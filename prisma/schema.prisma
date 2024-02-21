@@ -1,0 +1,270 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  // output        = "../src/generated/client" // todo 开发时注掉，上线前打开
+  binaryTargets = ["darwin", "windows", "linux-musl", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 1.1 用户表
+model sys_user {
+  id          String   @id @db.VarChar(10)
+  username    String   @db.VarChar(50)
+  nickname    String?  @db.VarChar(50)
+  password    String   @db.VarChar(50)
+  avatar      String?  @db.VarChar(50)
+  sex         String?  @db.Char(1)
+  email       String?  @db.VarChar(50)
+  tel         String?  @db.VarChar(15)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.2 部门表
+model sys_dept {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(50)
+  parent_id   Int      @db.Int
+  ancestor_id Int      @db.Int
+  order_num   Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.3 岗位表
+model sys_job {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(50)
+  dept_id     Int      @db.Int
+  order_num   Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.4 用户岗位表
+model sys_user_job {
+  id          Int      @id @default(autoincrement()) @db.Int
+  user_id     String   @db.VarChar(10)
+  job_id      Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.5 字典类型表
+model dic_type {
+  id          Int      @id @default(autoincrement()) @db.Int
+  name        String   @db.VarChar(50)
+  type        String   @db.VarChar(50)
+  if_disabled String   @db.Char(1)
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.6 字典数据表
+model dic_data {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(50)
+  value       String   @db.VarChar(50)
+  type        String   @db.VarChar(50)
+  if_default  String   @db.Char(1)
+  if_disabled String   @db.Char(1)
+  order_num   Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.7 sms记录表
+model tbl_sms {
+  id                 Int      @id @default(autoincrement()) @db.Int
+  from               String   @db.VarChar(15)
+  to                 String   @db.VarChar(15)
+  params             String   @db.VarChar(500)
+  send_type          String   @db.VarChar(50)
+  send_status        String   @db.Char(1)
+  send_status_remark String   @db.VarChar(300)
+  remark             String?  @db.VarChar(300)
+  create_by          String   @db.VarChar(10)
+  create_time        DateTime @default(now())
+  deleted            String   @default("N") @db.Char(1)
+}
+
+// 1.8 文件表
+model tbl_file {
+  id            String   @id @default(uuid()) @db.VarChar(50)
+  file_name     String   @db.VarChar(200)
+  file_new_name String   @db.VarChar(50)
+  file_size     BigInt   @db.BigInt
+  file_md5      String   @db.VarChar(50)
+  if_chunk      String   @db.Char(1)
+  chunk_num     Int?     @db.Int
+  if_merge      String?  @db.Char(1)
+  if_first      String   @db.Char(1)
+  if_finished   String   @db.Char(1)
+  remark        String?  @db.VarChar(300)
+  create_by     String   @db.VarChar(10)
+  update_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  update_time   DateTime @updatedAt
+  deleted       String   @default("N") @db.Char(1)
+}
+
+// 1.9 文件分片表
+model tbl_file_chunk {
+  id            String   @id @default(uuid()) @db.VarChar(50)
+  file_md5      String   @db.VarChar(50)
+  file_new_name String   @db.VarChar(50)
+  chunk_name    String   @db.VarChar(50)
+  chunk_index   Int      @db.Int
+  if_finished   String   @db.Char(1)
+  remark        String?  @db.VarChar(300)
+  create_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  deleted       String   @default("N") @db.Char(1)
+}
+
+// 1.10 公告表
+model tbl_bulletin {
+  id          Int      @id @default(autoincrement()) @db.Int
+  title       String   @db.VarChar(100)
+  content     String   @db.VarChar(500)
+  type        String   @db.VarChar(5)
+  if_top      String   @db.Char(1)
+  if_pin      String   @db.Char(1)
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.11 公告阅读状态表
+model tbl_bulletin_read {
+  id          Int      @id @default(autoincrement()) @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.1 顶级管理员表
+model sys_admin_top {
+  id          Int      @id @default(autoincrement()) @db.Int
+  user_id     String   @db.VarChar(10)
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.2 菜单表
+model sys_menu {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(30)
+  menu_type   String   @db.Char(1)
+  path        String   @db.VarChar(30)
+  parent_id   Int      @db.Int
+  component   String   @db.VarChar(60)
+  icon        String   @db.VarChar(30)
+  order_num   Int      @db.Int
+  if_link     String   @db.Char(1)
+  if_visible  String   @db.Char(1)
+  if_disabled String   @db.Char(1)
+  if_public   String   @db.Char(1)
+  perms       String   @db.VarChar(30)
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.3 角色表
+model sys_role {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(30)
+  order_num   Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.4 权限表
+model sys_permission {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(30)
+  menu_id     Int      @db.Int
+  order_num   Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.5 用户角色表
+model sys_user_role {
+  id          Int      @id @default(autoincrement()) @db.Int
+  user_id     String   @db.VarChar(10)
+  role_id     Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.6 角色权限表
+model sys_role_permission {
+  id            Int      @id @default(autoincrement()) @db.Int
+  role_id       Int      @db.Int
+  permission_id Int      @db.Int
+  remark        String?  @db.VarChar(300)
+  create_by     String   @db.VarChar(10)
+  update_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  update_time   DateTime @updatedAt
+  deleted       String   @default("N") @db.Char(1)
+}
