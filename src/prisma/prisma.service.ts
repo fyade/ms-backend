@@ -4,6 +4,8 @@ import { base } from '../util/base';
 import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
+import { pageSelDto } from '../common/dto/PageDto';
+import { withWhere } from '../common/commonType';
 
 const env = currentEnv();
 const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../generated/client');
@@ -75,17 +77,35 @@ export class PrismaService extends PrismaClient {
   /**
    * 查
    * @param model
-   * @param args
+   * @param data
    */
-  async findMany<T>(model: string, args?: any): Promise<T[]> {
+  async findPage_<T, P extends pageSelDto>(model: string, data: P): Promise<{
+    list: T[]
+    total: number
+  }> {
+    const pageNum = Number(data.pageNum);
+    const pageSize = Number(data.pageSize);
+    delete data.pageNum;
+    delete data.pageSize;
     const arg = {
-      ...args,
       where: {
         ...this.defaultSelArg().where,
-        ...(args?.where || {}),
+        ...(data || {}),
       },
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
     };
-    return this.getModel(model).findMany(arg);
+    const model1 = this.getModel(model);
+    const list = await model1.findMany(arg);
+    const count = await model1.count({
+      where: this.defaultSelArg().where,
+    });
+    return new Promise((resolve) => {
+      resolve({
+        list: list,
+        total: count,
+      });
+    });
   }
 
   /**
@@ -95,10 +115,9 @@ export class PrismaService extends PrismaClient {
    */
   async findFirst<T>(model: string, args?: any): Promise<T> {
     const arg = {
-      ...args,
       where: {
         ...this.defaultSelArg().where,
-        ...(args?.where || {}),
+        ...(args || {}),
       },
     };
     return this.getModel(model).findFirst(arg);
@@ -107,68 +126,43 @@ export class PrismaService extends PrismaClient {
   /**
    * 查
    * @param model
-   * @param args
+   * @param id
    */
-  async findUnique<T>(model: string, args?: any): Promise<T> {
-    const arg = {
-      ...args,
-      where: {
-        ...this.defaultSelArg().where,
-        ...(args?.where || {}),
-      },
-    };
-    return this.getModel(model).findUnique(arg);
+  async findById_<T>(model: string, id: any): Promise<T> {
+    return this.findFirst<T>(model, { id: id });
   }
 
   /**
    * 增
    * @param model
-   * @param args
+   * @param data
    */
-  async create<T>(model: string, args?: any): Promise<T> {
+  async create_<T>(model: string, data: any): Promise<T> {
+    delete data.id;
     const arg = {
-      ...args,
       data: {
         ...this.defaultInsArg().data,
-        ...(args?.data || {}),
+        ...(data || {}),
       },
     };
     return this.getModel(model).create(arg);
   }
 
   /**
-   * 增
-   * @param model
-   * @param args
-   */
-  async createMany<T>(model: string, args?: any): Promise<{ count: number }> {
-    const arg = {
-      ...args,
-      data: (args?.data || []).map((item: object) => {
-        return {
-          ...this.defaultInsArg().data,
-          ...item,
-        };
-      }),
-    };
-    return this.getModel(model).createMany(arg);
-  }
-
-  /**
    * 删
    * @param model
-   * @param args
+   * @param ids
    */
-  async deleteMany<T>(model: string, args?: any): Promise<{ count: number }> {
+  async deleteById_<T>(model: string, ids: any[]): Promise<{ count: number }> {
     const arg = {
-      ...args,
       where: {
         ...this.defaultDelArg().where,
-        ...(args?.where || {}),
+        id: {
+          in: ids,
+        },
       },
       data: {
         ...this.defaultDelArg().data,
-        ...(args?.data || {}),
       },
     };
     return this.getModel(model).updateMany(arg);
@@ -177,40 +171,180 @@ export class PrismaService extends PrismaClient {
   /**
    * 改
    * @param model
-   * @param args
+   * @param data
    */
-  async update<T>(model: string, args?: any): Promise<T> {
+  async updateById_<T>(model: string, data?: any): Promise<T> {
+    const id = data.id;
+    delete data.id;
     const arg = {
-      ...args,
       where: {
         ...this.defaultUpdArg().where,
-        ...(args?.where || {}),
+        id: id,
       },
       data: {
-        ...this.defaultUpdArg().data,
-        ...(args?.data || {}),
+        ...data,
       },
     };
     return this.getModel(model).update(arg);
   }
 
-  /**
-   * 改
-   * @param model
-   * @param args
-   */
-  async updateMany<T>(model: string, args?: any): Promise<{ count: number }> {
-    const arg = {
-      ...args,
-      where: {
-        ...this.defaultUpdArg().where,
-        ...(args?.where || {}),
-      },
-      data: {
-        ...this.defaultUpdArg().data,
-        ...(args?.data || {}),
-      },
-    };
-    return this.getModel(model).updateMany(arg);
-  }
+  // /**
+  //  * 查
+  //  * @param model
+  //  * @param args
+  //  */
+  // private async findMany<T>(model: string, args?: any): Promise<T[]> {
+  //   const arg = {
+  //     ...args,
+  //     where: {
+  //       ...this.defaultSelArg().where,
+  //       ...(args?.where || {}),
+  //     },
+  //   };
+  //   return this.getModel(model).findMany(arg);
+  // }
+
+  // /**
+  //  * 查
+  //  * @param model
+  //  * @param args
+  //  */
+  // private async findPage<T, P extends pageSelDto & withWhere>(model: string, args?: P): Promise<{
+  //   list: T[]
+  //   total: number
+  // }> {
+  //   const arg = {
+  //     ...args,
+  //     where: {
+  //       ...this.defaultSelArg().where,
+  //       ...(args?.where || {}),
+  //     },
+  //     skip: (Number(args.pageNum) - 1) * Number(args.pageSize),
+  //     take: Number(args.pageSize),
+  //   };
+  //   delete arg.pageNum;
+  //   delete arg.pageSize;
+  //   const model1 = this.getModel(model);
+  //   const list = await model1.findMany(arg);
+  //   const count = await model1.count({
+  //     where: this.defaultSelArg().where,
+  //   });
+  //   return new Promise((resolve) => {
+  //     resolve({
+  //       list: list,
+  //       total: count,
+  //     });
+  //   });
+  // }
+
+  // /**
+  //  * 查
+  //  * @param model
+  //  * @param args
+  //  */
+  // async findUnique<T>(model: string, args?: any): Promise<T> {
+  //   const arg = {
+  //     ...args,
+  //     where: {
+  //       ...this.defaultSelArg().where,
+  //       ...(args?.where || {}),
+  //     },
+  //   };
+  //   return this.getModel(model).findUnique(arg);
+  // }
+
+  // /**
+  //  * 增
+  //  * @param model
+  //  * @param args
+  //  */
+  // async create<T>(model: string, args?: any): Promise<T> {
+  //   delete args?.data.id;
+  //   const arg = {
+  //     ...args,
+  //     data: {
+  //       ...this.defaultInsArg().data,
+  //       ...(args?.data || {}),
+  //     },
+  //   };
+  //   return this.getModel(model).create(arg);
+  // }
+
+  // /**
+  //  * 增
+  //  * @param model
+  //  * @param args
+  //  */
+  // async createMany<T>(model: string, args?: any): Promise<{ count: number }> {
+  //   const arg = {
+  //     ...args,
+  //     data: (args?.data || []).map((item: object) => {
+  //       return {
+  //         ...this.defaultInsArg().data,
+  //         ...item,
+  //       };
+  //     }),
+  //   };
+  //   return this.getModel(model).createMany(arg);
+  // }
+
+  // /**
+  //  * 删
+  //  * @param model
+  //  * @param args
+  //  */
+  // async deleteMany<T>(model: string, args?: any): Promise<{ count: number }> {
+  //   const arg = {
+  //     ...args,
+  //     where: {
+  //       ...this.defaultDelArg().where,
+  //       ...(args?.where || {}),
+  //     },
+  //     data: {
+  //       ...this.defaultDelArg().data,
+  //       ...(args?.data || {}),
+  //     },
+  //   };
+  //   return this.getModel(model).updateMany(arg);
+  // }
+
+  // /**
+  //  * 改
+  //  * @param model
+  //  * @param args
+  //  */
+  // async update<T>(model: string, args?: any): Promise<T> {
+  //   const arg = {
+  //     ...args,
+  //     where: {
+  //       ...this.defaultUpdArg().where,
+  //       ...(args?.where || {}),
+  //     },
+  //     data: {
+  //       ...this.defaultUpdArg().data,
+  //       ...(args?.data || {}),
+  //     },
+  //   };
+  //   return this.getModel(model).update(arg);
+  // }
+
+  // /**
+  //  * 改
+  //  * @param model
+  //  * @param args
+  //  */
+  // async updateMany<T>(model: string, args?: any): Promise<{ count: number }> {
+  //   const arg = {
+  //     ...args,
+  //     where: {
+  //       ...this.defaultUpdArg().where,
+  //       ...(args?.where || {}),
+  //     },
+  //     data: {
+  //       ...this.defaultUpdArg().data,
+  //       ...(args?.data || {}),
+  //     },
+  //   };
+  //   return this.getModel(model).updateMany(arg);
+  // }
 }

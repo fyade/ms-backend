@@ -1,12 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { R } from "./common/R";
-import { Authorize } from "./decorator/authorizeDecorator";
+import { R } from './common/R';
+import { Authorize } from './decorator/authorizeDecorator';
 
 @Controller('sys')
 export class AppController {
   constructor(
-    private readonly appService: AppService
+    private readonly appService: AppService,
   ) {
   }
 
@@ -16,8 +16,8 @@ export class AppController {
   }
 
   @Get('base')
-  @Authorize('system:home:base:query')
+  @Authorize('system:home:base')
   async getBaseInfo(): Promise<R> {
-    return this.appService.getBaseInfo()
+    return this.appService.getBaseInfo();
   }
 }

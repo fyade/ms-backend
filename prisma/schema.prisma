@@ -197,7 +197,7 @@ model sys_admin_top {
 model sys_menu {
   id          Int      @id @default(autoincrement()) @db.Int
   label       String   @db.VarChar(30)
-  menu_type   String   @db.Char(1)
+  type        String   @db.Char(1)
   path        String   @db.VarChar(30)
   parent_id   Int      @db.Int
   component   String   @db.VarChar(60)

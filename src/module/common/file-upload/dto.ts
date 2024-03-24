@@ -1,4 +1,4 @@
-import { pageSelDto } from "../../common/dto/PageDto";
+import { pageSelDto } from "../../../common/dto/PageDto";
 
 export interface selListDto extends pageSelDto {
   filterSame: string

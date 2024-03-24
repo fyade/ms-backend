@@ -1,4 +1,4 @@
 export interface pageSelDto {
-  pageNum: number
-  pageSize: number
+  pageNum: number | string;
+  pageSize: number | string;
 }

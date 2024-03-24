@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import { jwtConstants, reqWhiteList } from '../config/authConfig';
 import { UnauthorizedException } from '../exception/UnauthorizedException';
 import { clearCurrentUser, setCurrentUser } from '../util/baseContext';
-import { userDto2 } from '../module/user/dto';
+import { userDto2 } from '../module/sys/user/dto';
 
 export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {

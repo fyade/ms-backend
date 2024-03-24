@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from "../../prisma/prisma.service";
-import { R } from "../../common/R";
-import { currentEnv } from "../../config/config";
+import { PrismaService } from "../../../prisma/prisma.service";
+import { R } from "../../../common/R";
+import { currentEnv } from "../../../config/config";
 import { join } from 'path';
 import * as fs from "fs";
-import { base } from "../../util/base";
+import { base } from "../../../util/base";
 import {
   params_fileUploadOneChunk_check,
   params_fileUploadOneChunk_merge,
   params_fileUploadOneChunk_upload,
   selListDto
 } from "./dto";
-import { pageVo } from "../../common/vo/PageVo";
-import { pageSelDto } from "../../common/dto/PageDto";
-import { randomUUID } from "../../util/IdUtils";
+import { pageVo } from "../../../common/vo/PageVo";
+import { pageSelDto } from "../../../common/dto/PageDto";
+import { randomUUID } from "../../../util/IdUtils";
 
 const SparkMD5 = require('spark-md5')
 
@@ -353,8 +353,8 @@ export class FileUploadService {
 
   async getImageWaterfallFlow(dto: pageSelDto) {
     return this.prisma.tbl_file.findMany({
-      skip: (dto.pageNum - 1) * dto.pageSize,
-      take: dto.pageSize,
+      skip: (Number(dto.pageNum) - 1) * Number(dto.pageSize),
+      take: Number(dto.pageSize),
       where: {
         file_name: {
           endsWith: ['.jpg', '.jpeg', '.png']
