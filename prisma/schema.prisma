@@ -230,18 +230,18 @@ model sys_role {
 }
 
 // 2.4 权限表
-model sys_permission {
-  id          Int      @id @default(autoincrement()) @db.Int
-  label       String   @db.VarChar(30)
-  menu_id     Int      @db.Int
-  order_num   Int      @db.Int
-  remark      String?  @db.VarChar(300)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
-}
+// model sys_permission {
+//   id          Int      @id @default(autoincrement()) @db.Int
+//   label       String   @db.VarChar(30)
+//   menu_id     Int      @db.Int
+//   order_num   Int      @db.Int
+//   remark      String?  @db.VarChar(300)
+//   create_by   String   @db.VarChar(10)
+//   update_by   String   @db.VarChar(10)
+//   create_time DateTime @default(now())
+//   update_time DateTime @updatedAt
+//   deleted     String   @default("N") @db.Char(1)
+// }
 
 // 2.5 用户角色表
 model sys_user_role {

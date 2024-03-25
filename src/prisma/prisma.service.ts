@@ -113,6 +113,21 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param args
    */
+  async findAll<T>(model: string, args?: any): Promise<T[]> {
+    const arg = {
+      where: {
+        ...this.defaultSelArg().where,
+        ...(args || {}),
+      },
+    };
+    return this.getModel(model).findMany(arg);
+  }
+
+  /**
+   * 查
+   * @param model
+   * @param args
+   */
   async findFirst<T>(model: string, args?: any): Promise<T> {
     const arg = {
       where: {
