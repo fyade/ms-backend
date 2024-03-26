@@ -4,7 +4,7 @@ import { Authorize } from '../../../decorator/authorizeDecorator';
 import { insOneDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 
-@Controller('sys/role')
+@Controller('/sys/role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {
   }
@@ -13,6 +13,12 @@ export class RoleController {
   @Authorize('system:role:selList')
   async selRole(@Query() dto: selListDto): Promise<R> {
     return this.roleService.selRole(dto);
+  }
+
+  @Get("/all")
+  @Authorize('system:role:selAll')
+  async selAll(): Promise<R> {
+    return this.roleService.selAll();
   }
 
   @Get(':id')

@@ -15,6 +15,12 @@ export interface insOneDto {
   remark: string;
 }
 
+export interface insManyDto {
+  role_id: number;
+  permission_id: number[];
+  remark: string;
+}
+
 export interface updOneDto extends insOneDto {
   id: number;
 }

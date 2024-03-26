@@ -4,13 +4,13 @@ import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { insOneDto, selListDto, updOneDto } from './dto';
 
-@Controller('sys/menu')
+@Controller('/sys/menu')
 export class MenuController {
   constructor(private readonly menuService: MenuService) {
   }
 
   @Get()
-  @Authorize('system:menu:selList')
+  @Authorize('system:menu:selAll')
   async selMenu(@Query() dto: selListDto): Promise<R> {
     return this.menuService.selMenu(dto);
   }

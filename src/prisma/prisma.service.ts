@@ -120,7 +120,8 @@ export class PrismaService extends PrismaClient {
         ...(args || {}),
       },
     };
-    return this.getModel(model).findMany(arg);
+    const res2 = await this.getModel(model).findMany(arg);
+    return new Promise(resolve => resolve(res2));
   }
 
   /**

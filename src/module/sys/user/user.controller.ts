@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { loginDto, registDto } from './dto';
 import { R } from '../../../common/R';
 
-@Controller('sys/user')
+@Controller('/sys/user')
 export class UserController {
   constructor(private readonly userService: UserService) {
   }

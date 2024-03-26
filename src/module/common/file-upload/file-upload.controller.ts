@@ -7,7 +7,7 @@ import { params_fileUploadOneChunk_check, params_fileUploadOneChunk_merge, selLi
 import { pageSelDto } from '../../../common/dto/PageDto';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 
-@Controller('sys/file-upload')
+@Controller('/sys/file-upload')
 export class FileUploadController {
   private env: any;
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { insOneDto, selListDto, updOneDto } from './dto';
+import { insOneDto, insManyDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 
 @Injectable()
@@ -18,8 +18,20 @@ export class RolePermissionService {
     return R.ok(one);
   }
 
-  async insRolePermission(dto: insOneDto): Promise<R> {
-    await this.prisma.create_('sys_role_permission', dto);
+  async selAll(): Promise<R> {
+    const res = await this.prisma.findAll('sys_role_permission');
+    return R.ok(res);
+  }
+
+  async insRolePermission(dto: insManyDto): Promise<R> {
+    const dtos = dto.permission_id.map(item => ({
+      ...dto,
+      permission_id: item,
+    }));
+    for (let i = 0; i < dtos.length; i++) {
+      const dto = dtos[i];
+      await this.prisma.create_('sys_role_permission', dto);
+    }
     return R.ok();
   }
 

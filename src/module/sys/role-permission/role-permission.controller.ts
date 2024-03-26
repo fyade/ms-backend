@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { insOneDto, selListDto, updOneDto } from './dto';
+import { insManyDto, insOneDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 import { RolePermissionService } from './role-permission.service';
 
-@Controller('sys/role-permission')
+@Controller('/sys/role-permission')
 export class RolePermissionController {
   constructor(private readonly rolePermissionService: RolePermissionService) {
   }
@@ -15,6 +15,12 @@ export class RolePermissionController {
     return this.rolePermissionService.selRolePermission(dto);
   }
 
+  @Get('/all')
+  @Authorize('system:rolePermission:selAll')
+  async selAll(): Promise<R> {
+    return this.rolePermissionService.selAll();
+  }
+
   @Get(':id')
   @Authorize('system:rolePermission:selOne')
   async selOne(@Param('id') id: number): Promise<R> {
@@ -23,7 +29,7 @@ export class RolePermissionController {
 
   @Post()
   @Authorize('system:rolePermission:ins')
-  async insRolePermission(@Body() dto: insOneDto): Promise<R> {
+  async insRolePermission(@Body() dto: insManyDto): Promise<R> {
     return this.rolePermissionService.insRolePermission(dto);
   }
 

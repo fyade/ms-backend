@@ -6,7 +6,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  // output        = "../src/generated/client" // todo 开发时注掉，上线前打开
+  output        = "../src/generated/client" // todo 开发时注掉，上线前打开
   binaryTargets = ["darwin", "windows", "linux-musl", "rhel-openssl-1.0.x"]
 }
 
@@ -173,6 +173,8 @@ model tbl_bulletin {
 // 1.11 公告阅读状态表
 model tbl_bulletin_read {
   id          Int      @id @default(autoincrement()) @db.Int
+  bulletin_id Int      @db.Int
+  user_id     String   @db.VarChar(10)
   remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
@@ -256,10 +258,15 @@ model sys_user_role {
   deleted     String   @default("N") @db.Char(1)
 }
 
-// 2.6 角色权限表
+// 2.6 接口组表
+
+// 2.7 接口表
+
+// 2.8 角色权限表
 model sys_role_permission {
   id            Int      @id @default(autoincrement()) @db.Int
   role_id       Int      @db.Int
+  type          String   @db.Char(1)
   permission_id Int      @db.Int
   remark        String?  @db.VarChar(300)
   create_by     String   @db.VarChar(10)

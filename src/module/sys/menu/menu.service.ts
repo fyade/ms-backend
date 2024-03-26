@@ -10,7 +10,6 @@ export class MenuService {
 
   async selMenu(dto: selListDto): Promise<R> {
     const res = await this.prisma.findAll<menuDto>('sys_menu', dto);
-    res.sort((a, b) => a.order_num - b.order_num);
     return R.ok(res);
   }
 

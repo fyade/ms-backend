@@ -4,7 +4,7 @@ import { insOneDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 import { UserRoleService } from './user-role.service';
 
-@Controller('sys/user-role')
+@Controller('/sys/user-role')
 export class UserRoleController {
   constructor(private readonly userRoleService: UserRoleService) {
   }

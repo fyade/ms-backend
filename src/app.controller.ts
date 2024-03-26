@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import { R } from './common/R';
 import { Authorize } from './decorator/authorizeDecorator';
 
-@Controller('sys')
+@Controller('/sys')
 export class AppController {
   constructor(
     private readonly appService: AppService,

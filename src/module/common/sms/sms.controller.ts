@@ -4,7 +4,7 @@ import { R } from '../../../common/R';
 import { sendDto0 } from './dto';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 
-@Controller('sys/sms')
+@Controller('/sys/sms')
 export class SmsController {
   constructor(private readonly smsService: SmsService) {
   }
