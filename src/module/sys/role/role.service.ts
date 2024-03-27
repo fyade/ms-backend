@@ -9,12 +9,12 @@ export class RoleService {
   }
 
   async selRole(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage_('sys_role', dto);
+    const res = await this.prisma.findPage_('sys_role', dto, true);
     return R.ok(res);
   }
 
   async selAll(): Promise<R> {
-    const res = await this.prisma.findAll<roleDto>('sys_role');
+    const res = await this.prisma.findAll<roleDto>('sys_role', null, true);
     return R.ok(res);
   }
 

@@ -78,8 +78,9 @@ export class PrismaService extends PrismaClient {
    * 查
    * @param model
    * @param data
+   * @param orderBy
    */
-  async findPage_<T, P extends pageSelDto>(model: string, data: P): Promise<{
+  async findPage_<T, P extends pageSelDto>(model: string, data?: P, orderBy?: boolean): Promise<{
     list: T[]
     total: number
   }> {
@@ -87,7 +88,7 @@ export class PrismaService extends PrismaClient {
     const pageSize = Number(data.pageSize);
     delete data.pageNum;
     delete data.pageSize;
-    const arg = {
+    const arg: any = {
       where: {
         ...this.defaultSelArg().where,
         ...(data || {}),
@@ -95,6 +96,11 @@ export class PrismaService extends PrismaClient {
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     };
+    if (orderBy) {
+      arg.orderBy = {
+        order_num: 'asc',
+      };
+    }
     const model1 = this.getModel(model);
     const list = await model1.findMany(arg);
     const count = await model1.count({
@@ -112,14 +118,20 @@ export class PrismaService extends PrismaClient {
    * 查
    * @param model
    * @param args
+   * @param orderBy
    */
-  async findAll<T>(model: string, args?: any): Promise<T[]> {
-    const arg = {
+  async findAll<T>(model: string, args?: any, orderBy?: boolean): Promise<T[]> {
+    const arg: any = {
       where: {
         ...this.defaultSelArg().where,
         ...(args || {}),
       },
     };
+    if (orderBy) {
+      arg.orderBy = {
+        order_num: 'asc',
+      };
+    }
     const res2 = await this.getModel(model).findMany(arg);
     return new Promise(resolve => resolve(res2));
   }
