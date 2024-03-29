@@ -24,7 +24,7 @@ export class UserService {
       return R.err('用户名已被使用。');
     }
     const userid = genid(5, false);
-    await this.prisma.create_<userDto>('sys_user', {
+    await this.prisma.create<userDto>('sys_user', {
       id: userid,
       username: dto.username,
       password: dto.password,

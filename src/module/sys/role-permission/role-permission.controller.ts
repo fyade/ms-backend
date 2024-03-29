@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { insManyDto, insOneDto, selListDto, updOneDto } from './dto';
+import { insManyDto, selByRoleIdDto, selListDto, updManyDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 import { RolePermissionService } from './role-permission.service';
 
@@ -17,8 +17,10 @@ export class RolePermissionController {
 
   @Get('/all')
   @Authorize('system:rolePermission:selAll')
-  async selAll(): Promise<R> {
-    return this.rolePermissionService.selAll();
+  async selAll(@Query() dto: selByRoleIdDto): Promise<R> {
+    return this.rolePermissionService.selAll({
+      role_id: dto.role_id ? Number(dto.role_id) : dto.role_id,
+    });
   }
 
   @Get(':id')
@@ -35,7 +37,7 @@ export class RolePermissionController {
 
   @Put()
   @Authorize('system:rolePermission:upd')
-  async updRolePermission(@Body() dto: updOneDto): Promise<R> {
+  async updRolePermission(@Body() dto: updManyDto): Promise<R> {
     return this.rolePermissionService.updRolePermission(dto);
   }
 

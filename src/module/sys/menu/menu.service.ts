@@ -14,22 +14,22 @@ export class MenuService {
   }
 
   async selOne(id: any): Promise<R> {
-    const one = await this.prisma.findById_('sys_menu', Number(id));
+    const one = await this.prisma.findById('sys_menu', Number(id));
     return R.ok(one);
   }
 
   async insMenu(dto: insOneDto): Promise<R> {
-    await this.prisma.create_('sys_menu', dto);
+    await this.prisma.create('sys_menu', dto);
     return R.ok();
   }
 
   async updMenu(dto: updOneDto): Promise<R> {
-    await this.prisma.updateById_('sys_menu', dto);
+    await this.prisma.updateById('sys_menu', dto);
     return R.ok();
   }
 
   async delMenu(ids: any[]): Promise<R> {
-    await this.prisma.deleteById_('sys_menu', ids);
+    await this.prisma.deleteById('sys_menu', ids);
     return R.ok();
   }
 }

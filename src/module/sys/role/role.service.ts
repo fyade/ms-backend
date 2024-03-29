@@ -9,7 +9,7 @@ export class RoleService {
   }
 
   async selRole(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage_('sys_role', dto, true);
+    const res = await this.prisma.findPage('sys_role', dto, true);
     return R.ok(res);
   }
 
@@ -19,22 +19,22 @@ export class RoleService {
   }
 
   async selOne(id: any): Promise<R> {
-    const one = await this.prisma.findById_('sys_role', Number(id));
+    const one = await this.prisma.findById('sys_role', Number(id));
     return R.ok(one);
   }
 
   async insRole(dto: insOneDto): Promise<R> {
-    await this.prisma.create_('sys_role', dto);
+    await this.prisma.create('sys_role', dto);
     return R.ok();
   }
 
   async updRole(dto: updOneDto): Promise<R> {
-    await this.prisma.updateById_('sys_role', dto);
+    await this.prisma.updateById('sys_role', dto);
     return R.ok();
   }
 
   async delRole(ids: any[]): Promise<R> {
-    await this.prisma.deleteById_('sys_role', ids);
+    await this.prisma.deleteById('sys_role', ids);
     return R.ok();
   }
 }

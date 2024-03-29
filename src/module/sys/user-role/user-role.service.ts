@@ -9,27 +9,27 @@ export class UserRoleService {
   }
 
   async selUserRole(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage_('sys_user_role', dto);
+    const res = await this.prisma.findPage('sys_user_role', dto);
     return R.ok(res);
   }
 
   async selOne(id: any): Promise<R> {
-    const one = await this.prisma.findById_('sys_user_role', Number(id));
+    const one = await this.prisma.findById('sys_user_role', Number(id));
     return R.ok(one);
   }
 
   async insUserRole(dto: insOneDto): Promise<R> {
-    await this.prisma.create_('sys_user_role', dto);
+    await this.prisma.create('sys_user_role', dto);
     return R.ok();
   }
 
   async updUserRole(dto: updOneDto): Promise<R> {
-    await this.prisma.updateById_('sys_user_role', dto);
+    await this.prisma.updateById('sys_user_role', dto);
     return R.ok();
   }
 
   async delUserRole(ids: any[]): Promise<R> {
-    await this.prisma.deleteById_('sys_user_role', ids);
+    await this.prisma.deleteById('sys_user_role', ids);
     return R.ok();
   }
 }

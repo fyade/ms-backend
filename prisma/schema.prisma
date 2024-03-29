@@ -8,6 +8,7 @@ generator client {
   provider      = "prisma-client-js"
   // output        = "../src/generated/client" // todo 开发时注掉，上线前打开
   binaryTargets = ["darwin", "windows", "linux-musl", "rhel-openssl-1.0.x"]
+  // previewFeatures = ["logging"]
 }
 
 datasource db {
@@ -30,6 +31,8 @@ model sys_user {
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
   deleted     String   @default("N") @db.Char(1)
+
+  @@map("sys_user")
 }
 
 // 1.2 部门表
