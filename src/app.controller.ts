@@ -15,7 +15,7 @@ export class AppController {
     return await this.appService.getHello();
   }
 
-  @Get('base')
+  @Get('/base')
   @Authorize('system:home:base')
   async getBaseInfo(): Promise<R> {
     return this.appService.getBaseInfo();

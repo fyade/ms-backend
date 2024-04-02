@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { loginDto, registDto, userDto } from './dto';
+import { loginDto, registDto, userDto, userListSelDto } from './dto';
 import { genid } from '../../../util/IdUtils';
 import { AuthService } from '../auth/auth.service';
 
@@ -55,5 +55,11 @@ export class UserService {
     } else {
       return R.err('用户不存在。');
     }
+  }
+
+  async userSelList(dto: userListSelDto): Promise<R> {
+    const res = await this.prisma.findPage<userDto, userListSelDto>('sys_user', dto);
+    res.list = res.list.map(item => ({ ...item, password: null }));
+    return R.ok(res);
   }
 }

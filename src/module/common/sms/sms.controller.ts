@@ -9,7 +9,7 @@ export class SmsController {
   constructor(private readonly smsService: SmsService) {
   }
 
-  @Post('1')
+  @Post('/1')
   @Authorize('system:sms:send')
   async send(@Body() dto: sendDto0): Promise<R> {
     return this.smsService.send1(dto);

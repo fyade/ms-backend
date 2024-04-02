@@ -21,7 +21,7 @@ export class FileUploadController {
     return this.fileUploadService.selList(dto);
   }
 
-  @Post('one-full')
+  @Post('/one-full')
   @UseInterceptors(FileInterceptor('file'))
   @Authorize('system:fileupload:onefull0')
   async fileUploadOneFull0(@UploadedFile() file): Promise<R> {
@@ -31,7 +31,7 @@ export class FileUploadController {
     return this.fileUploadService.fileUploadOneFull(file);
   }
 
-  @Post('one-full/:filename')
+  @Post('/one-full/:filename')
   @UseInterceptors(FileInterceptor('file'))
   @Authorize('system:fileupload:onefull')
   async fileUploadOneFull(@Param() param, @UploadedFile() file): Promise<R> {
@@ -41,13 +41,13 @@ export class FileUploadController {
     return this.fileUploadService.fileUploadOneFull(file, param.filename);
   }
 
-  @Post('one-chunk/check')
+  @Post('/one-chunk/check')
   @Authorize('system:fileupload:onechunkcheck')
   async fileUploadOneChunkCheck(@Body() dto: params_fileUploadOneChunk_check): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkCheck(dto);
   }
 
-  @Post('one-chunk/upload/:fileMd5/:fileNewName/:chunkIndex')
+  @Post('/one-chunk/upload/:fileMd5/:fileNewName/:chunkIndex')
   @UseInterceptors(FileInterceptor('file'))
   @Authorize('system:fileupload:onechunkupload')
   async fileUploadOneChunkUpload(@Param() param, @UploadedFile() file): Promise<R> {
@@ -59,13 +59,13 @@ export class FileUploadController {
     });
   }
 
-  @Post('one-chunk/merge')
+  @Post('/one-chunk/merge')
   @Authorize('system:fileupload:onechunkmerge')
   async fileUploadOneChunkMerge(@Body() dto: params_fileUploadOneChunk_merge): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkMerge(dto);
   }
 
-  @Get('image-waterfall-flow')
+  @Get('/image-waterfall-flow')
   @Authorize('system:fileupload:waterfall')
   async getImageWaterfallFlow(@Query() dto: pageSelDto) {
     return this.fileUploadService.getImageWaterfallFlow(dto);

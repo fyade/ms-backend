@@ -15,7 +15,7 @@ export class MenuController {
     return this.menuService.selMenu(dto);
   }
 
-  @Get(':id')
+  @Get('/:id')
   @Authorize('system:menu:selOne')
   async selOne(@Param('id') id: number): Promise<R> {
     return this.menuService.selOne(id);

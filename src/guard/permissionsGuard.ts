@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PRE_AUTHORIZE_KEY } from '../decorator/customDecorator';
 import { AuthService } from '../module/sys/auth/auth.service';
-import { reqWhiteList } from '../config/authConfig';
+import { adminLoginUrl, reqWhiteList } from '../config/authConfig';
 import { ForbiddenException } from '../exception/ForbiddenException';
 
 @Injectable()
@@ -23,7 +23,15 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
     const user = request.body.user;
-    delete request.body.user
+    if (!!!user && request.url === adminLoginUrl) {
+      const ifHasPermission = await this.authService.hasPermission2(request.body.username, permission);
+      if (ifHasPermission) {
+        return true;
+      } else {
+        throw new ForbiddenException();
+      }
+    }
+    delete request.body.user;
     const ifHasPermission = await this.authService.hasPermission(user.userid, permission);
     if (ifHasPermission) {
       return true;

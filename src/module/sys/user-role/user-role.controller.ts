@@ -15,7 +15,7 @@ export class UserRoleController {
     return this.userRoleService.selUserRole(dto);
   }
 
-  @Get(':id')
+  @Get('/:id')
   @Authorize('system:userRole:selOne')
   async selOne(@Param('id') id: number): Promise<R> {
     return this.userRoleService.selOne(id);

@@ -23,7 +23,7 @@ export class RolePermissionController {
     });
   }
 
-  @Get(':id')
+  @Get('/:id')
   @Authorize('system:rolePermission:selOne')
   async selOne(@Param('id') id: number): Promise<R> {
     return this.rolePermissionService.selOne(id);

@@ -26,4 +26,12 @@ export class AuthService {
     const admintop = await this.prisma.findFirst('sys_admin_top', { user_id: userid });
     return !!admintop;
   }
+
+  async hasPermission2(username: string, permission: string) {
+    const user = await this.prisma.findFirst<userDto>('sys_user', { username: username });
+    if (user) {
+      return this.hasPermission(user.id, permission);
+    }
+    return false;
+  }
 }

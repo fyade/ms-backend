@@ -21,7 +21,7 @@ export class RoleController {
     return this.roleService.selAll();
   }
 
-  @Get(':id')
+  @Get('/:id')
   @Authorize('system:role:selOne')
   async selOne(@Param('id') id: number): Promise<R> {
     return this.roleService.selOne(id);

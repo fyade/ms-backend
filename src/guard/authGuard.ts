@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import * as jwt from 'jsonwebtoken';
-import { jwtConstants, reqWhiteList } from '../config/authConfig';
+import { adminLoginUrl, jwtConstants, reqWhiteList } from '../config/authConfig';
 import { UnauthorizedException } from '../exception/UnauthorizedException';
 import { clearCurrentUser, setCurrentUser } from '../util/baseContext';
 import { userDto2 } from '../module/sys/user/dto';
@@ -27,7 +27,10 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException();
       }
     } else if (reqWhiteList.indexOf(request.url) === -1) {
-      throw new UnauthorizedException();
+      if (request.url === adminLoginUrl) {
+      } else {
+        throw new UnauthorizedException();
+      }
     }
     return true;
   }
