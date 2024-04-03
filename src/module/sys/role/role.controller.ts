@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { insOneDto, selListDto, updOneDto } from './dto';
+import { insOneDto, selListDto, selListDto2, updOneDto } from './dto';
 import { R } from '../../../common/R';
 
 @Controller('/sys/role')
@@ -15,10 +15,10 @@ export class RoleController {
     return this.roleService.selRole(dto);
   }
 
-  @Get("/all")
+  @Get('/all')
   @Authorize('system:role:selAll')
-  async selAll(): Promise<R> {
-    return this.roleService.selAll();
+  async selAll(@Query() dto: selListDto2): Promise<R> {
+    return this.roleService.selAll(dto);
   }
 
   @Get('/:id')
