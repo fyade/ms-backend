@@ -23,3 +23,8 @@ export interface registDto extends loginDto {
 
 export interface userListSelDto extends pageSelDto {
 }
+
+export interface resetPsdDto {
+  id: string;
+  password: string;
+}

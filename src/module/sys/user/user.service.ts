@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { loginDto, registDto, userDto, userListSelDto } from './dto';
+import { loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto';
 import { genid } from '../../../util/IdUtils';
 import { AuthService } from '../auth/auth.service';
+import { HTTP } from '../../../common/Enum';
 
 @Injectable()
 export class UserService {
@@ -57,9 +58,22 @@ export class UserService {
     }
   }
 
+  async adminlogin(dto: loginDto): Promise<R> {
+    const userinfo = await this.login(dto);
+    if (userinfo.code !== HTTP.SUCCESS().code) {
+      return R.err(userinfo.msg);
+    }
+    return R.ok(userinfo.data);
+  }
+
   async userSelList(dto: userListSelDto): Promise<R> {
     const res = await this.prisma.findPage<userDto, userListSelDto>('sys_user', dto);
     res.list = res.list.map(item => ({ ...item, password: null }));
     return R.ok(res);
+  }
+
+  async resetPsd(dto: resetPsdDto): Promise<R> {
+    const res = await this.prisma.updateById('sys_user', dto);
+    return R.ok();
   }
 }
