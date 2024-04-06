@@ -3,10 +3,18 @@ import { UserService } from './user.service';
 import { loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto';
 import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/sys/user')
+@ApiTags('用户')
 export class UserController {
   constructor(private readonly userService: UserService) {
+  }
+
+  @Get('/page')
+  @Authorize('system:user:selList')
+  async userSelList(@Query() dto: userListSelDto): Promise<R> {
+    return this.userService.userSelList(dto);
   }
 
   @Post('/regist')
@@ -23,12 +31,6 @@ export class UserController {
   @Authorize('system:user:adminlogin')
   async adminLogin(@Body() dto: loginDto): Promise<R> {
     return this.userService.adminlogin(dto);
-  }
-
-  @Get('/page')
-  @Authorize('system:user:selList')
-  async userSelList(@Query() dto: userListSelDto): Promise<R> {
-    return this.userService.userSelList(dto);
   }
 
   @Post('/resetpsd')

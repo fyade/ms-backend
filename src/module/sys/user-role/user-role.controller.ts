@@ -1,10 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { insOneDto, selListDto, updOneDto } from './dto';
+import { insManyDto, insOneDto, selListDto, updManyDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 import { UserRoleService } from './user-role.service';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/sys/user-role')
+@ApiTags('用户角色')
 export class UserRoleController {
   constructor(private readonly userRoleService: UserRoleService) {
   }
@@ -23,13 +25,13 @@ export class UserRoleController {
 
   @Post()
   @Authorize('system:userRole:ins')
-  async insUserRole(@Body() dto: insOneDto): Promise<R> {
+  async insUserRole(@Body() dto: insManyDto): Promise<R> {
     return this.userRoleService.insUserRole(dto);
   }
 
   @Put()
   @Authorize('system:userRole:upd')
-  async updUserRole(@Body() dto: updOneDto): Promise<R> {
+  async updUserRole(@Body() dto: updManyDto): Promise<R> {
     return this.userRoleService.updUserRole(dto);
   }
 

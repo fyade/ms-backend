@@ -5,6 +5,8 @@ import { loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto
 import { genid } from '../../../util/IdUtils';
 import { AuthService } from '../auth/auth.service';
 import { HTTP } from '../../../common/Enum';
+import { roleDto } from '../user-role/dto';
+import { base } from '../../../util/base';
 
 @Injectable()
 export class UserService {
@@ -17,6 +19,30 @@ export class UserService {
   async findUserByUsername(username: string): Promise<userDto> {
     const userDto = await this.prisma.findFirst<userDto>('sys_user', { username: username });
     return userDto;
+  }
+
+  async userSelList(dto: userListSelDto): Promise<R> {
+    const ifWithRole = dto.ifWithRole;
+    delete dto.ifWithRole;
+    const res = await this.prisma.findPage<userDto, userListSelDto>('sys_user', dto);
+    res.list = res.list.map(item => ({ ...item, password: null }));
+    if (ifWithRole === base.N) {
+      return R.ok(res);
+    }
+    const res2 = [];
+    for (let i = 0; i < res.list.length; i++) {
+      const roles = await this.prisma.findAll<roleDto>('sys_user_role', { user_id: res.list[i].id });
+      const roleids = roles.map(item => item.role_id);
+      const rols = await this.prisma.findAll('sys_role', { id: { in: roleids } }, true);
+      res2.push({
+        ...res.list[i],
+        roles: rols,
+      });
+    }
+    return R.ok({
+      ...res,
+      list: res2,
+    });
   }
 
   async regist(dto: registDto): Promise<R> {
@@ -64,12 +90,6 @@ export class UserService {
       return R.err(userinfo.msg);
     }
     return R.ok(userinfo.data);
-  }
-
-  async userSelList(dto: userListSelDto): Promise<R> {
-    const res = await this.prisma.findPage<userDto, userListSelDto>('sys_user', dto);
-    res.list = res.list.map(item => ({ ...item, password: null }));
-    return R.ok(res);
   }
 
   async resetPsd(dto: resetPsdDto): Promise<R> {

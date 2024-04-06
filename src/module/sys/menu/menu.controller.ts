@@ -3,8 +3,10 @@ import { MenuService } from './menu.service';
 import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { insOneDto, selListDto, updOneDto } from './dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/sys/menu')
+@ApiTags('菜单')
 export class MenuController {
   constructor(private readonly menuService: MenuService) {
   }

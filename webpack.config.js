@@ -43,7 +43,8 @@ module.exports = {
           "@nestjs/websockets/socket-module",
           "cache-manager",
           "class-validator",
-          "class-transformer"
+          "class-transformer",
+          "class-transformer/storage"
         ];
         if (!lazyImports.includes(resource)) {
           return false;

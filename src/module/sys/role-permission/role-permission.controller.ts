@@ -3,8 +3,10 @@ import { Authorize } from '../../../decorator/authorizeDecorator';
 import { insManyDto, selByRoleIdDto, selListDto, updManyDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 import { RolePermissionService } from './role-permission.service';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/sys/role-permission')
+@ApiTags('角色权限')
 export class RolePermissionController {
   constructor(private readonly rolePermissionService: RolePermissionService) {
   }

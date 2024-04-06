@@ -3,8 +3,10 @@ import { RoleService } from './role.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { insOneDto, selListDto, selListDto2, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/sys/role')
+@ApiTags('角色')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {
   }

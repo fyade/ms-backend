@@ -2,8 +2,10 @@ import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { R } from './common/R';
 import { Authorize } from './decorator/authorizeDecorator';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/sys')
+@ApiTags('系统')
 export class AppController {
   constructor(
     private readonly appService: AppService,

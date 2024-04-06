@@ -22,6 +22,7 @@ export interface registDto extends loginDto {
 }
 
 export interface userListSelDto extends pageSelDto {
+  ifWithRole: string;
 }
 
 export interface resetPsdDto {

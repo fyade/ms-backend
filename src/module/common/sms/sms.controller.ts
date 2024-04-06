@@ -3,8 +3,10 @@ import { SmsService } from './sms.service';
 import { R } from '../../../common/R';
 import { sendDto0 } from './dto';
 import { Authorize } from '../../../decorator/authorizeDecorator';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/sys/sms')
+@ApiTags('腾讯云sms')
 export class SmsController {
   constructor(private readonly smsService: SmsService) {
   }
