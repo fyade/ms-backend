@@ -22,7 +22,7 @@ async function bootstrap() {
     SwaggerModule.setup('/api', app, swaggerDocuemnt);
   }
   await app.listen(node_env.port);
-  console.log(`${time()} ${node_env.mode} ${node_env.port}`);
+  console.info(`${time()} ${node_env.mode} ${node_env.port}`);
 }
 
 bootstrap();

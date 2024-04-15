@@ -50,11 +50,11 @@ const server = ws.createServer(connect => {
       from: 'sys',
       to: 'all'
     })
-    console.log('连接关闭。')
+    console.info('连接关闭。')
   })
 
   connect.on('error', () => {
-    console.log('连接异常。')
+    console.info('连接异常。')
   })
 })
 
@@ -72,5 +72,5 @@ function boardcost(msg) {
 }
 
 server.listen(8061, () => {
-  console.log('websocket running 8061')
+  console.info('websocket running 8061')
 })

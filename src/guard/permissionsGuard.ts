@@ -23,8 +23,9 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
     const user = request.body.user;
+    // 放行管理员登陆接口
     if (!!!user && request.url === adminLoginUrl) {
-      const ifHasPermission = await this.authService.hasPermission2(request.body.username, permission);
+      const ifHasPermission = await this.authService.hasAdminPermissionByUsername(request.body.username, permission);
       if (ifHasPermission) {
         return true;
       } else {
@@ -32,7 +33,8 @@ export class PermissionsGuard implements CanActivate {
       }
     }
     delete request.body.user;
-    const ifHasPermission = await this.authService.hasPermission(user.userid, permission);
+    // 用户是否有当前接口的权限
+    const ifHasPermission = await this.authService.hasAdminPermissionByUserid(user.userid, permission);
     if (ifHasPermission) {
       return true;
     } else {
