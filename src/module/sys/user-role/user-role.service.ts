@@ -9,7 +9,7 @@ export class UserRoleService {
   }
 
   async selUserRole(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage('sys_user_role', dto);
+    const res = await this.prisma.findPage('sys_user_role', { data: dto });
     return R.ok(res);
   }
 

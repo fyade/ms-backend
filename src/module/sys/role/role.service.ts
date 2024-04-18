@@ -9,7 +9,11 @@ export class RoleService {
   }
 
   async selRole(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage('sys_role', dto, true);
+    const res = await this.prisma.findPage('sys_role', {
+      data: dto,
+      orderBy: true,
+      notNullKeys: ['label', 'if_admin', 'if_disabled'],
+    });
     return R.ok(res);
   }
 

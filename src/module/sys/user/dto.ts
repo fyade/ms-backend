@@ -23,6 +23,9 @@ export interface registDto extends loginDto {
 
 export interface userListSelDto extends pageSelDto {
   ifWithRole: string;
+  username: string;
+  nickname: string;
+  sex: string;
 }
 
 export interface resetPsdDto {

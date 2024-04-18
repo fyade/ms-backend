@@ -4,6 +4,7 @@ import { PRE_AUTHORIZE_KEY } from '../decorator/customDecorator';
 import { AuthService } from '../module/sys/auth/auth.service';
 import { adminLoginUrl, reqWhiteList } from '../config/authConfig';
 import { ForbiddenException } from '../exception/ForbiddenException';
+import { UserUnknownException } from '../exception/UserUnknownException';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -25,7 +26,11 @@ export class PermissionsGuard implements CanActivate {
     const user = request.body.user;
     // 放行管理员登陆接口
     if (!!!user && request.url === adminLoginUrl) {
-      const ifHasPermission = await this.authService.hasAdminPermissionByUsername(request.body.username, permission);
+      const userDto = await this.authService.findUserByUsername(request.body.username);
+      if (!!!userDto) {
+        throw new UserUnknownException();
+      }
+      const ifHasPermission = await this.authService.ifAdminUser(request.body.username);
       if (ifHasPermission) {
         return true;
       } else {

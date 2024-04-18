@@ -5,7 +5,7 @@ import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
 import { pageSelDto } from '../common/dto/PageDto';
-import { withWhere } from '../common/commonType';
+import { deepClone } from '../util/ObjectUtils';
 
 const env = currentEnv();
 const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../generated/client');
@@ -80,8 +80,18 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param data
    * @param orderBy
+   * @param notNullKeys
    */
-  async findPage<T, P extends pageSelDto>(model: string, data?: P, orderBy?: boolean): Promise<{
+  async findPage<T, P extends pageSelDto>(model: string, {
+                                            data,
+                                            orderBy,
+                                            notNullKeys = [],
+                                          }: {
+                                            data?: P,
+                                            orderBy?: boolean
+                                            notNullKeys?: string[]
+                                          } = {},
+  ): Promise<{
     list: T[]
     total: number
   }> {
@@ -91,8 +101,29 @@ export class PrismaService extends PrismaClient {
     delete data.pageSize;
     const arg: any = {
       where: {
-        ...this.defaultSelArg().where,
-        ...(data || {}),
+        AND: [
+          ...Object.keys(this.defaultSelArg().where).reduce((obj, item) => [
+            ...obj,
+            {
+              [item]: this.defaultSelArg().where[item],
+            },
+          ], []),
+          ...Object.keys(data).reduce((obj, item) => [
+            ...obj,
+            {
+              OR: [
+                {
+                  [item]: {
+                    contains: `${data[item]}`,
+                  },
+                },
+                {
+                  [item]: null,
+                },
+              ].slice(0, (notNullKeys.indexOf(item) > -1 || data[item] !== '') ? 1 : 2),
+            },
+          ], []),
+        ],
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
@@ -104,9 +135,10 @@ export class PrismaService extends PrismaClient {
     }
     const model1 = this.getModel(model);
     const list = await model1.findMany(arg);
-    const count = await model1.count({
-      where: this.defaultSelArg().where,
-    });
+    const arg2 = {
+      where: arg.where,
+    };
+    const count = await model1.count(arg2);
     return new Promise((resolve) => {
       resolve({
         list: list,

@@ -1,7 +1,7 @@
 import { pageSelDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
 
-export interface roleDto extends insOneDto, baseInterface {
+export interface userRoleDto extends insOneDto, baseInterface {
   id: number;
 }
 

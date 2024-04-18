@@ -15,6 +15,8 @@ export interface selListDto2 {
 
 export interface insOneDto {
   label: string;
+  if_admin: string;
+  if_disabled: string;
   order_num: number;
   remark: string;
 }

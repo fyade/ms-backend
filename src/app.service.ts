@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { R } from "./common/R";
 import * as os from "os";
-import { sleep } from "./util/baseUtils";
+import { sleep } from "./util/BaseUtils";
 import * as process from "process";
 import * as diskinfo from 'diskinfo'
 

@@ -5,8 +5,9 @@ import { loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto
 import { genid } from '../../../util/IdUtils';
 import { AuthService } from '../auth/auth.service';
 import { HTTP } from '../../../common/Enum';
-import { roleDto } from '../user-role/dto';
 import { base } from '../../../util/base';
+import { userRoleDto } from '../user-role/dto';
+import { UserUnknownException } from '../../../exception/UserUnknownException';
 
 @Injectable()
 export class UserService {
@@ -15,23 +16,20 @@ export class UserService {
     private readonly authService: AuthService,
   ) {
   }
-
-  async findUserByUsername(username: string): Promise<userDto> {
-    const userDto = await this.prisma.findFirst<userDto>('sys_user', { username: username });
-    return userDto;
-  }
-
   async userSelList(dto: userListSelDto): Promise<R> {
     const ifWithRole = dto.ifWithRole;
     delete dto.ifWithRole;
-    const res = await this.prisma.findPage<userDto, userListSelDto>('sys_user', dto);
+    const res = await this.prisma.findPage<userDto, userListSelDto>('sys_user', {
+      data: dto,
+      notNullKeys: ['username'],
+    });
     res.list = res.list.map(item => ({ ...item, password: null }));
     if (ifWithRole === base.N) {
       return R.ok(res);
     }
     const res2 = [];
     for (let i = 0; i < res.list.length; i++) {
-      const roles = await this.prisma.findAll<roleDto>('sys_user_role', { user_id: res.list[i].id });
+      const roles = await this.prisma.findAll<userRoleDto>('sys_user_role', { user_id: res.list[i].id });
       const roleids = roles.map(item => item.role_id);
       const rols = await this.prisma.findAll('sys_role', { id: { in: roleids } }, true);
       res2.push({
@@ -46,7 +44,7 @@ export class UserService {
   }
 
   async regist(dto: registDto): Promise<R> {
-    const user = await this.findUserByUsername(dto.username);
+    const user = await this.authService.findUserByUsername(dto.username);
     if (user) {
       return R.err('用户名已被使用。');
     }
@@ -80,7 +78,7 @@ export class UserService {
     if (user2) {
       return R.err('密码错误。');
     } else {
-      return R.err('用户不存在。');
+      throw new UserUnknownException();
     }
   }
 
@@ -89,7 +87,8 @@ export class UserService {
     if (userinfo.code !== HTTP.SUCCESS().code) {
       return R.err(userinfo.msg);
     }
-    return R.ok(userinfo.data);
+    const permissions = await this.authService.permissionsOfUser(userinfo.data.user);
+    return R.ok({ ...userinfo.data, permissions });
   }
 
   async resetPsd(dto: resetPsdDto): Promise<R> {
