@@ -90,7 +90,7 @@ export class AuthService {
                                   from sys_role_permission srp
                                            left join sys_user_role sur on srp.role_id = sur.role_id
                                            left join sys_role sr on sr.id = sur.role_id
-                                           left join sys_menu sm on srp.type = 'mm' and srp.permission_id = sm.id
+                                           left join sys_menu sm on srp.type = 'm' and srp.permission_id = sm.id
                                   where srp.deleted = ${base.N}
                                     and sur.deleted = ${base.N}
                                     and sm.deleted = ${base.N}
