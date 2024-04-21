@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto';
+import { adminNewUserDto, loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto';
 import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { ApiTags } from '@nestjs/swagger';
@@ -33,8 +33,14 @@ export class UserController {
     return this.userService.adminlogin(dto);
   }
 
+  @Post()
+  @Authorize('system:user:adminNewUser')
+  async insUser(@Body() dto: adminNewUserDto) {
+    return this.userService.insUser(dto);
+  }
+
   @Post('/resetpsd')
-  @Authorize('system:user:resetPsd')
+  @Authorize('system:user:adminResetPsd')
   async resetPsd(@Body() dto: resetPsdDto): Promise<R> {
     return this.userService.resetPsd(dto);
   }

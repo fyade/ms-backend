@@ -13,6 +13,11 @@ export interface userDto2 extends loginDto {
   userid: string;
 }
 
+export interface adminNewUserDto {
+  username: string;
+  password: string;
+}
+
 export interface loginDto {
   username: string;
   password: string;

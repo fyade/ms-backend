@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto';
+import { adminNewUserDto, loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto';
 import { genid } from '../../../util/IdUtils';
 import { AuthService } from '../auth/auth.service';
 import { HTTP } from '../../../common/Enum';
@@ -16,6 +16,7 @@ export class UserService {
     private readonly authService: AuthService,
   ) {
   }
+
   async userSelList(dto: userListSelDto): Promise<R> {
     const ifWithRole = dto.ifWithRole;
     delete dto.ifWithRole;
@@ -89,6 +90,15 @@ export class UserService {
     }
     const permissions = await this.authService.permissionsOfUser(userinfo.data.user);
     return R.ok({ ...userinfo.data, permissions });
+  }
+
+  async insUser(dto: adminNewUserDto): Promise<R> {
+    const user = await this.prisma.findFirst('sys_user', { username: dto.username });
+    if (user) {
+      return R.err('用户名已存在。');
+    }
+    await this.prisma.create('sys_user', { ...dto, id: genid(5, false) }, { ifCustomizeId: true });
+    return R.ok();
   }
 
   async resetPsd(dto: resetPsdDto): Promise<R> {

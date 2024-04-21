@@ -214,9 +214,17 @@ export class PrismaService extends PrismaClient {
    * 增
    * @param model
    * @param data
+   * @param ifCustomizeId
    */
-  async create<T>(model: string, data: any): Promise<T> {
-    delete data.id;
+  async create<T>(model: string, data: any, {
+                    ifCustomizeId = false,
+                  }: {
+                    ifCustomizeId?: boolean
+                  } = {},
+  ): Promise<T> {
+    if (!ifCustomizeId) {
+      delete data.id;
+    }
     const arg = {
       data: {
         ...this.defaultInsArg().data,
@@ -230,13 +238,24 @@ export class PrismaService extends PrismaClient {
    * 增
    * @param model
    * @param data
+   * @param ifCustomizeId
    */
-  async createMany<T>(model: string, data: any[]): Promise<T> {
+  async createMany<T>(model: string, data: any[], {
+                        ifCustomizeId = false,
+                      }: {
+                        ifCustomizeId?: boolean
+                      } = {},
+  ): Promise<T> {
     const arg = {
-      data: data.map(dat => ({
-        ...this.defaultInsArg().data,
-        ...(dat || {}),
-      })),
+      data: data.map(dat => {
+        if (!ifCustomizeId) {
+          delete dat.id;
+        }
+        return {
+          ...this.defaultInsArg().data,
+          ...(dat || {}),
+        };
+      }),
     };
     return this.getModel(model).createMany(arg);
   }
