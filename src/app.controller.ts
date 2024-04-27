@@ -4,7 +4,7 @@ import { R } from './common/R';
 import { Authorize } from './decorator/authorizeDecorator';
 import { ApiTags } from '@nestjs/swagger';
 
-@Controller('/sys')
+@Controller('/sys/base')
 @ApiTags('系统')
 export class AppController {
   constructor(
@@ -17,7 +17,7 @@ export class AppController {
     return await this.appService.getHello();
   }
 
-  @Get('/base')
+  @Get('/info')
   @Authorize('system:home:base')
   async getBaseInfo(): Promise<R> {
     return this.appService.getBaseInfo();

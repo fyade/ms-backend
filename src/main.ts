@@ -14,8 +14,9 @@ async function bootstrap() {
   const node_env = currentEnv();
   if (node_env.mode === base.DEV) {
     const swaggerOptions = new DocumentBuilder()
-      .setTitle('知笙管理系统接口文档')
-      .setDescription('文档')
+      .addBearerAuth()
+      .setTitle('知笙后台管理系统')
+      .setDescription('知笙后台管理系统接口文档')
       .setVersion('1.0.0')
       .build();
     const swaggerDocuemnt = SwaggerModule.createDocument(app, swaggerOptions);

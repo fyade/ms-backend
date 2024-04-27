@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { insOneDto, roleDto, selListDto, selListDto2, updOneDto } from './dto';
+import { insOneDto, roleDto, selListDto, selAllDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class RoleService {
     return R.ok(res);
   }
 
-  async selAll(dto: selListDto2): Promise<R> {
+  async selAll(dto: selAllDto): Promise<R> {
     const dto_ = dto;
     if (dto_.id) dto_.id = Number(dto_.id);
     const res = await this.prisma.findAll<roleDto>('sys_role', dto_, true);

@@ -18,6 +18,8 @@ import { AuthService } from './module/sys/auth/auth.service';
 import { RoleModule } from './module/sys/role/role.module';
 import { UserRoleModule } from './module/sys/user-role/user-role.module';
 import { RolePermissionModule } from './module/sys/role-permission/role-permission.module';
+import { DicTypeModule } from './module/sys/dic-type/dic-type.module';
+import { DicDataModule } from './module/sys/dic-data/dic-data.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { RolePermissionModule } from './module/sys/role-permission/role-permissi
     RoleModule,
     UserRoleModule,
     RolePermissionModule,
+    DicTypeModule,
+    DicDataModule,
   ],
   controllers: [
     AppController,

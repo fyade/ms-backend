@@ -78,11 +78,12 @@ model sys_user_job {
 }
 
 // 1.5 字典类型表
-model dic_type {
+model sys_dic_type {
   id          Int      @id @default(autoincrement()) @db.Int
   name        String   @db.VarChar(50)
   type        String   @db.VarChar(50)
   if_disabled String   @db.Char(1)
+  order_num   Int      @db.Int
   remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
@@ -92,11 +93,11 @@ model dic_type {
 }
 
 // 1.6 字典数据表
-model dic_data {
+model sys_dic_data {
   id          Int      @id @default(autoincrement()) @db.Int
   label       String   @db.VarChar(50)
   value       String   @db.VarChar(50)
-  type        String   @db.VarChar(50)
+  dic_type    String   @db.VarChar(50)
   if_default  String   @db.Char(1)
   if_disabled String   @db.Char(1)
   order_num   Int      @db.Int

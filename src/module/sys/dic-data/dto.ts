@@ -1,7 +1,7 @@
-import { pageSelDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
+import { pageSelDto } from '../../../common/dto/PageDto';
 
-export interface roleDto extends insOneDto, baseInterface {
+export interface dicDataDto extends insOneDto, baseInterface {
   id: number;
 }
 
@@ -9,16 +9,14 @@ export interface selListDto extends pageSelDto, insOneDto {
   id: number;
 }
 
-export interface selAllDto {
-  id: number;
-}
-
 export interface insOneDto {
   label: string;
-  if_admin: string;
+  value: string;
+  dic_type: string;
+  if_default: string;
   if_disabled: string;
   order_num: number;
-  remark: string;
+  remark?: string;
 }
 
 export interface updOneDto extends insOneDto {
