@@ -8,6 +8,9 @@ import { HTTP } from '../../../common/Enum';
 import { base } from '../../../util/base';
 import { userRoleDto } from '../user-role/dto';
 import { UserUnknownException } from '../../../exception/UserUnknownException';
+import { adminTopDto } from '../admin-top/dto';
+import { getCurrentUser } from '../../../util/baseContext';
+import { UserPermissionDeniedException } from '../../../exception/UserPermissionDeniedException';
 
 @Injectable()
 export class UserService {
@@ -28,6 +31,7 @@ export class UserService {
     if (ifWithRole === base.N) {
       return R.ok(res);
     }
+    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { user_id: { in: res.list.map(item => item.id) } });
     const res2 = [];
     for (let i = 0; i < res.list.length; i++) {
       const roles = await this.prisma.findAll<userRoleDto>('sys_user_role', { user_id: res.list[i].id });
@@ -36,6 +40,7 @@ export class UserService {
       res2.push({
         ...res.list[i],
         roles: rols,
+        if_top_admin: topAdminUser.findIndex(item => item.user_id === res.list[i].id) > -1,
       });
     }
     return R.ok({
@@ -102,6 +107,9 @@ export class UserService {
   }
 
   async resetPsd(dto: resetPsdDto): Promise<R> {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.id)) {
+      throw new UserPermissionDeniedException();
+    }
     const res = await this.prisma.updateById('sys_user', dto);
     return R.ok();
   }

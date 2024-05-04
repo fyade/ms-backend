@@ -5,6 +5,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { base } from '../../../util/base';
 import { Injectable } from '@nestjs/common';
 import { roleDto } from '../role/dto';
+import { adminTopDto } from '../admin-top/dto';
 
 @Injectable()
 export class AuthService {
@@ -103,5 +104,11 @@ export class AuthService {
       retarr.push(...userPermissions);
     }
     return retarr;
+  }
+
+  async ifAdminUserUpdNotAdminUser(controlUserId: string, controledUserId: string) {
+    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { user_id: { in: [controlUserId, controledUserId] } });
+    return (controlUserId === controledUserId)
+      || (topAdminUser.findIndex(item => item.user_id === controlUserId) > -1 && topAdminUser.findIndex(item => item.user_id === controledUserId) === -1);
   }
 }

@@ -32,10 +32,19 @@ export class DicTypeService {
     return R.ok(res);
   }
 
+  // async insDicTypes(dtos: insOneDto[]): Promise<R> {
+  //   const res = await this.prisma.createMany('sys_dic_type', dtos);
+  //   return R.ok(res);
+  // }
+
   async updDicType(dto: updOneDto): Promise<R> {
     const res = await this.prisma.updateById('sys_dic_type', dto);
     return R.ok(res);
   }
+
+  // async updDicTypes(dtos:updOneDto[]):Promise<R>{
+  //   const res=await this.prisma.updateById()
+  // }
 
   async delDicType(ids: any[]): Promise<R> {
     const res = await this.prisma.deleteById('sys_dic_type', ids);

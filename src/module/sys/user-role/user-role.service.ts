@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { insManyDto, insOneDto, selListDto, updManyDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import { getCurrentUser } from '../../../util/baseContext';
+import { UserPermissionDeniedException } from '../../../exception/UserPermissionDeniedException';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserRoleService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly authService: AuthService,
+  ) {
   }
 
   async selUserRole(dto: selListDto): Promise<R> {
@@ -19,6 +25,9 @@ export class UserRoleService {
   }
 
   async insUserRole(dto: insManyDto): Promise<R> {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.user_id)) {
+      throw new UserPermissionDeniedException();
+    }
     const data = dto.role_id.map(item => ({
       ...dto,
       role_id: item,
@@ -28,6 +37,9 @@ export class UserRoleService {
   }
 
   async updUserRole(dto: updManyDto): Promise<R> {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.user_id)) {
+      throw new UserPermissionDeniedException();
+    }
     const allroles = await this.prisma.findAll<updOneDto>('sys_user_role', { user_id: dto.user_id });
     const allroleids = allroles.map((item: any) => item.role_id);
     const addroles = dto.role_id.filter(id => allroleids.indexOf(id) === -1);

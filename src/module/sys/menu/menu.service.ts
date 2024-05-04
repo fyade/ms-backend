@@ -24,6 +24,9 @@ export class MenuService {
   }
 
   async updMenu(dto: updOneDto): Promise<R> {
+    if (dto.id === dto.parent_id) {
+      return R.err('父级菜单不可选自己！');
+    }
     await this.prisma.updateById('sys_menu', dto);
     return R.ok();
   }
