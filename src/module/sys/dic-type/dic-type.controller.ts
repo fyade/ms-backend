@@ -23,6 +23,12 @@ export class DicTypeController {
     return this.dicTypeService.selAll(dto);
   }
 
+  @Get('/ids')
+  @Authorize('system:dicType:selOne')
+  async selOnes(@Query() ids: any[]): Promise<R> {
+    return this.dicTypeService.selOnes(Object.values(ids).map(n => Number(n)));
+  }
+
   @Get('/:id')
   @Authorize('system:dicType:selOne')
   async selOne(@Param('id') id: number): Promise<R> {
@@ -35,10 +41,22 @@ export class DicTypeController {
     return this.dicTypeService.insDicType(dto);
   }
 
+  @Post('/s')
+  @Authorize('system:dicType:inss')
+  async insDicTypes(@Body() dto: insOneDto[]): Promise<R> {
+    return this.dicTypeService.insDicTypes(dto);
+  }
+
   @Put()
   @Authorize('system:dicType:upd')
   async updDicType(@Body() dto: updOneDto): Promise<R> {
     return this.dicTypeService.updDicType(dto);
+  }
+
+  @Put('/s')
+  @Authorize('system:dicType:upds')
+  async updDicTypes(@Body() dto: updOneDto[]): Promise<R> {
+    return this.dicTypeService.updDicTypes(dto);
   }
 
   @Delete()

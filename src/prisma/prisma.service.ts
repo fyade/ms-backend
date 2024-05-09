@@ -320,4 +320,18 @@ export class PrismaService extends PrismaClient {
     };
     return this.getModel(model).update(arg);
   }
+
+  /**
+   * 改
+   * @param model
+   * @param data
+   */
+  async updateMany<T>(model: string, data?: any[]): Promise<T[]> {
+    const retArr: T[] = [];
+    for (let i = 0; i < data.length; i++) {
+      const ret = await this.updateById<T>(model, data[i]);
+      retArr.push(ret);
+    }
+    return new Promise(resolve => resolve(retArr));
+  }
 }

@@ -22,6 +22,11 @@ export class DicTypeService {
     return R.ok(res);
   }
 
+  async selOnes(ids: any[]): Promise<R> {
+    const res = await this.prisma.findByIds('sys_dic_type', ids);
+    return R.ok(res);
+  }
+
   async selOne(id: number): Promise<R> {
     const res = await this.prisma.findById('sys_dic_type', Number(id));
     return R.ok(res);
@@ -32,19 +37,20 @@ export class DicTypeService {
     return R.ok(res);
   }
 
-  // async insDicTypes(dtos: insOneDto[]): Promise<R> {
-  //   const res = await this.prisma.createMany('sys_dic_type', dtos);
-  //   return R.ok(res);
-  // }
+  async insDicTypes(dtos: insOneDto[]): Promise<R> {
+    const res = await this.prisma.createMany('sys_dic_type', dtos);
+    return R.ok(res);
+  }
 
   async updDicType(dto: updOneDto): Promise<R> {
     const res = await this.prisma.updateById('sys_dic_type', dto);
     return R.ok(res);
   }
 
-  // async updDicTypes(dtos:updOneDto[]):Promise<R>{
-  //   const res=await this.prisma.updateById()
-  // }
+  async updDicTypes(dtos: updOneDto[]): Promise<R> {
+    const res = await this.prisma.updateMany('sys_dic_type', dtos);
+    return R.ok(res);
+  }
 
   async delDicType(ids: any[]): Promise<R> {
     const res = await this.prisma.deleteById('sys_dic_type', ids);
