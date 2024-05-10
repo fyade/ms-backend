@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SmsService } from './sms.service';
 import { SmsController } from './sms.controller';
-import { AuthService } from '../../sys/auth/auth.service';
+import { AuthService } from '../../sys-manage/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({

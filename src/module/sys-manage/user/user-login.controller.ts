@@ -7,14 +7,8 @@ import { ApiTags } from '@nestjs/swagger';
 
 @Controller('/sys/user')
 @ApiTags('用户')
-export class UserController {
+export class UserLoginController {
   constructor(private readonly userService: UserService) {
-  }
-
-  @Get('/page')
-  @Authorize('system:user:selList')
-  async userSelList(@Query() dto: userListSelDto): Promise<R> {
-    return this.userService.userSelList(dto);
   }
 
   @Post('/regist')
@@ -31,17 +25,5 @@ export class UserController {
   @Authorize('system:user:adminlogin')
   async adminLogin(@Body() dto: loginDto): Promise<R> {
     return this.userService.adminlogin(dto);
-  }
-
-  @Post()
-  @Authorize('system:user:adminNewUser')
-  async insUser(@Body() dto: adminNewUserDto) {
-    return this.userService.insUser(dto);
-  }
-
-  @Post('/resetpsd')
-  @Authorize('system:user:adminResetPsd')
-  async resetPsd(@Body() dto: resetPsdDto): Promise<R> {
-    return this.userService.resetPsd(dto);
   }
 }

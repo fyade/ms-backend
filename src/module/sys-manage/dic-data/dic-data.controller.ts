@@ -2,41 +2,65 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/
 import { ApiTags } from '@nestjs/swagger';
 import { DicDataService } from './dic-data.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { insOneDto, selListDto, updOneDto } from './dto';
+import { insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 
-@Controller('/sys/dic-data')
+@Controller('/sys-manage/dic-data')
 @ApiTags('字典数据')
 export class DicDataController {
   constructor(private readonly dicDataService: DicDataService) {
   }
 
   @Get()
-  @Authorize('system:dicData:selList')
+  @Authorize('sysManage:dicData:selList')
   async selDicData(@Query() dto: selListDto): Promise<R> {
     return this.dicDataService.selDicData(dto);
   }
 
+  @Get('/all')
+  @Authorize('sysManage:dicData:selAll')
+  async selAll(@Query() dto: selAllDto): Promise<R> {
+    return this.dicDataService.selAll(dto);
+  }
+
+  @Get('/ids')
+  @Authorize('sysManage:dicData:selOnes')
+  async selOnes(@Query() ids: any[]): Promise<R> {
+    return this.dicDataService.selOnes(ids);
+  }
+
   @Get('/:id')
-  @Authorize('system:dicData:selOne')
+  @Authorize('sysManage:dicData:selOne')
   async selOne(@Param('id') id: number): Promise<R> {
     return this.dicDataService.selOne(id);
   }
 
   @Post()
-  @Authorize('system:dicData:ins')
+  @Authorize('sysManage:dicData:ins')
   async insDicData(@Body() dto: insOneDto): Promise<R> {
     return this.dicDataService.insDicData(dto);
   }
 
+  @Post('/s')
+  @Authorize('sysManage:dicData:inss')
+  async insDicDatas(@Body() dto: insOneDto[]): Promise<R> {
+    return this.dicDataService.insDicDatas(dto);
+  }
+
   @Put()
-  @Authorize('system:dicData:upd')
+  @Authorize('sysManage:dicData:upd')
   async updDicData(@Body() dto: updOneDto): Promise<R> {
     return this.dicDataService.updDicData(dto);
   }
 
+  @Put('/s')
+  @Authorize('sysManage:dicData:upds')
+  async updDicDatas(@Body() dto: updOneDto[]): Promise<R> {
+    return this.dicDataService.updDicDatas(dto);
+  }
+
   @Delete()
-  @Authorize('system:dicData:del')
+  @Authorize('sysManage:dicData:del')
   async delDicData(@Body() ids: any[]): Promise<R> {
     return this.dicDataService.delDicData(ids);
   }

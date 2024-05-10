@@ -23,7 +23,7 @@ export class DicTypeService {
   }
 
   async selOnes(ids: any[]): Promise<R> {
-    const res = await this.prisma.findByIds('sys_dic_type', ids);
+    const res = await this.prisma.findByIds('sys_dic_type', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 

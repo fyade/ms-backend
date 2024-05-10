@@ -213,7 +213,7 @@ model sys_menu {
   if_visible  String   @db.Char(1)
   if_disabled String   @db.Char(1)
   if_public   String   @db.Char(1)
-  perms       String   @db.VarChar(30)
+  perms       String   @db.VarChar(100)
   remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)

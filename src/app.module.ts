@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { UserModule } from './module/sys/user/user.module';
+import { UserModule } from './module/sys-manage/user/user.module';
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
 import { AuthGuard } from './guard/authGuard';
 import { APP_GUARD } from '@nestjs/core';
@@ -13,13 +13,14 @@ import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { FileUploadModule } from './module/common/file-upload/file-upload.module';
 import { SmsModule } from './module/common/sms/sms.module';
-import { MenuModule } from './module/sys/menu/menu.module';
-import { AuthService } from './module/sys/auth/auth.service';
-import { RoleModule } from './module/sys/role/role.module';
-import { UserRoleModule } from './module/sys/user-role/user-role.module';
-import { RolePermissionModule } from './module/sys/role-permission/role-permission.module';
-import { DicTypeModule } from './module/sys/dic-type/dic-type.module';
-import { DicDataModule } from './module/sys/dic-data/dic-data.module';
+import { MenuModule } from './module/sys-manage/menu/menu.module';
+import { AuthService } from './module/sys-manage/auth/auth.service';
+import { RoleModule } from './module/sys-manage/role/role.module';
+import { UserRoleModule } from './module/sys-manage/user-role/user-role.module';
+import { RolePermissionModule } from './module/sys-manage/role-permission/role-permission.module';
+import { DicTypeModule } from './module/sys-manage/dic-type/dic-type.module';
+import { DicDataModule } from './module/sys-manage/dic-data/dic-data.module';
+import { CodeGenerationModule } from './module/sys-util/code-generation/code-generation.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { DicDataModule } from './module/sys/dic-data/dic-data.module';
     RolePermissionModule,
     DicTypeModule,
     DicDataModule,
+    CodeGenerationModule,
   ],
   controllers: [
     AppController,

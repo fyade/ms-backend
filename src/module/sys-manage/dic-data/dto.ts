@@ -9,6 +9,9 @@ export interface selListDto extends pageSelDto, insOneDto {
   id: number;
 }
 
+export interface selAllDto extends insOneDto {
+}
+
 export interface insOneDto {
   label: string;
   value: string;

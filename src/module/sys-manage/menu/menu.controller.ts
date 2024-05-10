@@ -5,38 +5,38 @@ import { Authorize } from '../../../decorator/authorizeDecorator';
 import { insOneDto, selListDto, updOneDto } from './dto';
 import { ApiTags } from '@nestjs/swagger';
 
-@Controller('/sys/menu')
+@Controller('/sys-manage/menu')
 @ApiTags('菜单')
 export class MenuController {
   constructor(private readonly menuService: MenuService) {
   }
 
   @Get()
-  @Authorize('system:menu:selAll')
+  @Authorize('sysManage:menu:selAll')
   async selMenu(@Query() dto: selListDto): Promise<R> {
     return this.menuService.selMenu(dto);
   }
 
   @Get('/:id')
-  @Authorize('system:menu:selOne')
+  @Authorize('sysManage:menu:selOne')
   async selOne(@Param('id') id: number): Promise<R> {
     return this.menuService.selOne(id);
   }
 
   @Post()
-  @Authorize('system:menu:ins')
+  @Authorize('sysManage:menu:ins')
   async insMenu(@Body() dto: insOneDto): Promise<R> {
     return this.menuService.insMenu(dto);
   }
 
   @Put()
-  @Authorize('system:menu:upd')
+  @Authorize('sysManage:menu:upd')
   async updMenu(@Body() dto: updOneDto): Promise<R> {
     return this.menuService.updMenu(dto);
   }
 
   @Delete()
-  @Authorize('system:menu:del')
+  @Authorize('sysManage:menu:del')
   async delMenu(@Body() ids: any[]): Promise<R> {
     return this.menuService.delMenu(ids);
   }
