@@ -204,7 +204,7 @@ model sys_menu {
   id          Int      @id @default(autoincrement()) @db.Int
   label       String   @db.VarChar(30)
   type        String   @db.VarChar(2)
-  path        String   @db.VarChar(30)
+  path        String   @db.VarChar(100)
   parent_id   Int      @db.Int
   component   String   @db.VarChar(60)
   icon        String   @db.VarChar(30)
