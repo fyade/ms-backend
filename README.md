@@ -20,6 +20,10 @@ $ nest g co module/name --no-spec # 创建不带测试文件的控制器
 $ nest g s module/name --no-spec # 创建不带测试文件的服务层
 ```
 
+```bash
+$ nest g pipe validation pipe # 管道
+```
+
 ## License
 
 [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.txt)
