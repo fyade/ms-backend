@@ -35,7 +35,26 @@ export class AuthService {
       return true;
     }
     const ps = await this.prisma.$queryRaw`
-            select *
+            select sur.id          as surId,
+                   sur.user_id     as userId,
+                   sur.role_id     as roleId,
+                   sur.remark      as surRemark,
+                   sur.create_by   as surCreateBy,
+                   sur.update_by   as surUpdateBy,
+                   sur.create_time as surCreateTime,
+                   sur.update_time as surUpdateTime,
+                   sur.deleted     as surDeleted,
+                   sr.id           as srId,
+                   sr.label        as label,
+                   sr.order_num    as orderNum,
+                   sr.remark       as srRemark,
+                   sr.create_by    as srCreateBy,
+                   sr.update_by    as srUpdateBy,
+                   sr.create_time  as srCreateTime,
+                   sr.update_time  as srUpdateTime,
+                   sr.deleted      as srDeleted,
+                   sr.if_admin     as ifAdmin,
+                   sr.if_disabled  as ifDisabled
             from sys_user_role sur
                      left join sys_role sr on sur.role_id = sr.id
             where sur.deleted = ${base.N}
@@ -48,7 +67,7 @@ export class AuthService {
   }
 
   async hasTopAdminPermission(userid: string) {
-    const admintop = await this.prisma.findFirst('sys_admin_top', { user_id: userid });
+    const admintop = await this.prisma.findFirst('sys_admin_top', { userId: userid });
     return !!admintop;
   }
 
@@ -78,7 +97,25 @@ export class AuthService {
     const retarr = [];
     if (user) {
       const userPermissions = await this.prisma.$queryRaw`
-            select sm.*
+            select sm.id          as id,
+                   sm.label       as label,
+                   sm.path        as path,
+                   sm.parent_id   as parentId,
+                   sm.component   as component,
+                   sm.icon        as icon,
+                   sm.order_num   as orderNum,
+                   sm.if_link     as ifLink,
+                   sm.if_visible  as ifVisible,
+                   sm.if_disabled as ifDisabled,
+                   sm.if_public   as ifPublic,
+                   sm.perms       as perms,
+                   sm.remark      as remark,
+                   sm.create_by   as createBy,
+                   sm.update_by   as updateBy,
+                   sm.create_time as createTime,
+                   sm.update_time as updateTime,
+                   sm.deleted     as deleted,
+                   sm.type        as type
             from sys_menu sm
             where (
                 exists(select 1 from sys_admin_top sat where sat.deleted = ${base.N} and sat.user_id = ${user.id})
@@ -107,8 +144,8 @@ export class AuthService {
   }
 
   async ifAdminUserUpdNotAdminUser(controlUserId: string, controledUserId: string) {
-    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { user_id: { in: [controlUserId, controledUserId] } });
+    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { userId: { in: [controlUserId, controledUserId] } });
     return (controlUserId === controledUserId)
-      || (topAdminUser.findIndex(item => item.user_id === controlUserId) > -1 && topAdminUser.findIndex(item => item.user_id === controledUserId) === -1);
+      || (topAdminUser.findIndex(item => item.userId === controlUserId) > -1 && topAdminUser.findIndex(item => item.userId === controledUserId) === -1);
   }
 }

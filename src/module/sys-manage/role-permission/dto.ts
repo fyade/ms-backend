@@ -6,7 +6,7 @@ export interface rolePermissionDto extends insOneDto, baseInterface {
 }
 
 export interface selByRoleIdDto {
-  role_id?: number;
+  roleId?: number;
 }
 
 export interface selListDto extends pageSelDto, insOneDto {
@@ -15,14 +15,14 @@ export interface selListDto extends pageSelDto, insOneDto {
 
 export interface insOneDto {
   type: string;
-  role_id: number;
-  permission_id: number;
+  roleId: number;
+  permissionId: number;
   remark: string;
 }
 
 export interface insManyDto {
-  role_id: number;
-  permission_id: number[];
+  roleId: number;
+  permissionId: number[];
   remark: string;
 }
 

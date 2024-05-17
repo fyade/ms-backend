@@ -1,8 +1,8 @@
 export interface baseInterface {
-  create_by: string;
-  update_by: string;
-  create_time: Date;
-  update_time: Date;
+  createBy: string;
+  updateBy: string;
+  createTime: Date;
+  updateTime: Date;
   deleted: string;
 }
 

@@ -15,10 +15,10 @@ export interface selAllDto extends insOneDto {
 export interface insOneDto {
   label: string;
   value: string;
-  dic_type: string;
-  if_default: string;
-  if_disabled: string;
-  order_num: number;
+  dicType: string;
+  ifDefault: string;
+  ifDisabled: string;
+  orderNum: number;
   remark?: string;
 }
 

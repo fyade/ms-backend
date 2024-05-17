@@ -5,7 +5,7 @@ import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
 import { pageSelDto } from '../common/dto/PageDto';
-import { deepClone } from '../util/ObjectUtils';
+import { objToCamelCase, objToSnakeCase } from '../util/BaseUtils';
 
 const env = currentEnv();
 const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../generated/client');
@@ -99,6 +99,7 @@ export class PrismaService extends PrismaClient {
     const pageSize = Number(data.pageSize);
     delete data.pageNum;
     delete data.pageSize;
+    const data_ = objToSnakeCase(data);
     const arg: any = {
       where: {
         AND: [
@@ -108,19 +109,19 @@ export class PrismaService extends PrismaClient {
               [item]: this.defaultSelArg().where[item],
             },
           ], []),
-          ...Object.keys(data).reduce((obj, item) => [
+          ...Object.keys(data_).reduce((obj, item) => [
             ...obj,
             {
               OR: [
                 {
                   [item]: {
-                    contains: `${data[item]}`,
+                    contains: `${data_[item]}`,
                   },
                 },
                 {
                   [item]: null,
                 },
-              ].slice(0, (notNullKeys.indexOf(item) > -1 || data[item] !== '') ? 1 : 2),
+              ].slice(0, (notNullKeys.indexOf(item) > -1 || data_[item] !== '') ? 1 : 2),
             },
           ], []),
         ],
@@ -135,13 +136,14 @@ export class PrismaService extends PrismaClient {
     }
     const model1 = this.getModel(model);
     const list = await model1.findMany(arg);
+    const list1 = list.map((item: any) => objToCamelCase(item));
     const arg2 = {
       where: arg.where,
     };
     const count = await model1.count(arg2);
     return new Promise((resolve) => {
       resolve({
-        list: list,
+        list: list1,
         total: count,
       });
     });
@@ -157,7 +159,7 @@ export class PrismaService extends PrismaClient {
     const arg: any = {
       where: {
         ...this.defaultSelArg().where,
-        ...(args || {}),
+        ...(objToSnakeCase(args) || {}),
       },
     };
     if (orderBy) {
@@ -166,7 +168,8 @@ export class PrismaService extends PrismaClient {
       };
     }
     const res2 = await this.getModel(model).findMany(arg);
-    return new Promise(resolve => resolve(res2));
+    const res3 = res2.map((item: any) => objToCamelCase(item));
+    return new Promise(resolve => resolve(res3));
   }
 
   /**
@@ -178,10 +181,12 @@ export class PrismaService extends PrismaClient {
     const arg = {
       where: {
         ...this.defaultSelArg().where,
-        ...(args || {}),
+        ...(objToSnakeCase(args) || {}),
       },
     };
-    return this.getModel(model).findFirst(arg);
+    const first = await this.getModel(model).findFirst(arg);
+    const objToCamelCase1 = objToCamelCase(first);
+    return new Promise(resolve => resolve(objToCamelCase1));
   }
 
   /**
@@ -207,7 +212,9 @@ export class PrismaService extends PrismaClient {
         },
       },
     };
-    return this.getModel(model).findMany(arg);
+    const list = await this.getModel(model).findMany(arg);
+    const list2 = list.map((item: any) => objToCamelCase(item));
+    return new Promise(resolve => resolve(list2));
   }
 
   /**
@@ -228,7 +235,7 @@ export class PrismaService extends PrismaClient {
     const arg = {
       data: {
         ...this.defaultInsArg().data,
-        ...(data || {}),
+        ...(objToSnakeCase(data) || {}),
       },
     };
     return this.getModel(model).create(arg);
@@ -253,7 +260,7 @@ export class PrismaService extends PrismaClient {
         }
         return {
           ...this.defaultInsArg().data,
-          ...(dat || {}),
+          ...(objToSnakeCase(dat) || {}),
         };
       }),
     };
@@ -315,7 +322,7 @@ export class PrismaService extends PrismaClient {
         id: id,
       },
       data: {
-        ...data,
+        ...objToSnakeCase(data),
       },
     };
     return this.getModel(model).update(arg);

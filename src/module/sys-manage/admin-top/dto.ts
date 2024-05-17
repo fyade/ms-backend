@@ -1,4 +1,4 @@
 export interface adminTopDto {
   id: number;
-  user_id: string;
+  userId: string;
 }

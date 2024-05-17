@@ -25,28 +25,28 @@ export class UserRoleService {
   }
 
   async insUserRole(dto: insManyDto): Promise<R> {
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.user_id)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
-    const data = dto.role_id.map(item => ({
+    const data = dto.roleId.map(item => ({
       ...dto,
-      role_id: item,
+      roleId: item,
     }));
     await this.prisma.createMany('sys_user_role', data);
     return R.ok();
   }
 
   async updUserRole(dto: updManyDto): Promise<R> {
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.user_id)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
-    const allroles = await this.prisma.findAll<updOneDto>('sys_user_role', { user_id: dto.user_id });
-    const allroleids = allroles.map((item: any) => item.role_id);
-    const addroles = dto.role_id.filter(id => allroleids.indexOf(id) === -1);
-    const delrolds = allroleids.filter(id => dto.role_id.indexOf(id) === -1);
-    const delids = allroles.filter(item => delrolds.indexOf(item.role_id) > -1).map(item => item.id);
+    const allroles = await this.prisma.findAll<updOneDto>('sys_user_role', { userId: dto.userId });
+    const allroleids = allroles.map((item: any) => item.roleId);
+    const addroles = dto.roleId.filter(id => allroleids.indexOf(id) === -1);
+    const delrolds = allroleids.filter(id => dto.roleId.indexOf(id) === -1);
+    const delids = allroles.filter(item => delrolds.indexOf(item.roleId) > -1).map(item => item.id);
     await this.prisma.deleteById('sys_user_role', delids);
-    await this.prisma.createMany('sys_user_role', addroles.map(item => ({ user_id: dto.user_id, role_id: item })));
+    await this.prisma.createMany('sys_user_role', addroles.map(item => ({ userId: dto.userId, roleId: item })));
     return R.ok();
   }
 

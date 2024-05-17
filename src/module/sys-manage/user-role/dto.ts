@@ -10,14 +10,14 @@ export interface selListDto extends pageSelDto, insOneDto {
 }
 
 export interface insOneDto {
-  user_id: string;
-  role_id: number;
+  userId: string;
+  roleId: number;
   remark: string;
 }
 
 export interface insManyDto {
-  user_id: string;
-  role_id: number[];
+  userId: string;
+  roleId: number[];
   remark: string;
 }
 

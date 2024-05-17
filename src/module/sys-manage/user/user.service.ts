@@ -31,16 +31,16 @@ export class UserService {
     if (ifWithRole === base.N) {
       return R.ok(res);
     }
-    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { user_id: { in: res.list.map(item => item.id) } });
+    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { userId: { in: res.list.map(item => item.id) } });
     const res2 = [];
     for (let i = 0; i < res.list.length; i++) {
-      const roles = await this.prisma.findAll<userRoleDto>('sys_user_role', { user_id: res.list[i].id });
-      const roleids = roles.map(item => item.role_id);
+      const roles = await this.prisma.findAll<userRoleDto>('sys_user_role', { userId: res.list[i].id });
+      const roleids = roles.map(item => item.roleId);
       const rols = await this.prisma.findAll('sys_role', { id: { in: roleids } }, true);
       res2.push({
         ...res.list[i],
         roles: rols,
-        if_top_admin: topAdminUser.findIndex(item => item.user_id === res.list[i].id) > -1,
+        ifTopAdmin: topAdminUser.findIndex(item => item.userId === res.list[i].id) > -1,
       });
     }
     return R.ok({
@@ -59,8 +59,8 @@ export class UserService {
       id: userid,
       username: dto.username,
       password: dto.password,
-      create_by: userid,
-      update_by: userid,
+      createBy: userid,
+      updateBy: userid,
     });
     return R.ok('注册成功。');
   }

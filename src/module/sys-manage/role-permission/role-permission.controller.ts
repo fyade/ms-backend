@@ -21,7 +21,7 @@ export class RolePermissionController {
   @Authorize('sysManage:rolePermission:selAll')
   async selAll(@Query() dto: selByRoleIdDto): Promise<R> {
     return this.rolePermissionService.selAll({
-      role_id: dto.role_id ? Number(dto.role_id) : dto.role_id,
+      roleId: dto.roleId ? Number(dto.roleId) : dto.roleId,
     });
   }
 

@@ -15,8 +15,8 @@ export interface selAllDto extends insOneDto {
 export interface insOneDto {
   name: string;
   type: string;
-  if_disabled: string;
-  order_num: number;
+  ifDisabled: string;
+  orderNum: number;
   remark?: string;
 }
 

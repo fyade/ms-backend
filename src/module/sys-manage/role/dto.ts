@@ -15,9 +15,9 @@ export interface selAllDto {
 
 export interface insOneDto {
   label: string;
-  if_admin: string;
-  if_disabled: string;
-  order_num: number;
+  ifAdmin: string;
+  ifDisabled: string;
+  orderNum: number;
   remark: string;
 }
 
