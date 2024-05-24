@@ -22,8 +22,32 @@ export function sleep(ms = 1000) {
  * 下划线转驼峰
  * @param str
  */
-export function toCamelCase(str: string) {
-  return str.replace(/-([a-z])/g, (all, i) => i.toLowerCase());
+export function toCamelCase(str: string): string {
+  return str.replace(/_([a-z])/g, (all, i) => i.toUpperCase());
+}
+
+/**
+ * 下划线转驼峰
+ * @param strs
+ */
+export function toCamelCases(strs: string[]): string[] {
+  return strs.map(str => toCamelCase(str));
+}
+
+/**
+ * 驼峰转下划线
+ * @param str
+ */
+export function toSnakeCase(str: string): string {
+  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
+}
+
+/**
+ * 驼峰转下划线
+ * @param strs
+ */
+export function toSnakeCases(strs: string[]): string[] {
+  return strs.map(str => toSnakeCase(str));
 }
 
 type ObjectType = Record<string, any>;

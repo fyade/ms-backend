@@ -10,4 +10,6 @@ export const base = {
   Y: 'Y',
   N: 'N',
   DEV: 'dev',
+  TEST: 'test',
+  PROD: 'prod',
 };

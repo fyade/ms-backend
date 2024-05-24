@@ -12,7 +12,7 @@ export class RoleService {
     const res = await this.prisma.findPage('sys_role', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'if_admin', 'if_disabled'],
+      notNullKeys: ['label', 'ifAdmin', 'ifDisabled'],
     });
     return R.ok(res);
   }

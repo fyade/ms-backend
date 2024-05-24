@@ -37,6 +37,12 @@ const config = {
 
 ## 命令 Bin
 
+启动命令：
+```bash
+$env:NODE_ENV="prod"; node ./main.js
+```
+
+其他命令：
 ```bash
 npx prisma init
 ```

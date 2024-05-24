@@ -109,33 +109,16 @@ model sys_dic_data {
   deleted     String   @default("N") @db.Char(1)
 }
 
-// 1.7 sms记录表
-model tbl_sms {
-  id                 Int      @id @default(autoincrement()) @db.Int
-  from               String   @db.VarChar(15)
-  to                 String   @db.VarChar(15)
-  params             String   @db.VarChar(500)
-  send_type          String   @db.VarChar(50)
-  send_status        String   @db.Char(1)
-  send_status_remark String   @db.VarChar(300)
-  remark             String?  @db.VarChar(300)
-  create_by          String   @db.VarChar(10)
-  create_time        DateTime @default(now())
-  deleted            String   @default("N") @db.Char(1)
-}
-
-// 1.8 文件表
-model tbl_file {
-  id            String   @id @default(uuid()) @db.VarChar(50)
-  file_name     String   @db.VarChar(200)
-  file_new_name String   @db.VarChar(50)
-  file_size     BigInt   @db.BigInt
-  file_md5      String   @db.VarChar(50)
-  if_chunk      String   @db.Char(1)
-  chunk_num     Int?     @db.Int
-  if_merge      String?  @db.Char(1)
-  if_first      String   @db.Char(1)
-  if_finished   String   @db.Char(1)
+// 1.7 代码生成-表信息表
+model sys_code_gen_table {
+  id            Int      @id @default(autoincrement()) @db.Int
+  table_name    String   @db.VarChar(60)
+  table_descr   String   @db.VarChar(100)
+  entity_name   String   @db.VarChar(60)
+  table_remark  String?  @db.VarChar(300)
+  module_name   String   @db.VarChar(60)
+  business_name String   @db.VarChar(60)
+  order_num     Int      @db.Int
   remark        String?  @db.VarChar(300)
   create_by     String   @db.VarChar(10)
   update_by     String   @db.VarChar(10)
@@ -144,41 +127,23 @@ model tbl_file {
   deleted       String   @default("N") @db.Char(1)
 }
 
-// 1.9 文件分片表
-model tbl_file_chunk {
-  id            String   @id @default(uuid()) @db.VarChar(50)
-  file_md5      String   @db.VarChar(50)
-  file_new_name String   @db.VarChar(50)
-  chunk_name    String   @db.VarChar(50)
-  chunk_index   Int      @db.Int
-  if_finished   String   @db.Char(1)
-  remark        String?  @db.VarChar(300)
-  create_by     String   @db.VarChar(10)
-  create_time   DateTime @default(now())
-  deleted       String   @default("N") @db.Char(1)
-}
-
-// 1.10 公告表
-model tbl_bulletin {
+// 1.8 代码生成-列信息表
+model sys_code_gen_column {
   id          Int      @id @default(autoincrement()) @db.Int
-  title       String   @db.VarChar(100)
-  content     String   @db.VarChar(500)
-  type        String   @db.VarChar(5)
-  if_top      String   @db.Char(1)
-  if_pin      String   @db.Char(1)
-  remark      String?  @db.VarChar(300)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
-}
-
-// 1.11 公告阅读状态表
-model tbl_bulletin_read {
-  id          Int      @id @default(autoincrement()) @db.Int
-  bulletin_id Int      @db.Int
-  user_id     String   @db.VarChar(10)
+  table_id    Int      @db.Int
+  col_name    String   @db.VarChar(60)
+  col_descr   String   @db.VarChar(60)
+  mysql_type  String   @db.VarChar(60)
+  ts_type     String   @db.VarChar(60)
+  ts_name     String   @db.VarChar(60)
+  if_ins      String   @db.Char(1)
+  if_upd      String   @db.Char(1)
+  if_sel_one  String   @db.Char(1)
+  if_sel_more String   @db.Char(1)
+  if_required String   @db.Char(1)
+  sel_type    String   @db.VarChar(2)
+  form_type   String   @db.VarChar(60)
+  order_num   Int      @db.Int
   remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
@@ -280,4 +245,82 @@ model sys_role_permission {
   create_time   DateTime @default(now())
   update_time   DateTime @updatedAt
   deleted       String   @default("N") @db.Char(1)
+}
+
+// 3.1 sms记录表
+model tbl_sms {
+  id                 Int      @id @default(autoincrement()) @db.Int
+  from               String   @db.VarChar(15)
+  to                 String   @db.VarChar(15)
+  params             String   @db.VarChar(500)
+  send_type          String   @db.VarChar(50)
+  send_status        String   @db.Char(1)
+  send_status_remark String   @db.VarChar(300)
+  remark             String?  @db.VarChar(300)
+  create_by          String   @db.VarChar(10)
+  create_time        DateTime @default(now())
+  deleted            String   @default("N") @db.Char(1)
+}
+
+// 3.2 文件表
+model tbl_file {
+  id            String   @id @default(uuid()) @db.VarChar(50)
+  file_name     String   @db.VarChar(200)
+  file_new_name String   @db.VarChar(50)
+  file_size     BigInt   @db.BigInt
+  file_md5      String   @db.VarChar(50)
+  if_chunk      String   @db.Char(1)
+  chunk_num     Int?     @db.Int
+  if_merge      String?  @db.Char(1)
+  if_first      String   @db.Char(1)
+  if_finished   String   @db.Char(1)
+  remark        String?  @db.VarChar(300)
+  create_by     String   @db.VarChar(10)
+  update_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  update_time   DateTime @updatedAt
+  deleted       String   @default("N") @db.Char(1)
+}
+
+// 3.3 文件分片表
+model tbl_file_chunk {
+  id            String   @id @default(uuid()) @db.VarChar(50)
+  file_md5      String   @db.VarChar(50)
+  file_new_name String   @db.VarChar(50)
+  chunk_name    String   @db.VarChar(50)
+  chunk_index   Int      @db.Int
+  if_finished   String   @db.Char(1)
+  remark        String?  @db.VarChar(300)
+  create_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  deleted       String   @default("N") @db.Char(1)
+}
+
+// 3.4 公告表
+model tbl_bulletin {
+  id          Int      @id @default(autoincrement()) @db.Int
+  title       String   @db.VarChar(100)
+  content     String   @db.VarChar(500)
+  type        String   @db.VarChar(5)
+  if_top      String   @db.Char(1)
+  if_pin      String   @db.Char(1)
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 3.5 公告阅读状态表
+model tbl_bulletin_read {
+  id          Int      @id @default(autoincrement()) @db.Int
+  bulletin_id Int      @db.Int
+  user_id     String   @db.VarChar(10)
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
 }

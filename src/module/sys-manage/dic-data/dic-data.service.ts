@@ -12,7 +12,7 @@ export class DicDataService {
     const res = await this.prisma.findPage<dicDataDto, selListDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'value', 'type', 'if_default', 'if_disabled', 'order_num'],
+      notNullKeys: ['label', 'value', 'type', 'ifDefault', 'ifDisabled', 'orderNum'],
     });
     return R.ok(res);
   }

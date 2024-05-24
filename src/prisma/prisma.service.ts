@@ -5,7 +5,7 @@ import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
 import { pageSelDto } from '../common/dto/PageDto';
-import { objToCamelCase, objToSnakeCase } from '../util/BaseUtils';
+import { objToCamelCase, objToSnakeCase, toSnakeCases } from '../util/BaseUtils';
 
 const env = currentEnv();
 const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../generated/client');
@@ -81,15 +81,18 @@ export class PrismaService extends PrismaClient {
    * @param data
    * @param orderBy
    * @param notNullKeys
+   * @param numberKeys
    */
   async findPage<T, P extends pageSelDto>(model: string, {
                                             data,
                                             orderBy,
                                             notNullKeys = [],
+                                            numberKeys = [],
                                           }: {
                                             data?: P,
-                                            orderBy?: boolean
+                                            orderBy?: boolean,
                                             notNullKeys?: string[]
+                                            numberKeys?: string[]
                                           } = {},
   ): Promise<{
     list: T[]
@@ -114,14 +117,14 @@ export class PrismaService extends PrismaClient {
             {
               OR: [
                 {
-                  [item]: {
+                  [item]: toSnakeCases(numberKeys).indexOf(item) > -1 ? Number(data_[item]) : {
                     contains: `${data_[item]}`,
                   },
                 },
                 {
                   [item]: null,
                 },
-              ].slice(0, (notNullKeys.indexOf(item) > -1 || data_[item] !== '') ? 1 : 2),
+              ].slice(0, (toSnakeCases(notNullKeys).indexOf(item) > -1 || data_[item] !== '') ? 1 : 2),
             },
           ], []),
         ],

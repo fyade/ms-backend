@@ -21,6 +21,9 @@ import { RolePermissionModule } from './module/sys-manage/role-permission/role-p
 import { DicTypeModule } from './module/sys-manage/dic-type/dic-type.module';
 import { DicDataModule } from './module/sys-manage/dic-data/dic-data.module';
 import { CodeGenerationModule } from './module/sys-util/code-generation/code-generation.module';
+import { DeptModule } from './module/sys-manage/dept/dept.module';
+import { CodeGenTableModule } from './module/sys-util/code-gen-table/code-gen-table.module';
+import { CodeGenColumnModule } from './module/sys-util/code-gen-column/code-gen-column.module';
 
 @Module({
   imports: [
@@ -46,6 +49,9 @@ import { CodeGenerationModule } from './module/sys-util/code-generation/code-gen
     DicTypeModule,
     DicDataModule,
     CodeGenerationModule,
+    DeptModule,
+    CodeGenTableModule,
+    CodeGenColumnModule,
   ],
   controllers: [
     AppController,
