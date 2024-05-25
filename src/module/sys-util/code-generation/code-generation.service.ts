@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { R } from '../../../common/R';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { NonSupportedException } from '../../../exception/NonSupportedException';
 
 @Injectable()
 export class CodeGenerationService {
@@ -9,7 +10,12 @@ export class CodeGenerationService {
   }
 
   async getDatabaseInfo(): Promise<R> {
-    const text = fs.readFileSync(path.join(__dirname, '../../../../prisma/schema.prisma'), 'utf-8');
+    let text = '';
+    try {
+      text = fs.readFileSync(path.join(__dirname, '../../../../prisma/schema.prisma'), 'utf-8');
+    } catch (e) {
+      throw new NonSupportedException('读取数据库信息');
+    }
     const regex1 = /\/\/ .+/;
     const regex2 = /^model (\w+) {/;
     const regex3 = /^ *([\w-]+) +([\w-?]+) +([\w-@(). "']+) */;
