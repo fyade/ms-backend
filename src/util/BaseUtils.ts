@@ -23,7 +23,7 @@ export function sleep(ms = 1000) {
  * @param str
  */
 export function toCamelCase(str: string): string {
-  return str.replace(/_([a-z])/g, (all, i) => i.toUpperCase());
+  return str.replace(/[-_]([a-z])/g, (all, i) => i.toUpperCase());
 }
 
 /**
@@ -49,6 +49,39 @@ export function toSnakeCase(str: string): string {
 export function toSnakeCases(strs: string[]): string[] {
   return strs.map(str => toSnakeCase(str));
 }
+
+/**
+ * 驼峰转短横线
+ * @param str
+ */
+export function toKebabCase(str: string): string {
+  return str.replace(/([A-Z])/g, '-$1').toLowerCase();
+}
+
+/**
+ * 驼峰转短横线
+ * @param strs
+ */
+export function toKebabCases(strs: string[]): string[] {
+  return strs.map(str => toKebabCase(str));
+}
+
+/**
+ * 首字母大写
+ * @param str
+ */
+export function capitalizeFirstLetter<T extends string>(str: T): Capitalize<T> {
+  return str.charAt(0).toUpperCase() + str.slice(1) as Capitalize<T>;
+}
+
+/**
+ * 首字母小写
+ * @param str
+ */
+export function lowercaseFirstLetter<T extends string>(str: T): Uncapitalize<T> {
+  return str.charAt(0).toLowerCase() + str.slice(1) as Uncapitalize<T>;
+}
+
 
 type ObjectType = Record<string, any>;
 

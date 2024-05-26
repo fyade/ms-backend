@@ -3,10 +3,15 @@ import { R } from '../../../common/R';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { NonSupportedException } from '../../../exception/NonSupportedException';
+import { sleep } from '../../../util/BaseUtils';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { codeGeneration } from './codeGeneration';
+import { codeGenTableDto } from '../code-gen-table/dto';
+import { codeGenColumnDto } from '../code-gen-column/dto';
 
 @Injectable()
 export class CodeGenerationService {
-  constructor() {
+  constructor(private readonly prisma: PrismaService) {
   }
 
   async getDatabaseInfo(): Promise<R> {
@@ -55,5 +60,21 @@ export class CodeGenerationService {
       }
     }
     return R.ok(tables);
+  }
+
+  async genCode(id: number): Promise<R> {
+    const table: codeGenTableDto = await this.prisma.findById('sys_code_gen_table', Number(id));
+    const columns: codeGenColumnDto[] = await this.prisma.findAll('sys_code_gen_column', { tableId: Number(id) });
+    const cgRes = codeGeneration({ table, columns });
+    return R.ok({
+      table,
+      columns,
+      cgRes
+    });
+  }
+
+  async genCodeZip(id: number): Promise<R> {
+    await sleep(2000);
+    return R.ok('codeZip');
   }
 }

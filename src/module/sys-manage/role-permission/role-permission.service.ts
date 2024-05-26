@@ -29,7 +29,7 @@ export class RolePermissionService {
     const permissions_m = await this.prisma.findByIds<menuDto>('sys_menu', permissionIds_m);
     const ret = roles.map(role => {
       const menuids = res.filter(item => item.roleId === role.id).map(item => item.permissionId);
-      const rp = res.find(item => item.roleId=== role.id);
+      const rp = res.find(item => item.roleId === role.id);
       delete rp.roleId;
       delete rp.permissionId;
       return {

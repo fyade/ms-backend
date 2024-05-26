@@ -20,6 +20,7 @@ export class CodeGenColumnController {
   @Get('/all')
   @Authorize('sysUtil:codeGenColumn:selAll')
   async selAll(@Query() dto: selAllDto) {
+    if (dto.tableId) dto.tableId = Number(dto.tableId);
     return this.codeGenColumnService.selAll(dto);
   }
 
