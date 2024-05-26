@@ -6,7 +6,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  // output        = "../src/generated/client" // todo 开发时注掉，上线前打开
+  output        = "../src/generated/client" // todo 开发时注掉，上线前打开
   binaryTargets = ["darwin", "windows", "linux-musl", "rhel-openssl-1.0.x"]
   // previewFeatures = ["logging"]
 }
@@ -116,8 +116,8 @@ model sys_code_gen_table {
   table_descr   String   @db.VarChar(100)
   entity_name   String   @db.VarChar(60)
   table_remark  String?  @db.VarChar(300)
-  module_name   String   @db.VarChar(60)
   business_name String   @db.VarChar(60)
+  module_name   String   @db.VarChar(60)
   order_num     Int      @db.Int
   remark        String?  @db.VarChar(300)
   create_by     String   @db.VarChar(10)

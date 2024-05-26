@@ -113,7 +113,7 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
     const res = await this.prisma.findPage<${moduleName}Dto, selListDto>('${table.tableName}', {
       data: dto,
       orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},
-      notNullKeys: ${columns.filter(item => item.ifRequired === base.Y).map(item => toCamelCase(item.colName))},
+      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => toCamelCase(item.colName))}],
     });
     return R.ok(res);
   }
@@ -364,7 +364,7 @@ const state = reactive<State>({
       .filter(item => item.ifRequired === base.Y)
       .map(item => `${item.tsName}: [{required: true, trigger: 'change'}],`)
       .join('\n')
-  },
+  }
   } as FormRules,
   // 字典
   // 格式: {
@@ -404,7 +404,7 @@ const dialogVisible = ref(false)
 const dialogLoadingRef = ref(false)
 const tableLoadingRef = ref(false)
 const switchLoadingRef = ref(false)
-const activeTabName = ref<ONE '|' MORE>(final.one)
+const activeTabName = ref<ONE | MORE>(final.one)
 const config: t_config = reactive({
   selectParam: {}, // 查询参数（补充
   getDataOnMounted: true, // 页面加载时获取数据，默认true
@@ -530,29 +530,29 @@ const {
 <template>
   <!--弹框-->
   <el-dialog
-      ':'width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
+      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
-      ':'title="state.dialogType.label"
+      :title="state.dialogType.label"
       draggable
       append-to-body
   >
     <el-tabs v-if="config.bulkOperation" v-model="activeTabName">
-      <el-tab-pane ':'disabled="state.dialogType.value===final.upd" label="操作单个" ':'name="final.one"></el-tab-pane>
-      <el-tab-pane ':'disabled="state.dialogType.value===final.upd" label="操作多个" ':'name="final.more"></el-tab-pane>
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
+      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
     </el-tabs>
     <template v-if="activeTabName===final.one">
       <el-form
           ref="dialogFormRef"
           v-loading="dialogLoadingRef"
-          ':'model="state.dialogForm"
-          ':'label-width="CONFIG.dialog_form_label_width"
-          ':'rules="state.dFormRules"
+          :model="state.dialogForm"
+          :label-width="CONFIG.dialog_form_label_width"
+          :rules="state.dFormRules"
       >
         <!--<el-row>-->
         <!--  <el-col :span="12"></el-col>-->
         <!--  <el-col :span="12"></el-col>-->
         <!--</el-row>-->
-        <el-form-item v-if="state.dialogType.value!==final.ins" ':'label="state.dict['id']" prop="id">
+        <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">
           <span>{{ state.dialogForm['id'] }}</span>
         </el-form-item>
         <!--
@@ -567,7 +567,7 @@ const {
           <el-input v-model="state.dialogForm['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
         </el-form-item>` : item.formType === 'inputNumber' ? `
         <el-form-item :label="state.dict['${item.tsName}']" prop="${item.tsName}">
-          <el-input-number v-model="state.dialogForm['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
+          <el-input-number v-model="state.dialogForm['${item.tsName}']" controls-position="right"/>
         </el-form-item>` : item.formType === 'textarea' ? `
         <el-form-item :label="state.dict['${item.tsName}']" prop="${item.tsName}">
           <el-input type="textarea" v-model="state.dialogForm['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
@@ -605,11 +605,11 @@ const {
           v-loading="dialogLoadingRef"
       >
         <el-table
-            ':'data="state.dialogForms"
+            :data="state.dialogForms"
             v-if="state.dialogForms"
         >
           <el-table-column type="index" width="50">
-            <template '#'header>
+            <template #header>
               #
             </template>
           </el-table-column>
@@ -633,7 +633,7 @@ const {
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[\`\${$index}-${item.tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index]['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
+                <el-input-number v-model="state.dialogForms[$index]['${item.tsName}']" controls-position="right"/>
               </div>
             </template>
           </el-table-column>` : item.formType === 'textarea' ? `
@@ -662,20 +662,20 @@ const {
   }
           <!--在此上方添加表格列-->
           <el-table-column fixed="right" label="操作" min-width="120">
-            <template v-if="state.dialogType.value===final.ins" '#'default="{$index}">
-              <el-button link type="danger" size="small" '@'click="dfDel($index)">删除</el-button>
+            <template v-if="state.dialogType.value===final.ins" #default="{$index}">
+              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
             </template>
           </el-table-column>
-          <template v-if="state.dialogType.value===final.ins" '#'append>
-            <el-button text type="primary" plain ':'icon="Plus" '@'click="dfIns">新增</el-button>
+          <template v-if="state.dialogType.value===final.ins" #append>
+            <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>
           </template>
         </el-table>
       </el-form>
     </template>
-    <template '#'footer>
+    <template #footer>
       <span class="dialog-footer">
-        <el-button '@'click="dCan">取消</el-button>
-        <el-button type="primary" '@'click="dCon">确认</el-button
+        <el-button @click="dCan">取消</el-button>
+        <el-button type="primary" @click="dCon">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -685,28 +685,28 @@ const {
       class="demo-form-inline"
       v-if="Object.keys(state.filterForm).length>0"
       ref="filterFormRef"
-      ':'model="state.filterForm"
-      ':'inline="true"
-      '@'keyup.enter="fEnter"
+      :model="state.filterForm"
+      :inline="true"
+      @keyup.enter="fEnter"
   >
     <!--在此下方添加表单项-->
-    <!--<el-form-item :label='state.dict[\'\']' prop=''>-->
-    <!--  <el-input v-model="state.filterForm['']" :placeholder='state.dict[\'\']'/>-->
+    <!--<el-form-item :label="state.dict['']" prop="">-->
+    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
     <!--</el-form-item>-->
     <!--在此上方添加表单项-->
     <el-form-item>
-      <el-button type="primary" '@'click="fCon">筛选</el-button>
-      <el-button '@'click="fCan">重置</el-button
+      <el-button type="primary" @click="fCon">筛选</el-button>
+      <el-button @click="fCan">重置</el-button>
     </el-form-item>
   </el-form>
 
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
-    <el-button type="primary" plain ':'icon="Refresh" '@'click="gRefresh">刷新</el-button>
-    <el-button type="primary" plain ':'icon="Plus" '@'click="gIns">新增</el-button>
-    <el-button type="success" plain ':'icon="Edit" ':'disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" '@'click="gUpd">修改</el-button>
-    <el-button type="danger" plain ':'icon="Delete" ':'disabled="state.multipleSelection.length===0" '@'click="gDel()">删除</el-button>
+    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
+    <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
+    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
+    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
     <!--<el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0'>导出</el-button>-->
     <!--<el-button type="warning" plain :icon='Upload'>上传</el-button>-->
     <!--</el-button-group>-->
@@ -724,8 +724,8 @@ const {
   <!--数据表格-->
   <el-table
       v-loading="tableLoadingRef"
-      ':'data="state.list"
-      '@'selection-change="handleSelectionChange"
+      :data="state.list"
+      @selection-change="handleSelectionChange"
   >
     <el-table-column fixed type="selection" width="55"/>
     <!--<el-table-column fixed prop="id" :label='state.dict[\'id\']' width='180'/>-->
@@ -746,24 +746,23 @@ const {
     <!--<el-table-column prop="deleted" :label='state.dict[\'deleted\']' width='60'/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
-      <template '#'default="{row}">
-        <el-button link type="primary" size="small" '@'click="tUpd(row.id)">修改</el-button>
-        <el-button link type="danger" size="small" '@'click="tDel(row.id)">删除</el-button>
+      <template #default="{row}">
+        <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
+        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>
-    <template '#'append>
-      <span>此表格的多选<span>
-          class='underline'>不支持</span>{{ \`跨分页保存，当前已选 \${state.multipleSelection.length} 条数据。\` }}</span>
-    </template
+    <template #append>
+      <span>此表格的多选<span class="underline">不支持</span>{{ \`跨分页保存，当前已选 \${state.multipleSelection.length} 条数据。\` }}</span>
+    </template>
   </el-table>
 
   <!--分页-->
   <Pagination
       v-if="state.total!==-1"
-      ':'total="Number(state.total)"
-      ':'page-num="state.pageParam.pageNum"
-      ':'page-size="state.pageParam.pageSize"
-      '@'page-change="pageChange"
+      :total="Number(state.total)"
+      :page-num="state.pageParam.pageNum"
+      :page-size="state.pageParam.pageSize"
+      @page-change="pageChange"
   />
 </template>
 ` + `

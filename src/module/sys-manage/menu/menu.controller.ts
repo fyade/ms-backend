@@ -11,10 +11,16 @@ export class MenuController {
   constructor(private readonly menuService: MenuService) {
   }
 
-  @Get()
+  @Get('/all')
   @Authorize('sysManage:menu:selAll')
   async selMenu(@Query() dto: selListDto): Promise<R> {
     return this.menuService.selMenu(dto);
+  }
+
+  @Get('/ids')
+  @Authorize('sysManage:menu:selOnes')
+  async selOnes(@Query() ids: any[]): Promise<R> {
+    return this.menuService.selOnes(ids);
   }
 
   @Get('/:id')
@@ -29,10 +35,22 @@ export class MenuController {
     return this.menuService.insMenu(dto);
   }
 
+  @Post('/s')
+  @Authorize('sysManage:menu:inss')
+  async insMenus(@Body() dto: insOneDto[]): Promise<R> {
+    return this.menuService.insMenus(dto);
+  }
+
   @Put()
   @Authorize('sysManage:menu:upd')
   async updMenu(@Body() dto: updOneDto): Promise<R> {
     return this.menuService.updMenu(dto);
+  }
+
+  @Put('/s')
+  @Authorize('sysManage:menu:upds')
+  async updMenus(@Body() dto: updOneDto[]): Promise<R> {
+    return this.menuService.updMenus(dto);
   }
 
   @Delete()
