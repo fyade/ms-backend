@@ -33,7 +33,7 @@ export class CodeGenerationService {
           tableNameCnInitial: lines[i],
           tableNameEnInitial: lines[i + 1],
           tableNameCn: lines[i].replace(/\/+ +/, ''),
-          tableNameEn: lines[i + 1].replace(/^model +/, '').replace(/ +{/, ''),
+          tableNameEn: lines[i + 1].replace(/^model +/, '').replace(/ +{/, '').match(/([a-zA-Z_]+)/g)[0],
           cols: [],
         });
       }
@@ -69,7 +69,7 @@ export class CodeGenerationService {
     return R.ok({
       table,
       columns,
-      cgRes
+      cgRes,
     });
   }
 
