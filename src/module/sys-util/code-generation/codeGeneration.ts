@@ -29,8 +29,8 @@ export function codeGeneration({ table, columns }: { table: codeGenTableDto, col
   const getDefaultValue = (tsName: string, tsType: string) => {
 
   };
-  const hd1 = `
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+  const hd1 =
+`import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
@@ -98,8 +98,8 @@ export class ${capitalizeFirstLetter(moduleName)}Controller {
   }
 }
 `;
-  const hd2 = `
-import { Injectable } from '@nestjs/common';
+  const hd2 =
+`import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { ${moduleName}Dto, insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
@@ -113,7 +113,7 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
     const res = await this.prisma.findPage<${moduleName}Dto, selListDto>('${table.tableName}', {
       data: dto,
       orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},
-      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => toCamelCase(item.colName))}],
+      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'toCamelCase(item.colName)'`).join(',')}],
     });
     return R.ok(res);
   }
@@ -159,8 +159,8 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
   }
 }
 `;
-  const hd3 = `
-import { pageSelDto } from '../../../common/dto/PageDto';
+  const hd3 =
+`import { pageSelDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
 
 export interface ${moduleName}Dto extends insOneDto, baseInterface {
@@ -187,8 +187,8 @@ export interface updOneDto extends insOneDto {
   id: ${columns.find(item => item.colName === 'id').tsType};
 }
 `;
-  const hd4 = `
-import { Module } from '@nestjs/common';
+  const hd4 =
+`import { Module } from '@nestjs/common';
 import { ${capitalizeFirstLetter(moduleName)}Controller } from './${toKebabCase(moduleName)}.controller';
 import { ${capitalizeFirstLetter(moduleName)}Service } from './${toKebabCase(moduleName)}.service';
 import { AuthService } from '../../sys-manage/auth/auth.service';
@@ -200,13 +200,13 @@ import { JwtService } from '@nestjs/jwt';
 })
 export class ${capitalizeFirstLetter(moduleName)}Module {}
 `;
-  const hd5 = `
-在 app.module.ts 中，导入 module 文件，并在 @module().imports 中添加，具体语句如下：
+  const hd5 =
+`在 app.module.ts 中，导入 module 文件，并在 @module().imports 中添加，具体语句如下：
 import { ${capitalizeFirstLetter(moduleName)}Module } from './module/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/${toKebabCase(moduleName)}.module';
 ${capitalizeFirstLetter(moduleName)}Module
 `;
-  const qd1 = `
-import request from "@/api/request.ts";
+  const qd1 =
+`import request from "@/api/request.ts";
 import { ${moduleName}InsDto, ${moduleName}SelAllDto, ${moduleName}SelDto, ${moduleName}UpdDto } from "@/type/api/${businessName}/${moduleName}.ts";
 
 export function ${moduleName}Sel(params: ${moduleName}SelDto) {
@@ -280,8 +280,8 @@ export function ${moduleName}Del(ids: any[]) {
   })
 }
 `;
-  const qd2 = `
-import { pageSelDto } from "@/type/tablePage.ts";
+  const qd2 =
+`import { pageSelDto } from "@/type/tablePage.ts";
 
 export interface ${moduleName}SelDto extends pageSelDto {
 }
@@ -302,8 +302,8 @@ export interface ${moduleName}UpdDto extends ${moduleName}InsDto {
   id: ${columns.find(item => item.colName === 'id').tsType};
 }
 `;
-  const qd3 = `
-<script lang="ts">
+  const qd3 =
+`<script lang="ts">
 export default {
   name: '${businessName}:${moduleName}'
 }
@@ -325,7 +325,7 @@ import {
   ${moduleName}Ins,
   ${moduleName}Upd,
   ${moduleName}Inss,
-  ${moduleName}Upds
+  ${moduleName}Upds,
   ${moduleName}Del,
 } from "@/api/module/${businessName}/${moduleName}.ts"
 
@@ -579,14 +579,14 @@ const {
       .join('')
   }
         <!--在此上方添加表单项-->
-        <!--<el-form-item :label='state.dict[\'orderNum\']' prop='orderNum'>-->
+        <!--<el-form-item :label="state.dict[\'orderNum\']" prop='orderNum'>-->
         <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label='state.dict[\'ifDefault\']' prop='ifDefault'>-->
+        <!--<el-form-item :label="state.dict[\'ifDefault\']" prop='ifDefault'>-->
         <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.IS_DEFAULT_YES'-->
         <!--             :inactive-value='final.IS_DEFAULT_NO'/>-->
         <!--</el-form-item>-->
-        <!--<el-form-item :label='state.dict[\'ifDisabled\']' prop='ifDisabled'>-->
+        <!--<el-form-item :label="state.dict[\'ifDisabled\']" prop='ifDisabled'>-->
         <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
         <!--    <el-radio :label="final.Y">是</el-radio>-->
         <!--    <el-radio :label="final.N">否</el-radio>-->
@@ -728,22 +728,22 @@ const {
       @selection-change="handleSelectionChange"
   >
     <el-table-column fixed type="selection" width="55"/>
-    <!--<el-table-column fixed prop="id" :label='state.dict[\'id\']' width='180'/>-->
+    <!--<el-table-column fixed prop="id" :label="state.dict[\'id\']" width='180'/>-->
     <!--上面id列的宽度改一下-->
     <!--在此下方添加表格列-->${
     columns
       .filter(item => item.ifSelOne === base.Y)
       .map(item => `
-        <el-table-column prop="${item.tsName}" :label='state.dict['${item.tsName}']' width='120'/>`,
+        <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width='120'/>`,
       )
       .join('')
   }
     <!--在此上方添加表格列-->
-    <!--<el-table-column prop="createBy" :label='state.dict[\'createBy\']' width='120'/>-->
-    <!--<el-table-column prop="updateBy" :label='state.dict[\'updateBy\']' width='120'/>-->
-    <!--<el-table-column prop="createTime" :label='state.dict[\'createTime\']' width='220'/>-->
-    <!--<el-table-column prop="updateTime" :label='state.dict[\'updateTime\']' width='220'/>-->
-    <!--<el-table-column prop="deleted" :label='state.dict[\'deleted\']' width='60'/>-->
+    <!--<el-table-column prop="createBy" :label="state.dict[\'createBy\']" width='120'/>-->
+    <!--<el-table-column prop="updateBy" :label="state.dict[\'updateBy\']" width='120'/>-->
+    <!--<el-table-column prop="createTime" :label="state.dict[\'createTime\']" width='220'/>-->
+    <!--<el-table-column prop="updateTime" :label="state.dict[\'updateTime\']" width='220'/>-->
+    <!--<el-table-column prop="deleted" :label="state.dict[\'deleted\']" width='60'/>-->
     <!--上方几个酌情使用-->
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="{row}">

@@ -52,7 +52,7 @@ export class CodeGenerationService {
       for (let j = is1; j <= ie1; j++) {
         tables[i].cols.push({
           colInfo: lines[j],
-          colName: lines[j].replace(regex3, '$1'),
+          colName: lines[j].replace(regex3, '$1').match(/([a-zA-Z_]+)/g)[0],
           colType: lines[j].replace(regex3, '$2').replace('?', ''),
           ifMust: !lines[j].replace(regex3, '$2').endsWith('?'),
           colRemark: lines[j].replace(regex3, '$3'),
