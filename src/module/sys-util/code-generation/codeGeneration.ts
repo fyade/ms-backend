@@ -113,7 +113,8 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
     const res = await this.prisma.findPage<${moduleName}Dto, selListDto>('${table.tableName}', {
       data: dto,
       orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},
-      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'toCamelCase(item.colName)'`).join(',')}],
+      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(',')}],
+      numberKeys: [${columns.filter(item => item.tsType === 'number').map(item => `'${toCamelCase(item.colName)}'`).join(',')}],
     });
     return R.ok(res);
   }
