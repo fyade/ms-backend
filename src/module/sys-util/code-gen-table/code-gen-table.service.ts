@@ -18,7 +18,7 @@ export class CodeGenTableService {
   }
 
   async selAll(dto: selAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_code_gen_table', dto);
+    const res = await this.prisma.findAll('sys_code_gen_table', { data: dto });
     return R.ok(res);
   }
 

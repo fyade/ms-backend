@@ -75,6 +75,45 @@ export class PrismaService extends PrismaClient {
     return modelInstance;
   }
 
+  genSelParams<T, P>({
+                       data,
+                       orderBy,
+                       notNullKeys = [],
+                       numberKeys = [],
+                     }: {
+    data?: P,
+    orderBy?: boolean,
+    notNullKeys?: string[]
+    numberKeys?: string[]
+  } = {}) {
+    const data_ = objToSnakeCase(data);
+    return {
+      AND: [
+        ...Object.keys(this.defaultSelArg().where).reduce((obj, item) => [
+          ...obj,
+          {
+            [item]: this.defaultSelArg().where[item],
+          },
+        ], []),
+        ...Object.keys(data_).reduce((obj, item) => [
+          ...obj,
+          {
+            OR: [
+              {
+                [item]: toSnakeCases(numberKeys).indexOf(item) > -1 ? Number(data_[item]) : {
+                  contains: `${data_[item]}`,
+                },
+              },
+              {
+                [item]: null,
+              },
+            ].slice(0, (toSnakeCases(notNullKeys).indexOf(item) > -1 || data_[item] !== '') ? 1 : 2),
+          },
+        ], []),
+      ],
+    };
+  }
+
   /**
    * 查
    * @param model
@@ -82,6 +121,7 @@ export class PrismaService extends PrismaClient {
    * @param orderBy
    * @param notNullKeys
    * @param numberKeys
+   * @param ifUseGenSelParams
    */
   async findPage<T, P extends pageSelDto>(model: string, {
                                             data,
@@ -93,7 +133,7 @@ export class PrismaService extends PrismaClient {
                                             orderBy?: boolean,
                                             notNullKeys?: string[]
                                             numberKeys?: string[]
-                                          } = {},
+                                          } = {}, ifUseGenSelParams = true,
   ): Promise<{
     list: T[]
     total: number
@@ -102,33 +142,8 @@ export class PrismaService extends PrismaClient {
     const pageSize = Number(data.pageSize);
     delete data.pageNum;
     delete data.pageSize;
-    const data_ = objToSnakeCase(data);
     const arg: any = {
-      where: {
-        AND: [
-          ...Object.keys(this.defaultSelArg().where).reduce((obj, item) => [
-            ...obj,
-            {
-              [item]: this.defaultSelArg().where[item],
-            },
-          ], []),
-          ...Object.keys(data_).reduce((obj, item) => [
-            ...obj,
-            {
-              OR: [
-                {
-                  [item]: toSnakeCases(numberKeys).indexOf(item) > -1 ? Number(data_[item]) : {
-                    contains: `${data_[item]}`,
-                  },
-                },
-                {
-                  [item]: null,
-                },
-              ].slice(0, (toSnakeCases(notNullKeys).indexOf(item) > -1 || data_[item] !== '') ? 1 : 2),
-            },
-          ], []),
-        ],
-      },
+      where: ifUseGenSelParams ? this.genSelParams<T, P>({ data, orderBy, notNullKeys, numberKeys }) : data,
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     };
@@ -155,15 +170,26 @@ export class PrismaService extends PrismaClient {
   /**
    * 查
    * @param model
-   * @param args
+   * @param data
    * @param orderBy
+   * @param notNullKeys
+   * @param numberKeys
+   * @param ifUseGenSelParams
    */
-  async findAll<T>(model: string, args?: any, orderBy?: boolean): Promise<T[]> {
+  async findAll<T>(model: string, {
+                     data,
+                     orderBy,
+                     notNullKeys = [],
+                     numberKeys = [],
+                   }: {
+                     data?: object,
+                     orderBy?: boolean,
+                     notNullKeys?: string[]
+                     numberKeys?: string[]
+                   } = {}, ifUseGenSelParams = true,
+  ): Promise<T[]> {
     const arg: any = {
-      where: {
-        ...this.defaultSelArg().where,
-        ...(objToSnakeCase(args) || {}),
-      },
+      where: ifUseGenSelParams ? this.genSelParams<T, object>({ data, orderBy, notNullKeys, numberKeys }) : data,
     };
     if (orderBy) {
       arg.orderBy = {

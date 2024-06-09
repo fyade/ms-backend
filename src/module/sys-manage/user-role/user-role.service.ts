@@ -40,7 +40,7 @@ export class UserRoleService {
     if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
-    const allroles = await this.prisma.findAll<updOneDto>('sys_user_role', { userId: dto.userId });
+    const allroles = await this.prisma.findAll<updOneDto>('sys_user_role', { data: { userId: dto.userId } });
     const allroleids = allroles.map((item: any) => item.roleId);
     const addroles = dto.roleId.filter(id => allroleids.indexOf(id) === -1);
     const delrolds = allroleids.filter(id => dto.roleId.indexOf(id) === -1);

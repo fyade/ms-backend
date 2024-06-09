@@ -153,7 +153,7 @@ export class AuthService {
   }
 
   async ifAdminUserUpdNotAdminUser(controlUserId: string, controledUserId: string) {
-    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { userId: { in: [controlUserId, controledUserId] } });
+    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { data: { userId: { in: [controlUserId, controledUserId] } } }, false);
     return (controlUserId === controledUserId)
       || (topAdminUser.findIndex(item => item.userId === controlUserId) > -1 && topAdminUser.findIndex(item => item.userId === controledUserId) === -1);
   }

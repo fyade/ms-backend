@@ -20,7 +20,7 @@ export class RoleService {
   async selAll(dto: selAllDto): Promise<R> {
     const dto_ = dto;
     if (dto_.id) dto_.id = Number(dto_.id);
-    const res = await this.prisma.findAll<roleDto>('sys_role', dto_, true);
+    const res = await this.prisma.findAll<roleDto>('sys_role', { data: dto_, orderBy: true });
     return R.ok(res);
   }
 

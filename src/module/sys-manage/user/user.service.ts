@@ -31,12 +31,12 @@ export class UserService {
     if (ifWithRole === base.N) {
       return R.ok(res);
     }
-    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { userId: { in: res.list.map(item => item.id) } });
+    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { data: { userId: { in: res.list.map(item => item.id) } } }, false);
     const res2 = [];
     for (let i = 0; i < res.list.length; i++) {
-      const roles = await this.prisma.findAll<userRoleDto>('sys_user_role', { userId: res.list[i].id });
+      const roles = await this.prisma.findAll<userRoleDto>('sys_user_role', { data: { userId: res.list[i].id } });
       const roleids = roles.map(item => item.roleId);
-      const rols = await this.prisma.findAll('sys_role', { id: { in: roleids } }, true);
+      const rols = await this.prisma.findAll('sys_role', { data: { id: { in: roleids } }, orderBy: true }, false);
       res2.push({
         ...res.list[i],
         roles: rols,

@@ -20,7 +20,7 @@ export class CodeGenColumnService {
   }
 
   async selAll(dto: selAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_code_gen_column', dto);
+    const res = await this.prisma.findAll('sys_code_gen_column', { data: dto });
     return R.ok(res);
   }
 

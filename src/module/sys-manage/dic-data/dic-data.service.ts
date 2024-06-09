@@ -18,7 +18,7 @@ export class DicDataService {
   }
 
   async selAll(dto: selAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_dic_data', dto);
+    const res = await this.prisma.findAll('sys_dic_data', { data: dto });
     return R.ok(res);
   }
 

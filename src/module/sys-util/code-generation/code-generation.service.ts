@@ -64,7 +64,7 @@ export class CodeGenerationService {
 
   async genCode(id: number): Promise<R> {
     const table: codeGenTableDto = await this.prisma.findById('sys_code_gen_table', Number(id));
-    const columns: codeGenColumnDto[] = await this.prisma.findAll('sys_code_gen_column', { tableId: Number(id) });
+    const columns: codeGenColumnDto[] = await this.prisma.findAll('sys_code_gen_column', { data: { tableId: Number(id) } });
     const cgRes = codeGeneration({ table, columns });
     return R.ok({
       table,
