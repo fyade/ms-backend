@@ -9,7 +9,7 @@ export class MenuService {
   }
 
   async selMenu(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findAll<menuDto>('sys_menu', { data: dto, orderBy: true });
+    const res = await this.prisma.findAll<menuDto>('sys_menu', { data: dto, orderBy: true,numberKeys:['parendId'] });
     return R.ok(res);
   }
 

@@ -12,13 +12,19 @@ export class CodeGenTableService {
     const res = await this.prisma.findPage<codeGenTableDto, selListDto>('sys_code_gen_table', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['tableName', 'tableDescr', 'entityName', 'moduleName', 'businessName', 'orderNum'],
+      notNullKeys: ['tableName', 'tableDescr', 'entityName', 'businessName', 'moduleName', 'orderNum'],
+      numberKeys: ['orderNum'],
     });
     return R.ok(res);
   }
 
   async selAll(dto: selAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_code_gen_table', { data: dto });
+    const res = await this.prisma.findAll('sys_code_gen_table', {
+      data: dto,
+      orderBy: true,
+      notNullKeys: ['tableName', 'tableDescr', 'entityName', 'businessName', 'moduleName', 'orderNum'],
+      numberKeys: ['orderNum'],
+    });
     return R.ok(res);
   }
 

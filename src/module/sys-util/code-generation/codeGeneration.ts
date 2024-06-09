@@ -120,7 +120,12 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
   }
 
   async selAll(dto: selAllDto): Promise<R> {
-    const res = await this.prisma.findAll('${table.tableName}', dto);
+    const res = await this.prisma.findAll('${table.tableName}', {
+      data: dto,
+      orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},
+      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(',')}],
+      numberKeys: [${columns.filter(item => item.tsType === 'number').map(item => `'${toCamelCase(item.colName)}'`).join(',')}],
+    });
     return R.ok(res);
   }
 

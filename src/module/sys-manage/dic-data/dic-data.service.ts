@@ -12,13 +12,19 @@ export class DicDataService {
     const res = await this.prisma.findPage<dicDataDto, selListDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'value', 'type', 'ifDefault', 'ifDisabled', 'orderNum'],
+      notNullKeys: ['label', 'value', 'dicType', 'ifDefault', 'ifDisabled', 'orderNum'],
+      numberKeys: ['orderNum'],
     });
     return R.ok(res);
   }
 
   async selAll(dto: selAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_dic_data', { data: dto });
+    const res = await this.prisma.findAll('sys_dic_data', {
+      data: dto,
+      orderBy: true,
+      notNullKeys: ['label', 'value', 'dicType', 'ifDefault', 'ifDisabled', 'orderNum'],
+      numberKeys: ['orderNum'],
+    });
     return R.ok(res);
   }
 

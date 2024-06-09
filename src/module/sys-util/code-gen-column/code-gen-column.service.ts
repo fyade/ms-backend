@@ -14,13 +14,18 @@ export class CodeGenColumnService {
       data: dto,
       orderBy: true,
       notNullKeys: ['tableId', 'colName', 'colDescr', 'mysqlType', 'tsType', 'tsName', 'ifIns', 'ifUpd', 'ifSelOne', 'ifSelMore', 'ifRequired', 'selType', 'formType', 'orderNum'],
-      numberKeys: ['tableId'],
+      numberKeys: ['tableId', 'orderNum'],
     });
     return R.ok(res);
   }
 
   async selAll(dto: selAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_code_gen_column', { data: dto });
+    const res = await this.prisma.findAll('sys_code_gen_column', {
+      data: dto,
+      orderBy: true,
+      notNullKeys: ['tableId', 'colName', 'colDescr', 'mysqlType', 'tsType', 'tsName', 'ifIns', 'ifUpd', 'ifSelOne', 'ifSelMore', 'ifRequired', 'selType', 'formType', 'orderNum'],
+      numberKeys: ['tableId', 'orderNum'],
+    });
     return R.ok(res);
   }
 

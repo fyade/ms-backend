@@ -13,12 +13,18 @@ export class DicTypeService {
       data: dto,
       orderBy: true,
       notNullKeys: ['name', 'type', 'ifDisabled', 'orderNum'],
+      numberKeys: ['orderNum'],
     });
     return R.ok(res);
   }
 
   async selAll(dto: selAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_dic_type', { data: dto });
+    const res = await this.prisma.findAll('sys_dic_type', {
+      data: dto,
+      orderBy: true,
+      notNullKeys: ['name', 'type', 'ifDisabled', 'orderNum'],
+      numberKeys: ['orderNum'],
+    });
     return R.ok(res);
   }
 

@@ -12,7 +12,8 @@ export class RoleService {
     const res = await this.prisma.findPage('sys_role', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'ifAdmin', 'ifDisabled'],
+      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'orderNum'],
+      numberKeys: ['orderNum'],
     });
     return R.ok(res);
   }
@@ -20,7 +21,12 @@ export class RoleService {
   async selAll(dto: selAllDto): Promise<R> {
     const dto_ = dto;
     if (dto_.id) dto_.id = Number(dto_.id);
-    const res = await this.prisma.findAll<roleDto>('sys_role', { data: dto_, orderBy: true });
+    const res = await this.prisma.findAll<roleDto>('sys_role', {
+      data: dto_,
+      orderBy: true,
+      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'orderNum'],
+      numberKeys: ['orderNum'],
+    });
     return R.ok(res);
   }
 
