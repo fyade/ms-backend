@@ -24,8 +24,8 @@ export class RoleService {
     const res = await this.prisma.findAll<roleDto>('sys_role', {
       data: dto_,
       orderBy: true,
-      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'orderNum'],
-      numberKeys: ['orderNum'],
+      notNullKeys: ['id', 'label', 'ifAdmin', 'ifDisabled', 'orderNum'],
+      numberKeys: ['id', 'orderNum'],
     });
     return R.ok(res);
   }

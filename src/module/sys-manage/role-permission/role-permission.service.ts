@@ -21,7 +21,10 @@ export class RolePermissionService {
   }
 
   async selAll(dto: selByRoleIdDto): Promise<R> {
-    const res = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', { data: dto });
+    const res = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
+      data: dto,
+      numberKeys: ['roleId'],
+    });
     const roleIds = res.map(item => item.roleId);
     const permissionIds_m = res.filter(item => item.type === 'm').map(item => item.permissionId);
     // const permissionIds_i = res.filter(item => item.type === 'i').map(item => item.permission_id);
