@@ -143,7 +143,7 @@ export class PrismaService extends PrismaClient {
     delete data.pageNum;
     delete data.pageSize;
     const arg: any = {
-      where: ifUseGenSelParams ? this.genSelParams<T, P>({ data, orderBy, notNullKeys, numberKeys }) : data,
+      where: ifUseGenSelParams ? this.genSelParams<T, P>({ data, orderBy, notNullKeys, numberKeys }) : objToSnakeCase(data),
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     };
@@ -189,7 +189,7 @@ export class PrismaService extends PrismaClient {
                    } = {}, ifUseGenSelParams = true,
   ): Promise<T[]> {
     const arg: any = {
-      where: ifUseGenSelParams ? this.genSelParams<T, object>({ data, orderBy, notNullKeys, numberKeys }) : data,
+      where: ifUseGenSelParams ? this.genSelParams<T, object>({ data, orderBy, notNullKeys, numberKeys }) : objToSnakeCase(data),
     };
     if (orderBy) {
       arg.orderBy = {
