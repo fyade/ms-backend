@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
     } else if (reqWhiteList.indexOf(request.url) === -1) {
       if (request.url === adminLoginUrl) {
       } else {
-        throw new UnauthorizedException();
+        // throw new UnauthorizedException();
       }
     }
     return true;

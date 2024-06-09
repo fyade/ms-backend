@@ -15,7 +15,7 @@ export class R {
     this.timestamp = this.time.getTime();
   }
 
-  static ok(data?: any) {
+  static ok(data: any = true) {
     return new R(HTTP.SUCCESS().code, data, HTTP.SUCCESS().msg);
   }
 

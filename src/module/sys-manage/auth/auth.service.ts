@@ -4,7 +4,6 @@ import { userDto } from '../user/dto';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { base } from '../../../util/base';
 import { Injectable } from '@nestjs/common';
-import { roleDto } from '../role/dto';
 import { adminTopDto } from '../admin-top/dto';
 
 @Injectable()
@@ -91,6 +90,16 @@ export class AuthService {
     const permissionsOfUser = await this.permissionsOfUser(user);
     const index = permissionsOfUser.findIndex(item => item.perms === permission);
     return await this.hasTopAdminPermission(user.id) || index > -1;
+  }
+
+  async ifPublicInterface(permission: string) {
+    const raw = await this.prisma.$queryRaw`
+      select if_public
+      from sys_menu
+      where perms = ${permission}
+        and if_public = ${base.Y};
+    `;
+    return raw.length > 0;
   }
 
   async permissionsOfUser(user: userDto) {

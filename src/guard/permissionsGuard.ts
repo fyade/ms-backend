@@ -24,26 +24,35 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
     const user = request.body.user;
-    // 放行管理员登陆接口
-    if (!!!user && request.url === adminLoginUrl) {
-      const userDto = await this.authService.findUserByUsername(request.body.username);
-      if (!!!userDto) {
-        throw new UserUnknownException();
+    if (user) {
+      // 放行管理员登陆接口
+      if (!!!user && request.url === adminLoginUrl) {
+        const userDto = await this.authService.findUserByUsername(request.body.username);
+        if (!!!userDto) {
+          throw new UserUnknownException();
+        }
+        const ifHasPermission = await this.authService.ifAdminUser(request.body.username);
+        if (ifHasPermission) {
+          return true;
+        } else {
+          throw new ForbiddenException();
+        }
       }
-      const ifHasPermission = await this.authService.ifAdminUser(request.body.username);
+      delete request.body.user;
+      // 用户是否有当前接口的权限
+      const ifHasPermission = await this.authService.hasAdminPermissionByUserid(user.userid, permission);
       if (ifHasPermission) {
         return true;
       } else {
         throw new ForbiddenException();
       }
-    }
-    delete request.body.user;
-    // 用户是否有当前接口的权限
-    const ifHasPermission = await this.authService.hasAdminPermissionByUserid(user.userid, permission);
-    if (ifHasPermission) {
-      return true;
     } else {
-      throw new ForbiddenException();
+      const ifPublicInterface = await this.authService.ifPublicInterface(permission);
+      if (ifPublicInterface) {
+      } else {
+        throw new ForbiddenException();
+      }
     }
+    return true;
   }
 }
