@@ -1,6 +1,7 @@
-import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { validate } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
+import { ParameterError } from '../../exception/ParameterError';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
@@ -10,11 +11,11 @@ export class ValidationPipe implements PipeTransform {
       return value;
     }
     // 将对象转换为 Class 来验证
-    const object = plainToClass(metatype, value);
+    const object = plainToInstance(metatype, value);
     const errors = await validate(object);
     if (errors.length > 0) {
-      const msg = Object.values(errors[0].constraints)[0]; // 只需要取第一个错误信息并返回即可
-      throw new BadRequestException(`${msg}`);
+      const msg = errors.map(item => Object.values(item.constraints)).flat().join('、');
+      throw new ParameterError(`${msg}。`);
     }
     return value;
   }

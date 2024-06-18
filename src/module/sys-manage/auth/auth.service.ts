@@ -19,10 +19,6 @@ export class AuthService {
     return this.jwtService.sign(payload, { secret: jwtConstants.secret });
   }
 
-  async verifyToken(token: string): Promise<any> {
-    const verify = this.jwtService.verify(token, { secret: jwtConstants.secret });
-  }
-
   async findUserByUsername(username: string): Promise<userDto> {
     const userDto = await this.prisma.findFirst<userDto>('sys_user', { username: username });
     return userDto;
