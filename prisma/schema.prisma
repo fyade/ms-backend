@@ -324,3 +324,12 @@ model tbl_bulletin_read {
   update_time DateTime @updatedAt
   deleted     String   @default("N") @db.Char(1)
 }
+
+// 0.1 登录日志表
+model log_user_login {
+  id          Int      @id @default(autoincrement()) @db.Int
+  user_id     String   @db.VarChar(10)
+  if_success  String   @db.Char(1)
+  remark      String?  @db.VarChar(100)
+  create_time DateTime @default(now())
+}

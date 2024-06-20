@@ -21,7 +21,7 @@ const idsOfLengthStr: string[] = []
  * @param length
  * @param suffix
  */
-export function genid(length = 16, suffix = true): string {
+export function genId(length = 16, suffix = true): string {
   if (idsOfLengthStr.length >= Math.pow(strArr.length, length)) {
     throw new Error("数量过多，无法计算。")
   }

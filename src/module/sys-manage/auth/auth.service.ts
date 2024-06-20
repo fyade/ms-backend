@@ -1,5 +1,3 @@
-import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from '../../../config/authConfig';
 import { userDto } from '../user/dto';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { base } from '../../../util/base';
@@ -8,15 +6,7 @@ import { adminTopDto } from '../admin-top/dto';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService,
-  ) {
-  }
-
-  async generateToken(user: userDto): Promise<any> {
-    const payload = { username: user.username, userid: user.id };
-    return this.jwtService.sign(payload, { secret: jwtConstants.secret });
+  constructor(private readonly prisma: PrismaService) {
   }
 
   async findUserByUsername(username: string): Promise<userDto> {

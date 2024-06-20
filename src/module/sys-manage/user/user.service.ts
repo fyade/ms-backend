@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
 import { adminNewUserDto, loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto';
-import { genid } from '../../../util/IdUtils';
+import { genId } from '../../../util/IdUtils';
 import { AuthService } from '../auth/auth.service';
 import { HTTP } from '../../../common/Enum';
 import { base } from '../../../util/base';
@@ -11,6 +11,7 @@ import { UserUnknownException } from '../../../exception/UserUnknownException';
 import { adminTopDto } from '../admin-top/dto';
 import { getCurrentUser } from '../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../exception/UserPermissionDeniedException';
+import { generateToken } from '../../../util/AuthUtils';
 
 @Injectable()
 export class UserService {
@@ -54,7 +55,7 @@ export class UserService {
     if (user) {
       return R.err('用户名已被使用。');
     }
-    const userid = genid(5, false);
+    const userid = genId(5, false);
     await this.prisma.create<userDto>('sys_user', {
       id: userid,
       username: dto.username,
@@ -71,7 +72,7 @@ export class UserService {
       password: dto.password,
     });
     if (user) {
-      const token = await this.authService.generateToken(user);
+      const token = generateToken(user);
       delete user.password;
       return R.ok({
         token: token,
@@ -102,7 +103,7 @@ export class UserService {
     if (user) {
       return R.err('用户名已存在。');
     }
-    await this.prisma.create('sys_user', { ...dto, id: genid(5, false) }, { ifCustomizeId: true });
+    await this.prisma.create('sys_user', { ...dto, id: genId(5, false) }, { ifCustomizeId: true });
     return R.ok();
   }
 

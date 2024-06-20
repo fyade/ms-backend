@@ -1,4 +1,4 @@
-import { genid } from "./util/IdUtils";
+import { genId } from './util/IdUtils';
 
 interface msg {
   id?: string
@@ -22,7 +22,7 @@ const types = {
 }
 const server = ws.createServer(connect => {
   count++
-  connect.username = `user_${genid()}`
+  connect.username = `user_${genId()}`
   boardcost({
     type: types.TYPE_ENTER,
     content: `${connect.username}已上线`,
@@ -63,7 +63,7 @@ function boardcost(msg) {
     const time = new Date()
     connect.send(JSON.stringify({
       count: count,
-      id: genid(),
+      id: genId(),
       time: time,
       timestamp: time.getTime(),
       ...msg,

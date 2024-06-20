@@ -1,10 +1,10 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import * as jwt from 'jsonwebtoken';
-import { adminLoginUrl, jwtConstants, reqWhiteList } from '../config/authConfig';
+import { adminLoginUrl, reqWhiteList } from '../config/authConfig';
 import { UnauthorizedException } from '../exception/UnauthorizedException';
 import { clearCurrentUser, setCurrentUser } from '../util/baseContext';
 import { userDto2 } from '../module/sys-manage/user/dto';
+import { verifyToken } from '../util/AuthUtils';
 
 export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
     const token = request.headers['authorization'];
     if (token) {
       try {
-        const decoded = jwt.verify(token, jwtConstants.secret);
+        const decoded = verifyToken(token);
         if (decoded) {
           // Token is valid and not expired
           request.body.user = decoded;

@@ -1,10 +1,10 @@
 import { HttpException, Logger } from "@nestjs/common";
-import { genid } from "../util/IdUtils";
+import { genId } from '../util/IdUtils';
 
 export class UnknownException extends HttpException {
   constructor() {
     const logger = new Logger();
-    const id = genid();
+    const id = genId();
     super(`未知错误，请反馈管理员并提供此识别码：${id}。`, 500);
     logger.error(`${id} ${this.message}`)
   }
