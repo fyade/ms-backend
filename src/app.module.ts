@@ -24,6 +24,7 @@ import { CodeGenerationModule } from './module/sys-util/code-generation/code-gen
 import { DeptModule } from './module/sys-manage/dept/dept.module';
 import { CodeGenTableModule } from './module/sys-util/code-gen-table/code-gen-table.module';
 import { CodeGenColumnModule } from './module/sys-util/code-gen-column/code-gen-column.module';
+import { UserLoginModule as LogUserLoginModule } from './module/sys-monitor/user-login/user-login.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { CodeGenColumnModule } from './module/sys-util/code-gen-column/code-gen-
     DeptModule,
     CodeGenTableModule,
     CodeGenColumnModule,
+    LogUserLoginModule,
   ],
   controllers: [
     AppController,

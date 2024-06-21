@@ -12,13 +12,19 @@ import { adminTopDto } from '../admin-top/dto';
 import { getCurrentUser } from '../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../exception/UserPermissionDeniedException';
 import { generateToken } from '../../../util/AuthUtils';
+import { UserLoginService } from '../../sys-monitor/user-login/user-login.service';
+import { comparePassword, hashPassword } from '../../../util/EncryptUtils';
 
 @Injectable()
 export class UserService {
+  private maxLoginFailCount: number;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
+    private readonly logUserLoginService: UserLoginService,
   ) {
+    this.maxLoginFailCount = 10;
   }
 
   async userSelList(dto: userListSelDto): Promise<R> {
@@ -59,7 +65,7 @@ export class UserService {
     await this.prisma.create<userDto>('sys_user', {
       id: userid,
       username: dto.username,
-      password: dto.password,
+      password: await hashPassword(dto.password),
       createBy: userid,
       updateBy: userid,
     });
@@ -67,13 +73,44 @@ export class UserService {
   }
 
   async login(dto: loginDto): Promise<R> {
-    const user = await this.prisma.findFirst<userDto>('sys_user', {
+    let user;
+    const user_ = await this.prisma.findFirst<userDto>('sys_user', {
       username: dto.username,
-      password: dto.password,
     });
+    const b1 = await comparePassword(dto.password, user_.password);
+    if (b1) {
+      user = user_;
+    }
     if (user) {
-      const token = generateToken(user);
       delete user.password;
+      const loginLog = await this.logUserLoginService.selAll({
+        userId: user.id,
+        ifSuccess: base.N,
+      }, {
+        orderBy: { createTime: 'desc' },
+        range: {
+          createTime: {
+            gte: new Date(new Date().getTime() - 1000 * 60 * 60 * 24),
+            lte: new Date(),
+          },
+        },
+      });
+      if (loginLog.data.length >= this.maxLoginFailCount) {
+        const sort = loginLog.data.sort((a, b) => a.createTime - b.createTime);
+        const number = Math.ceil(24 - (new Date().getTime() - new Date(sort[0].createTime).getTime()) / (1000 * 60 * 60));
+        return R.err(`密码错误次数过多，请${number}小时后重试。`);
+      }
+      await this.logUserLoginService.insUserLogin({
+        userId: user.id,
+        ifSuccess: base.Y,
+        remark: '登录成功',
+      }, {
+        ifCreateBy: false,
+        ifUpdateBy: false,
+        ifUpdateTime: false,
+        ifDeleted: false,
+      });
+      const token = generateToken(user);
       return R.ok({
         token: token,
         user: user,
@@ -83,7 +120,34 @@ export class UserService {
       username: dto.username,
     });
     if (user2) {
-      return R.err('密码错误。');
+      await this.logUserLoginService.insUserLogin({
+        userId: user2.id,
+        ifSuccess: base.N,
+        remark: '密码错误',
+      }, {
+        ifCreateBy: false,
+        ifUpdateBy: false,
+        ifUpdateTime: false,
+        ifDeleted: false,
+      });
+      const loginLog = await this.logUserLoginService.selAll({
+        userId: user2.id,
+        ifSuccess: base.N,
+      }, {
+        orderBy: { createTime: 'desc' },
+        range: {
+          createTime: {
+            gte: new Date(new Date().getTime() - 1000 * 60 * 60 * 24),
+            lte: new Date(),
+          },
+        },
+      });
+      if (loginLog.data.length >= this.maxLoginFailCount) {
+        const sort = loginLog.data.sort((a, b) => a.createTime - b.createTime);
+        const number = Math.ceil(24 - (new Date().getTime() - new Date(sort[0].createTime).getTime()) / (1000 * 60 * 60));
+        return R.err(`密码错误次数过多，请${number}小时后重试。`);
+      }
+      return R.err(`密码错误，还剩${this.maxLoginFailCount - loginLog.data.length}次机会。`);
     } else {
       throw new UserUnknownException();
     }
@@ -103,7 +167,11 @@ export class UserService {
     if (user) {
       return R.err('用户名已存在。');
     }
-    await this.prisma.create('sys_user', { ...dto, id: genId(5, false) }, { ifCustomizeId: true });
+    await this.prisma.create('sys_user', {
+      ...dto,
+      password: await hashPassword(dto.password),
+      id: genId(5, false),
+    }, { ifCustomizeId: true });
     return R.ok();
   }
 
@@ -111,7 +179,7 @@ export class UserService {
     if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.id)) {
       throw new UserPermissionDeniedException();
     }
-    const res = await this.prisma.updateById('sys_user', dto);
+    await this.prisma.updateById('sys_user', { ...dto, password: await hashPassword(dto.password) });
     return R.ok();
   }
 }

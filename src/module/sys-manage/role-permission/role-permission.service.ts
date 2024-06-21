@@ -59,7 +59,7 @@ export class RolePermissionService {
   }
 
   async updRolePermission(dto: updManyDto): Promise<R> {
-    const allRolePermissions = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', { data: { roleId: dto.roleId } });
+    const allRolePermissions = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', { data: { roleId: dto.roleId } }, false);
     const perIds = allRolePermissions.filter(item => item.type === 'm').map(item => item.permissionId);
     const addRPSPIDS = dto.permissionId.filter(item => perIds.indexOf(item) === -1);
     const delRPS = perIds.filter(item => dto.permissionId.indexOf(item) === -1);

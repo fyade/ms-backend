@@ -93,7 +93,7 @@ export function objToCamelCase<T extends ObjectType>(obj: T): T {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }
-  const newObj = Array.isArray(obj) ? [] : {} as any;
+  const newObj = obj instanceof Date ? obj : Array.isArray(obj) ? [] : {} as any;
   for (const key in obj) {
     const newKey = key.replace(/_([a-z])/g, (match, char) => char.toUpperCase()) as keyof any;
     newObj[newKey] = objToCamelCase(obj[key]);
@@ -109,7 +109,7 @@ export function objToSnakeCase<T extends ObjectType>(obj: T): T {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }
-  const newObj = Array.isArray(obj) ? [] : {} as unknown as T;
+  const newObj = obj instanceof Date ? obj : Array.isArray(obj) ? [] : {} as unknown as T;
   for (const key in obj) {
     const newKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase() as keyof any;
     newObj[newKey] = objToSnakeCase(obj[key]) as T[keyof T];

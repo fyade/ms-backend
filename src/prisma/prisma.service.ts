@@ -5,7 +5,7 @@ import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
 import { pageSelDto } from '../common/dto/PageDto';
-import { objToCamelCase, objToSnakeCase, toSnakeCases } from '../util/BaseUtils';
+import { objToCamelCase, objToSnakeCase, toCamelCase, toSnakeCase, toSnakeCases } from '../util/BaseUtils';
 
 const env = currentEnv();
 const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../generated/client');
@@ -78,21 +78,28 @@ export class PrismaService extends PrismaClient {
   genSelParams<T, P>({
                        data,
                        orderBy,
+                       range = {},
                        notNullKeys = [],
                        numberKeys = [],
+                       ifDeleted = true,
                      }: {
-    data?: P,
-    orderBy?: boolean,
-    notNullKeys?: string[]
-    numberKeys?: string[]
-  } = {}) {
+                       data?: P,
+                       orderBy?: boolean | object,
+                       range?: object,
+                       notNullKeys?: string[]
+                       numberKeys?: string[]
+                       ifDeleted?: boolean
+                     } = {},
+  ) {
     const data_ = objToSnakeCase(data);
+    const publicData = this.defaultSelArg().where;
+    if (!ifDeleted) delete publicData.deleted;
     return {
       AND: [
-        ...Object.keys(this.defaultSelArg().where).reduce((obj, item) => [
+        ...Object.keys(publicData).reduce((obj, item) => [
           ...obj,
           {
-            [item]: this.defaultSelArg().where[item],
+            [item]: publicData[item],
           },
         ], []),
         ...Object.keys(data_).reduce((obj, item) => [
@@ -110,6 +117,14 @@ export class PrismaService extends PrismaClient {
             ].slice(0, (toSnakeCases(notNullKeys).indexOf(item) > -1 || data_[item] !== '') ? 1 : 2),
           },
         ], []),
+        ...Object.keys(range).map(item => (
+          {
+            [toSnakeCase(item)]: {
+              gte: range[item].gte,
+              lte: range[item].lte,
+            },
+          }
+        )),
       ],
     };
   }
@@ -119,20 +134,26 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param data
    * @param orderBy
+   * @param range
    * @param notNullKeys
    * @param numberKeys
+   * @param ifDeleted
    * @param ifUseGenSelParams
    */
   async findPage<T, P extends pageSelDto>(model: string, {
                                             data,
                                             orderBy,
+                                            range = {},
                                             notNullKeys = [],
                                             numberKeys = [],
+                                            ifDeleted = true,
                                           }: {
                                             data?: P,
-                                            orderBy?: boolean,
+                                            orderBy?: boolean | object,
+                                            range?: object,
                                             notNullKeys?: string[]
-                                            numberKeys?: string[]
+                                            numberKeys?: string[],
+                                            ifDeleted?: boolean,
                                           } = {}, ifUseGenSelParams = true,
   ): Promise<{
     list: T[]
@@ -142,17 +163,30 @@ export class PrismaService extends PrismaClient {
     const pageSize = Number(data.pageSize);
     delete data.pageNum;
     delete data.pageSize;
+    const publicData = this.defaultSelArg().where;
+    if (!ifDeleted) delete publicData.deleted;
     const arg: any = {
-      where: ifUseGenSelParams ? this.genSelParams<T, P>({ data, orderBy, notNullKeys, numberKeys }) : {
-        ...this.defaultDelArg().where,
+      where: ifUseGenSelParams ? this.genSelParams<T, P>({
+        data,
+        orderBy,
+        range,
+        notNullKeys,
+        numberKeys,
+        ifDeleted,
+      }) : {
+        ...publicData,
         ...(objToSnakeCase(data) || {}),
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     };
-    if (orderBy) {
+    if (typeof orderBy === 'boolean' && orderBy) {
       arg.orderBy = {
         order_num: 'asc',
+      };
+    } else if (orderBy) {
+      arg.orderBy = {
+        [toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
       };
     }
     const model1 = this.getModel(model);
@@ -175,31 +209,48 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param data
    * @param orderBy
+   * @param range
    * @param notNullKeys
    * @param numberKeys
+   * @param ifDeleted
    * @param ifUseGenSelParams
    */
   async findAll<T>(model: string, {
                      data,
                      orderBy,
+                     range = {},
                      notNullKeys = [],
                      numberKeys = [],
+                     ifDeleted = true,
                    }: {
                      data?: object,
-                     orderBy?: boolean,
+                     orderBy?: boolean | object,
+                     range?: object,
                      notNullKeys?: string[]
                      numberKeys?: string[]
+                     ifDeleted?: boolean,
                    } = {}, ifUseGenSelParams = true,
   ): Promise<T[]> {
     const arg: any = {
-      where: ifUseGenSelParams ? this.genSelParams<T, object>({ data, orderBy, notNullKeys, numberKeys }) : {
-        ...this.defaultDelArg().where,
+      where: ifUseGenSelParams ? this.genSelParams<T, object>({
+        data,
+        orderBy,
+        range,
+        notNullKeys,
+        numberKeys,
+        ifDeleted,
+      }) : {
+        ...this.defaultSelArg().where,
         ...(objToSnakeCase(data) || {}),
       },
     };
-    if (orderBy) {
+    if (typeof orderBy === 'boolean' && orderBy) {
       arg.orderBy = {
         order_num: 'asc',
+      };
+    } else if (orderBy) {
+      arg.orderBy = {
+        [toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
       };
     }
     const res2 = await this.getModel(model).findMany(arg);
@@ -257,19 +308,40 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param data
    * @param ifCustomizeId
+   * @param ifCreateBy
+   * @param ifUpdateBy
+   * @param ifCreateTime
+   * @param ifUpdateTime
+   * @param ifDeleted
    */
   async create<T>(model: string, data: any, {
                     ifCustomizeId = false,
+                    ifCreateBy = true,
+                    ifUpdateBy = true,
+                    ifCreateTime = true,
+                    ifUpdateTime = true,
+                    ifDeleted = true,
                   }: {
-                    ifCustomizeId?: boolean
+                    ifCustomizeId?: boolean,
+                    ifCreateBy?: boolean,
+                    ifUpdateBy?: boolean,
+                    ifCreateTime?: boolean,
+                    ifUpdateTime?: boolean,
+                    ifDeleted?: boolean,
                   } = {},
   ): Promise<T> {
     if (!ifCustomizeId) {
       delete data.id;
     }
+    const publicData = this.defaultInsArg().data;
+    if (!ifCreateBy) delete publicData.create_by;
+    if (!ifUpdateBy) delete publicData.update_by;
+    if (!ifCreateTime) delete publicData.create_time;
+    if (!ifUpdateTime) delete publicData.update_time;
+    if (!ifDeleted) delete publicData.deleted;
     const arg = {
       data: {
-        ...this.defaultInsArg().data,
+        ...publicData,
         ...(objToSnakeCase(data) || {}),
       },
     };
@@ -281,20 +353,41 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param data
    * @param ifCustomizeId
+   * @param ifCreateBy
+   * @param ifUpdateBy
+   * @param ifCreateTime
+   * @param ifUpdateTime
+   * @param ifDeleted
    */
   async createMany<T>(model: string, data: any[], {
                         ifCustomizeId = false,
+                        ifCreateBy = true,
+                        ifUpdateBy = true,
+                        ifCreateTime = true,
+                        ifUpdateTime = true,
+                        ifDeleted = true,
                       }: {
-                        ifCustomizeId?: boolean
+                        ifCustomizeId?: boolean,
+                        ifCreateBy?: boolean,
+                        ifUpdateBy?: boolean,
+                        ifCreateTime?: boolean,
+                        ifUpdateTime?: boolean,
+                        ifDeleted?: boolean,
                       } = {},
   ): Promise<T> {
+    const publicData = this.defaultInsArg().data;
+    if (!ifCreateBy) delete publicData.create_by;
+    if (!ifUpdateBy) delete publicData.update_by;
+    if (!ifCreateTime) delete publicData.create_time;
+    if (!ifUpdateTime) delete publicData.update_time;
+    if (!ifDeleted) delete publicData.deleted;
     const arg = {
       data: data.map(dat => {
         if (!ifCustomizeId) {
           delete dat.id;
         }
         return {
-          ...this.defaultInsArg().data,
+          ...publicData,
           ...(objToSnakeCase(dat) || {}),
         };
       }),

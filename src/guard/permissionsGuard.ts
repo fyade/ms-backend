@@ -24,7 +24,7 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
     const user = request.body.user;
-    // 放行管理员登陆接口
+    // 放行管理员登录接口
     if (!!!user && request.url === adminLoginUrl) {
       const userDto = await this.authService.findUserByUsername(request.body.username);
       if (!!!userDto) {

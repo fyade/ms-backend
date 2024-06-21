@@ -6,7 +6,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  output        = "../src/generated/client" // todo 开发时注掉，上线前打开
+  // output        = "../src/generated/client" // todo 开发时注掉，上线前打开
   binaryTargets = ["darwin", "windows", "linux-musl", "rhel-openssl-1.0.x"]
   // previewFeatures = ["logging"]
 }
@@ -21,7 +21,7 @@ model sys_user {
   id          String   @id @db.VarChar(10)
   username    String   @db.VarChar(50)
   nickname    String?  @db.VarChar(50)
-  password    String   @db.VarChar(50)
+  password    String   @db.VarChar(100)
   avatar      String?  @db.VarChar(50)
   sex         String?  @db.Char(1)
   email       String?  @db.VarChar(50)
@@ -327,9 +327,13 @@ model tbl_bulletin_read {
 
 // 0.1 登录日志表
 model log_user_login {
-  id          Int      @id @default(autoincrement()) @db.Int
-  user_id     String   @db.VarChar(10)
-  if_success  String   @db.Char(1)
-  remark      String?  @db.VarChar(100)
-  create_time DateTime @default(now())
+  id             Int      @id @default(autoincrement()) @db.Int
+  user_id        String   @db.VarChar(10)
+  login_ip       String?  @db.VarChar(12)
+  login_position String?  @db.VarChar(30)
+  login_browser  String?  @db.VarChar(30)
+  login_os       String?  @db.VarChar(30)
+  if_success     String   @db.Char(1)
+  remark         String?  @db.VarChar(100)
+  create_time    DateTime @default(now())
 }
