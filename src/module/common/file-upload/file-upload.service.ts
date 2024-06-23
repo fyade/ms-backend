@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from "../../../prisma/prisma.service";
 import { R } from "../../../common/R";
-import { currentEnv } from "../../../config/config";
+import { currentEnv } from "../../../../config/config";
 import { join } from 'path';
 import * as fs from "fs";
 import { base } from "../../../util/base";

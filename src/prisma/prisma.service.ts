@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { currentEnv } from '../config/config';
+import { currentEnv } from '../../config/config';
 import { base } from '../util/base';
 import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';

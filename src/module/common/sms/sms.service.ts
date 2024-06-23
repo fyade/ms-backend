@@ -3,7 +3,7 @@ import { PrismaService } from "../../../prisma/prisma.service";
 import { R } from "../../../common/R";
 import { sendDto0, sendDto1 } from "./dto";
 import * as tencentcloud from 'tencentcloud-sdk-nodejs'
-import { currentEnv } from "../../../config/config";
+import { currentEnv } from "../../../../config/config";
 import { base } from "../../../util/base";
 import { unitConversion } from "../../../util/NumberUtils";
 import { timeDiff } from "../../../util/TimeUtils";

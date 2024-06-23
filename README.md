@@ -1,9 +1,9 @@
 ## 使用说明 Description
 
-在 src/config/ 目录下新建 config.ts 文件，并写入以下内容：
+在 /config 目录下新建 config.ts 文件，并写入以下内容：
 ```typescript
 import * as process from "process";
-import { base } from "../util/base";
+import { base } from "src/util/base";
 
 export const currentEnv = () => {
   const env = process.env.NODE_ENV || base.DEV
@@ -33,6 +33,16 @@ const config = {
     ... // 与上面的dev配置项一样
   }
 }
+```
+在 /config 目录下新建 authConfig.ts 文件，并写入以下内容：
+```typescript
+export const jwtConstants = {
+  secret: '', // 这里输入你的盐
+};
+export const SECRET_KEY = '' // 这里输入你的盐
+export const expireTime = '3600s'; // 这里是token超时时间
+export const reqWhiteList = ['/sys/user/regist', '/sys/user/login'];
+export const adminLoginUrl = '/sys/user/adminlogin';
 ```
 
 ## 命令 Bin

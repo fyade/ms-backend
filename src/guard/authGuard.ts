@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { adminLoginUrl, reqWhiteList } from '../config/authConfig';
+import { adminLoginUrl, reqWhiteList } from '../../config/authConfig';
 import { UnauthorizedException } from '../exception/UnauthorizedException';
 import { clearCurrentUser, setCurrentUser } from '../util/baseContext';
 import { userDto2 } from '../module/sys-manage/user/dto';

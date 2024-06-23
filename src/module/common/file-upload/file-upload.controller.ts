@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseInterceptor
 import { FileUploadService } from './file-upload.service';
 import { R } from '../../../common/R';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { currentEnv } from '../../../config/config';
+import { currentEnv } from '../../../../config/config';
 import { params_fileUploadOneChunk_check, params_fileUploadOneChunk_merge, selListDto } from './dto';
 import { pageSelDto } from '../../../common/dto/PageDto';
 import { Authorize } from '../../../decorator/authorizeDecorator';

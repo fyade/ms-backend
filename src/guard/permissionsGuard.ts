@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PRE_AUTHORIZE_KEY } from '../decorator/customDecorator';
 import { AuthService } from '../module/sys-manage/auth/auth.service';
-import { adminLoginUrl, reqWhiteList } from '../config/authConfig';
+import { adminLoginUrl, reqWhiteList } from '../../config/authConfig';
 import { ForbiddenException } from '../exception/ForbiddenException';
 import { UserUnknownException } from '../exception/UserUnknownException';
 
