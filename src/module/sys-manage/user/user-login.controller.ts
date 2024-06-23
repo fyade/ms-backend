@@ -22,13 +22,7 @@ export class UserLoginController {
   @Post('/login')
   async login(@Body() dto: loginDto, @Req() request): Promise<R> {
     dto.password = decrypt(dto.password);
-    const loginIp = request.headers['x-real-ip'] || request.headers['x-forwarded-for'] || request.ip;
-    const userAgentString = request.headers['user-agent'];
-    const userAgent = uaparser(userAgentString);
-    const browser = userAgent.browser;
-    const os = userAgent.os;
-    const loginBrowser = `${browser.name}${browser.version}`;
-    const loginOs = `${os.name}${os.version}`;
+    const { loginIp, loginBrowser, loginOs } = this.getLoginInfo(request);
     return this.userService.login(dto, { loginIp, loginBrowser, loginOs });
   }
 
@@ -37,13 +31,18 @@ export class UserLoginController {
   @UsePipes(new ValidationPipe())
   async adminLogin(@Body() dto: loginDto, @Req() request): Promise<R> {
     dto.password = decrypt(dto.password);
+    const { loginIp, loginBrowser, loginOs } = this.getLoginInfo(request);
+    return this.userService.adminlogin(dto, { loginIp, loginBrowser, loginOs });
+  }
+
+  getLoginInfo(request) {
     const loginIp = request.headers['x-real-ip'] || request.headers['x-forwarded-for'] || request.ip;
     const userAgentString = request.headers['user-agent'];
     const userAgent = uaparser(userAgentString);
     const browser = userAgent.browser;
     const os = userAgent.os;
-    const loginBrowser = `${browser.name}${browser.version}`;
-    const loginOs = `${os.name}${os.version}`;
-    return this.userService.adminlogin(dto, { loginIp, loginBrowser, loginOs });
+    const loginBrowser = `${browser.name} ${browser.version}`;
+    const loginOs = `${os.name} ${os.version}`;
+    return { loginIp, loginBrowser, loginOs };
   }
 }
