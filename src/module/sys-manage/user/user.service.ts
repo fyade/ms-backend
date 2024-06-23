@@ -72,7 +72,7 @@ export class UserService {
     return R.ok('注册成功。');
   }
 
-  async login(dto: loginDto): Promise<R> {
+  async login(dto: loginDto, { loginIp, loginBrowser, loginOs }): Promise<R> {
     let user;
     const user_ = await this.prisma.findFirst<userDto>('sys_user', {
       username: dto.username,
@@ -101,6 +101,9 @@ export class UserService {
         return R.err(`密码错误次数过多，请${number}小时后重试。`);
       }
       await this.logUserLoginService.insUserLogin({
+        loginIp: loginIp,
+        loginBrowser: loginBrowser,
+        loginOs: loginOs,
         userId: user.id,
         ifSuccess: base.Y,
         remark: '登录成功',
@@ -121,6 +124,9 @@ export class UserService {
     });
     if (user2) {
       await this.logUserLoginService.insUserLogin({
+        loginIp: loginIp,
+        loginBrowser: loginBrowser,
+        loginOs: loginOs,
         userId: user2.id,
         ifSuccess: base.N,
         remark: '密码错误',
@@ -153,8 +159,8 @@ export class UserService {
     }
   }
 
-  async adminlogin(dto: loginDto): Promise<R> {
-    const userinfo = await this.login(dto);
+  async adminlogin(dto: loginDto, { loginIp, loginBrowser, loginOs }): Promise<R> {
+    const userinfo = await this.login(dto, { loginIp, loginBrowser, loginOs });
     if (userinfo.code !== HTTP.SUCCESS().code) {
       return R.err(userinfo.msg);
     }

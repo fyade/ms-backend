@@ -329,7 +329,7 @@ model tbl_bulletin_read {
 model log_user_login {
   id             Int      @id @default(autoincrement()) @db.Int
   user_id        String   @db.VarChar(10)
-  login_ip       String?  @db.VarChar(12)
+  login_ip       String?  @db.VarChar(20)
   login_position String?  @db.VarChar(30)
   login_browser  String?  @db.VarChar(30)
   login_os       String?  @db.VarChar(30)

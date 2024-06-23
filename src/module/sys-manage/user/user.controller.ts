@@ -4,6 +4,7 @@ import { adminNewUserDto, loginDto, registDto, resetPsdDto, userDto, userListSel
 import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { ApiTags } from '@nestjs/swagger';
+import { decrypt } from '../../../util/EncryptUtils';
 
 @Controller('/sys-manage/user')
 @ApiTags('用户')
@@ -20,12 +21,14 @@ export class UserController {
   @Post()
   @Authorize('sysManage:user:adminNewUser')
   async insUser(@Body() dto: adminNewUserDto) {
+    dto.password = decrypt(dto.password);
     return this.userService.insUser(dto);
   }
 
   @Post('/resetpsd')
   @Authorize('sysManage:user:adminResetPsd')
   async resetPsd(@Body() dto: resetPsdDto): Promise<R> {
+    dto.password = decrypt(dto.password);
     return this.userService.resetPsd(dto);
   }
 }

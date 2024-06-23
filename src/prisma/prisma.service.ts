@@ -188,6 +188,10 @@ export class PrismaService extends PrismaClient {
       arg.orderBy = {
         [toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
       };
+    } else {
+      arg.orderBy = {
+        create_time: 'desc',
+      };
     }
     const model1 = this.getModel(model);
     const list = await model1.findMany(arg);
@@ -251,6 +255,10 @@ export class PrismaService extends PrismaClient {
     } else if (orderBy) {
       arg.orderBy = {
         [toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
+      };
+    } else {
+      arg.orderBy = {
+        create_time: 'desc',
       };
     }
     const res2 = await this.getModel(model).findMany(arg);

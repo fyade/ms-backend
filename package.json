@@ -32,6 +32,7 @@
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "crypto-js": "^4.2.0",
     "diskinfo": "^0.0.3",
     "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.5.45",
@@ -44,7 +45,8 @@
     "spark-md5": "^3.0.2",
     "swagger-ui-express": "^5.0.0",
     "tencentcloud-sdk-nodejs": "^4.0.796",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "ua-parser-js": "^1.0.38"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
