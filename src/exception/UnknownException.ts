@@ -5,7 +5,7 @@ export class UnknownException extends HttpException {
   constructor() {
     const logger = new Logger();
     const id = genId();
-    super(`未知错误，请反馈管理员并提供此识别码：${id}。`, 500);
+    super(`未知错误，请反馈管理员并提供此识别码：${id}。`, 501);
     logger.error(`${id} ${this.message}`)
   }
 
