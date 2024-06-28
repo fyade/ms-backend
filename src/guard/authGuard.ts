@@ -11,7 +11,8 @@ export class AuthGuard implements CanActivate {
     clearCurrentUser();
     const request = context.switchToHttp().getRequest();
     const token = request.headers['authorization'];
-    if (token) {
+    if (reqWhiteList.indexOf(request.url) > -1 || request.url === adminLoginUrl) {
+    } else if (token) {
       try {
         const decoded = verifyToken(token);
         if (decoded) {
@@ -25,11 +26,6 @@ export class AuthGuard implements CanActivate {
       } catch (e) {
         // Token is invalid or expired
         throw new UnauthorizedException();
-      }
-    } else if (reqWhiteList.indexOf(request.url) === -1) {
-      if (request.url === adminLoginUrl) {
-      } else {
-        // throw new UnauthorizedException();
       }
     }
     return true;

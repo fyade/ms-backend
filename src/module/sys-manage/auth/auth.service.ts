@@ -20,33 +20,36 @@ export class AuthService {
       return true;
     }
     const ps = await this.prisma.$queryRaw`
-            select sur.id          as surId,
-                   sur.user_id     as userId,
-                   sur.role_id     as roleId,
-                   sur.remark      as surRemark,
-                   sur.create_by   as surCreateBy,
-                   sur.update_by   as surUpdateBy,
-                   sur.create_time as surCreateTime,
-                   sur.update_time as surUpdateTime,
-                   sur.deleted     as surDeleted,
-                   sr.id           as srId,
-                   sr.label        as label,
-                   sr.order_num    as orderNum,
-                   sr.remark       as srRemark,
-                   sr.create_by    as srCreateBy,
-                   sr.update_by    as srUpdateBy,
-                   sr.create_time  as srCreateTime,
-                   sr.update_time  as srUpdateTime,
-                   sr.deleted      as srDeleted,
-                   sr.if_admin     as ifAdmin,
-                   sr.if_disabled  as ifDisabled
-            from sys_user_role sur
-                     left join sys_role sr on sur.role_id = sr.id
-            where sur.deleted = ${base.N}
-              and sr.deleted = ${base.N}
-              and sr.if_disabled = ${base.N}
-              and sr.if_admin = ${base.Y}
-              and sur.user_id = ${user.id};
+      SELECT 
+          sur.id AS surId,
+          sur.user_id AS userId,
+          sur.role_id AS roleId,
+          sur.remark AS surRemark,
+          sur.create_by AS surCreateBy,
+          sur.update_by AS surUpdateBy,
+          sur.create_time AS surCreateTime,
+          sur.update_time AS surUpdateTime,
+          sur.deleted AS surDeleted,
+          sr.id AS srId,
+          sr.label AS label,
+          sr.order_num AS orderNum,
+          sr.remark AS srRemark,
+          sr.create_by AS srCreateBy,
+          sr.update_by AS srUpdateBy,
+          sr.create_time AS srCreateTime,
+          sr.update_time AS srUpdateTime,
+          sr.deleted AS srDeleted,
+          sr.if_admin AS ifAdmin,
+          sr.if_disabled AS ifDisabled
+      FROM
+          sys_user_role sur
+              LEFT JOIN
+          sys_role sr ON sur.role_id = sr.id
+      WHERE
+          sur.deleted = ${base.N} AND sr.deleted = ${base.N}
+              AND sr.if_disabled = ${base.N}
+              AND sr.if_admin = ${base.Y}
+              AND sur.user_id = ${user.id};
     `;
     return ps.length > 0;
   }
@@ -73,9 +76,12 @@ export class AuthService {
   }
 
   async hasAdminPermissionByUser(user: userDto, permission: string) {
-    const permissionsOfUser = await this.permissionsOfUser(user);
+    if (await this.hasTopAdminPermission(user.id)) {
+      return true
+    }
+    const permissionsOfUser = await this.permissionsOfUser(user, permission);
     const index = permissionsOfUser.findIndex(item => item.perms === permission);
-    return await this.hasTopAdminPermission(user.id) || index > -1;
+    return index > -1;
   }
 
   async ifPublicInterface(permission: string) {
@@ -88,50 +94,78 @@ export class AuthService {
     return raw.length > 0;
   }
 
-  async permissionsOfUser(user: userDto) {
+  async permissionsOfUser(user: userDto, permission: string | null = null) {
     const retarr = [];
     if (user) {
       const userPermissions = await this.prisma.$queryRaw`
-            select sm.id          as id,
-                   sm.label       as label,
-                   sm.path        as path,
-                   sm.parent_id   as parentId,
-                   sm.component   as component,
-                   sm.icon        as icon,
-                   sm.order_num   as orderNum,
-                   sm.if_link     as ifLink,
-                   sm.if_visible  as ifVisible,
-                   sm.if_disabled as ifDisabled,
-                   sm.if_public   as ifPublic,
-                   sm.perms       as perms,
-                   sm.remark      as remark,
-                   sm.create_by   as createBy,
-                   sm.update_by   as updateBy,
-                   sm.create_time as createTime,
-                   sm.update_time as updateTime,
-                   sm.deleted     as deleted,
-                   sm.type        as type
-            from sys_menu sm
-            where (
-                exists(select 1 from sys_admin_top sat where sat.deleted = ${base.N} and sat.user_id = ${user.id})
-                    and sm.deleted = ${base.N}
-                    and sm.if_disabled = ${base.N}
-                )
-               or (
-                not exists(select 1 from sys_admin_top sat where sat.deleted = ${base.N} and sat.user_id = ${user.id})
-                    and sm.id in (select sm.id
-                                  from sys_role_permission srp
-                                           left join sys_user_role sur on srp.role_id = sur.role_id
-                                           left join sys_role sr on sr.id = sur.role_id
-                                           left join sys_menu sm on srp.type = 'm' and srp.permission_id = sm.id
-                                  where srp.deleted = ${base.N}
-                                    and sur.deleted = ${base.N}
-                                    and sm.deleted = ${base.N}
-                                    and sm.if_disabled = ${base.N}
-                                    and sr.deleted = ${base.N}
-                                    and sr.if_disabled = ${base.N}
-                                    and sur.user_id = ${user.id})
-                );
+        SELECT 
+            sm.id AS id,
+            sm.label AS label,
+            sm.path AS path,
+            sm.parent_id AS parentId,
+            sm.component AS component,
+            sm.icon AS icon,
+            sm.order_num AS orderNum,
+            sm.if_link AS ifLink,
+            sm.if_visible AS ifVisible,
+            sm.if_disabled AS ifDisabled,
+            sm.if_public AS ifPublic,
+            sm.perms AS perms,
+            sm.remark AS remark,
+            sm.create_by AS createBy,
+            sm.update_by AS updateBy,
+            sm.create_time AS createTime,
+            sm.update_time AS updateTime,
+            sm.deleted AS deleted,
+            sm.type AS type
+        FROM
+            sys_menu sm
+        WHERE
+            ((EXISTS( SELECT 
+                    1
+                FROM
+                    sys_admin_top sat
+                WHERE
+                    sat.deleted = ${base.N}
+                        AND sat.user_id = ${user.id})
+                AND sm.deleted = ${base.N}
+                AND sm.if_disabled = ${base.N})
+                OR (NOT EXISTS( SELECT 
+                    1
+                FROM
+                    sys_admin_top sat
+                WHERE
+                    sat.deleted = ${base.N}
+                        AND sat.user_id = ${user.id})
+                AND sm.id IN (SELECT 
+                    sm.id
+                FROM
+                    sys_role_permission srp
+                        LEFT JOIN
+                    sys_user_role sur ON srp.role_id = sur.role_id
+                        LEFT JOIN
+                    sys_role sr ON sr.id = sur.role_id
+                        LEFT JOIN
+                    sys_menu sm ON srp.type = 'm'
+                        AND srp.permission_id = sm.id
+                WHERE
+                    srp.deleted = ${base.N}
+                        AND sur.deleted = ${base.N}
+                        AND sm.deleted = ${base.N}
+                        AND sm.if_disabled = ${base.N}
+                        AND sr.deleted = ${base.N}
+                        AND sr.if_disabled = ${base.N}
+                        AND sur.user_id = ${user.id})))
+                AND 1 = CASE
+                WHEN
+                    COALESCE(${permission}, '') <> ''
+                THEN
+                    CASE
+                        WHEN perms = ${permission} THEN 1
+                        ELSE 0
+                    END
+                ELSE 1
+            END;
       `;
       retarr.push(...userPermissions);
     }
