@@ -62,7 +62,7 @@ $ npx prisma migrate dev --name init # 数据库
 ```
 
 ```bash
-$ prisma generate # 生成 Prisma Client
+$ npx prisma generate # 生成 Prisma Client
 ```
 
 ```bash

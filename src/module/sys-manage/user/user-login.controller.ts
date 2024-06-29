@@ -16,6 +16,7 @@ export class UserLoginController {
 
   @Post('/regist')
   async regist(@Body() dto: registDto): Promise<R> {
+    dto.password = decrypt(dto.password);
     return this.userService.regist(dto);
   }
 

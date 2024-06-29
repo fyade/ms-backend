@@ -68,7 +68,7 @@ export class UserService {
       password: await hashPassword(dto.password),
       createBy: userid,
       updateBy: userid,
-    });
+    }, { ifCustomizeId: true });
     return R.ok('注册成功。');
   }
 

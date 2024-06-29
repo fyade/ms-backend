@@ -5,7 +5,8 @@ const CryptoJS = require('crypto-js');
 
 /**
  * 单向加密
- * @param password
+ * @param password 
+ * @returns 
  */
 export async function hashPassword(password: string): Promise<string> {
   const salt = await bcrypt.genSalt();
@@ -15,8 +16,9 @@ export async function hashPassword(password: string): Promise<string> {
 
 /**
  * 单向加密的校验
- * @param password
- * @param hashedPassword
+ * @param password 
+ * @param hashedPassword 
+ * @returns 
  */
 export async function comparePassword(password: string, hashedPassword: string): Promise<boolean> {
   const boole = await bcrypt.compare(password, hashedPassword);
@@ -24,8 +26,19 @@ export async function comparePassword(password: string, hashedPassword: string):
 }
 
 /**
+ * 双向加密的加密
+ * @param str 
+ * @returns 
+ */
+export function encrypt(str: string): string {
+  const encrypted = CryptoJS.AES.encrypt(str, SECRET_KEY).toString()
+  return encrypted
+}
+
+/**
  * 双向加密的解密
- * @param encryptedStr
+ * @param encryptedStr 
+ * @returns 
  */
 export function decrypt(encryptedStr: string): string {
   const bytes = CryptoJS.AES.decrypt(encryptedStr, SECRET_KEY);
