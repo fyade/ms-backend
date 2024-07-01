@@ -1,0 +1,7 @@
+export const jwtConstants = {
+  secret: '',
+};
+export const SECRET_KEY = ''
+export const expireTime = '3600s';
+export const reqWhiteList = ['/sys/user/regist', '/sys/user/login'];
+export const adminLoginUrl = '/sys/user/adminlogin';
