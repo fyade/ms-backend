@@ -9,6 +9,11 @@ export class loginDto {
   password: string;
 }
 
+export class updPsdDto {
+  oldp: string
+  newp1: string
+  newp2: string
+}
 
 export interface reqUser {
   userid: string;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { adminNewUserDto, loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto';
+import { adminNewUserDto, loginDto, registDto, resetPsdDto, updPsdDto, userDto, userListSelDto } from './dto';
 import { genId } from '../../../util/IdUtils';
 import { AuthService } from '../auth/auth.service';
 import { HTTP } from '../../../common/Enum';
@@ -25,6 +25,13 @@ export class UserService {
     private readonly logUserLoginService: UserLoginService,
   ) {
     this.maxLoginFailCount = 10;
+  }
+
+  async getSelfInfo(): Promise<R> {
+    const currentUser = getCurrentUser().user
+    const user = await this.prisma.findById<userDto>('sys_user', currentUser.userid)
+    delete user.password
+    return R.ok(user)
   }
 
   async userSelList(dto: userListSelDto): Promise<R> {
@@ -54,6 +61,45 @@ export class UserService {
       ...res,
       list: res2,
     });
+  }
+
+  async insUser(dto: adminNewUserDto): Promise<R> {
+    const user = await this.prisma.findFirst('sys_user', { username: dto.username });
+    if (user) {
+      return R.err('用户名已存在。');
+    }
+    await this.prisma.create('sys_user', {
+      ...dto,
+      password: await hashPassword(dto.password),
+      id: genId(5, false),
+    }, { ifCustomizeId: true });
+    return R.ok();
+  }
+
+  async updUser(dto: userDto): Promise<R> {
+    await this.prisma.updateById('sys_user', dto)
+    return R.ok()
+  }
+
+  async updPsd(dto: updPsdDto): Promise<R> {
+    const user_ = await this.prisma.findById<userDto>('sys_user', getCurrentUser().user.userid);
+    const ifUserYes = await comparePassword(dto.oldp, user_.password)
+    if (!ifUserYes) {
+      return R.err('旧密码错误。')
+    }
+    await this.prisma.updateById('sys_user', {
+      id: user_.id,
+      password: await hashPassword(dto.newp1)
+    })
+    return R.ok()
+  }
+
+  async adminResetUserPsd(dto: resetPsdDto): Promise<R> {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.id)) {
+      throw new UserPermissionDeniedException();
+    }
+    await this.prisma.updateById('sys_user', { ...dto, password: await hashPassword(dto.password) });
+    return R.ok();
   }
 
   async regist(dto: registDto): Promise<R> {
@@ -166,26 +212,5 @@ export class UserService {
     }
     const permissions = await this.authService.permissionsOfUser(userinfo.data.user);
     return R.ok({ ...userinfo.data, permissions });
-  }
-
-  async insUser(dto: adminNewUserDto): Promise<R> {
-    const user = await this.prisma.findFirst('sys_user', { username: dto.username });
-    if (user) {
-      return R.err('用户名已存在。');
-    }
-    await this.prisma.create('sys_user', {
-      ...dto,
-      password: await hashPassword(dto.password),
-      id: genId(5, false),
-    }, { ifCustomizeId: true });
-    return R.ok();
-  }
-
-  async resetPsd(dto: resetPsdDto): Promise<R> {
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.id)) {
-      throw new UserPermissionDeniedException();
-    }
-    await this.prisma.updateById('sys_user', { ...dto, password: await hashPassword(dto.password) });
-    return R.ok();
   }
 }
