@@ -1,3 +1,14 @@
+## 关于 About
+
+这是一个后台管理系统模板，前端语言为Vue.js（Vue3），后端语言为Nest.js。
+
+前端开源地址：
+https://github.com/fyade/ms-frontend-admin
+https://gitee.com/fyade/ms-frontend-admin
+后端开源地址：
+https://github.com/fyade/ms-backend
+https://gitee.com/fyade/ms-backend
+
 ## 使用说明 Description
 
 在 /config 目录下新建 config.ts 文件，随后将 config.txt 内的内容复制进去并根据自身情况做修改；
@@ -7,7 +18,7 @@
 
 启动命令：
 ```bash
-$env:NODE_ENV="prod"; node ./main.js
+$env:NODE_ENV="dev"; node ./main.js
 ```
 
 其他命令：
