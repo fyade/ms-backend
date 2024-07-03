@@ -1,10 +1,10 @@
-import crypto from "crypto";
+const { v4: uuidv4 } = require('uuid');
 
 /**
  * 生成uuid
  */
 export function randomUUID() {
-  return crypto.randomUUID({disableEntropyCache: true})
+  return uuidv4()
 }
 
 const strArr = [

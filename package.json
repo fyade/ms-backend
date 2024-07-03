@@ -46,7 +46,8 @@
     "swagger-ui-express": "^5.0.0",
     "tencentcloud-sdk-nodejs": "^4.0.796",
     "typeorm": "^0.3.20",
-    "ua-parser-js": "^1.0.38"
+    "ua-parser-js": "^1.0.38",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

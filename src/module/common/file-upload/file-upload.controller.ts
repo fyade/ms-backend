@@ -8,7 +8,7 @@ import { pageSelDto } from '../../../common/dto/PageDto';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { ApiTags } from '@nestjs/swagger';
 
-@Controller('/sys/file-upload')
+@Controller('/sys-common/file-upload')
 @ApiTags('文件上传')
 export class FileUploadController {
   private env: any;

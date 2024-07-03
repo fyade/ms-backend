@@ -23,6 +23,7 @@ const config = {
     ...publicConfig,
     mode: base.DEV,
     port: portFromCmd || 8060,
+    staticRoot: '/static/file',
     database: {
       url: `mysql://root:123456@localhost:3306/proj_manage-system`,
       timezone: 'Asia/Shanghai'

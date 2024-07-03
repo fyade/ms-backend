@@ -33,7 +33,7 @@ import { UserLoginModule as LogUserLoginModule } from './module/sys-monitor/user
     }),
     ServeStaticModule.forRoot({
       rootPath: currentEnv().file.fileUploadPath,
-      serveRoot: '/static/file',
+      serveRoot: currentEnv().staticRoot,
     }),
     JwtModule.register({
       secret: jwtConstants.secret,

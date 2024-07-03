@@ -13,7 +13,7 @@ import {
 } from "./dto";
 import { pageVo } from "../../../common/vo/PageVo";
 import { pageSelDto } from "../../../common/dto/PageDto";
-import { randomUUID } from "../../../util/IdUtils";
+import { randomUUID } from '../../../util/IdUtils';
 
 const SparkMD5 = require('spark-md5')
 
@@ -85,7 +85,7 @@ export class FileUploadService {
       // 如果已有相同文件，则不用上传了
       const sameFile = await this.prisma.tbl_file.findFirst({
         where: {
-          file_name: fileName,
+          // file_name: fileName,
           file_md5: fileMd5,
           if_chunk: base.N,
           if_finished: base.Y,
@@ -147,7 +147,7 @@ export class FileUploadService {
     const fileNewName = fileUUID + fileSuffix;
     const sameFile = await this.prisma.tbl_file.findMany({
       where: {
-        file_name: dto.fileName,
+        // file_name: dto.fileName,
         file_md5: dto.fileMd5,
         if_chunk: base.Y,
         deleted: base.N
@@ -167,7 +167,7 @@ export class FileUploadService {
         // 已合并
         // 保存文件信息至数据库
         const fillObj = {
-          file_name: sameFileElement1.file_name,
+          file_name: fileName,
           file_new_name: sameFileElement1.file_new_name,
           file_size: BigInt(sameFileElement1.file_size),
           file_md5: sameFileElement1.file_md5,
@@ -182,12 +182,12 @@ export class FileUploadService {
         await this.prisma.tbl_file.create({
           data: fillObj
         })
-        return R.ok({merge: true})
+        return R.ok({ merge: true })
       } else {
         // 未合并
         // 保存文件信息至数据库
         const fillObj = {
-          file_name: sameFileElement1.file_name,
+          file_name: fileName,
           file_new_name: sameFileElement1.file_new_name,
           file_size: BigInt(sameFileElement1.file_size),
           file_md5: sameFileElement1.file_md5,
