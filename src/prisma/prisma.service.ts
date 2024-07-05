@@ -353,7 +353,8 @@ export class PrismaService extends PrismaClient {
         ...(objToSnakeCase(data) || {}),
       },
     };
-    return this.getModel(model).create(arg);
+    const retData = await this.getModel(model).create(arg);
+    return new Promise(resolve => resolve(objToCamelCase(retData)));
   }
 
   /**
@@ -400,7 +401,8 @@ export class PrismaService extends PrismaClient {
         };
       }),
     };
-    return this.getModel(model).createMany(arg);
+    const retData = await this.getModel(model).createMany(arg);
+    return new Promise(resolve => resolve(retData));
   }
 
   /**
@@ -461,7 +463,8 @@ export class PrismaService extends PrismaClient {
         ...objToSnakeCase(data),
       },
     };
-    return this.getModel(model).update(arg);
+    const retData = await this.getModel(model).update(arg);
+    return new Promise(resolve => resolve(objToCamelCase(retData)));
   }
 
   /**
