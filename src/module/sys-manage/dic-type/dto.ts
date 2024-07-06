@@ -1,5 +1,5 @@
-import { baseInterface } from '../../../util/base';
 import { pageSelDto } from '../../../common/dto/PageDto';
+import { baseInterface } from '../../../util/base';
 import { IsNotEmpty } from 'class-validator';
 
 export class dicTypeDto extends baseInterface {

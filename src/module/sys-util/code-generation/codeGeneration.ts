@@ -2,21 +2,29 @@
  * 代码生成说明：
  *
  * 后端部分：
- * 在 src/module/模块/业务/ 目录内新增 .controller.ts
- * 在 src/module/模块/业务/ 目录内新增 .service.ts
- * 在 src/module/模块/业务/ 目录内新增 dto.ts
- * 在 src/module/模块/业务/ 目录内新增 .module.ts，并在 @module().controllers 中引入 controller，在 @module().providers 中引入 service、AuthService、JwtService
- * 在 app.module.ts 中，导入 module 文件，并在 @module().imports 中添加
+ * * 在 src/module/模块/业务/ 目录内新增 .controller.ts
+ * * 在 src/module/模块/业务/ 目录内新增 .service.ts
+ * * 在 src/module/模块/业务/ 目录内新增 dto.ts
+ * * 在 src/module/模块/业务/ 目录内新增 .module.ts，并在 @module().controllers 中引入 controller，在 @module().providers 中引入 service、AuthService、JwtService
+ * * 在 app.module.ts 中，导入 module 文件，并在 @module().imports 中添加
  *
  * 前端部分：
- * 接口：在 src/api/module/模块/ 目录内新增 业务.ts 文件
- * 类型：在 src/type/api/模块/ 目录内新增 业务.ts 文件
- * 页面：在 src/views/模块/业务/ 目录内新增 index.vue 文件
+ * * 接口：在 src/api/module/模块/ 目录内新增 业务.ts 文件
+ * * 类型：在 src/type/api/模块/ 目录内新增 业务.ts 文件
+ * * 页面：在 src/views/模块/业务/ 目录内新增 index.vue 文件
  */
 import { codeGenTableDto } from '../code-gen-table/dto';
 import { codeGenColumnDto } from '../code-gen-column/dto';
 import { capitalizeFirstLetter, lowercaseFirstLetter, toCamelCase, toKebabCase } from '../../../util/BaseUtils';
-import { base } from '../../../util/base';
+import { base, publicDict } from '../../../util/base';
+
+const baseInterfaceColumns = [
+  'createBy',
+  'updateBy',
+  'createTime',
+  'updateTime',
+  'deleted'
+]
 
 /**
  * 代码生成
@@ -27,18 +35,154 @@ export function codeGeneration({ table, columns }: { table: codeGenTableDto, col
   const businessName = lowercaseFirstLetter(table.businessName);
   const moduleName = lowercaseFirstLetter(table.moduleName);
   const getDefaultValue = (tsName: string, tsType: string) => {
-
   };
+  const qd3_dialogFormDefaultData = [
+    [
+      (key?: any) => key === 'ifDefault',
+      (key?: any) => 'final.IS_DEFAULT_YES'
+    ],
+    [
+      (key?: any) => key === 'ifDisabled',
+      (key?: any) => 'final.DISABLED_NO'
+    ],
+    [
+      (key?: any) => key === 'parentId',
+      (key?: any) => 'final.DEFAULT_PARENT_ID'
+    ],
+    [
+      (key?: any) => key === 'orderNum',
+      (key?: any) => 'final.DEFAULT_ORDER_NUM'
+    ],
+    [
+      (key?: any) => true,
+      (key?: any) => `''`
+    ]
+  ]
+  const qd3_dialogFormForm = [
+    [
+      (formType: any, index: number, length: number) => formType === 'inputNumber',
+      (tsName: any, index: number, length: number) => {
+        const string = `            <el-form-item :label="state.dict['${tsName}']" prop="${tsName}">
+              <el-input-number v-model="state.dialogForm['${tsName}']" controls-position="right"/>
+            </el-form-item>`;
+        const ifLastAndSingular = index === length - 1 && length % 2 === 1
+        return `${index % 2 === 0 ? `        <el-row>
+          <el-col :span="${ifLastAndSingular ? 24 : 12}">` : `          <el-col :span="12">`}
+${string}
+${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
+        </el-row>` : `          </el-col>`}`;
+      },
+      (tsName: any, index: number, length: number) => {
+        return `
+          <el-table-column prop="${tsName}" :label="state.dict['${tsName}']" width="300">
+            <template #header>
+              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ state.dict['${tsName}'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[\`\${$index}-${tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input-number v-model="state.dialogForms[$index]['${tsName}']" controls-position="right"/>
+              </div>
+            </template>
+          </el-table-column>`;
+      }
+    ],
+    [
+      (formType: any, index: number, length: number) => formType === 'textarea',
+      (tsName: any, index: number, length: number) => {
+        const string = `            <el-form-item :label="state.dict['${tsName}']" prop="${tsName}">
+              <el-input type="textarea" v-model="state.dialogForm['${tsName}']" :placeholder="state.dict['${tsName}']"/>
+            </el-form-item>`;
+        const ifLastAndSingular = index === length - 1 && length % 2 === 1
+        return `${index % 2 === 0 ? `        <el-row>
+          <el-col :span="${ifLastAndSingular ? 24 : 12}">` : `          <el-col :span="12">`}
+${string}
+${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
+        </el-row>` : `          </el-col>`}`;
+      },
+      (tsName: any, index: number, length: number) => {
+        return `
+          <el-table-column prop="${tsName}" :label="state.dict['${tsName}']" width="300">
+            <template #header>
+              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ state.dict['${tsName}'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[\`\${$index}-${tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input type="textarea" v-model="state.dialogForms[$index]['${tsName}']" :placeholder="state.dict['${tsName}']"/>
+              </div>
+            </template>
+          </el-table-column>`;
+      }
+    ],
+    [
+      (formType: any, index: number, length: number) => formType === 'radio',
+      (tsName: any, index: number, length: number) => {
+        const string = `            <el-form-item :label="state.dict['${tsName}']" prop="${tsName}">
+              <el-radio-group v-model="state.dialogForm['${tsName}']">
+                <el-radio :label="final.Y">是</el-radio>
+                <el-radio :label="final.N">否</el-radio>
+              </el-radio-group>
+            </el-form-item>`;
+        const ifLastAndSingular = index === length - 1 && length % 2 === 1
+        return `${index % 2 === 0 ? `        <el-row>
+          <el-col :span="${ifLastAndSingular ? 24 : 12}">` : `          <el-col :span="12">`}
+${string}
+${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
+        </el-row>` : `          </el-col>`}`;
+      },
+      (tsName: any, index: number, length: number) => {
+        return `
+          <el-table-column prop="${tsName}" :label="state.dict['${tsName}']" width="70">
+            <template #header>
+              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ state.dict['${tsName}'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[\`\${$index}-${tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-checkbox v-model="state.dialogForms[$index]['${tsName}']" :true-label="final.Y" :false-label="final.N"/>
+              </div>
+            </template>
+          </el-table-column>`;
+      }
+    ],
+    [
+      (formType: any, index: number, length: number) => formType === 'input' || true,
+      (tsName: any, index: number, length: number) => {
+        const string = `            <el-form-item :label="state.dict['${tsName}']" prop="${tsName}">
+              <el-input v-model="state.dialogForm['${tsName}']" :placeholder="state.dict['${tsName}']"/>
+            </el-form-item>`;
+        const ifLastAndSingular = index === length - 1 && length % 2 === 1
+        return `${index % 2 === 0 ? `        <el-row>
+          <el-col :span="${ifLastAndSingular ? 24 : 12}">` : `          <el-col :span="12">`}
+${string}
+${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
+        </el-row>` : `          </el-col>`}`;
+      },
+      (tsName: any, index: number, length: number) => {
+        return `
+          <el-table-column prop="${tsName}" :label="state.dict['${tsName}']" width="300">
+            <template #header>
+              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ state.dict['${tsName}'] }}</span>
+            </template>
+            <template #default="{$index}">
+              <div :class="state.dialogForms_error?.[\`\${$index}-${tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
+                <el-input v-model="state.dialogForms[$index]['${tsName}']" :placeholder="state.dict['${tsName}']"/>
+              </div>
+            </template>
+          </el-table-column>`;
+      }
+    ]
+  ]
   const hd1 =
-`import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+`import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Authorize } from '../../../decorator/authorizeDecorator';
-import { R } from '../../../common/R';
 import { ${capitalizeFirstLetter(moduleName)}Service } from './${toKebabCase(moduleName)}.service';
+import { Authorize } from '../../../decorator/authorizeDecorator';
 import { insOneDto, selAllDto, selListDto, updOneDto } from './dto';
+import { R } from '../../../common/R';
+import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/${toKebabCase(businessName)}/${toKebabCase(moduleName)}')
 @ApiTags('${table.tableDescr}')
+@UsePipes(new ValidationPipe())
 export class ${capitalizeFirstLetter(moduleName)}Controller {
   constructor(private readonly ${moduleName}Service: ${capitalizeFirstLetter(moduleName)}Service) {
   }
@@ -113,8 +257,8 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
     const res = await this.prisma.findPage<${moduleName}Dto, selListDto>('${table.tableName}', {
       data: dto,
       orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},
-      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(',')}],
-      numberKeys: [${columns.filter(item => item.tsType === 'number').map(item => `'${toCamelCase(item.colName)}'`).join(',')}],
+      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],
+      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],
     });
     return R.ok(res);
   }
@@ -123,8 +267,8 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
     const res = await this.prisma.findAll('${table.tableName}', {
       data: dto,
       orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},
-      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(',')}],
-      numberKeys: [${columns.filter(item => item.tsType === 'number').map(item => `'${toCamelCase(item.colName)}'`).join(',')}],
+      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],
+      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],
     });
     return R.ok(res);
   }
@@ -168,28 +312,48 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
   const hd3 =
 `import { pageSelDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
+import { IsNotEmpty } from 'class-validator';
 
-export interface ${moduleName}Dto extends insOneDto, baseInterface {
+export class ${moduleName}Dto extends baseInterface {
+${
+  columns
+    .filter(item => baseInterfaceColumns.indexOf(item.tsName) === -1)
+    .map(column => `  ${column.tsName}: ${column.tsType};`)
+    .join('\n\n')
+}
+}
+
+export class selListDto extends pageSelDto {
   id: ${columns.find(item => item.colName === 'id').tsType};
+
+${
+  columns
+    .filter(item => item.ifIns === base.Y)
+    .map(column => `  ${column.tsName}: ${column.tsType};`)
+    .join('\n\n')
+}
 }
 
-export interface selListDto extends pageSelDto, insOneDto {
-  id: ${columns.find(item => item.colName === 'id').tsType};
-}
-
-export interface selAllDto extends insOneDto {
-}
-
-export interface insOneDto {
+export class insOneDto {
 ${
     columns
       .filter(item => item.ifIns === base.Y)
-      .map(column => `  ${column.tsName}${column.ifRequired === base.Y ? '' : '?'}: ${column.tsType};`)
-      .join('\n')
+      .map(column => `${column.ifRequired === base.Y ? `  @IsNotEmpty({ message: '${column.colDescr}不能为空' })\n` : ''}  ${column.tsName}: ${column.tsType};`)
+      .join('\n\n')
   }
 }
 
-export interface updOneDto extends insOneDto {
+export class selAllDto {
+${
+  columns
+    .filter(item => item.ifIns === base.Y)
+    .map(column => `  ${column.tsName}: ${column.tsType};`)
+    .join('\n\n')
+}
+}
+
+export class updOneDto extends insOneDto {
+  @IsNotEmpty({ message: '主键id不能为空' })
   id: ${columns.find(item => item.colName === 'id').tsType};
 }
 `;
@@ -204,7 +368,8 @@ import { JwtService } from '@nestjs/jwt';
   controllers: [${capitalizeFirstLetter(moduleName)}Controller],
   providers: [${capitalizeFirstLetter(moduleName)}Service, AuthService, JwtService]
 })
-export class ${capitalizeFirstLetter(moduleName)}Module {}
+export class ${capitalizeFirstLetter(moduleName)}Module {
+}
 `;
   const hd5 =
 `在 app.module.ts 中，导入 module 文件，并在 @module().imports 中添加，具体语句如下：
@@ -289,23 +454,29 @@ export function ${moduleName}Del(ids: any[]) {
   const qd2 =
 `import { pageSelDto } from "@/type/tablePage.ts";
 
-export interface ${moduleName}SelDto extends pageSelDto {
+export class ${moduleName}SelDto extends pageSelDto {
 }
 
-export interface ${moduleName}SelAllDto {
+export class ${moduleName}SelAllDto {
 }
 
-export interface ${moduleName}InsDto {
+export class ${moduleName}InsDto {
 ${
     columns
       .filter(item => item.ifIns === base.Y)
-      .map(column => `  ${column.tsName}${column.ifRequired === base.Y ? '' : '?'}: ${column.tsType};`)
+      .map(column => `  ${column.tsName}!: ${column.tsType};`)
       .join('\n')
   }
 }
 
-export interface ${moduleName}UpdDto extends ${moduleName}InsDto {
-  id: ${columns.find(item => item.colName === 'id').tsType};
+export class ${moduleName}UpdDto {
+  id!: ${columns.find(item => item.colName === 'id').tsType};
+${
+  columns
+    .filter(item => item.ifIns === base.Y)
+    .map(column => `  ${column.tsName}!: ${column.tsType};`)
+    .join('\n')
+}
 }
 `;
   const qd3 =
@@ -346,14 +517,15 @@ const state = reactive<State>({
   //   ifDefault: final.IS_DEFAULT_YES,
   //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
+  //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
   // }
   dialogForm: {
     id: '',
-    ${
+${
     columns
       .filter(item => item.ifIns === base.Y)
-      .map(column => `    ${column.tsName}: '',`)
+      .map(column => `    ${column.tsName}: ${qd3_dialogFormDefaultData.find(funcs => funcs[0](column.tsName))[1]()},`)
       .join('\n')
   }
   },
@@ -365,10 +537,10 @@ const state = reactive<State>({
   //   ...
   // }
   dFormRules: {
-    ${
+${
     columns
       .filter(item => item.ifRequired === base.Y)
-      .map(item => `${item.tsName}: [{required: true, trigger: 'change'}],`)
+      .map(item => `    ${item.tsName}: [{required: true, trigger: 'change'}],`)
       .join('\n')
   }
   } as FormRules,
@@ -380,9 +552,10 @@ const state = reactive<State>({
   // }
   dict: {
     ...publicDict,
-    ${
+${
     columns
-      .map(item => `${item.tsName}: '${item.colDescr}',`)
+      .filter(item => Object.keys(publicDict).indexOf(item.tsName) === -1)
+      .map(item => `    ${item.tsName}: '${item.colDescr}',`)
       .join('\n')
   }
   },
@@ -536,74 +709,60 @@ const {
 <template>
   <!--弹框-->
   <el-dialog
-      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
+      ${':'}width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"
       v-model="dialogVisible"
-      :title="state.dialogType.label"
+      ${':'}title="state.dialogType.label"
       draggable
       append-to-body
   >
     <el-tabs v-if="config.bulkOperation" v-model="activeTabName">
-      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
-      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
+      <el-tab-pane ${':'}disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>
+      <el-tab-pane ${':'}disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>
     </el-tabs>
     <template v-if="activeTabName===final.one">
       <el-form
           ref="dialogFormRef"
           v-loading="dialogLoadingRef"
-          :model="state.dialogForm"
-          :label-width="CONFIG.dialog_form_label_width"
-          :rules="state.dFormRules"
+          ${':'}model="state.dialogForm"
+          ${':'}label-width="CONFIG.dialog_form_label_width"
+          ${':'}rules="state.dFormRules"
       >
         <!--<el-row>-->
         <!--  <el-col :span="12"></el-col>-->
         <!--  <el-col :span="12"></el-col>-->
         <!--</el-row>-->
-        <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">
+        <el-form-item v-if="state.dialogType.value!==final.ins" ${':'}label="state.dict['id']" prop="id">
           <span>{{ state.dialogForm['id'] }}</span>
         </el-form-item>
         <!--
         第一个input添加如下属性
         v-focus
         -->
-        <!--在此下方添加表单项-->${
+        <!--在此下方添加表单项-->
+${
     columns
       .filter(item => item.ifIns === base.Y)
-      .map(item => item.formType === 'input' ? `
-        <el-form-item :label="state.dict['${item.tsName}']" prop="${item.tsName}">
-          <el-input v-model="state.dialogForm['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
-        </el-form-item>` : item.formType === 'inputNumber' ? `
-        <el-form-item :label="state.dict['${item.tsName}']" prop="${item.tsName}">
-          <el-input-number v-model="state.dialogForm['${item.tsName}']" controls-position="right"/>
-        </el-form-item>` : item.formType === 'textarea' ? `
-        <el-form-item :label="state.dict['${item.tsName}']" prop="${item.tsName}">
-          <el-input type="textarea" v-model="state.dialogForm['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
-        </el-form-item>` : `
-        <el-form-item :label="state.dict['${item.tsName}']" prop="${item.tsName}">
-          <el-input v-model="state.dialogForm['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
-        </el-form-item>`,
-      )
-      .join('')
+      .map((item, index) => `${qd3_dialogFormForm.find(funcs => funcs[0](item.formType, 0, 0))[1](item.tsName, index, columns.filter(item => item.ifIns === base.Y).length)}`)
+      .join('\n')
   }
-        <!--在此上方添加表单项-->
-        <!--<el-form-item :label="state.dict[\'orderNum\']" prop='orderNum'>-->
-        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict[\'ifDefault\']" prop='ifDefault'>-->
-        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.IS_DEFAULT_YES'-->
-        <!--             :inactive-value='final.IS_DEFAULT_NO'/>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict[\'ifDisabled\']" prop='ifDisabled'>-->
-        <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->
-        <!--    <el-radio :label="final.Y">是</el-radio>-->
-        <!--    <el-radio :label="final.N">否</el-radio>-->
-        <!--  </el-radio-group>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->
-        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO"-->
-        <!--             :inactive-value="final.DISABLED_YES"/>-->
-        <!--</el-form-item>-->
-        <!--上方几个酌情使用-->
-      </el-form>
+        ${'<!--在此上方添加表单项-->'}
+        ${`<!--<el-form-item :label="state.dict['orderNum']" prop='orderNum'>-->`}
+        ${`<!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->`}
+        ${`<!--</el-form-item>-->`}
+        ${`<!--<el-form-item :label="state.dict['ifDefault']" prop='ifDefault'>-->`}
+        ${`<!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.IS_DEFAULT_YES' :inactive-value='final.IS_DEFAULT_NO'/>-->`}
+        ${`<!--</el-form-item>-->`}
+        ${`<!--<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>-->`}
+        ${`<!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->`}${`
+        `}${`<!--    <el-radio :label="final.Y">是</el-radio>-->`}${`
+        `}${`<!--    <el-radio :label="final.N">否</el-radio>-->`}${`
+        `}${`<!--  </el-radio-group>-->`}${`
+        `}${`<!--</el-form-item>-->`}${`
+        `}${`<!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->`}${`
+        `}${`<!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO" :inactive-value="final.DISABLED_YES"/>-->`}${`
+        `}${`<!--</el-form-item>-->`}${`
+        `}${'<!--上方几个酌情使用-->'}${`
+      `}${'</el-form>'}
     </template>
     <template v-if="activeTabName===final.more">
       <el-form
@@ -611,77 +770,36 @@ const {
           v-loading="dialogLoadingRef"
       >
         <el-table
-            :data="state.dialogForms"
+            ${':'}data="state.dialogForms"
             v-if="state.dialogForms"
         >
           <el-table-column type="index" width="50">
-            <template #header>
+            <template ${'#'}header>
               #
             </template>
           </el-table-column>
           <!--在此下方添加表格列-->${
     columns
       .filter(item => item.ifIns === base.Y)
-      .map(item => item.formType === 'input' ? `
-          <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width="300">
-            <template #header>
-              <span :class="ifRequired('${item.tsName}')?'tp-table-header-required':''">{{ state.dict['${item.tsName}'] }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[\`\${$index}-${item.tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
-              </div>
-            </template>
-          </el-table-column>` : item.formType === 'inputNumber' ? `
-          <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width="300">
-            <template #header>
-              <span :class="ifRequired('${item.tsName}')?'tp-table-header-required':''">{{ state.dict['${item.tsName}'] }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[\`\${$index}-${item.tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index]['${item.tsName}']" controls-position="right"/>
-              </div>
-            </template>
-          </el-table-column>` : item.formType === 'textarea' ? `
-          <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width="300">
-            <template #header>
-              <span :class="ifRequired('${item.tsName}')?'tp-table-header-required':''">{{ state.dict['${item.tsName}'] }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[\`\${$index}-${item.tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index]['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
-              </div>
-            </template>
-          </el-table-column>` : `
-          <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width="300">
-            <template #header>
-              <span :class="ifRequired('${item.tsName}')?'tp-table-header-required':''">{{ state.dict['${item.tsName}'] }}</span>
-            </template>
-            <template #default="{$index}">
-              <div :class="state.dialogForms_error?.[\`\${$index}-${item.tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['${item.tsName}']" :placeholder="state.dict['${item.tsName}']"/>
-              </div>
-            </template>
-          </el-table-column>`,
-      )
+      .map((item, index) => `${qd3_dialogFormForm.find(funcs => funcs[0](item.formType, 0, 0))[2](item.tsName, index, columns.filter(item => item.ifIns === base.Y).length)}`)
       .join('')
   }
           <!--在此上方添加表格列-->
           <el-table-column fixed="right" label="操作" min-width="120">
-            <template v-if="state.dialogType.value===final.ins" #default="{$index}">
-              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>
+            <template v-if="state.dialogType.value===final.ins" ${'#'}default="{$index}">
+              <el-button link type="danger" size="small" ${'@'}click="dfDel($index)">删除</el-button>
             </template>
           </el-table-column>
-          <template v-if="state.dialogType.value===final.ins" #append>
+          <template v-if="state.dialogType.value===final.ins" ${'#'}append>
             <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>
           </template>
         </el-table>
       </el-form>
     </template>
-    <template #footer>
+    <template ${'#'}footer>
       <span class="dialog-footer">
         <el-button @click="dCan">取消</el-button>
-        <el-button type="primary" @click="dCon">确认</el-button>
+        <el-button type="primary" ${'@'}click="dCon">确认</el-button>
       </span>
     </template>
   </el-dialog>
@@ -691,73 +809,73 @@ const {
       class="demo-form-inline"
       v-if="Object.keys(state.filterForm).length>0"
       ref="filterFormRef"
-      :model="state.filterForm"
+      ${':'}model="state.filterForm"
       :inline="true"
       @keyup.enter="fEnter"
   >
-    <!--在此下方添加表单项-->
-    <!--<el-form-item :label="state.dict['']" prop="">-->
-    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->
-    <!--</el-form-item>-->
-    <!--在此上方添加表单项-->
+    ${`<!--在此下方添加表单项-->`}
+    ${`<!--<el-form-item :label="state.dict['']" prop="">-->`}
+    ${`<!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->`}
+    ${`<!--</el-form-item>-->`}
+    ${`<!--在此上方添加表单项-->`}
     <el-form-item>
       <el-button type="primary" @click="fCon">筛选</el-button>
-      <el-button @click="fCan">重置</el-button>
+      <el-button ${'@'}click="fCan">重置</el-button>
     </el-form-item>
   </el-form>
 
   <!--操作按钮-->
   <div>
     <!--<el-button-group>-->
-    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>
-    <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>
-    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
-    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
-    <!--<el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0'>导出</el-button>-->
-    <!--<el-button type="warning" plain :icon='Upload'>上传</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->
-    <!--</el-button-group>-->
-    <!--<el-button-group>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->
-    <!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->
-    <!--</el-button-group>-->
-  </div>
+    <el-button type="primary" plain ${':'}icon="Refresh" @click="gRefresh">刷新</el-button>
+    <el-button type="primary" plain ${':'}icon="Plus" @click="gIns">新增</el-button>
+    <el-button type="success" plain ${':'}icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
+    <el-button type="danger" plain ${':'}icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
+    ${`<!--<el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0'>导出</el-button>-->`}
+    ${`<!--<el-button type="warning" plain :icon='Upload'>上传</el-button>-->`}
+    ${`<!--</el-button-group>-->`}
+    ${`<!--<el-button-group>-->`}${`
+    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->`}${`
+    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->`}${`
+    `}${`<!--</el-button-group>-->`}${`
+    `}${`<!--<el-button-group>-->`}${`
+    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->`}${`
+    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->`}${`
+    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->`}${`
+    `}${`<!--</el-button-group>-->`}${`
+  `}${'</div>'}
 
   <!--数据表格-->
   <el-table
       v-loading="tableLoadingRef"
-      :data="state.list"
-      @selection-change="handleSelectionChange"
+      ${':'}data="state.list"
+      ${'@selection-change="handleSelectionChange"'}
   >
     <el-table-column fixed type="selection" width="55"/>
-    <!--<el-table-column fixed prop="id" :label="state.dict[\'id\']" width='180'/>-->
-    <!--上面id列的宽度改一下-->
-    <!--在此下方添加表格列-->${
+    ${`<!--<el-table-column fixed prop="id" :label="state.dict[\'id\']" width="180"/>-->`}
+    ${`<!--上面id列的宽度改一下-->`}
+    ${`<!--在此下方添加表格列-->`}${
     columns
       .filter(item => item.ifSelOne === base.Y)
       .map(item => `
-        <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width='120'/>`,
+        <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width="120"/>`,
       )
       .join('')
   }
-    <!--在此上方添加表格列-->
-    <!--<el-table-column prop="createBy" :label="state.dict[\'createBy\']" width='120'/>-->
-    <!--<el-table-column prop="updateBy" :label="state.dict[\'updateBy\']" width='120'/>-->
-    <!--<el-table-column prop="createTime" :label="state.dict[\'createTime\']" width='220'/>-->
-    <!--<el-table-column prop="updateTime" :label="state.dict[\'updateTime\']" width='220'/>-->
-    <!--<el-table-column prop="deleted" :label="state.dict[\'deleted\']" width='60'/>-->
-    <!--上方几个酌情使用-->
-    <el-table-column fixed="right" label="操作" min-width="120">
+    ${`<!--在此上方添加表格列-->`}
+    ${`<!--<el-table-column prop="createBy" :label="state.dict[\'createBy\']" width="120"/>-->`}
+    ${`<!--<el-table-column prop="updateBy" :label="state.dict[\'updateBy\']" width="120"/>-->`}
+    ${`<!--<el-table-column prop="createTime" :label="state.dict[\'createTime\']" width="220"/>-->`}
+    ${`<!--<el-table-column prop="updateTime" :label="state.dict[\'updateTime\']" width="220"/>-->`}
+    ${`<!--<el-table-column prop="deleted" :label="state.dict[\'deleted\']" width="60"/>-->`}
+    ${`<!--上方几个酌情使用-->`}
+    ${'<el-table-column fixed="right" label="操作" min-width="120">'}
       <template #default="{row}">
         <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>
-        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>
+        <el-button link type="danger" size="small" ${'@'}click="tDel(row.id)">删除</el-button>
       </template>
     </el-table-column>
-    <template #append>
+    <template ${'#'}append>
       <span>此表格的多选<span class="underline">不支持</span>{{ \`跨分页保存，当前已选 \${state.multipleSelection.length} 条数据。\` }}</span>
     </template>
   </el-table>
@@ -765,10 +883,10 @@ const {
   <!--分页-->
   <Pagination
       v-if="state.total!==-1"
-      :total="Number(state.total)"
-      :page-num="state.pageParam.pageNum"
-      :page-size="state.pageParam.pageSize"
-      @page-change="pageChange"
+      ${':total="Number(state.total)"'}
+      ${':page-num="state.pageParam.pageNum"'}
+      ${':page-size="state.pageParam.pageSize"'}
+      ${'@page-change="pageChange"'}
   />
 </template>
 ` + `
