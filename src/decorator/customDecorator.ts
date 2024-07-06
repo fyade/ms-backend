@@ -1,11 +1,18 @@
-import { createParamDecorator, ExecutionContext, SetMetadata } from "@nestjs/common";
+import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common';
 
 export const GetReqUser = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest()
-    return request.body.user
-  }
-)
+    const request = ctx.switchToHttp().getRequest();
+    return request.body.user;
+  },
+);
 
-export const PRE_AUTHORIZE_KEY = 'perAuthorize'
-export const PreAuthorize = (permission: string) => SetMetadata(PRE_AUTHORIZE_KEY, permission)
+export const PRE_AUTHORIZE_KEY = 'perAuthorize';
+
+export class PreAuthorizeParams {
+  permission: string;
+  ifSF: boolean;
+}
+
+export const PreAuthorize = (param: PreAuthorizeParams) => SetMetadata(PRE_AUTHORIZE_KEY, param);
+

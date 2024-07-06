@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CodeGenColumnService } from './code-gen-column.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
 import { insOneDto, selAllDto, selListDto, updOneDto } from './dto';
+import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/sys-util/code-gen-column')
 @ApiTags('代码生成-列信息表')
+@UsePipes(new ValidationPipe())
 export class CodeGenColumnController {
   constructor(private readonly codeGenColumnService: CodeGenColumnService) {
   }
@@ -20,7 +22,6 @@ export class CodeGenColumnController {
   @Get('/all')
   @Authorize('sysUtil:codeGenColumn:selAll')
   async selAll(@Query() dto: selAllDto) {
-    if (dto.tableId) dto.tableId = Number(dto.tableId);
     return this.codeGenColumnService.selAll(dto);
   }
 

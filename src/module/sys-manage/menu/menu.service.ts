@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { insOneDto, menuDto, selListDto, updOneDto } from './dto';
+import { insOneDto, menuDto, selAllDto, updOneDto } from './dto';
 
 @Injectable()
 export class MenuService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selMenu(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findAll<menuDto>('sys_menu', { data: dto, orderBy: true,numberKeys:['parendId'] });
+  async selMenu(dto: selAllDto): Promise<R> {
+    const res = await this.prisma.findAll<menuDto>('sys_menu', { data: dto, orderBy: true, numberKeys: ['parendId'] });
     return R.ok(res);
   }
 

@@ -12,17 +12,37 @@ const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../
 
 @Injectable()
 export class PrismaService extends PrismaClient {
-  private defaultSelArg = () => {
-    return {
+  private defaultSelArg = ({
+                             ifDeleted = true,
+                           }: {
+                             ifDeleted?: boolean
+                           } = {},
+  ) => {
+    const retObj = {
       where: {
         deleted: base.N,
       },
     };
+    if (!ifDeleted) delete retObj.where.deleted;
+    return retObj;
   };
-  private defaultInsArg = () => {
+  private defaultInsArg = ({
+                             ifCreateBy = true,
+                             ifUpdateBy = true,
+                             ifCreateTime = true,
+                             ifUpdateTime = true,
+                             ifDeleted = true,
+                           }: {
+                             ifCreateBy?: boolean,
+                             ifUpdateBy?: boolean,
+                             ifCreateTime?: boolean,
+                             ifUpdateTime?: boolean,
+                             ifDeleted?: boolean,
+                           } = {},
+  ) => {
     const userid = getCurrentUser().user?.userid;
     const time1 = time();
-    return {
+    const retObj = {
       data: {
         create_by: userid,
         update_by: userid,
@@ -31,9 +51,24 @@ export class PrismaService extends PrismaClient {
         deleted: base.N,
       },
     };
+    if (!ifCreateBy) delete retObj.data.create_by;
+    if (!ifUpdateBy) delete retObj.data.update_by;
+    if (!ifCreateTime) delete retObj.data.create_time;
+    if (!ifUpdateTime) delete retObj.data.update_time;
+    if (!ifDeleted) delete retObj.data.deleted;
+    return retObj;
   };
-  private defaultUpdArg = () => {
-    return {
+  private defaultUpdArg = ({
+                             ifUpdateBy = true,
+                             ifUpdateTime = true,
+                             ifDeleted = true,
+                           }: {
+                             ifUpdateBy?: boolean,
+                             ifUpdateTime?: boolean,
+                             ifDeleted?: boolean,
+                           } = {},
+  ) => {
+    const retObj = {
       where: {
         deleted: base.N,
       },
@@ -42,6 +77,10 @@ export class PrismaService extends PrismaClient {
         update_time: time(),
       },
     };
+    if (!ifUpdateBy) delete retObj.data.update_by;
+    if (!ifUpdateTime) delete retObj.data.update_time;
+    if (!ifDeleted) delete retObj.where.deleted;
+    return retObj;
   };
   private defaultDelArg = () => {
     return {
@@ -92,8 +131,7 @@ export class PrismaService extends PrismaClient {
                      } = {},
   ) {
     const data_ = objToSnakeCase(data);
-    const publicData = this.defaultSelArg().where;
-    if (!ifDeleted) delete publicData.deleted;
+    const publicData = this.defaultSelArg({ ifDeleted }).where;
     return {
       AND: [
         ...Object.keys(publicData).reduce((obj, item) => [
@@ -163,8 +201,7 @@ export class PrismaService extends PrismaClient {
     const pageSize = Number(data.pageSize);
     delete data.pageNum;
     delete data.pageSize;
-    const publicData = this.defaultSelArg().where;
-    if (!ifDeleted) delete publicData.deleted;
+    const publicData = this.defaultSelArg({ ifDeleted }).where;
     const arg: any = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
         data,
@@ -244,7 +281,7 @@ export class PrismaService extends PrismaClient {
         numberKeys,
         ifDeleted,
       }) : {
-        ...this.defaultSelArg().where,
+        ...this.defaultSelArg({ ifDeleted }).where,
         ...(objToSnakeCase(data) || {}),
       },
     };
@@ -270,11 +307,17 @@ export class PrismaService extends PrismaClient {
    * 查
    * @param model
    * @param args
+   * @param ifDeleted
    */
-  async findFirst<T>(model: string, args?: any): Promise<T> {
+  async findFirst<T>(model: string, args?: any, {
+                       ifDeleted = true,
+                     }: {
+                       ifDeleted?: boolean
+                     } = {},
+  ): Promise<T> {
     const arg = {
       where: {
-        ...this.defaultSelArg().where,
+        ...this.defaultSelArg({ ifDeleted }).where,
         ...(objToSnakeCase(args) || {}),
       },
     };
@@ -287,20 +330,32 @@ export class PrismaService extends PrismaClient {
    * 查
    * @param model
    * @param id
+   * @param ifDeleted
    */
-  async findById<T>(model: string, id: any): Promise<T> {
-    return this.findFirst<T>(model, { id: id });
+  async findById<T>(model: string, id: any, {
+                      ifDeleted = true,
+                    }: {
+                      ifDeleted?: boolean
+                    } = {},
+  ): Promise<T> {
+    return this.findFirst<T>(model, { id: id }, { ifDeleted });
   }
 
   /**
    * 查
    * @param model
    * @param ids
+   * @param ifDeleted
    */
-  async findByIds<T>(model: string, ids: any[]): Promise<T[]> {
+  async findByIds<T>(model: string, ids: any[], {
+                       ifDeleted = true,
+                     }: {
+                       ifDeleted?: boolean
+                     } = {},
+  ): Promise<T[]> {
     const arg = {
       where: {
-        ...this.defaultSelArg().where,
+        ...this.defaultSelArg({ ifDeleted }).where,
         id: {
           in: ids,
         },
@@ -341,12 +396,7 @@ export class PrismaService extends PrismaClient {
     if (!ifCustomizeId) {
       delete data.id;
     }
-    const publicData = this.defaultInsArg().data;
-    if (!ifCreateBy) delete publicData.create_by;
-    if (!ifUpdateBy) delete publicData.update_by;
-    if (!ifCreateTime) delete publicData.create_time;
-    if (!ifUpdateTime) delete publicData.update_time;
-    if (!ifDeleted) delete publicData.deleted;
+    const publicData = this.defaultInsArg({ ifCreateBy, ifUpdateBy, ifCreateTime, ifUpdateTime, ifDeleted }).data;
     const arg = {
       data: {
         ...publicData,
@@ -384,12 +434,7 @@ export class PrismaService extends PrismaClient {
                         ifDeleted?: boolean,
                       } = {},
   ): Promise<T> {
-    const publicData = this.defaultInsArg().data;
-    if (!ifCreateBy) delete publicData.create_by;
-    if (!ifUpdateBy) delete publicData.update_by;
-    if (!ifCreateTime) delete publicData.create_time;
-    if (!ifUpdateTime) delete publicData.update_time;
-    if (!ifDeleted) delete publicData.deleted;
+    const publicData = this.defaultInsArg({ ifCreateBy, ifUpdateBy, ifCreateTime, ifUpdateTime, ifDeleted }).data;
     const arg = {
       data: data.map(dat => {
         if (!ifCustomizeId) {
@@ -450,13 +495,25 @@ export class PrismaService extends PrismaClient {
    * 改
    * @param model
    * @param data
+   * @param ifUpdateBy
+   * @param ifUpdateTime
+   * @param ifDeleted
    */
-  async updateById<T>(model: string, data?: any): Promise<T> {
+  async updateById<T>(model: string, data?: any, {
+                        ifUpdateBy = true,
+                        ifUpdateTime = true,
+                        ifDeleted = true,
+                      }: {
+                        ifUpdateBy?: boolean,
+                        ifUpdateTime?: boolean,
+                        ifDeleted?: boolean,
+                      } = {},
+  ): Promise<T> {
     const id = data.id;
     delete data.id;
     const arg = {
       where: {
-        ...this.defaultUpdArg().where,
+        ...this.defaultUpdArg({ ifUpdateBy, ifUpdateTime, ifDeleted }).where,
         id: id,
       },
       data: {
@@ -471,11 +528,23 @@ export class PrismaService extends PrismaClient {
    * 改
    * @param model
    * @param data
+   * @param ifUpdateBy
+   * @param ifUpdateTime
+   * @param ifDeleted
    */
-  async updateMany<T>(model: string, data?: any[]): Promise<T[]> {
+  async updateMany<T>(model: string, data?: any[], {
+                        ifUpdateBy = true,
+                        ifUpdateTime = true,
+                        ifDeleted = true,
+                      }: {
+                        ifUpdateBy?: boolean,
+                        ifUpdateTime?: boolean,
+                        ifDeleted?: boolean,
+                      } = {},
+  ): Promise<T[]> {
     const retArr: T[] = [];
     for (let i = 0; i < data.length; i++) {
-      const ret = await this.updateById<T>(model, data[i]);
+      const ret = await this.updateById<T>(model, data[i], { ifUpdateBy, ifUpdateTime, ifDeleted });
       retArr.push(ret);
     }
     return new Promise(resolve => resolve(retArr));

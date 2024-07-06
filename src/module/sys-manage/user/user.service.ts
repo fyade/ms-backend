@@ -28,10 +28,10 @@ export class UserService {
   }
 
   async getSelfInfo(): Promise<R> {
-    const currentUser = getCurrentUser().user
-    const user = await this.prisma.findById<userDto>('sys_user', currentUser.userid)
-    delete user.password
-    return R.ok(user)
+    const currentUser = getCurrentUser().user;
+    const user = await this.prisma.findById<userDto>('sys_user', currentUser.userid);
+    delete user.password;
+    return R.ok(user);
   }
 
   async userSelList(dto: userListSelDto): Promise<R> {
@@ -77,21 +77,21 @@ export class UserService {
   }
 
   async updUser(dto: userDto): Promise<R> {
-    await this.prisma.updateById('sys_user', dto)
-    return R.ok()
+    await this.prisma.updateById('sys_user', dto);
+    return R.ok();
   }
 
   async updPsd(dto: updPsdDto): Promise<R> {
     const user_ = await this.prisma.findById<userDto>('sys_user', getCurrentUser().user.userid);
-    const ifUserYes = await comparePassword(dto.oldp, user_.password)
+    const ifUserYes = await comparePassword(dto.oldp, user_.password);
     if (!ifUserYes) {
-      return R.err('旧密码错误。')
+      return R.err('旧密码错误。');
     }
     await this.prisma.updateById('sys_user', {
       id: user_.id,
-      password: await hashPassword(dto.newp1)
-    })
-    return R.ok()
+      password: await hashPassword(dto.newp1),
+    });
+    return R.ok();
   }
 
   async adminResetUserPsd(dto: resetPsdDto): Promise<R> {
@@ -149,6 +149,7 @@ export class UserService {
       await this.logUserLoginService.insUserLogin({
         loginIp: loginIp,
         loginBrowser: loginBrowser,
+        loginPosition: '',
         loginOs: loginOs,
         userId: user.id,
         ifSuccess: base.Y,
@@ -172,6 +173,7 @@ export class UserService {
       await this.logUserLoginService.insUserLogin({
         loginIp: loginIp,
         loginBrowser: loginBrowser,
+        loginPosition: '',
         loginOs: loginOs,
         userId: user2.id,
         ifSuccess: base.N,

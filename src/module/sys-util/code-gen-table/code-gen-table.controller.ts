@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
 import { CodeGenTableService } from './code-gen-table.service';
 import { insOneDto, selAllDto, selListDto, updOneDto } from './dto';
+import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/sys-util/code-gen-table')
 @ApiTags('代码生成-表信息表')
+@UsePipes(new ValidationPipe())
 export class CodeGenTableController {
   constructor(private readonly codeGenTableService: CodeGenTableService) {
   }

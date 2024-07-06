@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { insManyDto, insOneDto, selListDto, updManyDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 import { UserRoleService } from './user-role.service';
 import { ApiTags } from '@nestjs/swagger';
+import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/sys-manage/user-role')
 @ApiTags('用户角色')
+@UsePipes(new ValidationPipe())
 export class UserRoleController {
   constructor(private readonly userRoleService: UserRoleService) {
   }

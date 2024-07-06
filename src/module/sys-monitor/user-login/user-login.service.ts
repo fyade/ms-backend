@@ -39,12 +39,12 @@ export class UserLoginService {
   }
 
   async selOnes(ids: any[]): Promise<R> {
-    const res = await this.prisma.findByIds('log_user_login', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds('log_user_login', Object.values(ids).map(n => Number(n)), { ifDeleted: false });
     return R.ok(res);
   }
 
   async selOne(id: number): Promise<R> {
-    const res = await this.prisma.findById('log_user_login', Number(id));
+    const res = await this.prisma.findById('log_user_login', Number(id), { ifDeleted: false });
     return R.ok(res);
   }
 
@@ -80,12 +80,12 @@ export class UserLoginService {
   }
 
   async updUserLogin(dto: updOneDto): Promise<R> {
-    const res = await this.prisma.updateById('log_user_login', dto);
+    const res = await this.prisma.updateById('log_user_login', dto, { ifDeleted: false });
     return R.ok(res);
   }
 
   async updUserLogins(dtos: updOneDto[]): Promise<R> {
-    const res = await this.prisma.updateMany('log_user_login', dtos);
+    const res = await this.prisma.updateMany('log_user_login', dtos, { ifDeleted: false });
     return R.ok(res);
   }
 

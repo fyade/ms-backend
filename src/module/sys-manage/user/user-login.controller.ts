@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UsePipes } from '@nestjs/common';
+import { Body, Controller, Post, Req, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
-import { adminNewUserDto, loginDto, registDto, resetPsdDto, userDto, userListSelDto } from './dto';
+import { loginDto, registDto } from './dto';
 import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { ApiTags } from '@nestjs/swagger';
@@ -10,6 +10,7 @@ import * as uaparser from 'ua-parser-js';
 
 @Controller('/sys/user')
 @ApiTags('用户')
+@UsePipes(new ValidationPipe())
 export class UserLoginController {
   constructor(private readonly userService: UserService) {
   }
@@ -29,7 +30,6 @@ export class UserLoginController {
 
   @Post('/adminlogin')
   @Authorize('system:user:adminlogin')
-  @UsePipes(new ValidationPipe())
   async adminLogin(@Body() dto: loginDto, @Req() request): Promise<R> {
     dto.password = decrypt(dto.password);
     const { loginIp, loginBrowser, loginOs } = this.getLoginInfo(request);

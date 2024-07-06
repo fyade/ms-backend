@@ -1,4 +1,5 @@
-export interface adminTopDto {
+export class adminTopDto {
   id: number;
+
   userId: string;
 }

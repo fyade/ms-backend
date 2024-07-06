@@ -1,19 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { insOneDto, selListDto, updOneDto } from './dto';
+import { insOneDto, selAllDto, updOneDto } from './dto';
 import { ApiTags } from '@nestjs/swagger';
+import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/sys-manage/menu')
 @ApiTags('菜单')
+@UsePipes(new ValidationPipe())
 export class MenuController {
   constructor(private readonly menuService: MenuService) {
   }
 
   @Get('/all')
   @Authorize('sysManage:menu:selAll')
-  async selMenu(@Query() dto: selListDto): Promise<R> {
+  async selMenu(@Query() dto: selAllDto): Promise<R> {
     return this.menuService.selMenu(dto);
   }
 

@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { DicDataService } from './dic-data.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/sys-manage/dic-data')
 @ApiTags('字典数据')
+@UsePipes(new ValidationPipe())
 export class DicDataController {
   constructor(private readonly dicDataService: DicDataService) {
   }

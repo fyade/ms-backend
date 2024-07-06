@@ -1,34 +1,62 @@
 import { pageSelDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
+import { IsArray, IsNotEmpty } from 'class-validator';
 
-export interface rolePermissionDto extends insOneDto, baseInterface {
+export class rolePermissionDto extends baseInterface {
   id: number;
-}
 
-export interface selByRoleIdDto {
-  roleId?: number;
-}
-
-export interface selListDto extends pageSelDto, insOneDto {
-  id: number;
-}
-
-export interface insOneDto {
   type: string;
+
   roleId: number;
+
   permissionId: number;
+
   remark: string;
 }
 
-export interface insManyDto {
-  roleId: number;
-  permissionId: number[];
-  remark: string;
-}
-
-export interface updOneDto extends insOneDto {
+export class selListDto extends pageSelDto {
   id: number;
+
+  type: string;
+
+  roleId: number;
+
+  permissionId: number;
+
+  remark: string;
 }
 
-export interface updManyDto extends insManyDto {
+export class selByRoleIdDto {
+  @IsNotEmpty({ message: '角色id不能为空' })
+  roleId: number;
+}
+
+export class insManyDto {
+  @IsNotEmpty({ message: '角色id不能为空' })
+  roleId: number;
+
+  @IsArray({ message: '权限id不能为空' })
+  permissionId: number[];
+
+  @IsNotEmpty({ message: '权限类型不能为空' })
+  type: string;
+
+  remark: string;
+}
+
+export class updManyDto extends insManyDto {
+}
+
+export class insOneDto {
+  type: string;
+
+  roleId: number;
+
+  permissionId: number;
+
+  remark: string;
+}
+
+export class updOneDto extends insOneDto {
+  id: number;
 }

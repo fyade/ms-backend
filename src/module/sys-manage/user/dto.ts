@@ -1,54 +1,74 @@
 import { pageSelDto } from '../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 
+export class userDto {
+  @IsNotEmpty({ message: '用户id不能为空' })
+  id: string;
+
+  username: string;
+
+  password: string;
+
+  nickname: string;
+
+  avatar: string;
+
+  sex: string;
+
+  email: string;
+
+  tel: string;
+}
 
 export class loginDto {
   @IsNotEmpty({ message: '用户名不能为空' })
   username: string;
+
   @IsNotEmpty({ message: '密码不能为空' })
   password: string;
 }
 
 export class updPsdDto {
-  oldp: string
-  newp1: string
-  newp2: string
+  @IsNotEmpty({ message: '旧密码不能为空' })
+  oldp: string;
+
+  @IsNotEmpty({ message: '新密码不能为空' })
+  newp1: string;
+
+  @IsNotEmpty({ message: '确认新密码不能为空' })
+  newp2: string;
 }
 
-export interface reqUser {
+export class reqUser {
   userid: string;
+
   username: string;
 }
 
-export interface userDto extends loginDtoi {
-  id: string;
-}
-
-export interface userDto2 extends loginDtoi {
+export class userDto2 extends loginDto {
   userid: string;
 }
 
-export interface adminNewUserDto {
-  username: string;
-  password: string;
+export class adminNewUserDto extends loginDto {
 }
 
-export interface loginDtoi {
-  username: string;
-  password: string;
+export class registDto extends loginDto {
 }
 
-export interface registDto extends loginDtoi {
-}
-
-export interface userListSelDto extends pageSelDto {
+export class userListSelDto extends pageSelDto {
   ifWithRole: string;
+
   username: string;
+
   nickname: string;
+
   sex: string;
 }
 
-export interface resetPsdDto {
+export class resetPsdDto {
+  @IsNotEmpty({ message: '用户id不能为空' })
   id: string;
+
+  @IsNotEmpty({ message: '密码不能为空' })
   password: string;
 }

@@ -1,4 +1,4 @@
-export interface baseInterface {
+export class baseInterface {
   createBy: string;
   updateBy: string;
   createTime: Date;
