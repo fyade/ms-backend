@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CodeGenColumnService } from './code-gen-column.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
@@ -45,7 +45,11 @@ export class CodeGenColumnController {
 
   @Post('/s')
   @Authorize('sysUtil:codeGenColumn:inss')
-  async insCodeGenColumns(@Body() dto: insOneDto[]): Promise<R> {
+  async insCodeGenColumns(@Body(
+    new ParseArrayPipe({
+      items: insOneDto
+    })
+  ) dto: insOneDto[]): Promise<R> {
     return this.codeGenColumnService.insCodeGenColumns(dto);
   }
 
@@ -57,7 +61,11 @@ export class CodeGenColumnController {
 
   @Put('/s')
   @Authorize('sysUtil:codeGenColumn:upds')
-  async updCodeGenColumns(@Body() dto: updOneDto[]): Promise<R> {
+  async updCodeGenColumns(@Body(
+    new ParseArrayPipe({
+      items: updOneDto
+    })
+  ) dto: updOneDto[]): Promise<R> {
     return this.codeGenColumnService.updCodeGenColumns(dto);
   }
 

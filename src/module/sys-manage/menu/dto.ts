@@ -1,5 +1,6 @@
 import { baseInterface } from '../../../util/base';
 import { IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class menuDto extends baseInterface {
   id: number;
@@ -71,6 +72,7 @@ export class insOneDto {
   @IsNotEmpty({ message: '菜单路径不能为空' })
   path: string;
 
+  @Type(() => Number)
   @IsNotEmpty({ message: '父级菜单不能为空' })
   parentId: number;
 
@@ -79,6 +81,7 @@ export class insOneDto {
 
   icon: string;
 
+  @Type(() => Number)
   @IsNotEmpty({ message: '顺序不能为空' })
   orderNum: number;
 

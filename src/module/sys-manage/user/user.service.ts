@@ -12,7 +12,7 @@ import { adminTopDto } from '../admin-top/dto';
 import { getCurrentUser } from '../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../exception/UserPermissionDeniedException';
 import { generateToken } from '../../../util/AuthUtils';
-import { UserLoginService } from '../../sys-monitor/user-login/user-login.service';
+import { LogUserLoginService } from '../../sys-monitor/log-user-login/log-user-login.service';
 import { comparePassword, hashPassword } from '../../../util/EncryptUtils';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class UserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
-    private readonly logUserLoginService: UserLoginService,
+    private readonly logUserLoginService: LogUserLoginService,
   ) {
     this.maxLoginFailCount = 10;
   }
@@ -146,7 +146,7 @@ export class UserService {
         const number = Math.ceil(24 - (new Date().getTime() - new Date(sort[0].createTime).getTime()) / (1000 * 60 * 60));
         return R.err(`密码错误次数过多，请${number}小时后重试。`);
       }
-      await this.logUserLoginService.insUserLogin({
+      await this.logUserLoginService.insLogUserLogin({
         loginIp: loginIp,
         loginBrowser: loginBrowser,
         loginPosition: '',
@@ -170,7 +170,7 @@ export class UserService {
       username: dto.username,
     });
     if (user2) {
-      await this.logUserLoginService.insUserLogin({
+      await this.logUserLoginService.insLogUserLogin({
         loginIp: loginIp,
         loginBrowser: loginBrowser,
         loginPosition: '',

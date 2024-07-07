@@ -17,6 +17,7 @@ import { codeGenTableDto } from '../code-gen-table/dto';
 import { codeGenColumnDto } from '../code-gen-column/dto';
 import { capitalizeFirstLetter, lowercaseFirstLetter, toCamelCase, toKebabCase } from '../../../util/BaseUtils';
 import { base, publicDict } from '../../../util/base';
+import { Type } from 'class-transformer';
 
 const baseInterfaceColumns = [
   'createBy',
@@ -172,7 +173,7 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
     ]
   ]
   const hd1 =
-`import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
+`import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ${capitalizeFirstLetter(moduleName)}Service } from './${toKebabCase(moduleName)}.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
@@ -219,7 +220,11 @@ export class ${capitalizeFirstLetter(moduleName)}Controller {
 
   @Post('/s')
   @Authorize('${businessName}:${moduleName}:inss')
-  async ins${capitalizeFirstLetter(moduleName)}s(@Body() dto: insOneDto[]): Promise<R> {
+  async ins${capitalizeFirstLetter(moduleName)}s(@Body(
+    new ParseArrayPipe({
+      items: insOneDto
+    })
+  ) dto: insOneDto[]): Promise<R> {
     return this.${moduleName}Service.ins${capitalizeFirstLetter(moduleName)}s(dto);
   }
 
@@ -231,7 +236,11 @@ export class ${capitalizeFirstLetter(moduleName)}Controller {
 
   @Put('/s')
   @Authorize('${businessName}:${moduleName}:upds')
-  async upd${capitalizeFirstLetter(moduleName)}s(@Body() dto: updOneDto[]): Promise<R> {
+  async upd${capitalizeFirstLetter(moduleName)}s(@Body(
+    new ParseArrayPipe({
+      items: updOneDto
+    })
+  ) dto: updOneDto[]): Promise<R> {
     return this.${moduleName}Service.upd${capitalizeFirstLetter(moduleName)}s(dto);
   }
 
@@ -328,7 +337,7 @@ export class selListDto extends pageSelDto {
 
 ${
   columns
-    .filter(item => item.ifIns === base.Y)
+    .filter(item => item.ifSelMore === base.Y)
     .map(column => `  ${column.tsName}: ${column.tsType};`)
     .join('\n\n')
 }
@@ -338,7 +347,7 @@ export class insOneDto {
 ${
     columns
       .filter(item => item.ifIns === base.Y)
-      .map(column => `${column.ifRequired === base.Y ? `  @IsNotEmpty({ message: '${column.colDescr}不能为空' })\n` : ''}  ${column.tsName}: ${column.tsType};`)
+      .map(column => `${column.tsType === 'number' ? `  @Type(() => Number)\n` : ''}${column.ifRequired === base.Y ? `  @IsNotEmpty({ message: '${column.colDescr}不能为空' })\n` : ''}  ${column.tsName}: ${column.tsType};`)
       .join('\n\n')
   }
 }
@@ -346,7 +355,7 @@ ${
 export class selAllDto {
 ${
   columns
-    .filter(item => item.ifIns === base.Y)
+    .filter(item => item.ifSelMore === base.Y)
     .map(column => `  ${column.tsName}: ${column.tsType};`)
     .join('\n\n')
 }
@@ -493,7 +502,7 @@ import Pagination from "@/components/pagination/pagination.vue"
 import { funcTablePage } from "@/composition/tablePage/tablePage.js"
 import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
-import { Delete, Edit, Plus, Refresh } from "@element-plus/icons-vue"
+import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
 import {
   ${moduleName}Sel,
@@ -683,6 +692,8 @@ const {
   gIns,
   gUpd,
   gDel,
+  gExport,
+  gImport,
   tUpd,
   tDel,
   handleSelectionChange,
@@ -831,8 +842,8 @@ ${
     <el-button type="primary" plain ${':'}icon="Plus" @click="gIns">新增</el-button>
     <el-button type="success" plain ${':'}icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>
     <el-button type="danger" plain ${':'}icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
-    ${`<!--<el-button type="warning" plain :icon='Download' :disabled='state.multipleSelection.length===0'>导出</el-button>-->`}
-    ${`<!--<el-button type="warning" plain :icon='Upload'>上传</el-button>-->`}
+    <el-button type="warning" plain ${':'}icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport">导出</el-button>
+    <el-button type="warning" plain ${':'}icon='Upload' @click="gImport">上传</el-button>
     ${`<!--</el-button-group>-->`}
     ${`<!--<el-button-group>-->`}${`
     `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->`}${`
@@ -854,13 +865,13 @@ ${
     <el-table-column fixed type="selection" width="55"/>
     ${`<!--<el-table-column fixed prop="id" :label="state.dict[\'id\']" width="180"/>-->`}
     ${`<!--上面id列的宽度改一下-->`}
-    ${`<!--在此下方添加表格列-->`}${
+    ${`<!--在此下方添加表格列-->`}
+${
     columns
       .filter(item => item.ifSelOne === base.Y)
-      .map(item => `
-        <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width="120"/>`,
+      .map(item => `    <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width="120"/>`,
       )
-      .join('')
+      .join('\n')
   }
     ${`<!--在此上方添加表格列-->`}
     ${`<!--<el-table-column prop="createBy" :label="state.dict[\'createBy\']" width="120"/>-->`}
@@ -891,7 +902,6 @@ ${
 </template>
 ` + `
 <style scoped>
-
 </style>`;
   const fileNames = {
     hd1: `${toKebabCase(moduleName)}.controller.ts`,

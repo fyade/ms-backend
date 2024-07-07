@@ -100,6 +100,7 @@ export class selAllDto {
 }
 
 export class insOneDto {
+  @Type(() => Number)
   @IsNotEmpty({ message: '所属表id不能为空' })
   tableId: number;
 
@@ -139,6 +140,7 @@ export class insOneDto {
   @IsNotEmpty({ message: '表单类型不能为空' })
   formType: string;
 
+  @Type(() => Number)
   @IsNotEmpty({ message: '顺序不能为空' })
   orderNum: number;
 }

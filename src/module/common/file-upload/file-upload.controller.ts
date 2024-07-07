@@ -40,7 +40,17 @@ export class FileUploadController {
     if (file.size > this.env.file.maxSizeOfFull) {
       return R.err('文件大小超出限制。');
     }
-    return this.fileUploadService.fileUploadOneFull(file, param.filename);
+    return this.fileUploadService.fileUploadOneFull(file, { filename: param.filename });
+  }
+
+  @Post('/one-full-avatar')
+  @UseInterceptors(FileInterceptor('file'))
+  @Authorize('system:fileupload:avatar')
+  async fileUploadAvatar(@Param() param, @UploadedFile() file): Promise<R> {
+    if (file.size > this.env.file.maxSizeOfFull) {
+      return R.err('文件大小超出限制。');
+    }
+    return this.fileUploadService.fileUploadOneFull(file, { filename: param.filename, module: 'avatar' });
   }
 
   @Post('/one-chunk/check')

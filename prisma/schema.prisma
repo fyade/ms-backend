@@ -274,6 +274,7 @@ model tbl_file {
   if_merge      String?  @db.Char(1)
   if_first      String   @db.Char(1)
   if_finished   String   @db.Char(1)
+  module        String?  @db.VarChar(50)
   remark        String?  @db.VarChar(300)
   create_by     String   @db.VarChar(10)
   update_by     String   @db.VarChar(10)

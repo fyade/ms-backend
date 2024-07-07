@@ -1,6 +1,7 @@
 import { pageSelDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
 import { IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class roleDto extends baseInterface {
   id: number;
@@ -44,6 +45,7 @@ export class insOneDto {
   @IsNotEmpty({ message: '是否禁用不能为空' })
   ifDisabled: string;
 
+  @Type(() => Number)
   @IsNotEmpty({ message: '顺序不能为空' })
   orderNum: number;
 

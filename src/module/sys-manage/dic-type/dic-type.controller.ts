@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { DicTypeService } from './dic-type.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
@@ -45,7 +45,11 @@ export class DicTypeController {
 
   @Post('/s')
   @Authorize('sysManage:dicType:inss')
-  async insDicTypes(@Body() dto: insOneDto[]): Promise<R> {
+  async insDicTypes(@Body(
+    new ParseArrayPipe({
+      items: insOneDto,
+    }),
+  ) dto: insOneDto[]): Promise<R> {
     return this.dicTypeService.insDicTypes(dto);
   }
 
@@ -57,7 +61,11 @@ export class DicTypeController {
 
   @Put('/s')
   @Authorize('sysManage:dicType:upds')
-  async updDicTypes(@Body() dto: updOneDto[]): Promise<R> {
+  async updDicTypes(@Body(
+    new ParseArrayPipe({
+      items: updOneDto
+    })
+  ) dto: updOneDto[]): Promise<R> {
     return this.dicTypeService.updDicTypes(dto);
   }
 

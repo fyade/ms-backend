@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
@@ -45,7 +45,11 @@ export class CodeGenTableController {
 
   @Post('/s')
   @Authorize('sysUtil:codeGenTable:inss')
-  async insCodeGenTables(@Body() dto: insOneDto[]): Promise<R> {
+  async insCodeGenTables(@Body(
+    new ParseArrayPipe({
+      items: insOneDto
+    })
+  ) dto: insOneDto[]): Promise<R> {
     return this.codeGenTableService.insCodeGenTables(dto);
   }
 
@@ -57,7 +61,11 @@ export class CodeGenTableController {
 
   @Put('/s')
   @Authorize('sysUtil:codeGenTable:upds')
-  async updCodeGenTables(@Body() dto: updOneDto[]): Promise<R> {
+  async updCodeGenTables(@Body(
+    new ParseArrayPipe({
+      items: updOneDto
+    })
+  ) dto: updOneDto[]): Promise<R> {
     return this.codeGenTableService.updCodeGenTables(dto);
   }
 

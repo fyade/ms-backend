@@ -8,8 +8,13 @@ export class MenuService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selMenu(dto: selAllDto): Promise<R> {
-    const res = await this.prisma.findAll<menuDto>('sys_menu', { data: dto, orderBy: true, numberKeys: ['parendId'] });
+  async selAll(dto: selAllDto): Promise<R> {
+    const res = await this.prisma.findAll<menuDto>('sys_menu', {
+      data: dto,
+      orderBy: true,
+      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms'],
+      numberKeys: ['parentId', 'orderNum'],
+    });
     return R.ok(res);
   }
 

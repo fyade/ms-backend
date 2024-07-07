@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
@@ -15,8 +15,8 @@ export class MenuController {
 
   @Get('/all')
   @Authorize('sysManage:menu:selAll')
-  async selMenu(@Query() dto: selAllDto): Promise<R> {
-    return this.menuService.selMenu(dto);
+  async selAll(@Query() dto: selAllDto): Promise<R> {
+    return this.menuService.selAll(dto);
   }
 
   @Get('/ids')
@@ -39,7 +39,11 @@ export class MenuController {
 
   @Post('/s')
   @Authorize('sysManage:menu:inss')
-  async insMenus(@Body() dto: insOneDto[]): Promise<R> {
+  async insMenus(@Body(
+    new ParseArrayPipe({
+      items: insOneDto
+    })
+  ) dto: insOneDto[]): Promise<R> {
     return this.menuService.insMenus(dto);
   }
 
@@ -51,7 +55,11 @@ export class MenuController {
 
   @Put('/s')
   @Authorize('sysManage:menu:upds')
-  async updMenus(@Body() dto: updOneDto[]): Promise<R> {
+  async updMenus(@Body(
+    new ParseArrayPipe({
+      items: updOneDto
+    })
+  ) dto: updOneDto[]): Promise<R> {
     return this.menuService.updMenus(dto);
   }
 

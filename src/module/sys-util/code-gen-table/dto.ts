@@ -1,6 +1,7 @@
 import { pageSelDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
 import { IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class codeGenTableDto extends baseInterface {
   id: number;
@@ -72,6 +73,7 @@ export class insOneDto {
   @IsNotEmpty({ message: '业务名不能为空' })
   businessName: string;
 
+  @Type(() => Number)
   @IsNotEmpty({ message: '顺序不能为空' })
   orderNum: number;
 }

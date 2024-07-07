@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { DicDataService } from './dic-data.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
@@ -45,7 +45,11 @@ export class DicDataController {
 
   @Post('/s')
   @Authorize('sysManage:dicData:inss')
-  async insDicDatas(@Body() dto: insOneDto[]): Promise<R> {
+  async insDicDatas(@Body(
+    new ParseArrayPipe({
+      items: insOneDto
+    })
+  ) dto: insOneDto[]): Promise<R> {
     return this.dicDataService.insDicDatas(dto);
   }
 
@@ -57,7 +61,11 @@ export class DicDataController {
 
   @Put('/s')
   @Authorize('sysManage:dicData:upds')
-  async updDicDatas(@Body() dto: updOneDto[]): Promise<R> {
+  async updDicDatas(@Body(
+    new ParseArrayPipe({
+      items: updOneDto
+    })
+  ) dto: updOneDto[]): Promise<R> {
     return this.dicDataService.updDicDatas(dto);
   }
 
