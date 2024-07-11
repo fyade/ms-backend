@@ -14,63 +14,90 @@ export class LogUserLoginController {
   }
 
   @Get()
-  @Authorize('sysMonitor:userLogin:selList')
+  @Authorize({
+    permission: 'sysMonitor:userLogin:selList',
+    label: '分页查询用户登录日志',
+  })
   async selLogUserLogin(@Query() dto: selListDto): Promise<R> {
     return this.logUserLoginService.selLogUserLogin(dto);
   }
 
   @Get('/all')
-  @Authorize('sysMonitor:userLogin:selAll')
+  @Authorize({
+    permission: 'sysMonitor:userLogin:selAll',
+    label: '查询所有用户登录日志',
+  })
   async selAll(@Query() dto: selAllDto) {
     return this.logUserLoginService.selAll(dto);
   }
 
   @Get('/ids')
-  @Authorize('sysMonitor:userLogin:selOnes')
+  @Authorize({
+    permission: 'sysMonitor:userLogin:selOnes',
+    label: '查询多个用户登录日志（根据id）',
+  })
   async selOnes(@Query() ids: any[]): Promise<R> {
     return this.logUserLoginService.selOnes(ids);
   }
 
   @Get('/:id')
-  @Authorize('sysMonitor:userLogin:selOne')
+  @Authorize({
+    permission: 'sysMonitor:userLogin:selOne',
+    label: '查询单个用户登录日志',
+  })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.logUserLoginService.selOne(id);
   }
 
   @Post()
-  @Authorize('sysMonitor:userLogin:ins')
+  @Authorize({
+    permission: 'sysMonitor:userLogin:ins',
+    label: '新增用户登录日志',
+  })
   async insLogUserLogin(@Body() dto: insOneDto): Promise<R> {
     return this.logUserLoginService.insLogUserLogin(dto);
   }
 
   @Post('/s')
-  @Authorize('sysMonitor:userLogin:inss')
+  @Authorize({
+    permission: 'sysMonitor:userLogin:inss',
+    label: '批量新增用户登录日志',
+  })
   async insLogUserLogins(@Body(
     new ParseArrayPipe({
-      items: insOneDto
-    })
+      items: insOneDto,
+    }),
   ) dto: insOneDto[]): Promise<R> {
     return this.logUserLoginService.insLogUserLogins(dto);
   }
 
   @Put()
-  @Authorize('sysMonitor:userLogin:upd')
+  @Authorize({
+    permission: 'sysMonitor:userLogin:upd',
+    label: '修改用户登录日志',
+  })
   async updLogUserLogin(@Body() dto: updOneDto): Promise<R> {
     return this.logUserLoginService.updLogUserLogin(dto);
   }
 
   @Put('/s')
-  @Authorize('sysMonitor:userLogin:upds')
+  @Authorize({
+    permission: 'sysMonitor:userLogin:upds',
+    label: '批量修改用户登录日志',
+  })
   async updLogUserLogins(@Body(
     new ParseArrayPipe({
-      items: updOneDto
-    })
+      items: updOneDto,
+    }),
   ) dto: updOneDto[]): Promise<R> {
     return this.logUserLoginService.updLogUserLogins(dto);
   }
 
   @Delete()
-  @Authorize('sysMonitor:userLogin:del')
+  @Authorize({
+    permission: 'sysMonitor:userLogin:del',
+    label: '删除用户登录日志',
+  })
   async delLogUserLogin(@Body() ids: any[]): Promise<R> {
     return this.logUserLoginService.delLogUserLogin(ids);
   }

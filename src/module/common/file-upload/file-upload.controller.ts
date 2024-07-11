@@ -18,14 +18,20 @@ export class FileUploadController {
   }
 
   @Get()
-  @Authorize('system:fileupload:selList')
+  @Authorize({
+    permission: 'system:fileupload:selList',
+    label: '分页查询文件上传列表',
+  })
   async selList(@Query() dto: selListDto): Promise<R> {
     return this.fileUploadService.selList(dto);
   }
 
   @Post('/one-full')
   @UseInterceptors(FileInterceptor('file'))
-  @Authorize('system:fileupload:onefull0')
+  @Authorize({
+    permission: 'system:fileupload:onefull0',
+    label: '文件上传-单文件完整上传',
+  })
   async fileUploadOneFull0(@UploadedFile() file): Promise<R> {
     if (file.size > this.env.file.maxSizeOfFull) {
       return R.err('文件大小超出限制。');
@@ -35,7 +41,10 @@ export class FileUploadController {
 
   @Post('/one-full/:filename')
   @UseInterceptors(FileInterceptor('file'))
-  @Authorize('system:fileupload:onefull')
+  @Authorize({
+    permission: 'system:fileupload:onefull',
+    label: '文件上传-单文件完整上传',
+  })
   async fileUploadOneFull(@Param() param, @UploadedFile() file): Promise<R> {
     if (file.size > this.env.file.maxSizeOfFull) {
       return R.err('文件大小超出限制。');
@@ -45,7 +54,10 @@ export class FileUploadController {
 
   @Post('/one-full-avatar')
   @UseInterceptors(FileInterceptor('file'))
-  @Authorize('system:fileupload:avatar')
+  @Authorize({
+    permission: 'system:fileupload:avatar',
+    label: '文件上传-头像',
+  })
   async fileUploadAvatar(@Param() param, @UploadedFile() file): Promise<R> {
     if (file.size > this.env.file.maxSizeOfFull) {
       return R.err('文件大小超出限制。');
@@ -54,14 +66,20 @@ export class FileUploadController {
   }
 
   @Post('/one-chunk/check')
-  @Authorize('system:fileupload:onechunkcheck')
+  @Authorize({
+    permission: 'system:fileupload:onechunkcheck',
+    label: '文件上传-单文件分片上传前检查',
+  })
   async fileUploadOneChunkCheck(@Body() dto: params_fileUploadOneChunk_check): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkCheck(dto);
   }
 
   @Post('/one-chunk/upload/:fileMd5/:fileNewName/:chunkIndex')
   @UseInterceptors(FileInterceptor('file'))
-  @Authorize('system:fileupload:onechunkupload')
+  @Authorize({
+    permission: 'system:fileupload:onechunkupload',
+    label: '文件上传-单文件分片上传',
+  })
   async fileUploadOneChunkUpload(@Param() param, @UploadedFile() file): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkUpload({
       fileMd5: param.fileMd5,
@@ -72,14 +90,17 @@ export class FileUploadController {
   }
 
   @Post('/one-chunk/merge')
-  @Authorize('system:fileupload:onechunkmerge')
+  @Authorize({
+    permission: 'system:fileupload:onechunkmerge',
+    label: '文件上传-单文件分片上传分片合并',
+  })
   async fileUploadOneChunkMerge(@Body() dto: params_fileUploadOneChunk_merge): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkMerge(dto);
   }
 
-  @Get('/image-waterfall-flow')
-  @Authorize('system:fileupload:waterfall')
-  async getImageWaterfallFlow(@Query() dto: pageSelDto) {
-    return this.fileUploadService.getImageWaterfallFlow(dto);
-  }
+  // @Get('/image-waterfall-flow')
+  // @Authorize('system:fileupload:waterfall')
+  // async getImageWaterfallFlow(@Query() dto: pageSelDto) {
+  //   return this.fileUploadService.getImageWaterfallFlow(dto);
+  // }
 }

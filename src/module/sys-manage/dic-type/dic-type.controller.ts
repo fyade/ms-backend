@@ -14,37 +14,55 @@ export class DicTypeController {
   }
 
   @Get()
-  @Authorize('sysManage:dicType:selList')
+  @Authorize({
+    permission: 'sysManage:dicType:selList',
+    label: '分页查询字典类型',
+  })
   async selDicType(@Query() dto: selListDto): Promise<R> {
     return this.dicTypeService.selDicType(dto);
   }
 
   @Get('/all')
-  @Authorize('sysManage:dicType:selAll')
+  @Authorize({
+    permission: 'sysManage:dicType:selAll',
+    label: '查询所有字典类型',
+  })
   async selAll(@Query() dto: selAllDto) {
     return this.dicTypeService.selAll(dto);
   }
 
   @Get('/ids')
-  @Authorize('sysManage:dicType:selOnes')
+  @Authorize({
+    permission: 'sysManage:dicType:selOnes',
+    label: '查询多个字典类型（根据id）',
+  })
   async selOnes(@Query() ids: any[]): Promise<R> {
     return this.dicTypeService.selOnes(ids);
   }
 
   @Get('/:id')
-  @Authorize('sysManage:dicType:selOne')
+  @Authorize({
+    permission: 'sysManage:dicType:selOne',
+    label: '查询单个字典类型',
+  })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.dicTypeService.selOne(id);
   }
 
   @Post()
-  @Authorize('sysManage:dicType:ins')
+  @Authorize({
+    permission: 'sysManage:dicType:ins',
+    label: '新增字典类型',
+  })
   async insDicType(@Body() dto: insOneDto): Promise<R> {
     return this.dicTypeService.insDicType(dto);
   }
 
   @Post('/s')
-  @Authorize('sysManage:dicType:inss')
+  @Authorize({
+    permission: 'sysManage:dicType:inss',
+    label: '批量新增字典类型',
+  })
   async insDicTypes(@Body(
     new ParseArrayPipe({
       items: insOneDto,
@@ -54,23 +72,32 @@ export class DicTypeController {
   }
 
   @Put()
-  @Authorize('sysManage:dicType:upd')
+  @Authorize({
+    permission: 'sysManage:dicType:upd',
+    label: '修改字典类型',
+  })
   async updDicType(@Body() dto: updOneDto): Promise<R> {
     return this.dicTypeService.updDicType(dto);
   }
 
   @Put('/s')
-  @Authorize('sysManage:dicType:upds')
+  @Authorize({
+    permission: 'sysManage:dicType:upds',
+    label: '批量修改字典类型',
+  })
   async updDicTypes(@Body(
     new ParseArrayPipe({
-      items: updOneDto
-    })
+      items: updOneDto,
+    }),
   ) dto: updOneDto[]): Promise<R> {
     return this.dicTypeService.updDicTypes(dto);
   }
 
   @Delete()
-  @Authorize('sysManage:dicType:del')
+  @Authorize({
+    permission: 'sysManage:dicType:del',
+    label: '删除字典类型',
+  })
   async delDicType(@Body() ids: any[]): Promise<R> {
     return this.dicTypeService.delDicType(ids);
   }

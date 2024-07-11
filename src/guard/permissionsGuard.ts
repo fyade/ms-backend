@@ -15,15 +15,18 @@ export class PermissionsGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const { permission, ifSF } = this.reflector.get<PreAuthorizeParams>(
+    const authorizeParams = this.reflector.get<PreAuthorizeParams>(
       PRE_AUTHORIZE_KEY,
       context.getHandler(),
     );
+    const { permission, ifSF, label } = authorizeParams;
     const request = context.switchToHttp().getRequest();
+    const user = request.body.user;
+    delete request.body.user;
+    request.body = request.body.reqBody;
     if (reqWhiteList.indexOf(request.url) > -1) {
       return true;
     }
-    const user = request.body.user;
     // 放行管理员登录接口
     if (request.url === adminLoginUrl && !!!user) {
       const userDto = await this.authService.findUserByUsername(request.body.username);
@@ -34,10 +37,9 @@ export class PermissionsGuard implements CanActivate {
       if (ifHasPermission) {
         return true;
       } else {
-        throw new ForbiddenException();
+        throw new ForbiddenException(label);
       }
     }
-    delete request.body.user;
     // 算法接口权限控制
     if (ifSF) {
     }
@@ -56,6 +58,6 @@ export class PermissionsGuard implements CanActivate {
         }
       }
     }
-    throw new ForbiddenException();
+    throw new ForbiddenException(label);
   }
 }

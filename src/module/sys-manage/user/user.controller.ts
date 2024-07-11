@@ -15,33 +15,57 @@ export class UserController {
   }
 
   @Get('/self-info')
-  @Authorize('sysManage:user:getSelfInfo')
+  @Authorize({
+    permission: 'sysManage:user:getSelfInfo',
+    label: '查询个人信息',
+  })
   async getSelfInfo() {
     return this.userService.getSelfInfo();
   }
 
   @Get('/page')
-  @Authorize('sysManage:user:selList')
+  @Authorize({
+    permission: 'sysManage:user:selList',
+    label: '分页查询用户',
+  })
   async userSelList(@Query() dto: userListSelDto): Promise<R> {
     return this.userService.userSelList(dto);
   }
 
+  @Get('/ids')
+  @Authorize({
+    permission: 'sysManage:user:selOnes',
+    label: '查询多个用户（根据id）',
+  })
+  async selOnes(@Query() ids: any[]): Promise<R> {
+    return this.userService.selOnes(ids);
+  }
+
   @Post()
-  @Authorize('sysManage:user:adminNewUser')
+  @Authorize({
+    permission: 'sysManage:user:adminNewUser',
+    label: '管理员新建用户',
+  })
   async insUser(@Body() dto: adminNewUserDto) {
     dto.password = decrypt(dto.password);
     return this.userService.insUser(dto);
   }
 
   @Post('/upd-user')
-  @Authorize('sysManage:user:updUser')
+  @Authorize({
+    permission: 'sysManage:user:updUser',
+    label: '修改个人信息',
+  })
   async updUser(@Body() dto: userDto) {
     delete dto.password;
     return this.userService.updUser(dto);
   }
 
   @Post('/upd-psd')
-  @Authorize('sysManage:user:updPsd')
+  @Authorize({
+    permission: 'sysManage:user:updPsd',
+    label: '修改密码',
+  })
   async updPsd(@Body() dto: updPsdDto) {
     dto.oldp = decrypt(dto.oldp);
     dto.newp1 = decrypt(dto.newp1);
@@ -51,7 +75,10 @@ export class UserController {
   }
 
   @Post('/admin-reset-user-psd')
-  @Authorize('sysManage:user:adminResetUserPsd')
+  @Authorize({
+    permission: 'sysManage:user:adminResetUserPsd',
+    label: '管理员重置用户密码',
+  })
   async adminResetUserPsd(@Body() dto: resetPsdDto): Promise<R> {
     dto.password = decrypt(dto.password);
     return this.userService.adminResetUserPsd(dto);

@@ -17,7 +17,6 @@ import { codeGenTableDto } from '../code-gen-table/dto';
 import { codeGenColumnDto } from '../code-gen-column/dto';
 import { capitalizeFirstLetter, lowercaseFirstLetter, toCamelCase, toKebabCase } from '../../../util/BaseUtils';
 import { base, publicDict } from '../../../util/base';
-import { Type } from 'class-transformer';
 
 const baseInterfaceColumns = [
   'createBy',
@@ -322,6 +321,7 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
 `import { pageSelDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
 import { IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class ${moduleName}Dto extends baseInterface {
 ${
@@ -462,6 +462,16 @@ export function ${moduleName}Del(ids: any[]) {
 `;
   const qd2 =
 `import { pageSelDto } from "@/type/tablePage.ts";
+import { baseInterface } from "@/utils/base.ts";
+
+export class ${moduleName}Dto extends baseInterface {
+${
+  columns
+    .filter(column => baseInterfaceColumns.indexOf(column.tsName) === -1)
+    .map(column => `  ${column.tsName}!: ${column.tsType};`)
+    .join('\n')
+}
+}
 
 export class ${moduleName}SelDto extends pageSelDto {
 }
@@ -504,10 +514,12 @@ import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
 import type { FormRules } from 'element-plus'
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts"
+import { ${moduleName}Dto } from "@/type/api/${businessName}/${moduleName}.ts";
 import {
   ${moduleName}Sel,
   ${moduleName}SelById,
   ${moduleName}SelByIds,
+  ${moduleName}SelAll,
   ${moduleName}Ins,
   ${moduleName}Upd,
   ${moduleName}Inss,
@@ -515,7 +527,7 @@ import {
   ${moduleName}Del,
 } from "@/api/module/${businessName}/${moduleName}.ts"
 
-const state = reactive<State>({
+const state = reactive<State<${moduleName}Dto>>({
   dialogType: {
     value: '',
     label: ''
@@ -530,7 +542,7 @@ const state = reactive<State>({
   //   ...
   // }
   dialogForm: {
-    id: '',
+    id: ${columns.find(item => item.colName === 'id').tsType === 'number' ? -1 : ''},
 ${
     columns
       .filter(item => item.ifIns === base.Y)
@@ -624,11 +636,18 @@ const config: t_config = reactive({
 
 const func: t_FuncMap = {
   /**
-   * 查询列表
+   * 分页查询
    * @param params
    */
   selectList: (params: any) => {
     return ${moduleName}Sel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: any) => {
+    return ${moduleName}SelAll(params)
   },
   /**
    * 查询单个
@@ -902,7 +921,8 @@ ${
 </template>
 ` + `
 <style scoped>
-</style>`;
+</style>
+`;
   const fileNames = {
     hd1: `${toKebabCase(moduleName)}.controller.ts`,
     hd2: `${toKebabCase(moduleName)}.service.ts`,

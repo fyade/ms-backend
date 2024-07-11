@@ -56,6 +56,8 @@ export class registDto extends loginDto {
 }
 
 export class userListSelDto extends pageSelDto {
+  id: string;
+
   ifWithRole: string;
 
   username: string;

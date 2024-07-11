@@ -13,19 +13,28 @@ export class CodeGenerationController {
   }
 
   @Get()
-  @Authorize('sysUtil:codeGeneration:get')
+  @Authorize({
+    permission: 'sysUtil:codeGeneration:get',
+    label: '查询数据库信息',
+  })
   async getDatabaseInfo(): Promise<R> {
     return this.codeGenerationService.getDatabaseInfo();
   }
 
   @Get('/c/:id')
-  @Authorize('sysUtil:codeGeneration:getCode')
+  @Authorize({
+    permission: 'sysUtil:codeGeneration:getCode',
+    label: '获取代码生成代码',
+  })
   async genCode(@Param('id') id: number): Promise<R> {
     return this.codeGenerationService.genCode(id);
   }
 
   @Get('/z/:id')
-  @Authorize('sysUtil:codeGeneration:getCodeZip')
+  @Authorize({
+    permission: 'sysUtil:codeGeneration:getCodeZip',
+    label: '获取代码生成代码压缩包',
+  })
   async genCodeZip(@Param('id') id: number): Promise<R> {
     return this.codeGenerationService.genCodeZip(id);
   }

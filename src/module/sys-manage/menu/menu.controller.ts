@@ -14,57 +14,81 @@ export class MenuController {
   }
 
   @Get('/all')
-  @Authorize('sysManage:menu:selAll')
+  @Authorize({
+    permission: 'sysManage:menu:selAll',
+    label: '查询所有菜单',
+  })
   async selAll(@Query() dto: selAllDto): Promise<R> {
     return this.menuService.selAll(dto);
   }
 
   @Get('/ids')
-  @Authorize('sysManage:menu:selOnes')
+  @Authorize({
+    permission: 'sysManage:menu:selOnes',
+    label: '查询多个菜单（根据id）',
+  })
   async selOnes(@Query() ids: any[]): Promise<R> {
     return this.menuService.selOnes(ids);
   }
 
   @Get('/:id')
-  @Authorize('sysManage:menu:selOne')
+  @Authorize({
+    permission: 'sysManage:menu:selOne',
+    label: '查询单个菜单',
+  })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.menuService.selOne(id);
   }
 
   @Post()
-  @Authorize('sysManage:menu:ins')
+  @Authorize({
+    permission: 'sysManage:menu:ins',
+    label: '新增菜单',
+  })
   async insMenu(@Body() dto: insOneDto): Promise<R> {
     return this.menuService.insMenu(dto);
   }
 
   @Post('/s')
-  @Authorize('sysManage:menu:inss')
+  @Authorize({
+    permission: 'sysManage:menu:inss',
+    label: '批量新增菜单',
+  })
   async insMenus(@Body(
     new ParseArrayPipe({
-      items: insOneDto
-    })
+      items: insOneDto,
+    }),
   ) dto: insOneDto[]): Promise<R> {
     return this.menuService.insMenus(dto);
   }
 
   @Put()
-  @Authorize('sysManage:menu:upd')
+  @Authorize({
+    permission: 'sysManage:menu:upd',
+    label: '修改菜单',
+  })
   async updMenu(@Body() dto: updOneDto): Promise<R> {
     return this.menuService.updMenu(dto);
   }
 
   @Put('/s')
-  @Authorize('sysManage:menu:upds')
+  @Authorize({
+    permission: 'sysManage:menu:upds',
+    label: '批量修改菜单',
+  })
   async updMenus(@Body(
     new ParseArrayPipe({
-      items: updOneDto
-    })
+      items: updOneDto,
+    }),
   ) dto: updOneDto[]): Promise<R> {
     return this.menuService.updMenus(dto);
   }
 
   @Delete()
-  @Authorize('sysManage:menu:del')
+  @Authorize({
+    permission: 'sysManage:menu:del',
+    label: '删除菜单',
+  })
   async delMenu(@Body() ids: any[]): Promise<R> {
     return this.menuService.delMenu(ids);
   }

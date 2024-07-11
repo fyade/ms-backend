@@ -14,63 +14,90 @@ export class CodeGenColumnController {
   }
 
   @Get()
-  @Authorize('sysUtil:codeGenColumn:selList')
+  @Authorize({
+    permission: 'sysUtil:codeGenColumn:selList',
+    label: '分页查询列信息',
+  })
   async selCodeGenColumn(@Query() dto: selListDto): Promise<R> {
     return this.codeGenColumnService.selCodeGenColumn(dto);
   }
 
   @Get('/all')
-  @Authorize('sysUtil:codeGenColumn:selAll')
+  @Authorize({
+    permission: 'sysUtil:codeGenColumn:selAll',
+    label: '查询所有列信息',
+  })
   async selAll(@Query() dto: selAllDto) {
     return this.codeGenColumnService.selAll(dto);
   }
 
   @Get('/ids')
-  @Authorize('sysUtil:codeGenColumn:selOnes')
+  @Authorize({
+    permission: 'sysUtil:codeGenColumn:selOnes',
+    label: '查询多个列信息（根据id）',
+  })
   async selOnes(@Query() ids: any[]): Promise<R> {
     return this.codeGenColumnService.selOnes(ids);
   }
 
   @Get('/:id')
-  @Authorize('sysUtil:codeGenColumn:selOne')
+  @Authorize({
+    permission: 'sysUtil:codeGenColumn:selOne',
+    label: '查询单个列信息',
+  })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.codeGenColumnService.selOne(id);
   }
 
   @Post()
-  @Authorize('sysUtil:codeGenColumn:ins')
+  @Authorize({
+    permission: 'sysUtil:codeGenColumn:ins',
+    label: '新增列信息',
+  })
   async insCodeGenColumn(@Body() dto: insOneDto): Promise<R> {
     return this.codeGenColumnService.insCodeGenColumn(dto);
   }
 
   @Post('/s')
-  @Authorize('sysUtil:codeGenColumn:inss')
+  @Authorize({
+    permission: 'sysUtil:codeGenColumn:inss',
+    label: '批量新增列信息',
+  })
   async insCodeGenColumns(@Body(
     new ParseArrayPipe({
-      items: insOneDto
-    })
+      items: insOneDto,
+    }),
   ) dto: insOneDto[]): Promise<R> {
     return this.codeGenColumnService.insCodeGenColumns(dto);
   }
 
   @Put()
-  @Authorize('sysUtil:codeGenColumn:upd')
+  @Authorize({
+    permission: 'sysUtil:codeGenColumn:upd',
+    label: '修改列信息',
+  })
   async updCodeGenColumn(@Body() dto: updOneDto): Promise<R> {
     return this.codeGenColumnService.updCodeGenColumn(dto);
   }
 
   @Put('/s')
-  @Authorize('sysUtil:codeGenColumn:upds')
+  @Authorize({
+    permission: 'sysUtil:codeGenColumn:upds',
+    label: '批量修改列信息',
+  })
   async updCodeGenColumns(@Body(
     new ParseArrayPipe({
-      items: updOneDto
-    })
+      items: updOneDto,
+    }),
   ) dto: updOneDto[]): Promise<R> {
     return this.codeGenColumnService.updCodeGenColumns(dto);
   }
 
   @Delete()
-  @Authorize('sysUtil:codeGenColumn:del')
+  @Authorize({
+    permission: 'sysUtil:codeGenColumn:del',
+    label: '删除列信息',
+  })
   async delCodeGenColumn(@Body() ids: any[]): Promise<R> {
     return this.codeGenColumnService.delCodeGenColumn(ids);
   }

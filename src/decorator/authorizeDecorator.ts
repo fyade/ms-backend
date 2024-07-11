@@ -1,15 +1,18 @@
-import { PreAuthorize } from './customDecorator';
+import { PreAuthorize, PreAuthorizeParams } from './customDecorator';
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { PermissionsGuard } from '../guard/permissionsGuard';
 
-export function Authorize(permission: string, {
-                            ifSF = false,
-                          }: {
-                            ifSF?: boolean
-                          } = {},
-) {
+export function Authorize(param: string | PreAuthorizeParams) {
+  let param_;
+  if (typeof param === 'string') {
+    param_ = {
+      permission: param,
+    };
+  } else {
+    param_ = param;
+  }
   return applyDecorators(
-    PreAuthorize({ permission, ifSF }),
+    PreAuthorize(param_),
     UseGuards(PermissionsGuard),
   );
 }

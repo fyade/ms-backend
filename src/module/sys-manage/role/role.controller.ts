@@ -14,37 +14,55 @@ export class RoleController {
   }
 
   @Get()
-  @Authorize('sysManage:role:selList')
+  @Authorize({
+    permission: 'sysManage:role:selList',
+    label: '分页查询角色',
+  })
   async selRole(@Query() dto: selListDto): Promise<R> {
     return this.roleService.selRole(dto);
   }
 
   @Get('/all')
-  @Authorize('sysManage:role:selAll')
+  @Authorize({
+    permission: 'sysManage:role:selAll',
+    label: '查询所有角色',
+  })
   async selAll(@Query() dto: selAllDto): Promise<R> {
     return this.roleService.selAll(dto);
   }
 
   @Get('/:id')
-  @Authorize('sysManage:role:selOne')
+  @Authorize({
+    permission: 'sysManage:role:selOne',
+    label: '查询单个角色',
+  })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.roleService.selOne(id);
   }
 
   @Post()
-  @Authorize('sysManage:role:ins')
+  @Authorize({
+    permission: 'sysManage:role:ins',
+    label: '新增角色',
+  })
   async insRole(@Body() dto: insOneDto): Promise<R> {
     return this.roleService.insRole(dto);
   }
 
   @Put()
-  @Authorize('sysManage:role:upd')
+  @Authorize({
+    permission: 'sysManage:role:upd',
+    label: '修改角色',
+  })
   async updRole(@Body() dto: updOneDto): Promise<R> {
     return this.roleService.updRole(dto);
   }
 
   @Delete()
-  @Authorize('sysManage:role:del')
+  @Authorize({
+    permission: 'sysManage:role:del',
+    label: '删除角色',
+  })
   async delRole(@Body() ids: any[]): Promise<R> {
     return this.roleService.delRole(ids);
   }

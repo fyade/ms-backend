@@ -10,6 +10,9 @@ export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     clearCurrentUser();
     const request = context.switchToHttp().getRequest();
+    request.body = {
+      reqBody: request.body,
+    };
     const token = request.headers['authorization'];
     if (reqWhiteList.indexOf(request.url) > -1 || request.url === adminLoginUrl) {
     } else if (token) {

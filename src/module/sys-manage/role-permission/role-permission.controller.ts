@@ -14,13 +14,19 @@ export class RolePermissionController {
   }
 
   @Get()
-  @Authorize('sysManage:rolePermission:selList')
+  @Authorize({
+    permission: 'sysManage:rolePermission:selList',
+    label: '分页查询角色权限',
+  })
   async selRolePermission(@Query() dto: selListDto): Promise<R> {
     return this.rolePermissionService.selRolePermission(dto);
   }
 
   @Get('/all')
-  @Authorize('sysManage:rolePermission:selAll')
+  @Authorize({
+    permission: 'sysManage:rolePermission:selAll',
+    label: '查询所有角色权限',
+  })
   async selAll(@Query() dto: selByRoleIdDto): Promise<R> {
     return this.rolePermissionService.selAll({
       roleId: dto.roleId ? Number(dto.roleId) : dto.roleId,
@@ -28,25 +34,37 @@ export class RolePermissionController {
   }
 
   @Get('/:id')
-  @Authorize('sysManage:rolePermission:selOne')
+  @Authorize({
+    permission: 'sysManage:rolePermission:selOne',
+    label: '查询单个角色权限',
+  })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.rolePermissionService.selOne(id);
   }
 
   @Post()
-  @Authorize('sysManage:rolePermission:ins')
+  @Authorize({
+    permission: 'sysManage:rolePermission:ins',
+    label: '新增角色权限',
+  })
   async insRolePermission(@Body() dto: insManyDto): Promise<R> {
     return this.rolePermissionService.insRolePermission(dto);
   }
 
   @Put()
-  @Authorize('sysManage:rolePermission:upd')
+  @Authorize({
+    permission: 'sysManage:rolePermission:upd',
+    label: '修改角色权限',
+  })
   async updRolePermission(@Body() dto: updManyDto): Promise<R> {
     return this.rolePermissionService.updRolePermission(dto);
   }
 
   @Delete()
-  @Authorize('sysManage:rolePermission:del')
+  @Authorize({
+    permission: 'sysManage:rolePermission:del',
+    label: '删除角色权限',
+  })
   async delRolePermission(@Body() ids: any[]): Promise<R> {
     return this.rolePermissionService.delRolePermission(ids);
   }

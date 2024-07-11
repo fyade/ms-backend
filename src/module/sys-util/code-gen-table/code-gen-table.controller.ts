@@ -14,63 +14,90 @@ export class CodeGenTableController {
   }
 
   @Get()
-  @Authorize('sysUtil:codeGenTable:selList')
+  @Authorize({
+    permission: 'sysUtil:codeGenTable:selList',
+    label: '分页查询表信息',
+  })
   async selCodeGenTable(@Query() dto: selListDto): Promise<R> {
     return this.codeGenTableService.selCodeGenTable(dto);
   }
 
   @Get('/all')
-  @Authorize('sysUtil:codeGenTable:selAll')
+  @Authorize({
+    permission: 'sysUtil:codeGenTable:selAll',
+    label: '查询所有表信息',
+  })
   async selAll(@Query() dto: selAllDto) {
     return this.codeGenTableService.selAll(dto);
   }
 
   @Get('/ids')
-  @Authorize('sysUtil:codeGenTable:selOnes')
+  @Authorize({
+    permission: 'sysUtil:codeGenTable:selOnes',
+    label: '查询多个表信息（根据id）',
+  })
   async selOnes(@Query() ids: any[]): Promise<R> {
     return this.codeGenTableService.selOnes(ids);
   }
 
   @Get('/:id')
-  @Authorize('sysUtil:codeGenTable:selOne')
+  @Authorize({
+    permission: 'sysUtil:codeGenTable:selOne',
+    label: '查询单个表信息',
+  })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.codeGenTableService.selOne(id);
   }
 
   @Post()
-  @Authorize('sysUtil:codeGenTable:ins')
+  @Authorize({
+    permission: 'sysUtil:codeGenTable:ins',
+    label: '新增表信息',
+  })
   async insCodeGenTable(@Body() dto: insOneDto): Promise<R> {
     return this.codeGenTableService.insCodeGenTable(dto);
   }
 
   @Post('/s')
-  @Authorize('sysUtil:codeGenTable:inss')
+  @Authorize({
+    permission: 'sysUtil:codeGenTable:inss',
+    label: '批量新增表信息',
+  })
   async insCodeGenTables(@Body(
     new ParseArrayPipe({
-      items: insOneDto
-    })
+      items: insOneDto,
+    }),
   ) dto: insOneDto[]): Promise<R> {
     return this.codeGenTableService.insCodeGenTables(dto);
   }
 
   @Put()
-  @Authorize('sysUtil:codeGenTable:upd')
+  @Authorize({
+    permission: 'sysUtil:codeGenTable:upd',
+    label: '修改表信息',
+  })
   async updCodeGenTable(@Body() dto: updOneDto): Promise<R> {
     return this.codeGenTableService.updCodeGenTable(dto);
   }
 
   @Put('/s')
-  @Authorize('sysUtil:codeGenTable:upds')
+  @Authorize({
+    permission: 'sysUtil:codeGenTable:upds',
+    label: '批量修改表信息',
+  })
   async updCodeGenTables(@Body(
     new ParseArrayPipe({
-      items: updOneDto
-    })
+      items: updOneDto,
+    }),
   ) dto: updOneDto[]): Promise<R> {
     return this.codeGenTableService.updCodeGenTables(dto);
   }
 
   @Delete()
-  @Authorize('sysUtil:codeGenTable:del')
+  @Authorize({
+    permission: 'sysUtil:codeGenTable:del',
+    label: '删除表信息',
+  })
   async delCodeGenTable(@Body() ids: any[]): Promise<R> {
     return this.codeGenTableService.delCodeGenTable(ids);
   }

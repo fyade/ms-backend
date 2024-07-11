@@ -14,6 +14,7 @@ import { UserPermissionDeniedException } from '../../../exception/UserPermission
 import { generateToken } from '../../../util/AuthUtils';
 import { LogUserLoginService } from '../../sys-monitor/log-user-login/log-user-login.service';
 import { comparePassword, hashPassword } from '../../../util/EncryptUtils';
+import { userDeptDto } from '../user-dept/dto';
 
 @Injectable()
 export class UserService {
@@ -39,9 +40,11 @@ export class UserService {
     delete dto.ifWithRole;
     const res = await this.prisma.findPage<userDto, userListSelDto>('sys_user', {
       data: dto,
-      notNullKeys: ['username'],
+      notNullKeys: ['id', 'username'],
     });
-    res.list = res.list.map(item => ({ ...item, password: null }));
+    res.list.forEach(item => {
+      delete item.password;
+    });
     if (ifWithRole === base.N) {
       return R.ok(res);
     }
@@ -51,9 +54,13 @@ export class UserService {
       const roles = await this.prisma.findAll<userRoleDto>('sys_user_role', { data: { userId: res.list[i].id } });
       const roleids = roles.map(item => item.roleId);
       const rols = await this.prisma.findAll('sys_role', { data: { id: { in: roleids } }, orderBy: true }, false);
+      const depts = await this.prisma.findAll<userDeptDto>('sys_user_dept', { data: { userId: res.list[i].id } });
+      const deptids = depts.map(item => item.deptId);
+      const deps = await this.prisma.findAll('sys_dept', { data: { id: { in: deptids } }, orderBy: true }, false);
       res2.push({
         ...res.list[i],
         roles: rols,
+        depts: deps,
         ifTopAdmin: topAdminUser.findIndex(item => item.userId === res.list[i].id) > -1,
       });
     }
@@ -61,6 +68,14 @@ export class UserService {
       ...res,
       list: res2,
     });
+  }
+
+  async selOnes(ids: any[]): Promise<R> {
+    const res = await this.prisma.findByIds('sys_user', Object.values(ids));
+    res.forEach((item: any) => {
+      delete item.password;
+    });
+    return R.ok(res);
   }
 
   async insUser(dto: adminNewUserDto): Promise<R> {

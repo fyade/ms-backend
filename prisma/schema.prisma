@@ -35,49 +35,7 @@ model sys_user {
   @@map("sys_user")
 }
 
-// 1.2 部门表
-model sys_dept {
-  id          Int      @id @default(autoincrement()) @db.Int
-  label       String   @db.VarChar(50)
-  parent_id   Int      @db.Int
-  ancestor_id Int      @db.Int
-  order_num   Int      @db.Int
-  remark      String?  @db.VarChar(300)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
-}
-
-// 1.3 岗位表
-model sys_job {
-  id          Int      @id @default(autoincrement()) @db.Int
-  label       String   @db.VarChar(50)
-  dept_id     Int      @db.Int
-  order_num   Int      @db.Int
-  remark      String?  @db.VarChar(300)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
-}
-
-// 1.4 用户岗位表
-model sys_user_job {
-  id          Int      @id @default(autoincrement()) @db.Int
-  user_id     String   @db.VarChar(10)
-  job_id      Int      @db.Int
-  remark      String?  @db.VarChar(300)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
-}
-
-// 1.5 字典类型表
+// 1.2 字典类型表
 model sys_dic_type {
   id          Int      @id @default(autoincrement()) @db.Int
   name        String   @db.VarChar(50)
@@ -92,7 +50,7 @@ model sys_dic_type {
   deleted     String   @default("N") @db.Char(1)
 }
 
-// 1.6 字典数据表
+// 1.3 字典数据表
 model sys_dic_data {
   id          Int      @id @default(autoincrement()) @db.Int
   label       String   @db.VarChar(50)
@@ -109,7 +67,7 @@ model sys_dic_data {
   deleted     String   @default("N") @db.Char(1)
 }
 
-// 1.7 代码生成-表信息表
+// 1.4 代码生成-表信息表
 model sys_code_gen_table {
   id            Int      @id @default(autoincrement()) @db.Int
   table_name    String   @db.VarChar(60)
@@ -127,7 +85,7 @@ model sys_code_gen_table {
   deleted       String   @default("N") @db.Char(1)
 }
 
-// 1.8 代码生成-列信息表
+// 1.5 代码生成-列信息表
 model sys_code_gen_column {
   id          Int      @id @default(autoincrement()) @db.Int
   table_id    Int      @db.Int
@@ -152,10 +110,25 @@ model sys_code_gen_column {
   deleted     String   @default("N") @db.Char(1)
 }
 
-// 2.1 顶级管理员表
+// 2.0 顶级管理员表
 model sys_admin_top {
   id          Int      @id @default(autoincrement()) @db.Int
   user_id     String   @db.VarChar(10)
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.1 角色表
+model sys_role {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(30)
+  if_admin    String   @db.Char(1)
+  if_disabled String   @db.Char(1)
+  order_num   Int      @db.Int
   remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
@@ -187,36 +160,7 @@ model sys_menu {
   deleted     String   @default("N") @db.Char(1)
 }
 
-// 2.3 角色表
-model sys_role {
-  id          Int      @id @default(autoincrement()) @db.Int
-  label       String   @db.VarChar(30)
-  if_admin    String   @db.Char(1)
-  if_disabled String   @db.Char(1)
-  order_num   Int      @db.Int
-  remark      String?  @db.VarChar(300)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
-}
-
-// 2.4 权限表
-// model sys_permission {
-//   id          Int      @id @default(autoincrement()) @db.Int
-//   label       String   @db.VarChar(30)
-//   menu_id     Int      @db.Int
-//   order_num   Int      @db.Int
-//   remark      String?  @db.VarChar(300)
-//   create_by   String   @db.VarChar(10)
-//   update_by   String   @db.VarChar(10)
-//   create_time DateTime @default(now())
-//   update_time DateTime @updatedAt
-//   deleted     String   @default("N") @db.Char(1)
-// }
-
-// 2.5 用户角色表
+// 2.3 用户角色表
 model sys_user_role {
   id          Int      @id @default(autoincrement()) @db.Int
   user_id     String   @db.VarChar(10)
@@ -229,11 +173,7 @@ model sys_user_role {
   deleted     String   @default("N") @db.Char(1)
 }
 
-// 2.6 接口组表
-
-// 2.7 接口表
-
-// 2.8 角色权限表
+// 2.4 角色权限表
 model sys_role_permission {
   id            Int      @id @default(autoincrement()) @db.Int
   role_id       Int      @db.Int
@@ -245,6 +185,118 @@ model sys_role_permission {
   create_time   DateTime @default(now())
   update_time   DateTime @updatedAt
   deleted       String   @default("N") @db.Char(1)
+}
+
+// 2.5 部门表
+model sys_dept {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(50)
+  parent_id   Int      @db.Int
+  order_num   Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.6 用户部门表
+model sys_user_dept {
+  id          Int      @id @default(autoincrement()) @db.Int
+  user_id     String   @db.VarChar(10)
+  dept_id     Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.7 部门权限表
+model sys_dept_permission {
+  id            Int      @id @default(autoincrement()) @db.Int
+  dept_id       Int      @db.Int
+  type          String   @db.VarChar(2)
+  permission_id Int      @db.Int
+  remark        String?  @db.VarChar(300)
+  create_by     String   @db.VarChar(10)
+  update_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  update_time   DateTime @updatedAt
+  deleted       String   @default("N") @db.Char(1)
+}
+
+// 2.8 用户组表
+model sys_usergroup {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(30)
+  parent_id   Int      @db.Int
+  order_num   Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.9 用户用户组表
+model sys_user_usergroup {
+  id           Int      @id @default(autoincrement()) @db.Int
+  user_id      String   @db.VarChar(10)
+  usergroup_id Int      @db.Int
+  remark       String?  @db.VarChar(300)
+  create_by    String   @db.VarChar(10)
+  update_by    String   @db.VarChar(10)
+  create_time  DateTime @default(now())
+  update_time  DateTime @updatedAt
+  deleted      String   @default("N") @db.Char(1)
+}
+
+// 2.10 接口表
+model sys_interface {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(30)
+  icon        String   @db.VarChar(30)
+  order_num   Int      @db.Int
+  if_disabled String   @db.Char(1)
+  if_public   String   @db.Char(1)
+  perms       String   @db.VarChar(100)
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.11 接口组表
+model sys_interfacegroup {
+  id          Int      @id @default(autoincrement()) @db.Int
+  label       String   @db.VarChar(30)
+  parent_id   Int      @db.Int
+  order_num   Int      @db.Int
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 2.12 用户组接口组表
+model sys_usergroup_interfacegroup {
+  id                Int      @id @default(autoincrement()) @db.Int
+  usergroup_id      Int      @db.Int
+  interfacegroup_id Int      @db.Int
+  remark            String?  @db.VarChar(300)
+  create_by         String   @db.VarChar(10)
+  update_by         String   @db.VarChar(10)
+  create_time       DateTime @default(now())
+  update_time       DateTime @updatedAt
+  deleted           String   @default("N") @db.Char(1)
 }
 
 // 3.1 sms记录表

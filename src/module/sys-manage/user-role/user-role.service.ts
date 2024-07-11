@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { insManyDto, insOneDto, selListDto, updManyDto, updOneDto } from './dto';
+import { selAllDto, selListDto, updManyRUDto, updManyURDto, updOneDto, userRoleDto } from './dto';
 import { R } from '../../../common/R';
 import { getCurrentUser } from '../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../exception/UserPermissionDeniedException';
@@ -19,34 +19,49 @@ export class UserRoleService {
     return R.ok(res);
   }
 
+  async selAll(dto: selAllDto): Promise<R> {
+    const res = await this.prisma.findAll('sys_user_role', { data: dto, numberKeys: ['roleId'] });
+    return R.ok(res);
+  }
+
   async selOne(id: any): Promise<R> {
     const one = await this.prisma.findById('sys_user_role', Number(id));
     return R.ok(one);
   }
 
-  async insUserRole(dto: insManyDto): Promise<R> {
+  async updUserRoleUR(dto: updManyURDto): Promise<R> {
     if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
-    const data = dto.roleId.map(item => ({
-      ...dto,
-      roleId: item,
-    }));
-    await this.prisma.createMany('sys_user_role', data);
+    const allRoles = await this.prisma.findAll<updOneDto>('sys_user_role', { data: { userId: dto.userId } });
+    const allRoleIds = allRoles.map((item: any) => item.roleId);
+    const addRoles = dto.roleId.filter(id => allRoleIds.indexOf(id) === -1);
+    const delRoleIds = allRoleIds.filter(id => dto.roleId.indexOf(id) === -1);
+    const delIds = allRoles.filter(item => delRoleIds.indexOf(item.roleId) > -1).map(item => item.id);
+    await this.prisma.deleteById('sys_user_role', delIds);
+    await this.prisma.createMany('sys_user_role', addRoles.map(item => ({ userId: dto.userId, roleId: item })));
     return R.ok();
   }
 
-  async updUserRole(dto: updManyDto): Promise<R> {
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
-      throw new UserPermissionDeniedException();
+  async updUserRoleRU(dto: updManyRUDto): Promise<R> {
+    const data = [];
+    const allUsersOfThisRole = await this.prisma.findAll<userRoleDto>('sys_user_role', {
+      data: { roleId: dto.roleId },
+      numberKeys: ['roleId'],
+    });
+    const allUserIdsOfThisRole = allUsersOfThisRole.map(item => item.userId);
+    const userIds = dto.userId.filter(item => allUserIdsOfThisRole.indexOf(item) === -1);
+    for (let i = 0; i < userIds.length; i++) {
+      const userId = userIds[i];
+      if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, userId)) {
+        throw new UserPermissionDeniedException();
+      }
+      data.push({
+        userId: userId,
+        roleId: dto.roleId,
+      });
     }
-    const allroles = await this.prisma.findAll<updOneDto>('sys_user_role', { data: { userId: dto.userId } });
-    const allroleids = allroles.map((item: any) => item.roleId);
-    const addroles = dto.roleId.filter(id => allroleids.indexOf(id) === -1);
-    const delrolds = allroleids.filter(id => dto.roleId.indexOf(id) === -1);
-    const delids = allroles.filter(item => delrolds.indexOf(item.roleId) > -1).map(item => item.id);
-    await this.prisma.deleteById('sys_user_role', delids);
-    await this.prisma.createMany('sys_user_role', addroles.map(item => ({ userId: dto.userId, roleId: item })));
+    await this.prisma.createMany('sys_user_role', data);
     return R.ok();
   }
 

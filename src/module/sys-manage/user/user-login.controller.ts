@@ -29,7 +29,10 @@ export class UserLoginController {
   }
 
   @Post('/adminlogin')
-  @Authorize('system:user:adminlogin')
+  @Authorize({
+    permission: 'system:user:adminlogin',
+    label: '管理员登录',
+  })
   async adminLogin(@Body() dto: loginDto, @Req() request): Promise<R> {
     dto.password = decrypt(dto.password);
     const { loginIp, loginBrowser, loginOs } = this.getLoginInfo(request);

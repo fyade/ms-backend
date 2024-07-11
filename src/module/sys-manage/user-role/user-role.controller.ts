@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { insManyDto, insOneDto, selListDto, updManyDto, updOneDto } from './dto';
+import { selAllDto, selListDto, updManyRUDto, updManyURDto } from './dto';
 import { R } from '../../../common/R';
 import { UserRoleService } from './user-role.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -14,31 +14,55 @@ export class UserRoleController {
   }
 
   @Get()
-  @Authorize('sysManage:userRole:selList')
+  @Authorize({
+    permission: 'sysManage:userRole:selList',
+    label: '分页查询用户角色',
+  })
   async selUserRole(@Query() dto: selListDto): Promise<R> {
     return this.userRoleService.selUserRole(dto);
   }
 
+  @Get('/all')
+  @Authorize({
+    permission: 'sysManage:userRole:selAll',
+    label: '查询所有用户角色',
+  })
+  async selAll(@Query() dto: selAllDto): Promise<R> {
+    return this.userRoleService.selAll(dto);
+  }
+
   @Get('/:id')
-  @Authorize('sysManage:userRole:selOne')
+  @Authorize({
+    permission: 'sysManage:userRole:selOne',
+    label: '查询单个用户角色',
+  })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.userRoleService.selOne(id);
   }
 
-  @Post()
-  @Authorize('sysManage:userRole:ins')
-  async insUserRole(@Body() dto: insManyDto): Promise<R> {
-    return this.userRoleService.insUserRole(dto);
+  @Post('/ur')
+  @Authorize({
+    permission: 'sysManage:userRole:updur',
+    label: '更新用户角色（ur）',
+  })
+  async updUserRoleUR(@Body() dto: updManyURDto): Promise<R> {
+    return this.userRoleService.updUserRoleUR(dto);
   }
 
-  @Put()
-  @Authorize('sysManage:userRole:upd')
-  async updUserRole(@Body() dto: updManyDto): Promise<R> {
-    return this.userRoleService.updUserRole(dto);
+  @Post('/ru')
+  @Authorize({
+    permission: 'sysManage:userRole:updru',
+    label: '更新用户角色（ru）',
+  })
+  async updUserRoleRU(@Body() dto: updManyRUDto): Promise<R> {
+    return this.userRoleService.updUserRoleRU(dto);
   }
 
   @Delete()
-  @Authorize('sysManage:userRole:del')
+  @Authorize({
+    permission: 'sysManage:userRole:del',
+    label: '删除用户角色',
+  })
   async delUserRole(@Body() ids: any[]): Promise<R> {
     return this.userRoleService.delUserRole(ids);
   }
