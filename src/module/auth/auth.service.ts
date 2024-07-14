@@ -153,17 +153,17 @@ export class AuthService {
         from sys_menu sm
         where deleted = ${base.N}
           and (
-            id in (select permission_id
-                   from sys_role_permission
-                   where deleted = ${base.N}
-                     and type = 'm'
-                     and if(exists
-                                (select 1
-                                 from sys_admin_top sat
-                                 where sat.deleted = ${base.N}
-                                   and sat.user_id = ${user.id}),
-                            1 = 1,
-                            role_id in
+            if(exists
+                   (select 1
+                    from sys_admin_top sat
+                    where sat.deleted = ${base.N}
+                      and sat.user_id = ${user.id}),
+               1 = 1,
+               id in (select permission_id
+                      from sys_role_permission
+                      where deleted = ${base.N}
+                        and type = 'm'
+                        and role_id in
                             (select role_id
                              from sys_user_role
                              where deleted = ${base.N}
@@ -173,8 +173,8 @@ export class AuthService {
                                     from sys_role
                                     where deleted = ${base.N}
                                       and if_admin = ${base.Y}
-                                      and if_disabled = ${base.N}))
-                         ))
+                                      and if_disabled = ${base.N})))
+            )
                 or id in
                    (select permission_id
                     from sys_dept_permission
