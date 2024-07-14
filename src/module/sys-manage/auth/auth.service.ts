@@ -3,10 +3,14 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { base } from '../../../util/base';
 import { Injectable } from '@nestjs/common';
 import { adminTopDto } from '../admin-top/dto';
+import { RedisService } from '../../../redis/redis.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {
   }
 
   async findUserByUsername(username: string): Promise<userDto> {
@@ -19,38 +23,30 @@ export class AuthService {
     if (await this.hasTopAdminPermission(user.id)) {
       return true;
     }
-    const ps = await this.prisma.$queryRaw`
-      SELECT 
-          sur.id AS surId,
-          sur.user_id AS userId,
-          sur.role_id AS roleId,
-          sur.remark AS surRemark,
-          sur.create_by AS surCreateBy,
-          sur.update_by AS surUpdateBy,
-          sur.create_time AS surCreateTime,
-          sur.update_time AS surUpdateTime,
-          sur.deleted AS surDeleted,
-          sr.id AS srId,
-          sr.label AS label,
-          sr.order_num AS orderNum,
-          sr.remark AS srRemark,
-          sr.create_by AS srCreateBy,
-          sr.update_by AS srUpdateBy,
-          sr.create_time AS srCreateTime,
-          sr.update_time AS srUpdateTime,
-          sr.deleted AS srDeleted,
-          sr.if_admin AS ifAdmin,
-          sr.if_disabled AS ifDisabled
-      FROM
-          sys_user_role sur
-              LEFT JOIN
-          sys_role sr ON sur.role_id = sr.id
-      WHERE
-          sur.deleted = ${base.N} AND sr.deleted = ${base.N}
-              AND sr.if_disabled = ${base.N}
-              AND sr.if_admin = ${base.Y}
-              AND sur.user_id = ${user.id};
+    const ps1 = await this.prisma.$queryRaw`
+      SELECT sur.id AS surId
+      FROM sys_user_role sur
+      WHERE sur.deleted = ${base.N}
+        AND sur.user_id = ${user.id}
+        and sur.role_id in
+            (select sr.id
+             from sys_role sr
+             where sr.deleted = ${base.N}
+               AND sr.if_disabled = ${base.N}
+               AND sr.if_admin = ${base.Y});
     `;
+    const ps2 = await this.prisma.$queryRaw`
+      select sud.id as sudId
+      from sys_user_dept sud
+      where sud.deleted = ${base.N}
+        and sud.user_id = ${user.id}
+        and sud.dept_id in
+            (select sd.id
+             from sys_dept sd
+             where sd.deleted = ${base.N}
+               and sd.if_admin = ${base.Y});
+    `;
+    const ps = [...ps1, ...ps2];
     return ps.length > 0;
   }
 
@@ -77,7 +73,7 @@ export class AuthService {
 
   async hasAdminPermissionByUser(user: userDto, permission: string) {
     if (await this.hasTopAdminPermission(user.id)) {
-      return true
+      return true;
     }
     const permissionsOfUser = await this.permissionsOfUser(user, permission);
     const index = permissionsOfUser.findIndex(item => item.perms === permission);
@@ -97,75 +93,75 @@ export class AuthService {
   async permissionsOfUser(user: userDto, permission: string | null = null) {
     const retarr = [];
     if (user) {
+      /**
+       * 第三版
+       */
       const userPermissions = await this.prisma.$queryRaw`
-        SELECT 
-            sm.id AS id,
-            sm.label AS label,
-            sm.path AS path,
-            sm.parent_id AS parentId,
-            sm.component AS component,
-            sm.icon AS icon,
-            sm.order_num AS orderNum,
-            sm.if_link AS ifLink,
-            sm.if_visible AS ifVisible,
-            sm.if_disabled AS ifDisabled,
-            sm.if_public AS ifPublic,
-            sm.perms AS perms,
-            sm.remark AS remark,
-            sm.create_by AS createBy,
-            sm.update_by AS updateBy,
-            sm.create_time AS createTime,
-            sm.update_time AS updateTime,
-            sm.deleted AS deleted,
-            sm.type AS type
-        FROM
-            sys_menu sm
-        WHERE
-            ((EXISTS( SELECT 
-                    1
-                FROM
-                    sys_admin_top sat
-                WHERE
-                    sat.deleted = ${base.N}
-                        AND sat.user_id = ${user.id})
-                AND sm.deleted = ${base.N}
-                AND sm.if_disabled = ${base.N})
-                OR (NOT EXISTS( SELECT 
-                    1
-                FROM
-                    sys_admin_top sat
-                WHERE
-                    sat.deleted = ${base.N}
-                        AND sat.user_id = ${user.id})
-                AND sm.id IN (SELECT 
-                    sm.id
-                FROM
-                    sys_role_permission srp
-                        LEFT JOIN
-                    sys_user_role sur ON srp.role_id = sur.role_id
-                        LEFT JOIN
-                    sys_role sr ON sr.id = sur.role_id
-                        LEFT JOIN
-                    sys_menu sm ON srp.type = 'm'
-                        AND srp.permission_id = sm.id
-                WHERE
-                    srp.deleted = ${base.N}
-                        AND sur.deleted = ${base.N}
-                        AND sm.deleted = ${base.N}
-                        AND sm.if_disabled = ${base.N}
-                        AND sr.deleted = ${base.N}
-                        AND sr.if_disabled = ${base.N}
-                        AND sur.user_id = ${user.id})))
-                AND 1 = CASE
-                WHEN
-                    COALESCE(${permission}, '') <> ''
-                THEN
-                    CASE
-                        WHEN perms = ${permission} THEN 1
-                        ELSE 0
-                    END
-                ELSE 1
-            END;
+        select sm.id          AS id,
+               sm.label       AS label,
+               sm.path        AS path,
+               sm.parent_id   AS parentId,
+               sm.component   AS component,
+               sm.icon        AS icon,
+               sm.order_num   AS orderNum,
+               sm.if_link     AS ifLink,
+               sm.if_visible  AS ifVisible,
+               sm.if_disabled AS ifDisabled,
+               sm.if_public   AS ifPublic,
+               sm.perms       AS perms,
+               sm.remark      AS remark,
+               sm.create_by   AS createBy,
+               sm.update_by   AS updateBy,
+               sm.create_time AS createTime,
+               sm.update_time AS updateTime,
+               sm.deleted     AS deleted,
+               sm.type        AS type
+        from sys_menu sm
+        where deleted = ${base.N}
+          and (
+            id in (select permission_id
+                   from sys_role_permission
+                   where deleted = ${base.N}
+                     and type = 'm'
+                     and if(exists
+                                (select 1
+                                 from sys_admin_top sat
+                                 where sat.deleted = ${base.N}
+                                   and sat.user_id = ${user.id}),
+                            1 = 1,
+                            role_id in
+                            (select role_id
+                             from sys_user_role
+                             where deleted = ${base.N}
+                               and user_id = ${user.id}
+                               and role_id in
+                                   (select id
+                                    from sys_role
+                                    where deleted = ${base.N}
+                                      and if_admin = ${base.Y}
+                                      and if_disabled = ${base.N}))
+                         ))
+                or id in
+                   (select permission_id
+                    from sys_dept_permission
+                    where deleted = ${base.N}
+                      and type = 'm'
+                      and dept_id in
+                          (select dept_id
+                           from sys_user_dept
+                           where deleted = ${base.N}
+                             and user_id = ${user.id}))
+            )
+          and 1 = case
+                      when coalesce(${permission}, '') <> ''
+                          then
+                          case
+                              when perms = ${permission}
+                                  then 1
+                              else 0
+                              end
+                      else 1
+            end;
       `;
       retarr.push(...userPermissions);
     }
@@ -173,7 +169,13 @@ export class AuthService {
   }
 
   async ifAdminUserUpdNotAdminUser(controlUserId: string, controledUserId: string) {
-    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { data: { userId: { in: [controlUserId, controledUserId] } } }, false);
+    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', {
+      data: {
+        userId: {
+          in: [controlUserId, controledUserId],
+        },
+      },
+    }, false);
     return (controlUserId === controledUserId)
       || (topAdminUser.findIndex(item => item.userId === controlUserId) > -1 && topAdminUser.findIndex(item => item.userId === controledUserId) === -1);
   }

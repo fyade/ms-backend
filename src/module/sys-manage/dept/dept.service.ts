@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { deptDto, insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import { deptDto, deptInsOneDto, deptSelAllDto, deptSelListDto, deptUpdOneDto } from './dto';
 
 @Injectable()
 export class DeptService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selDept(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage<deptDto, selListDto>('sys_dept', {
+  async selDept(dto: deptSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<deptDto, deptSelListDto>('sys_dept', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'parentId', 'orderNum'],
@@ -18,7 +18,7 @@ export class DeptService {
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
+  async selAll(dto: deptSelAllDto): Promise<R> {
     const res = await this.prisma.findAll('sys_dept', {
       data: dto,
       orderBy: true,
@@ -38,22 +38,22 @@ export class DeptService {
     return R.ok(res);
   }
 
-  async insDept(dto: insOneDto): Promise<R> {
+  async insDept(dto: deptInsOneDto): Promise<R> {
     const res = await this.prisma.create('sys_dept', dto);
     return R.ok(res);
   }
 
-  async insDepts(dtos: insOneDto[]): Promise<R> {
+  async insDepts(dtos: deptInsOneDto[]): Promise<R> {
     const res = await this.prisma.createMany('sys_dept', dtos);
     return R.ok(res);
   }
 
-  async updDept(dto: updOneDto): Promise<R> {
+  async updDept(dto: deptUpdOneDto): Promise<R> {
     const res = await this.prisma.updateById('sys_dept', dto);
     return R.ok(res);
   }
 
-  async updDepts(dtos: updOneDto[]): Promise<R> {
+  async updDepts(dtos: deptUpdOneDto[]): Promise<R> {
     const res = await this.prisma.updateMany('sys_dept', dtos);
     return R.ok(res);
   }

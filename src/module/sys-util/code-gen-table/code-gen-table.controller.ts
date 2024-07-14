@@ -1,102 +1,148 @@
 import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { CodeGenTableService } from './code-gen-table.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
-import { CodeGenTableService } from './code-gen-table.service';
-import { insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
+import { codeGenTableSelListDto, codeGenTableSelAllDto, codeGenTableInsOneDto, codeGenTableUpdOneDto } from './dto';
 
 @Controller('/sys-util/code-gen-table')
-@ApiTags('代码生成-表信息表')
+@ApiTags('代码生成-表信息')
+@ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class CodeGenTableController {
   constructor(private readonly codeGenTableService: CodeGenTableService) {
   }
 
   @Get()
+  @ApiOperation({
+    summary: '分页查询代码生成-表信息',
+  })
   @Authorize({
     permission: 'sysUtil:codeGenTable:selList',
-    label: '分页查询表信息',
+    label: '分页查询代码生成-表信息',
   })
-  async selCodeGenTable(@Query() dto: selListDto): Promise<R> {
+  async selCodeGenTable(@Query() dto: codeGenTableSelListDto): Promise<R> {
     return this.codeGenTableService.selCodeGenTable(dto);
   }
 
   @Get('/all')
+  @ApiOperation({
+    summary: '查询所有代码生成-表信息',
+  })
   @Authorize({
     permission: 'sysUtil:codeGenTable:selAll',
-    label: '查询所有表信息',
+    label: '查询所有代码生成-表信息',
   })
-  async selAll(@Query() dto: selAllDto) {
+  async selAll(@Query() dto: codeGenTableSelAllDto): Promise<R> {
     return this.codeGenTableService.selAll(dto);
   }
 
   @Get('/ids')
+  @ApiOperation({
+    summary: '查询多个代码生成-表信息（根据id）',
+  })
+  @ApiQuery({
+    name: 'ids',
+    description: 'id列表',
+    isArray: true,
+    type: Number,
+  })
   @Authorize({
     permission: 'sysUtil:codeGenTable:selOnes',
-    label: '查询多个表信息（根据id）',
+    label: '查询多个代码生成-表信息（根据id）',
   })
   async selOnes(@Query() ids: any[]): Promise<R> {
     return this.codeGenTableService.selOnes(ids);
   }
 
   @Get('/:id')
+  @ApiOperation({
+    summary: '查询单个代码生成-表信息',
+  })
   @Authorize({
     permission: 'sysUtil:codeGenTable:selOne',
-    label: '查询单个表信息',
+    label: '查询单个代码生成-表信息',
   })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.codeGenTableService.selOne(id);
   }
 
   @Post()
+  @ApiOperation({
+    summary: '新增代码生成-表信息',
+  })
   @Authorize({
     permission: 'sysUtil:codeGenTable:ins',
-    label: '新增表信息',
+    label: '新增代码生成-表信息',
   })
-  async insCodeGenTable(@Body() dto: insOneDto): Promise<R> {
+  async insCodeGenTable(@Body() dto: codeGenTableInsOneDto): Promise<R> {
     return this.codeGenTableService.insCodeGenTable(dto);
   }
 
   @Post('/s')
+  @ApiOperation({
+    summary: '批量新增代码生成-表信息',
+  })
+  @ApiBody({
+    isArray: true,
+    type: codeGenTableInsOneDto,
+  })
   @Authorize({
     permission: 'sysUtil:codeGenTable:inss',
-    label: '批量新增表信息',
+    label: '批量新增代码生成-表信息',
   })
   async insCodeGenTables(@Body(
     new ParseArrayPipe({
-      items: insOneDto,
+      items: codeGenTableInsOneDto,
     }),
-  ) dto: insOneDto[]): Promise<R> {
+  ) dto: codeGenTableInsOneDto[]): Promise<R> {
     return this.codeGenTableService.insCodeGenTables(dto);
   }
 
   @Put()
+  @ApiOperation({
+    summary: '修改代码生成-表信息',
+  })
   @Authorize({
     permission: 'sysUtil:codeGenTable:upd',
-    label: '修改表信息',
+    label: '修改代码生成-表信息',
   })
-  async updCodeGenTable(@Body() dto: updOneDto): Promise<R> {
+  async updCodeGenTable(@Body() dto: codeGenTableUpdOneDto): Promise<R> {
     return this.codeGenTableService.updCodeGenTable(dto);
   }
 
   @Put('/s')
+  @ApiOperation({
+    summary: '批量修改代码生成-表信息',
+  })
+  @ApiBody({
+    isArray: true,
+    type: codeGenTableUpdOneDto,
+  })
   @Authorize({
     permission: 'sysUtil:codeGenTable:upds',
-    label: '批量修改表信息',
+    label: '批量修改代码生成-表信息',
   })
   async updCodeGenTables(@Body(
     new ParseArrayPipe({
-      items: updOneDto,
+      items: codeGenTableUpdOneDto,
     }),
-  ) dto: updOneDto[]): Promise<R> {
+  ) dto: codeGenTableUpdOneDto[]): Promise<R> {
     return this.codeGenTableService.updCodeGenTables(dto);
   }
 
   @Delete()
+  @ApiOperation({
+    summary: '删除代码生成-表信息',
+  })
+  @ApiBody({
+    isArray: true,
+    type: Number,
+  })
   @Authorize({
     permission: 'sysUtil:codeGenTable:del',
-    label: '删除表信息',
+    label: '删除代码生成-表信息',
   })
   async delCodeGenTable(@Body() ids: any[]): Promise<R> {
     return this.codeGenTableService.delCodeGenTable(ids);

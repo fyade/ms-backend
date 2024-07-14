@@ -24,9 +24,19 @@ const config = {
     mode: base.DEV,
     port: portFromCmd || 8060,
     staticRoot: '/static/file',
+    redis: {
+      host: 'localhost',
+      port: 6379,
+      password: '123456',
+      database: 0,
+    },
     database: {
-      url: `mysql://root:123456@localhost:3306/proj_manage-system`,
-      timezone: 'Asia/Shanghai'
+      host: 'localhost',
+      port: 3306,
+      username: '',
+      password: '',
+      database: '',
+      timezone: 'Asia/Shanghai',
     },
     file: {
       fileUploadPath: '',
@@ -43,4 +53,8 @@ const config = {
   prod: {
     ...
   }
+}
+
+export function getMysqlUrlFromEnv(env: any): string {
+  return `mysql://${env.database.username}:${env.database.password}@${env.database.host}:${env.database.port}/${env.database.database}`;
 }

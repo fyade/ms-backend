@@ -2,17 +2,21 @@ import { Controller, Get, Param, UsePipes } from '@nestjs/common';
 import { CodeGenerationService } from './code-generation.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/sys-util/code-generation')
 @ApiTags('代码生成')
+@ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class CodeGenerationController {
   constructor(private readonly codeGenerationService: CodeGenerationService) {
   }
 
   @Get()
+  @ApiOperation({
+    summary: '查询数据库信息',
+  })
   @Authorize({
     permission: 'sysUtil:codeGeneration:get',
     label: '查询数据库信息',
@@ -22,6 +26,9 @@ export class CodeGenerationController {
   }
 
   @Get('/c/:id')
+  @ApiOperation({
+    summary: '获取代码生成代码',
+  })
   @Authorize({
     permission: 'sysUtil:codeGeneration:getCode',
     label: '获取代码生成代码',
@@ -31,6 +38,9 @@ export class CodeGenerationController {
   }
 
   @Get('/z/:id')
+  @ApiOperation({
+    summary: '获取代码生成代码压缩包',
+  })
   @Authorize({
     permission: 'sysUtil:codeGeneration:getCodeZip',
     label: '获取代码生成代码压缩包',

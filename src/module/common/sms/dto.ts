@@ -1,15 +1,20 @@
-export interface sendDto0 {
-  msg: string
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
+
+export class smsSendDto1 {
+  @ApiProperty({ description: '内容', required: true })
+  @IsNotEmpty({ message: '内容不能为空' })
+  msg: string;
 }
 
-export interface sendDto1 {
-  from: string
-  to: string
-  params: equipName
-  remark: string
+export class smsSendDto2 {
+  from: string;
+  to: string;
+  params: equipName;
+  remark: string;
 }
 
-interface equipName {
-  name: string
-  power: string
+class equipName {
+  name: string;
+  power: string;
 }

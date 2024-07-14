@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { userLoginDto, insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import {
+  logUserLoginDto,
+  logUserLoginInsOneDto,
+  logUserLoginSelAllDto,
+  logUserLoginSelListDto,
+  logUserLoginUpdOneDto,
+} from './dto';
 
 @Injectable()
 export class LogUserLoginService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selLogUserLogin(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage<userLoginDto, selListDto>('log_user_login', {
+  async selLogUserLogin(dto: logUserLoginSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<logUserLoginDto, logUserLoginSelListDto>('log_user_login', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'ifSuccess'],
@@ -19,7 +25,7 @@ export class LogUserLoginService {
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto, {
+  async selAll(dto: logUserLoginSelAllDto, {
                  orderBy = false,
                  range = {},
                }: {
@@ -48,7 +54,7 @@ export class LogUserLoginService {
     return R.ok(res);
   }
 
-  async insLogUserLogin(dto: insOneDto, {
+  async insLogUserLogin(dto: logUserLoginInsOneDto, {
     ifCustomizeId = false,
     ifCreateBy = true,
     ifUpdateBy = true,
@@ -74,17 +80,17 @@ export class LogUserLoginService {
     return R.ok(res);
   }
 
-  async insLogUserLogins(dtos: insOneDto[]): Promise<R> {
+  async insLogUserLogins(dtos: logUserLoginInsOneDto[]): Promise<R> {
     const res = await this.prisma.createMany('log_user_login', dtos);
     return R.ok(res);
   }
 
-  async updLogUserLogin(dto: updOneDto): Promise<R> {
+  async updLogUserLogin(dto: logUserLoginUpdOneDto): Promise<R> {
     const res = await this.prisma.updateById('log_user_login', dto, { ifDeleted: false });
     return R.ok(res);
   }
 
-  async updLogUserLogins(dtos: updOneDto[]): Promise<R> {
+  async updLogUserLogins(dtos: logUserLoginUpdOneDto[]): Promise<R> {
     const res = await this.prisma.updateMany('log_user_login', dtos, { ifDeleted: false });
     return R.ok(res);
   }

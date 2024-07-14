@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { insOneDto, menuDto, selAllDto, updOneDto } from './dto';
+import { menuDto, menuInsOneDto, menuSelAllDto, menuUpdOneDto } from './dto';
 
 @Injectable()
 export class MenuService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
+  async selAll(dto: menuSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<menuDto>('sys_menu', {
       data: dto,
       orderBy: true,
@@ -28,17 +28,17 @@ export class MenuService {
     return R.ok(one);
   }
 
-  async insMenu(dto: insOneDto): Promise<R> {
+  async insMenu(dto: menuInsOneDto): Promise<R> {
     await this.prisma.create('sys_menu', dto);
     return R.ok();
   }
 
-  async insMenus(dtos: insOneDto[]): Promise<R> {
+  async insMenus(dtos: menuInsOneDto[]): Promise<R> {
     await this.prisma.createMany('sys_menu', dtos);
     return R.ok();
   }
 
-  async updMenu(dto: updOneDto): Promise<R> {
+  async updMenu(dto: menuUpdOneDto): Promise<R> {
     if (dto.id === dto.parentId) {
       return R.err('父级菜单不可选自己！');
     }
@@ -46,7 +46,7 @@ export class MenuService {
     return R.ok();
   }
 
-  async updMenus(dtos: updOneDto[]): Promise<R> {
+  async updMenus(dtos: menuUpdOneDto[]): Promise<R> {
     if (dtos.some(item => item.id === item.parentId)) {
       return R.err('父级菜单不可选自己！');
     }

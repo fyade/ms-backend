@@ -27,6 +27,9 @@ import { LogUserLoginModule } from './module/sys-monitor/log-user-login/log-user
 import { DeptModule } from './module/sys-manage/dept/dept.module';
 import { UserGroupModule } from './module/sys-manage/user-group/user-group.module';
 import { UserDeptModule } from './module/sys-manage/user-dept/user-dept.module';
+import { InterfaceGroupModule } from './module/sys-manage/interface-group/interface-group.module';
+import { DeptPermissionModule } from './module/sys-manage/dept-permission/dept-permission.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -42,6 +45,7 @@ import { UserDeptModule } from './module/sys-manage/user-dept/user-dept.module';
       signOptions: { expiresIn: expireTime },
     }),
     PrismaModule,
+    RedisModule,
     FileUploadModule,
     SmsModule,
     UserModule,
@@ -58,6 +62,8 @@ import { UserDeptModule } from './module/sys-manage/user-dept/user-dept.module';
     DeptModule,
     UserGroupModule,
     UserDeptModule,
+    InterfaceGroupModule,
+    DeptPermissionModule,
   ],
   controllers: [
     AppController,

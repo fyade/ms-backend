@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { userDeptDto, insOneDto, selAllDto, selListDto, updOneDto, userDeptUpdUDDto, userDeptUpdDUDto } from './dto';
 import { R } from '../../../common/R';
 import { getCurrentUser } from '../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../exception/UserPermissionDeniedException';
 import { AuthService } from '../auth/auth.service';
+import { userDeptDto, userDeptSelAllDto, userDeptSelListDto, userDeptUpdDUDto, userDeptUpdUDDto } from './dto';
 
 @Injectable()
 export class UserDeptService {
@@ -14,8 +14,8 @@ export class UserDeptService {
   ) {
   }
 
-  async selUserDept(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage<userDeptDto, selListDto>('sys_user_dept', {
+  async selUserDept(dto: userDeptSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<userDeptDto, userDeptSelListDto>('sys_user_dept', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'deptId'],
@@ -24,7 +24,7 @@ export class UserDeptService {
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
+  async selAll(dto: userDeptSelAllDto): Promise<R> {
     const res = await this.prisma.findAll('sys_user_dept', {
       data: dto,
       orderBy: false,

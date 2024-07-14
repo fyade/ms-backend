@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { selAllDto, selListDto, updManyRUDto, updManyURDto, updOneDto, userRoleDto } from './dto';
 import { R } from '../../../common/R';
 import { getCurrentUser } from '../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../exception/UserPermissionDeniedException';
 import { AuthService } from '../auth/auth.service';
+import {
+  userRoleDto,
+  userRoleSelAllDto,
+  userRoleSelListDto,
+  userRoleUpdManyRUDto,
+  userRoleUpdManyURDto,
+  userRoleUpdOneDto,
+} from './dto';
 
 @Injectable()
 export class UserRoleService {
@@ -14,12 +21,12 @@ export class UserRoleService {
   ) {
   }
 
-  async selUserRole(dto: selListDto): Promise<R> {
+  async selUserRole(dto: userRoleSelListDto): Promise<R> {
     const res = await this.prisma.findPage('sys_user_role', { data: dto });
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
+  async selAll(dto: userRoleSelAllDto): Promise<R> {
     const res = await this.prisma.findAll('sys_user_role', { data: dto, numberKeys: ['roleId'] });
     return R.ok(res);
   }
@@ -29,11 +36,11 @@ export class UserRoleService {
     return R.ok(one);
   }
 
-  async updUserRoleUR(dto: updManyURDto): Promise<R> {
+  async updUserRoleUR(dto: userRoleUpdManyURDto): Promise<R> {
     if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
-    const allRoles = await this.prisma.findAll<updOneDto>('sys_user_role', { data: { userId: dto.userId } });
+    const allRoles = await this.prisma.findAll<userRoleUpdOneDto>('sys_user_role', { data: { userId: dto.userId } });
     const allRoleIds = allRoles.map((item: any) => item.roleId);
     const addRoles = dto.roleId.filter(id => allRoleIds.indexOf(id) === -1);
     const delRoleIds = allRoleIds.filter(id => dto.roleId.indexOf(id) === -1);
@@ -43,7 +50,7 @@ export class UserRoleService {
     return R.ok();
   }
 
-  async updUserRoleRU(dto: updManyRUDto): Promise<R> {
+  async updUserRoleRU(dto: userRoleUpdManyRUDto): Promise<R> {
     const data = [];
     const allUsersOfThisRole = await this.prisma.findAll<userRoleDto>('sys_user_role', {
       data: { roleId: dto.roleId },

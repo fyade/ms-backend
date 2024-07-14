@@ -45,18 +45,38 @@ export class UserService {
     res.list.forEach(item => {
       delete item.password;
     });
-    if (ifWithRole === base.N) {
+    if (ifWithRole !== base.Y) {
       return R.ok(res);
     }
-    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', { data: { userId: { in: res.list.map(item => item.id) } } }, false);
+    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', {
+      data: {
+        userId: {
+          in: res.list.map(item => item.id),
+        },
+      },
+    }, false);
     const res2 = [];
     for (let i = 0; i < res.list.length; i++) {
       const roles = await this.prisma.findAll<userRoleDto>('sys_user_role', { data: { userId: res.list[i].id } });
       const roleids = roles.map(item => item.roleId);
-      const rols = await this.prisma.findAll('sys_role', { data: { id: { in: roleids } }, orderBy: true }, false);
+      const rols = await this.prisma.findAll('sys_role', {
+        data: {
+          id: {
+            in: roleids,
+          },
+        },
+        orderBy: true,
+      }, false);
       const depts = await this.prisma.findAll<userDeptDto>('sys_user_dept', { data: { userId: res.list[i].id } });
       const deptids = depts.map(item => item.deptId);
-      const deps = await this.prisma.findAll('sys_dept', { data: { id: { in: deptids } }, orderBy: true }, false);
+      const deps = await this.prisma.findAll('sys_dept', {
+        data: {
+          id: {
+            in: deptids,
+          },
+        },
+        orderBy: true,
+      }, false);
       res2.push({
         ...res.list[i],
         roles: rols,

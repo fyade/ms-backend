@@ -1,15 +1,17 @@
-import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UploadedFile, UseInterceptors, UsePipes } from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
 import { R } from '../../../common/R';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { currentEnv } from '../../../../config/config';
-import { params_fileUploadOneChunk_check, params_fileUploadOneChunk_merge, selListDto } from './dto';
-import { pageSelDto } from '../../../common/dto/PageDto';
+import { fileUploadSelListDto, fileUploadOneChunk_check, fileUploadOneChunk_merge } from './dto';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/sys-common/file-upload')
 @ApiTags('文件上传')
+@ApiBearerAuth()
+@UsePipes(new ValidationPipe())
 export class FileUploadController {
   private env: any;
 
@@ -18,15 +20,21 @@ export class FileUploadController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: '分页查询文件上传列表',
+  })
   @Authorize({
     permission: 'system:fileupload:selList',
     label: '分页查询文件上传列表',
   })
-  async selList(@Query() dto: selListDto): Promise<R> {
+  async selList(@Query() dto: fileUploadSelListDto): Promise<R> {
     return this.fileUploadService.selList(dto);
   }
 
   @Post('/one-full')
+  @ApiOperation({
+    summary: '文件上传-单文件完整上传',
+  })
   @UseInterceptors(FileInterceptor('file'))
   @Authorize({
     permission: 'system:fileupload:onefull0',
@@ -40,6 +48,9 @@ export class FileUploadController {
   }
 
   @Post('/one-full/:filename')
+  @ApiOperation({
+    summary: '文件上传-单文件完整上传',
+  })
   @UseInterceptors(FileInterceptor('file'))
   @Authorize({
     permission: 'system:fileupload:onefull',
@@ -53,6 +64,9 @@ export class FileUploadController {
   }
 
   @Post('/one-full-avatar')
+  @ApiOperation({
+    summary: '文件上传-头像',
+  })
   @UseInterceptors(FileInterceptor('file'))
   @Authorize({
     permission: 'system:fileupload:avatar',
@@ -66,15 +80,21 @@ export class FileUploadController {
   }
 
   @Post('/one-chunk/check')
+  @ApiOperation({
+    summary: '文件上传-单文件分片上传前检查',
+  })
   @Authorize({
     permission: 'system:fileupload:onechunkcheck',
     label: '文件上传-单文件分片上传前检查',
   })
-  async fileUploadOneChunkCheck(@Body() dto: params_fileUploadOneChunk_check): Promise<R> {
+  async fileUploadOneChunkCheck(@Body() dto: fileUploadOneChunk_check): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkCheck(dto);
   }
 
   @Post('/one-chunk/upload/:fileMd5/:fileNewName/:chunkIndex')
+  @ApiOperation({
+    summary: '文件上传-单文件分片上传',
+  })
   @UseInterceptors(FileInterceptor('file'))
   @Authorize({
     permission: 'system:fileupload:onechunkupload',
@@ -90,11 +110,14 @@ export class FileUploadController {
   }
 
   @Post('/one-chunk/merge')
+  @ApiOperation({
+    summary: '文件上传-单文件分片上传分片合并',
+  })
   @Authorize({
     permission: 'system:fileupload:onechunkmerge',
     label: '文件上传-单文件分片上传分片合并',
   })
-  async fileUploadOneChunkMerge(@Body() dto: params_fileUploadOneChunk_merge): Promise<R> {
+  async fileUploadOneChunkMerge(@Body() dto: fileUploadOneChunk_merge): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkMerge(dto);
   }
 

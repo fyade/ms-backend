@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { dicDataDto, insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import { dicDataDto, dicDataInsOneDto, dicDataSelAllDto, dicDataSelListDto, dicDataUpdOneDto } from './dto';
 
 @Injectable()
 export class DicDataService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selDicData(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage<dicDataDto, selListDto>('sys_dic_data', {
+  async selDicData(dto: dicDataSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<dicDataDto, dicDataSelListDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'value', 'dicType', 'ifDefault', 'ifDisabled', 'orderNum'],
@@ -18,7 +18,7 @@ export class DicDataService {
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
+  async selAll(dto: dicDataSelAllDto): Promise<R> {
     const res = await this.prisma.findAll('sys_dic_data', {
       data: dto,
       orderBy: true,
@@ -38,22 +38,22 @@ export class DicDataService {
     return R.ok(res);
   }
 
-  async insDicData(dto: insOneDto): Promise<R> {
+  async insDicData(dto: dicDataInsOneDto): Promise<R> {
     const res = await this.prisma.create('sys_dic_data', dto);
     return R.ok(res);
   }
 
-  async insDicDatas(dto: insOneDto[]): Promise<R> {
+  async insDicDatas(dto: dicDataInsOneDto[]): Promise<R> {
     const res = await this.prisma.createMany('sys_dic_data', dto);
     return R.ok(res);
   }
 
-  async updDicData(dto: updOneDto): Promise<R> {
+  async updDicData(dto: dicDataUpdOneDto): Promise<R> {
     const res = await this.prisma.updateById('sys_dic_data', dto);
     return R.ok(res);
   }
 
-  async updDicDatas(dto: updOneDto[]): Promise<R> {
+  async updDicDatas(dto: dicDataUpdOneDto[]): Promise<R> {
     const res = await this.prisma.updateMany('sys_dic_data', dto);
     return R.ok(res);
   }

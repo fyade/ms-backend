@@ -17,6 +17,7 @@ import { codeGenTableDto } from '../code-gen-table/dto';
 import { codeGenColumnDto } from '../code-gen-column/dto';
 import { capitalizeFirstLetter, lowercaseFirstLetter, toCamelCase, toKebabCase } from '../../../util/BaseUtils';
 import { base, publicDict } from '../../../util/base';
+import { getDBTableName } from '../../../util/RegularUtils';
 
 const baseInterfaceColumns = [
   'createBy',
@@ -173,78 +174,151 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
   ]
   const hd1 =
 `import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ${capitalizeFirstLetter(moduleName)}Service } from './${toKebabCase(moduleName)}.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
+import { ${moduleName}SelListDto, ${moduleName}SelAllDto, ${moduleName}InsOneDto, ${moduleName}UpdOneDto } from './dto';
 
 @Controller('/${toKebabCase(businessName)}/${toKebabCase(moduleName)}')
-@ApiTags('${table.tableDescr}')
+@ApiTags('${getDBTableName(table.tableDescr)}')
+@ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class ${capitalizeFirstLetter(moduleName)}Controller {
   constructor(private readonly ${moduleName}Service: ${capitalizeFirstLetter(moduleName)}Service) {
   }
 
   @Get()
-  @Authorize('${businessName}:${moduleName}:selList')
-  async sel${capitalizeFirstLetter(moduleName)}(@Query() dto: selListDto): Promise<R> {
+  @ApiOperation({
+    summary: '分页查询${getDBTableName(table.tableDescr)}',
+  })
+  @Authorize({
+    permission: '${businessName}:${moduleName}:selList',
+    label: '分页查询${getDBTableName(table.tableDescr)}',
+  })
+  async sel${capitalizeFirstLetter(moduleName)}(@Query() dto: ${moduleName}SelListDto): Promise<R> {
     return this.${moduleName}Service.sel${capitalizeFirstLetter(moduleName)}(dto);
   }
 
   @Get('/all')
-  @Authorize('${businessName}:${moduleName}:selAll')
-  async selAll(@Query() dto: selAllDto) {
+  @ApiOperation({
+    summary: '查询所有${getDBTableName(table.tableDescr)}',
+  })
+  @Authorize({
+    permission: '${businessName}:${moduleName}:selAll',
+    label: '查询所有${getDBTableName(table.tableDescr)}',
+  })
+  async selAll(@Query() dto: ${moduleName}SelAllDto): Promise<R> {
     return this.${moduleName}Service.selAll(dto);
   }
 
   @Get('/ids')
-  @Authorize('${businessName}:${moduleName}:selOnes')
+  @ApiOperation({
+    summary: '查询多个${getDBTableName(table.tableDescr)}（根据id）',
+  })
+  @ApiQuery({
+    name: 'ids',
+    description: 'id列表',
+    isArray: true,
+    type: Number,
+  })
+  @Authorize({
+    permission: '${businessName}:${moduleName}:selOnes',
+    label: '查询多个${getDBTableName(table.tableDescr)}（根据id）',
+  })
   async selOnes(@Query() ids: any[]): Promise<R> {
     return this.${moduleName}Service.selOnes(ids);
   }
 
   @Get('/:id')
-  @Authorize('${businessName}:${moduleName}:selOne')
+  @ApiOperation({
+    summary: '查询单个${getDBTableName(table.tableDescr)}',
+  })
+  @Authorize({
+    permission: '${businessName}:${moduleName}:selOne',
+    label: '查询单个${getDBTableName(table.tableDescr)}',
+  })
   async selOne(@Param('id') id: number): Promise<R> {
     return this.${moduleName}Service.selOne(id);
   }
 
   @Post()
-  @Authorize('${businessName}:${moduleName}:ins')
-  async ins${capitalizeFirstLetter(moduleName)}(@Body() dto: insOneDto): Promise<R> {
+  @ApiOperation({
+    summary: '新增${getDBTableName(table.tableDescr)}',
+  })
+  @Authorize({
+    permission: '${businessName}:${moduleName}:ins',
+    label: '新增${getDBTableName(table.tableDescr)}',
+  })
+  async ins${capitalizeFirstLetter(moduleName)}(@Body() dto: ${moduleName}InsOneDto): Promise<R> {
     return this.${moduleName}Service.ins${capitalizeFirstLetter(moduleName)}(dto);
   }
 
   @Post('/s')
-  @Authorize('${businessName}:${moduleName}:inss')
+  @ApiOperation({
+    summary: '批量新增${getDBTableName(table.tableDescr)}',
+  })
+  @ApiBody({
+    isArray: true,
+    type: ${moduleName}InsOneDto,
+  })
+  @Authorize({
+    permission: '${businessName}:${moduleName}:inss',
+    label: '批量新增${getDBTableName(table.tableDescr)}',
+  })
   async ins${capitalizeFirstLetter(moduleName)}s(@Body(
     new ParseArrayPipe({
-      items: insOneDto
-    })
-  ) dto: insOneDto[]): Promise<R> {
+      items: ${moduleName}InsOneDto,
+    }),
+  ) dto: ${moduleName}InsOneDto[]): Promise<R> {
     return this.${moduleName}Service.ins${capitalizeFirstLetter(moduleName)}s(dto);
   }
 
   @Put()
-  @Authorize('${businessName}:${moduleName}:upd')
-  async upd${capitalizeFirstLetter(moduleName)}(@Body() dto: updOneDto): Promise<R> {
+  @ApiOperation({
+    summary: '修改${getDBTableName(table.tableDescr)}',
+  })
+  @Authorize({
+    permission: '${businessName}:${moduleName}:upd',
+    label: '修改${getDBTableName(table.tableDescr)}',
+  })
+  async upd${capitalizeFirstLetter(moduleName)}(@Body() dto: ${moduleName}UpdOneDto): Promise<R> {
     return this.${moduleName}Service.upd${capitalizeFirstLetter(moduleName)}(dto);
   }
 
   @Put('/s')
-  @Authorize('${businessName}:${moduleName}:upds')
+  @ApiOperation({
+    summary: '批量修改${getDBTableName(table.tableDescr)}',
+  })
+  @ApiBody({
+    isArray: true,
+    type: ${moduleName}UpdOneDto,
+  })
+  @Authorize({
+    permission: '${businessName}:${moduleName}:upds',
+    label: '批量修改${getDBTableName(table.tableDescr)}',
+  })
   async upd${capitalizeFirstLetter(moduleName)}s(@Body(
     new ParseArrayPipe({
-      items: updOneDto
-    })
-  ) dto: updOneDto[]): Promise<R> {
+      items: ${moduleName}UpdOneDto,
+    }),
+  ) dto: ${moduleName}UpdOneDto[]): Promise<R> {
     return this.${moduleName}Service.upd${capitalizeFirstLetter(moduleName)}s(dto);
   }
 
   @Delete()
-  @Authorize('${businessName}:${moduleName}:del')
+  @ApiOperation({
+    summary: '删除${getDBTableName(table.tableDescr)}',
+  })
+  @ApiBody({
+    isArray: true,
+    type: Number,
+  })
+  @Authorize({
+    permission: '${businessName}:${moduleName}:del',
+    label: '删除${getDBTableName(table.tableDescr)}',
+  })
   async del${capitalizeFirstLetter(moduleName)}(@Body() ids: any[]): Promise<R> {
     return this.${moduleName}Service.del${capitalizeFirstLetter(moduleName)}(ids);
   }
@@ -253,16 +327,16 @@ export class ${capitalizeFirstLetter(moduleName)}Controller {
   const hd2 =
 `import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { ${moduleName}Dto, insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import { ${moduleName}Dto, ${moduleName}SelListDto, ${moduleName}SelAllDto, ${moduleName}InsOneDto, ${moduleName}UpdOneDto } from './dto';
 
 @Injectable()
 export class ${capitalizeFirstLetter(moduleName)}Service {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async sel${capitalizeFirstLetter(moduleName)}(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage<${moduleName}Dto, selListDto>('${table.tableName}', {
+  async sel${capitalizeFirstLetter(moduleName)}(dto: ${moduleName}SelListDto): Promise<R> {
+    const res = await this.prisma.findPage<${moduleName}Dto, ${moduleName}SelListDto>('${table.tableName}', {
       data: dto,
       orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},
       notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],
@@ -271,7 +345,7 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
+  async selAll(dto: ${moduleName}SelAllDto): Promise<R> {
     const res = await this.prisma.findAll('${table.tableName}', {
       data: dto,
       orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},
@@ -291,22 +365,22 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
     return R.ok(res);
   }
 
-  async ins${capitalizeFirstLetter(moduleName)}(dto: insOneDto): Promise<R> {
+  async ins${capitalizeFirstLetter(moduleName)}(dto: ${moduleName}InsOneDto): Promise<R> {
     const res = await this.prisma.create('${table.tableName}', dto);
     return R.ok(res);
   }
 
-  async ins${capitalizeFirstLetter(moduleName)}s(dtos: insOneDto[]): Promise<R> {
+  async ins${capitalizeFirstLetter(moduleName)}s(dtos: ${moduleName}InsOneDto[]): Promise<R> {
     const res = await this.prisma.createMany('${table.tableName}', dtos);
     return R.ok(res);
   }
 
-  async upd${capitalizeFirstLetter(moduleName)}(dto: updOneDto): Promise<R> {
+  async upd${capitalizeFirstLetter(moduleName)}(dto: ${moduleName}UpdOneDto): Promise<R> {
     const res = await this.prisma.updateById('${table.tableName}', dto);
     return R.ok(res);
   }
 
-  async upd${capitalizeFirstLetter(moduleName)}s(dtos: updOneDto[]): Promise<R> {
+  async upd${capitalizeFirstLetter(moduleName)}s(dtos: ${moduleName}UpdOneDto[]): Promise<R> {
     const res = await this.prisma.updateMany('${table.tableName}', dtos);
     return R.ok(res);
   }
@@ -322,6 +396,7 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
 import { baseInterface } from '../../../util/base';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class ${moduleName}Dto extends baseInterface {
 ${
@@ -332,36 +407,49 @@ ${
 }
 }
 
-export class selListDto extends pageSelDto {
+export class ${moduleName}SelListDto extends pageSelDto {
+  @ApiProperty({ description: '主键id', required: false })
   id: ${columns.find(item => item.colName === 'id').tsType};
 
 ${
   columns
     .filter(item => item.ifSelMore === base.Y)
-    .map(column => `  ${column.tsName}: ${column.tsType};`)
+    .map(column => `  @ApiProperty({ description: '${column.colDescr}', required: false })\n  ${column.tsName}: ${column.tsType};`)
     .join('\n\n')
 }
 }
 
-export class insOneDto {
+export class ${moduleName}SelAllDto {
+${
+  columns
+    .filter(item => item.ifSelMore === base.Y)
+    .map(column => `  @ApiProperty({ description: '${column.colDescr}', required: false })\n  ${column.tsName}: ${column.tsType};`)
+    .join('\n\n')
+}
+}
+
+export class ${moduleName}InsOneDto {
 ${
     columns
       .filter(item => item.ifIns === base.Y)
-      .map(column => `${column.tsType === 'number' ? `  @Type(() => Number)\n` : ''}${column.ifRequired === base.Y ? `  @IsNotEmpty({ message: '${column.colDescr}不能为空' })\n` : ''}  ${column.tsName}: ${column.tsType};`)
+      .map(column => {
+        let str: string = ''
+        str += `  @ApiProperty({ description: '${column.colDescr}', required: ${column.ifRequired === base.Y} })\n`
+        if (column.tsType === 'number') {
+          str += `  @Type(() => Number)\n`
+        }
+        if (column.ifRequired === base.Y) {
+          str += `  @IsNotEmpty({ message: '${column.colDescr}不能为空' })\n`
+        }
+        str += `  ${column.tsName}: ${column.tsType};`
+        return str
+      })
       .join('\n\n')
   }
 }
 
-export class selAllDto {
-${
-  columns
-    .filter(item => item.ifSelMore === base.Y)
-    .map(column => `  ${column.tsName}: ${column.tsType};`)
-    .join('\n\n')
-}
-}
-
-export class updOneDto extends insOneDto {
+export class ${moduleName}UpdOneDto extends ${moduleName}InsOneDto {
+  @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: ${columns.find(item => item.colName === 'id').tsType};
 }

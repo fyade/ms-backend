@@ -2,6 +2,7 @@ import { pageSelDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
 import { IsArray, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class rolePermissionDto extends baseInterface {
   id: number;
@@ -15,51 +16,86 @@ export class rolePermissionDto extends baseInterface {
   remark: string;
 }
 
-export class selListDto extends pageSelDto {
+export class rolePermissionSelListDto extends pageSelDto {
+  @ApiProperty({ description: '主键id', required: false })
   id: number;
 
-  type: string;
-
+  @ApiProperty({ description: '角色', required: false })
   roleId: number;
 
+  @ApiProperty({ description: '权限类型', required: false })
+  type: string;
+
+  @ApiProperty({ description: '权限', required: false })
   permissionId: number;
 
+  @ApiProperty({ description: '备注', required: false })
   remark: string;
 }
 
-export class selByRoleIdDto {
+export class rolePermissionSelAllDto {
+  @ApiProperty({ description: '角色', required: false })
+  roleId: number;
+
+  @ApiProperty({ description: '权限类型', required: false })
+  type: string;
+
+  @ApiProperty({ description: '权限', required: false })
+  permissionId: number;
+
+  @ApiProperty({ description: '备注', required: false })
+  remark: string;
+}
+
+export class rolePermissionSelByRoleIdDto {
+  @ApiProperty({ description: '角色id', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '角色id不能为空' })
   roleId: number;
 }
 
-export class insManyDto {
+export class rolePermissionInsManyDto {
+  @ApiProperty({ description: '角色id', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '角色id不能为空' })
   roleId: number;
 
+  @ApiProperty({ description: '权限id', required: true })
   @IsArray({ message: '权限id不能为空' })
   permissionId: number[];
 
+  @ApiProperty({ description: '权限类型', required: false })
+    // @IsNotEmpty({ message: '权限类型不能为空' })
+  type: string;
+
+  @ApiProperty({ description: '备注', required: false })
+  remark: string;
+}
+
+export class rolePermissionUpdManyDto extends rolePermissionInsManyDto {
+}
+
+export class rolePermissionInsOneDto {
+  @ApiProperty({ description: '角色', required: true })
+  @Type(() => Number)
+  @IsNotEmpty({ message: '角色不能为空' })
+  roleId: number;
+
+  @ApiProperty({ description: '权限类型', required: true })
   @IsNotEmpty({ message: '权限类型不能为空' })
   type: string;
 
-  remark: string;
-}
-
-export class updManyDto extends insManyDto {
-}
-
-export class insOneDto {
-  type: string;
-
-  roleId: number;
-
+  @ApiProperty({ description: '权限', required: true })
+  @Type(() => Number)
+  @IsNotEmpty({ message: '权限不能为空' })
   permissionId: number;
 
+  @ApiProperty({ description: '备注', required: false })
   remark: string;
 }
 
-export class updOneDto extends insOneDto {
+export class rolePermissionUpdOneDto extends rolePermissionInsOneDto {
+  @ApiProperty({ description: '主键id', required: true })
+  @IsNotEmpty({ message: '主键id不能为空' })
   id: number;
 }

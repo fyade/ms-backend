@@ -3,25 +3,32 @@ import { UserService } from './user.service';
 import { loginDto, registDto } from './dto';
 import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { decrypt } from '../../../util/EncryptUtils';
 import * as uaparser from 'ua-parser-js';
 
 @Controller('/sys/user')
 @ApiTags('用户')
+@ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class UserLoginController {
   constructor(private readonly userService: UserService) {
   }
 
   @Post('/regist')
+  @ApiOperation({
+    summary: '用户注册',
+  })
   async regist(@Body() dto: registDto): Promise<R> {
     dto.password = decrypt(dto.password);
     return this.userService.regist(dto);
   }
 
   @Post('/login')
+  @ApiOperation({
+    summary: '用户登录',
+  })
   async login(@Body() dto: loginDto, @Req() request): Promise<R> {
     dto.password = decrypt(dto.password);
     const { loginIp, loginBrowser, loginOs } = this.getLoginInfo(request);
@@ -29,6 +36,9 @@ export class UserLoginController {
   }
 
   @Post('/adminlogin')
+  @ApiOperation({
+    summary: '管理员登录',
+  })
   @Authorize({
     permission: 'system:user:adminlogin',
     label: '管理员登录',

@@ -6,10 +6,10 @@ import { join } from 'path';
 import * as fs from 'fs';
 import { base } from '../../../util/base';
 import {
-  params_fileUploadOneChunk_check,
-  params_fileUploadOneChunk_merge,
-  params_fileUploadOneChunk_upload,
-  selListDto,
+  fileUploadSelListDto,
+  fileUploadOneChunk_check,
+  fileUploadOneChunk_merge,
+  fileUploadOneChunk_upload,
 } from './dto';
 import { pageVo } from '../../../common/vo/PageVo';
 import { pageSelDto } from '../../../common/dto/PageDto';
@@ -26,7 +26,7 @@ export class FileUploadService {
     this.env = currentEnv();
   }
 
-  async selList(dto: selListDto): Promise<R> {
+  async selList(dto: fileUploadSelListDto): Promise<R> {
     dto.pageNum = Number(dto.pageNum);
     dto.pageSize = Number(dto.pageSize);
     const filter = {
@@ -145,11 +145,12 @@ export class FileUploadService {
       }
       return R.ok(fillObj.file_new_name);
     } catch (e) {
+      console.error(e);
       return R.err(e.message);
     }
   }
 
-  async fileUploadOneChunkCheck(dto: params_fileUploadOneChunk_check): Promise<R> {
+  async fileUploadOneChunkCheck(dto: fileUploadOneChunk_check): Promise<R> {
     const fileName = dto.fileName;
     const fileSuffix = fileName.substring(fileName.lastIndexOf('.'));
     const fileUUID = randomUUID();
@@ -253,7 +254,7 @@ export class FileUploadService {
     }
   }
 
-  async fileUploadOneChunkUpload(dto: params_fileUploadOneChunk_upload): Promise<R> {
+  async fileUploadOneChunkUpload(dto: fileUploadOneChunk_upload): Promise<R> {
     dto.chunkIndex = Number(dto.chunkIndex);
     try {
       const chunkName = randomUUID();
@@ -283,11 +284,12 @@ export class FileUploadService {
       });
       return R.ok();
     } catch (e) {
+      console.error(e);
       return R.err(e.message);
     }
   }
 
-  async fileUploadOneChunkMerge(dto: params_fileUploadOneChunk_merge): Promise<R> {
+  async fileUploadOneChunkMerge(dto: fileUploadOneChunk_merge): Promise<R> {
     const fileInfos = await this.prisma.tbl_file.findMany({
       where: {
         file_new_name: dto.fileNewName,
@@ -355,6 +357,7 @@ export class FileUploadService {
           },
         });
       } catch (e) {
+        console.error(e);
       }
     }
     return R.ok();

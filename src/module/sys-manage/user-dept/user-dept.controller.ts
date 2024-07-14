@@ -1,37 +1,60 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserDeptService } from './user-dept.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
-import { selAllDto, selListDto, userDeptUpdDUDto, userDeptUpdUDDto } from './dto';
 import { R } from '../../../common/R';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
+import {
+  userDeptSelListDto,
+  userDeptSelAllDto,
+  userDeptInsOneDto,
+  userDeptUpdOneDto,
+  userDeptUpdUDDto,
+  userDeptUpdDUDto,
+} from './dto';
 
 @Controller('/sys-manage/user-dept')
-@ApiTags('2.6 用户部门表')
+@ApiTags('用户部门')
+@ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class UserDeptController {
   constructor(private readonly userDeptService: UserDeptService) {
   }
 
   @Get()
+  @ApiOperation({
+    summary: '分页查询用户部门',
+  })
   @Authorize({
     permission: 'sysManage:userDept:selList',
     label: '分页查询用户部门',
   })
-  async selUserDept(@Query() dto: selListDto): Promise<R> {
+  async selUserDept(@Query() dto: userDeptSelListDto): Promise<R> {
     return this.userDeptService.selUserDept(dto);
   }
 
   @Get('/all')
+  @ApiOperation({
+    summary: '查询所有用户部门',
+  })
   @Authorize({
     permission: 'sysManage:userDept:selAll',
     label: '查询所有用户部门',
   })
-  async selAll(@Query() dto: selAllDto) {
+  async selAll(@Query() dto: userDeptSelAllDto): Promise<R> {
     return this.userDeptService.selAll(dto);
   }
 
   @Get('/ids')
+  @ApiOperation({
+    summary: '查询多个用户部门（根据id）',
+  })
+  @ApiQuery({
+    name: 'ids',
+    description: 'id列表',
+    isArray: true,
+    type: Number,
+  })
   @Authorize({
     permission: 'sysManage:userDept:selOnes',
     label: '查询多个用户部门（根据id）',
@@ -41,6 +64,9 @@ export class UserDeptController {
   }
 
   @Get('/:id')
+  @ApiOperation({
+    summary: '查询单个用户部门',
+  })
   @Authorize({
     permission: 'sysManage:userDept:selOne',
     label: '查询单个用户部门',
@@ -50,6 +76,9 @@ export class UserDeptController {
   }
 
   @Post('/ud')
+  @ApiOperation({
+    summary: '更新用户部门（ud）',
+  })
   @Authorize({
     permission: 'sysManage:userDept:updud',
     label: '更新用户部门（ud）',
@@ -59,6 +88,9 @@ export class UserDeptController {
   }
 
   @Post('/du')
+  @ApiOperation({
+    summary: '更新用户部门（du）',
+  })
   @Authorize({
     permission: 'sysManage:userDept:upddu',
     label: '更新用户部门（du）',
@@ -68,6 +100,13 @@ export class UserDeptController {
   }
 
   @Delete()
+  @ApiOperation({
+    summary: '删除用户部门',
+  })
+  @ApiBody({
+    isArray: true,
+    type: Number,
+  })
   @Authorize({
     permission: 'sysManage:userDept:del',
     label: '删除用户部门',

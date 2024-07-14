@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { codeGenColumnDto, insOneDto, selAllDto, selListDto, updOneDto } from './dto';
+import { codeGenColumnDto, codeGenColumnSelListDto, codeGenColumnSelAllDto, codeGenColumnInsOneDto, codeGenColumnUpdOneDto } from './dto';
 
 @Injectable()
 export class CodeGenColumnService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selCodeGenColumn(dto: selListDto): Promise<R> {
-    dto.tableId = Number(dto.tableId);
-    const res = await this.prisma.findPage<codeGenColumnDto, selListDto>('sys_code_gen_column', {
+  async selCodeGenColumn(dto: codeGenColumnSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<codeGenColumnDto, codeGenColumnSelListDto>('sys_code_gen_column', {
       data: dto,
       orderBy: true,
       notNullKeys: ['tableId', 'colName', 'colDescr', 'mysqlType', 'tsType', 'tsName', 'ifIns', 'ifUpd', 'ifSelOne', 'ifSelMore', 'ifRequired', 'selType', 'formType', 'orderNum'],
@@ -19,7 +18,7 @@ export class CodeGenColumnService {
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
+  async selAll(dto: codeGenColumnSelAllDto): Promise<R> {
     const res = await this.prisma.findAll('sys_code_gen_column', {
       data: dto,
       orderBy: true,
@@ -39,22 +38,22 @@ export class CodeGenColumnService {
     return R.ok(res);
   }
 
-  async insCodeGenColumn(dto: insOneDto): Promise<R> {
+  async insCodeGenColumn(dto: codeGenColumnInsOneDto): Promise<R> {
     const res = await this.prisma.create('sys_code_gen_column', dto);
     return R.ok(res);
   }
 
-  async insCodeGenColumns(dtos: insOneDto[]): Promise<R> {
+  async insCodeGenColumns(dtos: codeGenColumnInsOneDto[]): Promise<R> {
     const res = await this.prisma.createMany('sys_code_gen_column', dtos);
     return R.ok(res);
   }
 
-  async updCodeGenColumn(dto: updOneDto): Promise<R> {
+  async updCodeGenColumn(dto: codeGenColumnUpdOneDto): Promise<R> {
     const res = await this.prisma.updateById('sys_code_gen_column', dto);
     return R.ok(res);
   }
 
-  async updCodeGenColumns(dtos: updOneDto[]): Promise<R> {
+  async updCodeGenColumns(dtos: codeGenColumnUpdOneDto[]): Promise<R> {
     const res = await this.prisma.updateMany('sys_code_gen_column', dtos);
     return R.ok(res);
   }

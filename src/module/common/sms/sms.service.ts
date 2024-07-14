@@ -1,49 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from "../../../prisma/prisma.service";
-import { R } from "../../../common/R";
-import { sendDto0, sendDto1 } from "./dto";
-import * as tencentcloud from 'tencentcloud-sdk-nodejs'
-import { currentEnv } from "../../../../config/config";
-import { base } from "../../../util/base";
-import { unitConversion } from "../../../util/NumberUtils";
-import { timeDiff } from "../../../util/TimeUtils";
+import { PrismaService } from '../../../prisma/prisma.service';
+import { R } from '../../../common/R';
+import { smsSendDto1, smsSendDto2 } from './dto';
+import * as tencentcloud from 'tencentcloud-sdk-nodejs';
+import { currentEnv } from '../../../../config/config';
+import { base } from '../../../util/base';
+import { unitConversion } from '../../../util/NumberUtils';
+import { timeDiff } from '../../../util/TimeUtils';
 
 @Injectable()
 export class SmsService {
   private env: any;
 
   constructor(private readonly prisma: PrismaService) {
-    this.env = currentEnv()
+    this.env = currentEnv();
   }
 
-  async send1(dto: sendDto0): Promise<R> {
+  async send1(dto: smsSendDto1): Promise<R> {
     const strings = dto.msg.split('-');
-    const dto1: sendDto1 = {
+    const dto1: smsSendDto2 = {
       from: `aaa`,
       // from: `${strings[]}${strings[]}${strings[]}${strings[]}${strings[]}${strings[]}${strings[]}${strings[]}${strings[]}${strings[]}${strings[]}`,
       to: `${strings[14]}${strings[45]}${strings[21]}${strings[83]}${strings[44]}${strings[65]}${strings[85]}${strings[64]}${strings[33]}${strings[99]}${strings[29]}`,
       params: {
         name: strings[100],
-        power: strings[101]
+        power: strings[101],
       },
-      remark: strings[102]
-    }
+      remark: strings[102],
+    };
     const lastedNote = await this.prisma.tbl_sms.findFirst({
       where: {
-        send_status: base.Y
+        send_status: base.Y,
       },
       orderBy: {
-        create_time: 'desc'
-      }
+        create_time: 'desc',
+      },
     });
     if (lastedNote) {
       const timeDiff_ = timeDiff(lastedNote.create_time, new Date());
-      const time = 1000 * 60 * 60
+      const time = 1000 * 60 * 60;
       if (timeDiff_ < time) {
         const s = unitConversion((time - timeDiff_) / 1000, {
           scale: 60,
           units: ['秒', '分钟'],
-          decimalDigits: 0
+          decimalDigits: 0,
         });
         const s1 = `请${s}后再试。`;
         await this.prisma.tbl_sms.create({
@@ -54,10 +54,10 @@ export class SmsService {
             remark: '设备低电量提醒',
             send_type: 'low_power',
             send_status: base.N,
-            send_status_remark: s1
-          }
-        })
-        return R.err(s1)
+            send_status_remark: s1,
+          },
+        });
+        return R.err(s1);
       }
     }
     await this.prisma.tbl_sms.create({
@@ -68,11 +68,11 @@ export class SmsService {
         remark: '设备低电量提醒',
         send_type: 'low_power',
         send_status: base.Y,
-        send_status_remark: ''
-      }
-    })
+        send_status_remark: '',
+      },
+    });
     // 导入对应产品模块的client models。
-    const smsClient = tencentcloud.sms.v20210111.Client
+    const smsClient = tencentcloud.sms.v20210111.Client;
     /* 实例化要请求产品(以sms为例)的client对象 */
     const client = new smsClient({
       credential: {
@@ -85,7 +85,7 @@ export class SmsService {
         secretKey: this.env.sms.secretKey,
       },
       /* 必填：地域信息，可以直接填写字符串ap-guangzhou，支持的地域列表参考 https://cloud.tencent.com/document/api/382/52071#.E5.9C.B0.E5.9F.9F.E5.88.97.E8.A1.A8 */
-      region: "ap-guangzhou",
+      region: 'ap-guangzhou',
       /* 非必填:
        * 客户端配置对象，可以指定超时时间等配置 */
       // profile: {
@@ -104,7 +104,7 @@ export class SmsService {
       //     endpoint: "sms.tencentcloudapi.com"
       //   },
       // },
-    })
+    });
 
     /* 请求参数，根据调用的接口和实际情况，可以进一步设置请求参数
      * 属性可能是基本类型，也可能引用了另一个数据结构
@@ -129,16 +129,16 @@ export class SmsService {
        * 示例如：+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
       PhoneNumberSet: [`+86${dto1.to}`],
       /* 用户的 session 内容（无需要可忽略）: 可以携带用户侧 ID 等上下文信息，server 会原样返回 */
-      SessionContext: "",
+      SessionContext: '',
       /* 短信码号扩展号（无需要可忽略）: 默认未开通，如需开通请联系 [腾讯云短信小助手] */
-      ExtendCode: "",
+      ExtendCode: '',
       /* 国内短信无需填写该项；国际/港澳台短信已申请独立 SenderId 需要填写该字段，默认使用公共 SenderId，无需填写该字段。注：月度使用量达到指定量级可申请独立 SenderId 使用，详情请联系 [腾讯云短信小助手](https://cloud.tencent.com/document/product/382/3773#.E6.8A.80.E6.9C.AF.E4.BA.A4.E6.B5.81)。 */
-      SenderId: "",
-    }
+      SenderId: '',
+    };
     // 通过client对象调用想要访问的接口，需要传入请求对象以及响应回调函数
     const sendSmsResponse = await client.SendSms(params);
 
-    return sendSmsResponse.SendStatusSet[0].Code === 'Ok' ? R.ok(null) : R.err(null)
+    return sendSmsResponse.SendStatusSet[0].Code === 'Ok' ? R.ok(null) : R.err(null);
 
     /* 当出现以下错误码时，快速解决方案参考
      * [FailedOperation.SignatureIncorrectOrUnapproved](https://cloud.tencent.com/document/product/382/9558#.E7.9F.AD.E4.BF.A1.E5.8F.91.E9.80.81.E6.8F.90.E7.A4.BA.EF.BC.9Afailedoperation.signatureincorrectorunapproved-.E5.A6.82.E4.BD.95.E5.A4.84.E7.90.86.EF.BC.9F)

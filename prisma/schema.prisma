@@ -191,6 +191,7 @@ model sys_role_permission {
 model sys_dept {
   id          Int      @id @default(autoincrement()) @db.Int
   label       String   @db.VarChar(50)
+  if_admin    String   @db.Char(1)
   parent_id   Int      @db.Int
   order_num   Int      @db.Int
   remark      String?  @db.VarChar(300)
@@ -286,7 +287,20 @@ model sys_interfacegroup {
   deleted     String   @default("N") @db.Char(1)
 }
 
-// 2.12 用户组接口组表
+// 2.12 接口接口组
+model sys_interface_interfacegroup {
+  id                Int      @id @default(autoincrement()) @db.Int
+  interface_id      Int      @db.Int
+  interfacegroup_id Int      @db.Int
+  remark            String?  @db.VarChar(300)
+  create_by         String   @db.VarChar(10)
+  update_by         String   @db.VarChar(10)
+  create_time       DateTime @default(now())
+  update_time       DateTime @updatedAt
+  deleted           String   @default("N") @db.Char(1)
+}
+
+// 2.13 用户组接口组表
 model sys_usergroup_interfacegroup {
   id                Int      @id @default(autoincrement()) @db.Int
   usergroup_id      Int      @db.Int

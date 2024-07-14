@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { dicTypeDto, insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import { dicTypeDto, dicTypeInsOneDto, dicTypeSelAllDto, dicTypeSelListDto, dicTypeUpdOneDto } from './dto';
 
 @Injectable()
 export class DicTypeService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selDicType(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage<dicTypeDto, selListDto>('sys_dic_type', {
+  async selDicType(dto: dicTypeSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<dicTypeDto, dicTypeSelListDto>('sys_dic_type', {
       data: dto,
       orderBy: true,
       notNullKeys: ['name', 'type', 'ifDisabled', 'orderNum'],
@@ -18,7 +18,7 @@ export class DicTypeService {
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
+  async selAll(dto: dicTypeSelAllDto): Promise<R> {
     const res = await this.prisma.findAll('sys_dic_type', {
       data: dto,
       orderBy: true,
@@ -38,22 +38,22 @@ export class DicTypeService {
     return R.ok(res);
   }
 
-  async insDicType(dto: insOneDto): Promise<R> {
+  async insDicType(dto: dicTypeInsOneDto): Promise<R> {
     const res = await this.prisma.create('sys_dic_type', dto);
     return R.ok(res);
   }
 
-  async insDicTypes(dtos: insOneDto[]): Promise<R> {
+  async insDicTypes(dtos: dicTypeInsOneDto[]): Promise<R> {
     const res = await this.prisma.createMany('sys_dic_type', dtos);
     return R.ok(res);
   }
 
-  async updDicType(dto: updOneDto): Promise<R> {
+  async updDicType(dto: dicTypeUpdOneDto): Promise<R> {
     const res = await this.prisma.updateById('sys_dic_type', dto);
     return R.ok(res);
   }
 
-  async updDicTypes(dtos: updOneDto[]): Promise<R> {
+  async updDicTypes(dtos: dicTypeUpdOneDto[]): Promise<R> {
     const res = await this.prisma.updateMany('sys_dic_type', dtos);
     return R.ok(res);
   }

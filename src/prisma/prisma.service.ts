@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { currentEnv } from '../../config/config';
+import { currentEnv, getMysqlUrlFromEnv } from '../../config/config';
 import { base } from '../util/base';
 import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';
@@ -99,7 +99,7 @@ export class PrismaService extends PrismaClient {
     super({
       datasources: {
         db: {
-          url: env.database.url,
+          url: getMysqlUrlFromEnv(env),
         },
       },
       log: env.mode === base.DEV ? ['query', 'info', 'warn'] : [],

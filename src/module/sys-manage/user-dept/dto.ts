@@ -13,7 +13,7 @@ export class userDeptDto extends baseInterface {
   remark: string;
 }
 
-export class selListDto extends pageSelDto {
+export class userDeptSelListDto extends pageSelDto {
   id: number;
 
   userId: string;
@@ -23,7 +23,7 @@ export class selListDto extends pageSelDto {
   remark: string;
 }
 
-export class insOneDto {
+export class userDeptInsOneDto {
   @IsNotEmpty({ message: '用户id不能为空' })
   userId: string;
 
@@ -34,7 +34,7 @@ export class insOneDto {
   remark: string;
 }
 
-export class selAllDto {
+export class userDeptSelAllDto {
   userId: string;
 
   deptId: number;
@@ -42,7 +42,7 @@ export class selAllDto {
   remark: string;
 }
 
-export class updOneDto extends insOneDto {
+export class userDeptUpdOneDto extends userDeptInsOneDto {
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;
 }

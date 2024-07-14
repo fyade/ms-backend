@@ -13,7 +13,8 @@ export class AuthGuard implements CanActivate {
     request.body = {
       reqBody: request.body,
     };
-    const token = request.headers['authorization'];
+    const oauth = request.headers['authorization'];
+    const token = (typeof oauth === 'string' && oauth.length >= 7 && oauth.startsWith('Bearer ')) ? oauth.substring(7) : '';
     if (reqWhiteList.indexOf(request.url) > -1 || request.url === adminLoginUrl) {
     } else if (token) {
       try {

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { insOneDto, roleDto, selListDto, selAllDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import { roleDto, roleSelListDto, roleSelAllDto, roleInsOneDto, roleUpdOneDto } from './dto';
 
 @Injectable()
 export class RoleService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selRole(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage('sys_role', {
+  async selRole(dto: roleSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<roleDto, roleSelListDto>('sys_role', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'orderNum'],
@@ -18,14 +18,12 @@ export class RoleService {
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
-    const dto_ = dto;
-    if (dto_.id) dto_.id = Number(dto_.id);
+  async selAll(dto: roleSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<roleDto>('sys_role', {
-      data: dto_,
+      data: dto,
       orderBy: true,
-      notNullKeys: ['id', 'label', 'ifAdmin', 'ifDisabled', 'orderNum'],
-      numberKeys: ['id', 'orderNum'],
+      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'orderNum'],
+      numberKeys: ['orderNum'],
     });
     return R.ok(res);
   }
@@ -35,12 +33,12 @@ export class RoleService {
     return R.ok(one);
   }
 
-  async insRole(dto: insOneDto): Promise<R> {
+  async insRole(dto: roleInsOneDto): Promise<R> {
     await this.prisma.create('sys_role', dto);
     return R.ok();
   }
 
-  async updRole(dto: updOneDto): Promise<R> {
+  async updRole(dto: roleUpdOneDto): Promise<R> {
     await this.prisma.updateById('sys_role', dto);
     return R.ok();
   }

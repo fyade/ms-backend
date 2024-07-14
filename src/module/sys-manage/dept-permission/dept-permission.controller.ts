@@ -1,0 +1,98 @@
+import { Body, Controller, Delete, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { DeptPermissionService } from './dept-permission.service';
+import { Authorize } from '../../../decorator/authorizeDecorator';
+import { R } from '../../../common/R';
+import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
+import { deptPermissionSelAllDto, deptPermissionSelListDto, deptPermissionUpdManyDPDto } from './dto';
+
+@Controller('/sys-manage/dept-permission')
+@ApiTags('部门权限')
+@ApiBearerAuth()
+@UsePipes(new ValidationPipe())
+export class DeptPermissionController {
+  constructor(private readonly deptPermissionService: DeptPermissionService) {
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: '分页查询部门权限',
+  })
+  @Authorize({
+    permission: 'sysManage:deptPermission:selList',
+    label: '分页查询部门权限',
+  })
+  async selDeptPermission(@Query() dto: deptPermissionSelListDto): Promise<R> {
+    return this.deptPermissionService.selDeptPermission(dto);
+  }
+
+  @Get('/all')
+  @ApiOperation({
+    summary: '查询所有部门权限',
+  })
+  @Authorize({
+    permission: 'sysManage:deptPermission:selAll',
+    label: '查询所有部门权限',
+  })
+  async selAll(@Query() dto: deptPermissionSelAllDto): Promise<R> {
+    return this.deptPermissionService.selAll(dto);
+  }
+
+  @Get('/ids')
+  @ApiOperation({
+    summary: '查询多个部门权限（根据id）',
+  })
+  @ApiQuery({
+    name: 'ids',
+    description: 'id列表',
+    isArray: true,
+    type: Number,
+  })
+  @Authorize({
+    permission: 'sysManage:deptPermission:selOnes',
+    label: '查询多个部门权限（根据id）',
+  })
+  async selOnes(@Query() ids: any[]): Promise<R> {
+    return this.deptPermissionService.selOnes(ids);
+  }
+
+  @Get('/:id')
+  @ApiOperation({
+    summary: '查询单个部门权限',
+  })
+  @Authorize({
+    permission: 'sysManage:deptPermission:selOne',
+    label: '查询单个部门权限',
+  })
+  async selOne(@Param('id') id: number): Promise<R> {
+    return this.deptPermissionService.selOne(id);
+  }
+
+  @Post('/dp')
+  @ApiOperation({
+    summary: '更新部门权限（dp）',
+  })
+  @Authorize({
+    permission: 'sysManage:deptPermission:upddp',
+    label: '更新部门权限（dp）',
+  })
+  async upddp(@Body() dto: deptPermissionUpdManyDPDto): Promise<R> {
+    return this.deptPermissionService.upddp(dto);
+  }
+
+  @Delete()
+  @ApiOperation({
+    summary: '删除部门权限',
+  })
+  @ApiBody({
+    isArray: true,
+    type: Number,
+  })
+  @Authorize({
+    permission: 'sysManage:deptPermission:del',
+    label: '删除部门权限',
+  })
+  async delDeptPermission(@Body() ids: any[]): Promise<R> {
+    return this.deptPermissionService.delDeptPermission(ids);
+  }
+}

@@ -1,65 +1,84 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { insManyDto, rolePermissionDto, selByRoleIdDto, selListDto, updManyDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
-import { roleDto } from '../role/dto';
-import { menuDto } from '../menu/dto';
+import { rolePermissionDto, rolePermissionSelAllDto, rolePermissionSelListDto, rolePermissionUpdManyDto } from './dto';
 
 @Injectable()
 export class RolePermissionService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selRolePermission(dto: selListDto): Promise<R> {
+  async selRolePermission(dto: rolePermissionSelListDto): Promise<R> {
     const res = await this.prisma.findPage('sys_role_permission', { data: dto });
     return R.ok(res);
   }
+
+  async selAll(dto: rolePermissionSelAllDto): Promise<R> {
+    const res = await this.prisma.findAll('sys_role_permission', {
+      data: dto,
+      orderBy: false,
+      notNullKeys: ['roleId', 'type', 'permissionId'],
+      numberKeys: ['roleId', 'permissionId'],
+    });
+    return R.ok(res);
+  }
+
+  // async selAll(dto: selByRoleIdDto): Promise<R> {
+  //   const res = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
+  //     data: dto,
+  //     numberKeys: ['roleId'],
+  //   });
+  //   const roleIds = res.map(item => item.roleId);
+  //   const permissionIds_m = res.filter(item => item.type === 'm').map(item => item.permissionId);
+  //   // const permissionIds_i = res.filter(item => item.type === 'i').map(item => item.permission_id);
+  //   const roles = await this.prisma.findByIds<roleDto>('sys_role', roleIds);
+  //   const permissions_m = await this.prisma.findByIds<menuDto>('sys_menu', permissionIds_m);
+  //   const ret = roles.map(role => {
+  //     const menuids = res.filter(item => item.roleId === role.id).map(item => item.permissionId);
+  //     const rp = res.find(item => item.roleId === role.id);
+  //     delete rp.roleId;
+  //     delete rp.permissionId;
+  //     return {
+  //       ...rp,
+  //       roleId: role.id,
+  //       permissionId: permissionIds_m,
+  //       role: role,
+  //       menus: permissions_m.filter(item => menuids.indexOf(item.id) > -1),
+  //     };
+  //   });
+  //   return R.ok(ret);
+  // }
 
   async selOne(id: any): Promise<R> {
     const one = await this.prisma.findById<rolePermissionDto>('sys_role_permission', Number(id));
     return R.ok(one);
   }
 
-  async selAll(dto: selByRoleIdDto): Promise<R> {
-    const res = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
-      data: dto,
+  // async insRolePermission(dto: insManyDto): Promise<R> {
+  //   const addedRolePermissions = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
+  //     data: {
+  //       roleId: dto.roleId,
+  //       permissionId: { in: dto.permissionId },
+  //     },
+  //   }, false);
+  //   const addedRolePermissionIds = addedRolePermissions.map(item => item.permissionId);
+  //   const dtos = dto.permissionId.map(item => ({
+  //     ...dto,
+  //     permissionId: item,
+  //   })).filter(item => addedRolePermissionIds.indexOf(item.permissionId) === -1);
+  //   for (let i = 0; i < dtos.length; i++) {
+  //     const dto = dtos[i];
+  //     dto.type = 'm';
+  //     await this.prisma.create('sys_role_permission', dto);
+  //   }
+  //   return R.ok();
+  // }
+
+  async updRolePermission(dto: rolePermissionUpdManyDto): Promise<R> {
+    const allRolePermissions = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
+      data: { roleId: dto.roleId },
       numberKeys: ['roleId'],
     });
-    const roleIds = res.map(item => item.roleId);
-    const permissionIds_m = res.filter(item => item.type === 'm').map(item => item.permissionId);
-    // const permissionIds_i = res.filter(item => item.type === 'i').map(item => item.permission_id);
-    const roles = await this.prisma.findByIds<roleDto>('sys_role', roleIds);
-    const permissions_m = await this.prisma.findByIds<menuDto>('sys_menu', permissionIds_m);
-    const ret = roles.map(role => {
-      const menuids = res.filter(item => item.roleId === role.id).map(item => item.permissionId);
-      const rp = res.find(item => item.roleId === role.id);
-      delete rp.roleId;
-      delete rp.permissionId;
-      return {
-        ...rp,
-        roleId: role.id,
-        permissionId: permissionIds_m,
-        role: role,
-        menus: permissions_m.filter(item => menuids.indexOf(item.id) > -1),
-      };
-    });
-    return R.ok(ret);
-  }
-
-  async insRolePermission(dto: insManyDto): Promise<R> {
-    const dtos = dto.permissionId.map(item => ({
-      ...dto,
-      permissionId: item,
-    }));
-    for (let i = 0; i < dtos.length; i++) {
-      const dto = dtos[i];
-      await this.prisma.create('sys_role_permission', dto);
-    }
-    return R.ok();
-  }
-
-  async updRolePermission(dto: updManyDto): Promise<R> {
-    const allRolePermissions = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', { data: { roleId: dto.roleId } }, false);
     const perIds = allRolePermissions.filter(item => item.type === 'm').map(item => item.permissionId);
     const addRPSPIDS = dto.permissionId.filter(item => perIds.indexOf(item) === -1);
     const delRPS = perIds.filter(item => dto.permissionId.indexOf(item) === -1);

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { codeGenTableDto, insOneDto, selAllDto, selListDto, updOneDto } from './dto';
 import { R } from '../../../common/R';
+import { codeGenTableDto, codeGenTableSelListDto, codeGenTableSelAllDto, codeGenTableInsOneDto, codeGenTableUpdOneDto } from './dto';
 
 @Injectable()
 export class CodeGenTableService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selCodeGenTable(dto: selListDto): Promise<R> {
-    const res = await this.prisma.findPage<codeGenTableDto, selListDto>('sys_code_gen_table', {
+  async selCodeGenTable(dto: codeGenTableSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<codeGenTableDto, codeGenTableSelListDto>('sys_code_gen_table', {
       data: dto,
       orderBy: true,
       notNullKeys: ['tableName', 'tableDescr', 'entityName', 'businessName', 'moduleName', 'orderNum'],
@@ -18,7 +18,7 @@ export class CodeGenTableService {
     return R.ok(res);
   }
 
-  async selAll(dto: selAllDto): Promise<R> {
+  async selAll(dto: codeGenTableSelAllDto): Promise<R> {
     const res = await this.prisma.findAll('sys_code_gen_table', {
       data: dto,
       orderBy: true,
@@ -38,22 +38,22 @@ export class CodeGenTableService {
     return R.ok(res);
   }
 
-  async insCodeGenTable(dto: insOneDto): Promise<R> {
+  async insCodeGenTable(dto: codeGenTableInsOneDto): Promise<R> {
     const res = await this.prisma.create('sys_code_gen_table', dto);
     return R.ok(res);
   }
 
-  async insCodeGenTables(dtos: insOneDto[]): Promise<R> {
+  async insCodeGenTables(dtos: codeGenTableInsOneDto[]): Promise<R> {
     const res = await this.prisma.createMany('sys_code_gen_table', dtos);
     return R.ok(res);
   }
 
-  async updCodeGenTable(dto: updOneDto): Promise<R> {
+  async updCodeGenTable(dto: codeGenTableUpdOneDto): Promise<R> {
     const res = await this.prisma.updateById('sys_code_gen_table', dto);
     return R.ok(res);
   }
 
-  async updCodeGenTables(dtos: updOneDto[]): Promise<R> {
+  async updCodeGenTables(dtos: codeGenTableUpdOneDto[]): Promise<R> {
     const res = await this.prisma.updateMany('sys_code_gen_table', dtos);
     return R.ok(res);
   }
