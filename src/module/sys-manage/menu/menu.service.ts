@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
 import { menuDto, menuInsOneDto, menuSelAllDto, menuUpdOneDto } from './dto';
+import { CachePermissionService } from '../../cache/cache.permission.service';
 
 @Injectable()
 export class MenuService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cachePermissionService: CachePermissionService,
+  ) {
   }
 
   async selAll(dto: menuSelAllDto): Promise<R> {
@@ -39,6 +43,7 @@ export class MenuService {
   }
 
   async updMenu(dto: menuUpdOneDto): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     if (dto.id === dto.parentId) {
       return R.err('父级菜单不可选自己！');
     }
@@ -47,6 +52,7 @@ export class MenuService {
   }
 
   async updMenus(dtos: menuUpdOneDto[]): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     if (dtos.some(item => item.id === item.parentId)) {
       return R.err('父级菜单不可选自己！');
     }
@@ -55,6 +61,7 @@ export class MenuService {
   }
 
   async delMenu(ids: any[]): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     await this.prisma.deleteById('sys_menu', ids);
     return R.ok();
   }

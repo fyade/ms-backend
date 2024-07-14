@@ -168,7 +168,7 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
-   * 查
+   * 分页查询
    * @param model
    * @param data
    * @param orderBy
@@ -246,7 +246,7 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
-   * 查
+   * 查询所有
    * @param model
    * @param data
    * @param orderBy
@@ -304,7 +304,7 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
-   * 查
+   * 查询首个
    * @param model
    * @param args
    * @param ifDeleted
@@ -327,7 +327,7 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
-   * 查
+   * 查询单个
    * @param model
    * @param id
    * @param ifDeleted
@@ -342,7 +342,7 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
-   * 查
+   * 查询多个（根据id）
    * @param model
    * @param ids
    * @param ifDeleted
@@ -367,7 +367,7 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
-   * 增
+   * 新增
    * @param model
    * @param data
    * @param ifCustomizeId
@@ -408,7 +408,7 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
-   * 增
+   * 批量新增
    * @param model
    * @param data
    * @param ifCustomizeId
@@ -451,48 +451,7 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
-   * 删
-   * @param model
-   * @param ids
-   */
-  async deleteById<T>(model: string, ids: any[]): Promise<{ count: number }> {
-    const arg = {
-      where: {
-        ...this.defaultDelArg().where,
-        id: {
-          in: ids,
-        },
-      },
-      data: {
-        ...this.defaultDelArg().data,
-      },
-    };
-    return this.getModel(model).updateMany(arg);
-  }
-
-  /**
-   * 删
-   * @param model
-   * @param key
-   * @param values
-   */
-  async delete<T>(model: string, key: string, values: any[]): Promise<{ count: number }> {
-    const arg = {
-      where: {
-        ...this.defaultDelArg().where,
-        [key]: {
-          in: values,
-        },
-      },
-      data: {
-        ...this.defaultDelArg().data,
-      },
-    };
-    return this.getModel(model).updateMany(arg);
-  }
-
-  /**
-   * 改
+   * 修改
    * @param model
    * @param data
    * @param ifUpdateBy
@@ -525,7 +484,7 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
-   * 改
+   * 批量修改
    * @param model
    * @param data
    * @param ifUpdateBy
@@ -548,5 +507,46 @@ export class PrismaService extends PrismaClient {
       retArr.push(ret);
     }
     return new Promise(resolve => resolve(retArr));
+  }
+
+  /**
+   * 批量删除
+   * @param model
+   * @param ids
+   */
+  async deleteById<T>(model: string, ids: any[]): Promise<{ count: number }> {
+    const arg = {
+      where: {
+        ...this.defaultDelArg().where,
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        ...this.defaultDelArg().data,
+      },
+    };
+    return this.getModel(model).updateMany(arg);
+  }
+
+  /**
+   * 条件删除
+   * @param model
+   * @param key
+   * @param values
+   */
+  async delete<T>(model: string, key: string, values: any[]): Promise<{ count: number }> {
+    const arg = {
+      where: {
+        ...this.defaultDelArg().where,
+        [key]: {
+          in: values,
+        },
+      },
+      data: {
+        ...this.defaultDelArg().data,
+      },
+    };
+    return this.getModel(model).updateMany(arg);
   }
 }

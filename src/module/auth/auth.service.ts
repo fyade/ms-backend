@@ -1,23 +1,29 @@
-import { userDto } from '../user/dto';
-import { PrismaService } from '../../../prisma/prisma.service';
-import { base } from '../../../util/base';
+import { userDto } from '../sys-manage/user/dto';
+import { PrismaService } from '../../prisma/prisma.service';
+import { base } from '../../util/base';
 import { Injectable } from '@nestjs/common';
 import { adminTopDto } from '../admin-top/dto';
-import { RedisService } from '../../../redis/redis.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly redis: RedisService,
   ) {
   }
 
+  /**
+   * 根据用户名查询用户
+   * @param username
+   */
   async findUserByUsername(username: string): Promise<userDto> {
     const userDto = await this.prisma.findFirst<userDto>('sys_user', { username: username });
     return userDto;
   }
 
+  /**
+   * 是否管理员用户
+   * @param username
+   */
   async ifAdminUser(username: string) {
     const user = await this.prisma.findFirst<userDto>('sys_user', { username: username });
     if (await this.hasTopAdminPermission(user.id)) {
@@ -50,11 +56,20 @@ export class AuthService {
     return ps.length > 0;
   }
 
+  /**
+   * 是否超级管理员用户
+   * @param userid
+   */
   async hasTopAdminPermission(userid: string) {
     const admintop = await this.prisma.findFirst('sys_admin_top', { userId: userid });
     return !!admintop;
   }
 
+  /**
+   * 是否有某权限（根据用户名查询）
+   * @param username
+   * @param permission
+   */
   async hasAdminPermissionByUsername(username: string, permission: string) {
     const user = await this.prisma.findFirst<userDto>('sys_user', { username: username });
     if (user) {
@@ -63,6 +78,11 @@ export class AuthService {
     return false;
   }
 
+  /**
+   * 是否有某权限（根据用户id查询）
+   * @param userid
+   * @param permission
+   */
   async hasAdminPermissionByUserid(userid: string, permission: string) {
     const user = await this.prisma.findFirst<userDto>('sys_user', { id: userid });
     if (user) {
@@ -71,6 +91,11 @@ export class AuthService {
     return false;
   }
 
+  /**
+   * 是否有某权限（根据用户查询）
+   * @param user
+   * @param permission
+   */
   async hasAdminPermissionByUser(user: userDto, permission: string) {
     if (await this.hasTopAdminPermission(user.id)) {
       return true;
@@ -80,6 +105,10 @@ export class AuthService {
     return index > -1;
   }
 
+  /**
+   * 是否公共接口
+   * @param permission
+   */
   async ifPublicInterface(permission: string) {
     const raw = await this.prisma.$queryRaw`
       select if_public
@@ -90,6 +119,11 @@ export class AuthService {
     return raw.length > 0;
   }
 
+  /**
+   * 用户的权限
+   * @param user
+   * @param permission
+   */
   async permissionsOfUser(user: userDto, permission: string | null = null) {
     const retarr = [];
     if (user) {
@@ -168,6 +202,11 @@ export class AuthService {
     return retarr;
   }
 
+  /**
+   * 是否管理员用户操作非管理员用户
+   * @param controlUserId
+   * @param controledUserId
+   */
   async ifAdminUserUpdNotAdminUser(controlUserId: string, controledUserId: string) {
     const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', {
       data: {

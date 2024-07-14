@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
 import { rolePermissionDto, rolePermissionSelAllDto, rolePermissionSelListDto, rolePermissionUpdManyDto } from './dto';
+import { CachePermissionService } from '../../cache/cache.permission.service';
 
 @Injectable()
 export class RolePermissionService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cachePermissionService: CachePermissionService,
+  ) {
   }
 
   async selRolePermission(dto: rolePermissionSelListDto): Promise<R> {
@@ -75,6 +79,7 @@ export class RolePermissionService {
   // }
 
   async updRolePermission(dto: rolePermissionUpdManyDto): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     const allRolePermissions = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
       data: { roleId: dto.roleId },
       numberKeys: ['roleId'],
@@ -94,6 +99,7 @@ export class RolePermissionService {
   }
 
   async delRolePermission(ids: any[]): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     await this.prisma.delete('sys_role_permission', 'permission_id', ids);
     return R.ok();
   }

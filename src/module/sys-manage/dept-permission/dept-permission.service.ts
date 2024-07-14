@@ -7,10 +7,14 @@ import {
   deptPermissionSelListDto,
   deptPermissionUpdManyDPDto,
 } from './dto';
+import { CachePermissionService } from '../../cache/cache.permission.service';
 
 @Injectable()
 export class DeptPermissionService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cachePermissionService: CachePermissionService,
+  ) {
   }
 
   async selDeptPermission(dto: deptPermissionSelListDto): Promise<R> {
@@ -44,6 +48,7 @@ export class DeptPermissionService {
   }
 
   async upddp(dto: deptPermissionUpdManyDPDto): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     const allDeptPermission = await this.prisma.findAll<deptPermissionDto>('sys_dept_permission', {
       data: { deptId: dto.deptId },
       numberKeys: ['deptId'],
@@ -63,6 +68,7 @@ export class DeptPermissionService {
   }
 
   async delDeptPermission(ids: any[]): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     const res = await this.prisma.deleteById('sys_dept_permission', ids);
     return R.ok(res);
   }

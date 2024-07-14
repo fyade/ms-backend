@@ -14,7 +14,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { FileUploadModule } from './module/common/file-upload/file-upload.module';
 import { SmsModule } from './module/common/sms/sms.module';
 import { MenuModule } from './module/sys-manage/menu/menu.module';
-import { AuthService } from './module/sys-manage/auth/auth.service';
+import { AuthService } from './module/auth/auth.service';
 import { RoleModule } from './module/sys-manage/role/role.module';
 import { UserRoleModule } from './module/sys-manage/user-role/user-role.module';
 import { RolePermissionModule } from './module/sys-manage/role-permission/role-permission.module';
@@ -30,6 +30,7 @@ import { UserDeptModule } from './module/sys-manage/user-dept/user-dept.module';
 import { InterfaceGroupModule } from './module/sys-manage/interface-group/interface-group.module';
 import { DeptPermissionModule } from './module/sys-manage/dept-permission/dept-permission.module';
 import { RedisModule } from './redis/redis.module';
+import { CachePermissionService } from './module/cache/cache.permission.service';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { RedisModule } from './redis/redis.module';
     AppService,
     AuthService,
     JwtService,
+    CachePermissionService,
   ],
 })
 export class AppModule {

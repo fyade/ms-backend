@@ -1,16 +1,20 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PRE_AUTHORIZE_KEY, PreAuthorizeParams } from '../decorator/customDecorator';
-import { AuthService } from '../module/sys-manage/auth/auth.service';
+import { AuthService } from '../module/auth/auth.service';
 import { adminLoginUrl, reqWhiteList } from '../../config/authConfig';
 import { ForbiddenException } from '../exception/ForbiddenException';
 import { UserUnknownException } from '../exception/UserUnknownException';
+import { CachePermissionService } from '../module/cache/cache.permission.service';
+import { userDto2 } from '../module/sys-manage/user/dto';
+import { base } from '../util/base';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
+    private readonly cachePermissionService: CachePermissionService,
   ) {
   }
 
@@ -21,7 +25,7 @@ export class PermissionsGuard implements CanActivate {
     );
     const { permission, ifSF, label } = authorizeParams;
     const request = context.switchToHttp().getRequest();
-    const user = request.body.user;
+    const user = request.body.user as userDto2;
     delete request.body.user;
     request.body = request.body.reqBody;
     if (reqWhiteList.indexOf(request.url) > -1) {
@@ -46,14 +50,28 @@ export class PermissionsGuard implements CanActivate {
     // 页面接口权限控制
     else {
       // 是否公共接口
-      const ifPublicInterface = await this.authService.ifPublicInterface(permission);
-      if (ifPublicInterface) {
-        return true;
+      const ifPublicInterfaceInCache = await this.cachePermissionService.getIfPublicPermissionInCache(permission);
+      if (ifPublicInterfaceInCache) {
+        if (ifPublicInterfaceInCache === base.Y) {
+          return true;
+        }
+      } else {
+        const ifPublicInterface = await this.authService.ifPublicInterface(permission);
+        if (ifPublicInterface) {
+          await this.cachePermissionService.addPublicPermissionInCache(permission);
+          return true;
+        }
+        await this.cachePermissionService.addPublicPermissionInCache(permission, base.N);
       }
       // 用户是否有当前接口的权限
       if (user) {
+        const ifHavePermissionInCache = await this.cachePermissionService.ifHavePermissionInCache(user.userid, permission);
+        if (ifHavePermissionInCache) {
+          return true;
+        }
         const ifHasPermission = await this.authService.hasAdminPermissionByUserid(user.userid, permission);
         if (ifHasPermission) {
+          await this.cachePermissionService.addPermissionInCache(user.userid, permission);
           return true;
         }
       }

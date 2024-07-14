@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
 import { deptDto, deptInsOneDto, deptSelAllDto, deptSelListDto, deptUpdOneDto } from './dto';
+import { CachePermissionService } from '../../cache/cache.permission.service';
 
 @Injectable()
 export class DeptService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cachePermissionService: CachePermissionService,
+  ) {
   }
 
   async selDept(dto: deptSelListDto): Promise<R> {
@@ -49,16 +53,19 @@ export class DeptService {
   }
 
   async updDept(dto: deptUpdOneDto): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     const res = await this.prisma.updateById('sys_dept', dto);
     return R.ok(res);
   }
 
   async updDepts(dtos: deptUpdOneDto[]): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     const res = await this.prisma.updateMany('sys_dept', dtos);
     return R.ok(res);
   }
 
   async delDept(ids: any[]): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     const res = await this.prisma.deleteById('sys_dept', ids);
     return R.ok(res);
   }

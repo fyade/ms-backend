@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
 import { roleDto, roleSelListDto, roleSelAllDto, roleInsOneDto, roleUpdOneDto } from './dto';
+import { CachePermissionService } from '../../cache/cache.permission.service';
 
 @Injectable()
 export class RoleService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cachePermissionService: CachePermissionService,
+  ) {
   }
 
   async selRole(dto: roleSelListDto): Promise<R> {
@@ -39,11 +43,13 @@ export class RoleService {
   }
 
   async updRole(dto: roleUpdOneDto): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     await this.prisma.updateById('sys_role', dto);
     return R.ok();
   }
 
   async delRole(ids: any[]): Promise<R> {
+    await this.cachePermissionService.delAllPermissionsInCache();
     await this.prisma.deleteById('sys_role', ids);
     return R.ok();
   }

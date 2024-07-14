@@ -458,12 +458,13 @@ export class ${moduleName}UpdOneDto extends ${moduleName}InsOneDto {
 `import { Module } from '@nestjs/common';
 import { ${capitalizeFirstLetter(moduleName)}Controller } from './${toKebabCase(moduleName)}.controller';
 import { ${capitalizeFirstLetter(moduleName)}Service } from './${toKebabCase(moduleName)}.service';
-import { AuthService } from '../../sys-manage/auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { CacheService } from '../../cache/cache.service';
 
 @Module({
   controllers: [${capitalizeFirstLetter(moduleName)}Controller],
-  providers: [${capitalizeFirstLetter(moduleName)}Service, AuthService, JwtService]
+  providers: [${capitalizeFirstLetter(moduleName)}Service, AuthService, JwtService, CacheService],
 })
 export class ${capitalizeFirstLetter(moduleName)}Module {
 }
