@@ -10,9 +10,9 @@ export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     clearCurrentUser();
     const request = context.switchToHttp().getRequest();
-    request.body = {
-      reqBody: request.body,
-    };
+    // request.body = {
+    //   reqBody: request.body,
+    // };
     const oauth = request.headers['authorization'];
     const token = (typeof oauth === 'string' && oauth.length >= 7 && oauth.startsWith('Bearer ')) ? oauth.substring(7) : '';
     if (reqWhiteList.indexOf(request.url) > -1 || request.url === adminLoginUrl) {
@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
         const decoded = verifyToken(token);
         if (decoded) {
           // Token is valid and not expired
-          request.body.user = decoded;
+          // request.body.user = decoded;
           setCurrentUser(decoded as userDto2, token);
         } else {
           // Token is invalid or expired

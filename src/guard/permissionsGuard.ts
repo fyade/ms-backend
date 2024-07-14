@@ -8,6 +8,7 @@ import { UserUnknownException } from '../exception/UserUnknownException';
 import { CachePermissionService } from '../module/cache/cache.permission.service';
 import { userDto2 } from '../module/sys-manage/user/dto';
 import { base } from '../util/base';
+import { getCurrentUser } from '../util/baseContext';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -25,9 +26,10 @@ export class PermissionsGuard implements CanActivate {
     );
     const { permission, ifSF, label } = authorizeParams;
     const request = context.switchToHttp().getRequest();
-    const user = request.body.user as userDto2;
-    delete request.body.user;
-    request.body = request.body.reqBody;
+    const user = getCurrentUser().user;
+    // const user = request.body.user as userDto2;
+    // delete request.body.user;
+    // request.body = request.body.reqBody;
     if (reqWhiteList.indexOf(request.url) > -1) {
       return true;
     }

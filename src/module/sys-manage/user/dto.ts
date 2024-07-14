@@ -39,6 +39,9 @@ export class loginDto {
   password: string;
 }
 
+export class registDto extends loginDto {
+}
+
 export class updPsdDto {
   @ApiProperty({ description: '旧密码', required: true })
   @IsNotEmpty({ message: '旧密码不能为空' })
@@ -64,9 +67,6 @@ export class userDto2 extends loginDto {
 }
 
 export class adminNewUserDto extends loginDto {
-}
-
-export class registDto extends loginDto {
 }
 
 export class userListSelDto extends pageSelDto {
