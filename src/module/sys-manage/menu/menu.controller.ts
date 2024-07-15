@@ -84,8 +84,8 @@ export class MenuController {
     new ParseArrayPipe({
       items: menuInsOneDto,
     }),
-  ) dto: menuInsOneDto[]): Promise<R> {
-    return this.menuService.insMenus(dto);
+  ) dtos: menuInsOneDto[]): Promise<R> {
+    return this.menuService.insMenus(dtos);
   }
 
   @Put()
@@ -116,8 +116,8 @@ export class MenuController {
     new ParseArrayPipe({
       items: menuUpdOneDto,
     }),
-  ) dto: menuUpdOneDto[]): Promise<R> {
-    return this.menuService.updMenus(dto);
+  ) dtos: menuUpdOneDto[]): Promise<R> {
+    return this.menuService.updMenus(dtos);
   }
 
   @Delete()

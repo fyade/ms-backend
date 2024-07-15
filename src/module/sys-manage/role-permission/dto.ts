@@ -7,9 +7,9 @@ import { ApiProperty } from '@nestjs/swagger';
 export class rolePermissionDto extends baseInterface {
   id: number;
 
-  type: string;
-
   roleId: number;
+
+  type: string;
 
   permissionId: number;
 
@@ -48,20 +48,20 @@ export class rolePermissionSelAllDto {
 }
 
 export class rolePermissionSelByRoleIdDto {
-  @ApiProperty({ description: '角色id', required: true })
+  @ApiProperty({ description: '角色', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '角色id不能为空' })
+  @IsNotEmpty({ message: '角色不能为空' })
   roleId: number;
 }
 
 export class rolePermissionInsManyDto {
-  @ApiProperty({ description: '角色id', required: true })
+  @ApiProperty({ description: '角色', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '角色id不能为空' })
+  @IsNotEmpty({ message: '角色不能为空' })
   roleId: number;
 
-  @ApiProperty({ description: '权限id', required: true })
-  @IsArray({ message: '权限id不能为空' })
+  @ApiProperty({ description: '权限', required: true })
+  @IsArray({ message: '权限应为数组' })
   permissionId: number[];
 
   @ApiProperty({ description: '权限类型', required: false })

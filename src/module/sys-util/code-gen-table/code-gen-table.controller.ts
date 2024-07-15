@@ -96,8 +96,8 @@ export class CodeGenTableController {
     new ParseArrayPipe({
       items: codeGenTableInsOneDto,
     }),
-  ) dto: codeGenTableInsOneDto[]): Promise<R> {
-    return this.codeGenTableService.insCodeGenTables(dto);
+  ) dtos: codeGenTableInsOneDto[]): Promise<R> {
+    return this.codeGenTableService.insCodeGenTables(dtos);
   }
 
   @Put()
@@ -128,8 +128,8 @@ export class CodeGenTableController {
     new ParseArrayPipe({
       items: codeGenTableUpdOneDto,
     }),
-  ) dto: codeGenTableUpdOneDto[]): Promise<R> {
-    return this.codeGenTableService.updCodeGenTables(dto);
+  ) dtos: codeGenTableUpdOneDto[]): Promise<R> {
+    return this.codeGenTableService.updCodeGenTables(dtos);
   }
 
   @Delete()

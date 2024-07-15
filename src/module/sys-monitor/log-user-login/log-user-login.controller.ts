@@ -96,8 +96,8 @@ export class LogUserLoginController {
     new ParseArrayPipe({
       items: logUserLoginInsOneDto,
     }),
-  ) dto: logUserLoginInsOneDto[]): Promise<R> {
-    return this.logUserLoginService.insLogUserLogins(dto);
+  ) dtos: logUserLoginInsOneDto[]): Promise<R> {
+    return this.logUserLoginService.insLogUserLogins(dtos);
   }
 
   @Put()
@@ -128,8 +128,8 @@ export class LogUserLoginController {
     new ParseArrayPipe({
       items: logUserLoginUpdOneDto,
     }),
-  ) dto: logUserLoginUpdOneDto[]): Promise<R> {
-    return this.logUserLoginService.updLogUserLogins(dto);
+  ) dtos: logUserLoginUpdOneDto[]): Promise<R> {
+    return this.logUserLoginService.updLogUserLogins(dtos);
   }
 
   @Delete()

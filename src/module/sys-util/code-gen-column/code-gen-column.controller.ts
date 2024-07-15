@@ -96,8 +96,8 @@ export class CodeGenColumnController {
     new ParseArrayPipe({
       items: codeGenColumnInsOneDto,
     }),
-  ) dto: codeGenColumnInsOneDto[]): Promise<R> {
-    return this.codeGenColumnService.insCodeGenColumns(dto);
+  ) dtos: codeGenColumnInsOneDto[]): Promise<R> {
+    return this.codeGenColumnService.insCodeGenColumns(dtos);
   }
 
   @Put()
@@ -128,8 +128,8 @@ export class CodeGenColumnController {
     new ParseArrayPipe({
       items: codeGenColumnUpdOneDto,
     }),
-  ) dto: codeGenColumnUpdOneDto[]): Promise<R> {
-    return this.codeGenColumnService.updCodeGenColumns(dto);
+  ) dtos: codeGenColumnUpdOneDto[]): Promise<R> {
+    return this.codeGenColumnService.updCodeGenColumns(dtos);
   }
 
   @Delete()

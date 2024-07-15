@@ -60,19 +60,19 @@ export class codeGenColumnSelListDto extends pageSelDto {
   @ApiProperty({ description: 'ts属性', required: false })
   tsName: string;
 
-  @ApiProperty({ description: '是否增', required: false })
+  @ApiProperty({ description: '增', required: false })
   ifIns: string;
 
-  @ApiProperty({ description: '是否改', required: false })
+  @ApiProperty({ description: '改', required: false })
   ifUpd: string;
 
-  @ApiProperty({ description: '是否查1', required: false })
+  @ApiProperty({ description: '查1', required: false })
   ifSelOne: string;
 
-  @ApiProperty({ description: '是否查n', required: false })
+  @ApiProperty({ description: '查n', required: false })
   ifSelMore: string;
 
-  @ApiProperty({ description: '是否必填', required: false })
+  @ApiProperty({ description: '必填', required: false })
   ifRequired: string;
 
   @ApiProperty({ description: '查询方式', required: false })
@@ -107,19 +107,19 @@ export class codeGenColumnSelAllDto {
   @ApiProperty({ description: 'ts属性', required: false })
   tsName: string;
 
-  @ApiProperty({ description: '是否增', required: false })
+  @ApiProperty({ description: '增', required: false })
   ifIns: string;
 
-  @ApiProperty({ description: '是否改', required: false })
+  @ApiProperty({ description: '改', required: false })
   ifUpd: string;
 
-  @ApiProperty({ description: '是否查1', required: false })
+  @ApiProperty({ description: '查1', required: false })
   ifSelOne: string;
 
-  @ApiProperty({ description: '是否查n', required: false })
+  @ApiProperty({ description: '查n', required: false })
   ifSelMore: string;
 
-  @ApiProperty({ description: '是否必填', required: false })
+  @ApiProperty({ description: '必填', required: false })
   ifRequired: string;
 
   @ApiProperty({ description: '查询方式', required: false })
@@ -161,24 +161,24 @@ export class codeGenColumnInsOneDto {
   @IsNotEmpty({ message: 'ts属性不能为空' })
   tsName: string;
 
-  @ApiProperty({ description: '是否增', required: true })
-  @IsNotEmpty({ message: '是否增不能为空' })
+  @ApiProperty({ description: '增', required: true })
+  @IsNotEmpty({ message: '增不能为空' })
   ifIns: string;
 
-  @ApiProperty({ description: '是否改', required: true })
-  @IsNotEmpty({ message: '是否改不能为空' })
+  @ApiProperty({ description: '改', required: true })
+  @IsNotEmpty({ message: '改不能为空' })
   ifUpd: string;
 
-  @ApiProperty({ description: '是否查1', required: true })
-  @IsNotEmpty({ message: '是否查1不能为空' })
+  @ApiProperty({ description: '查1', required: true })
+  @IsNotEmpty({ message: '查1不能为空' })
   ifSelOne: string;
 
-  @ApiProperty({ description: '是否查n', required: true })
-  @IsNotEmpty({ message: '是否查n不能为空' })
+  @ApiProperty({ description: '查n', required: true })
+  @IsNotEmpty({ message: '查n不能为空' })
   ifSelMore: string;
 
-  @ApiProperty({ description: '是否必填', required: true })
-  @IsNotEmpty({ message: '是否必填不能为空' })
+  @ApiProperty({ description: '必填', required: true })
+  @IsNotEmpty({ message: '必填不能为空' })
   ifRequired: string;
 
   @ApiProperty({ description: '查询方式', required: true })

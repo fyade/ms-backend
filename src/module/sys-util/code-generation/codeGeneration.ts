@@ -40,11 +40,11 @@ export function codeGeneration({ table, columns }: { table: codeGenTableDto, col
   const qd3_dialogFormDefaultData = [
     [
       (key?: any) => key === 'ifDefault',
-      (key?: any) => 'final.IS_DEFAULT_YES'
+      (key?: any) => 'final.N'
     ],
     [
       (key?: any) => key === 'ifDisabled',
-      (key?: any) => 'final.DISABLED_NO'
+      (key?: any) => 'final.N'
     ],
     [
       (key?: any) => key === 'parentId',
@@ -271,8 +271,8 @@ export class ${capitalizeFirstLetter(moduleName)}Controller {
     new ParseArrayPipe({
       items: ${moduleName}InsOneDto,
     }),
-  ) dto: ${moduleName}InsOneDto[]): Promise<R> {
-    return this.${moduleName}Service.ins${capitalizeFirstLetter(moduleName)}s(dto);
+  ) dtos: ${moduleName}InsOneDto[]): Promise<R> {
+    return this.${moduleName}Service.ins${capitalizeFirstLetter(moduleName)}s(dtos);
   }
 
   @Put()
@@ -303,8 +303,8 @@ export class ${capitalizeFirstLetter(moduleName)}Controller {
     new ParseArrayPipe({
       items: ${moduleName}UpdOneDto,
     }),
-  ) dto: ${moduleName}UpdOneDto[]): Promise<R> {
-    return this.${moduleName}Service.upd${capitalizeFirstLetter(moduleName)}s(dto);
+  ) dtos: ${moduleName}UpdOneDto[]): Promise<R> {
+    return this.${moduleName}Service.upd${capitalizeFirstLetter(moduleName)}s(dtos);
   }
 
   @Delete()
@@ -346,7 +346,7 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
   }
 
   async selAll(dto: ${moduleName}SelAllDto): Promise<R> {
-    const res = await this.prisma.findAll('${table.tableName}', {
+    const res = await this.prisma.findAll<${moduleName}Dto>('${table.tableName}', {
       data: dto,
       orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},
       notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],
@@ -356,37 +356,37 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
   }
 
   async selOnes(ids: any[]): Promise<R> {
-    const res = await this.prisma.findByIds('${table.tableName}', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<${moduleName}Dto>('${table.tableName}', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOne(id: number): Promise<R> {
-    const res = await this.prisma.findById('${table.tableName}', Number(id));
+    const res = await this.prisma.findById<${moduleName}Dto>('${table.tableName}', Number(id));
     return R.ok(res);
   }
 
   async ins${capitalizeFirstLetter(moduleName)}(dto: ${moduleName}InsOneDto): Promise<R> {
-    const res = await this.prisma.create('${table.tableName}', dto);
+    const res = await this.prisma.create<${moduleName}Dto>('${table.tableName}', dto);
     return R.ok(res);
   }
 
   async ins${capitalizeFirstLetter(moduleName)}s(dtos: ${moduleName}InsOneDto[]): Promise<R> {
-    const res = await this.prisma.createMany('${table.tableName}', dtos);
+    const res = await this.prisma.createMany<${moduleName}Dto>('${table.tableName}', dtos);
     return R.ok(res);
   }
 
   async upd${capitalizeFirstLetter(moduleName)}(dto: ${moduleName}UpdOneDto): Promise<R> {
-    const res = await this.prisma.updateById('${table.tableName}', dto);
+    const res = await this.prisma.updateById<${moduleName}Dto>('${table.tableName}', dto);
     return R.ok(res);
   }
 
   async upd${capitalizeFirstLetter(moduleName)}s(dtos: ${moduleName}UpdOneDto[]): Promise<R> {
-    const res = await this.prisma.updateMany('${table.tableName}', dtos);
+    const res = await this.prisma.updateMany<${moduleName}Dto>('${table.tableName}', dtos);
     return R.ok(res);
   }
 
   async del${capitalizeFirstLetter(moduleName)}(ids: any[]): Promise<R> {
-    const res = await this.prisma.deleteById('${table.tableName}', ids);
+    const res = await this.prisma.deleteById<${moduleName}Dto>('${table.tableName}', ids);
     return R.ok(res);
   }
 }
@@ -577,14 +577,8 @@ ${
   }
 }
 
-export class ${moduleName}UpdDto {
+export class ${moduleName}UpdDto extends ${moduleName}InsDto {
   id!: ${columns.find(item => item.colName === 'id').tsType};
-${
-  columns
-    .filter(item => item.ifIns === base.Y)
-    .map(column => `  ${column.tsName}!: ${column.tsType};`)
-    .join('\n')
-}
 }
 `;
   const qd3 =
@@ -624,8 +618,6 @@ const state = reactive<State<${moduleName}Dto>>({
   // 这个是弹出框表单
   // 格式: {
   //   id: '',
-  //   ifDefault: final.IS_DEFAULT_YES,
-  //   ifDisabled: final.DISABLED_NO,
   //   parentId: final.DEFAULT_PARENT_ID,
   //   orderNum: final.DEFAULT_ORDER_NUM,
   //   ...
@@ -869,7 +861,7 @@ ${
         ${`<!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->`}
         ${`<!--</el-form-item>-->`}
         ${`<!--<el-form-item :label="state.dict['ifDefault']" prop='ifDefault'>-->`}
-        ${`<!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.IS_DEFAULT_YES' :inactive-value='final.IS_DEFAULT_NO'/>-->`}
+        ${`<!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.Y' :inactive-value='final.N'/>-->`}
         ${`<!--</el-form-item>-->`}
         ${`<!--<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>-->`}
         ${`<!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->`}${`
@@ -878,7 +870,7 @@ ${
         `}${`<!--  </el-radio-group>-->`}${`
         `}${`<!--</el-form-item>-->`}${`
         `}${`<!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->`}${`
-        `}${`<!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.DISABLED_NO" :inactive-value="final.DISABLED_YES"/>-->`}${`
+        `}${`<!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.N" :inactive-value="final.Y"/>-->`}${`
         `}${`<!--</el-form-item>-->`}${`
         `}${'<!--上方几个酌情使用-->'}${`
       `}${'</el-form>'}
@@ -952,16 +944,7 @@ ${
     <el-button type="danger" plain ${':'}icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>
     <el-button type="warning" plain ${':'}icon='Download' :disabled='state.multipleSelection.length===0' @click="gExport()">导出</el-button>
     <el-button type="warning" plain ${':'}icon='Upload' @click="gImport">上传</el-button>
-    ${`<!--</el-button-group>-->`}
-    ${`<!--<el-button-group>-->`}${`
-    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveUp">上移</el-button>-->`}${`
-    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gMoveDown">下移</el-button>-->`}${`
-    `}${`<!--</el-button-group>-->`}${`
-    `}${`<!--<el-button-group>-->`}${`
-    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToNo">启用</el-button>-->`}${`
-    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledToYes">禁用</el-button>-->`}${`
-    `}${`<!--  <el-button plain :disabled="state.multipleSelection.length===0" @click="gDisabledShift">切换</el-button>-->`}${`
-    `}${`<!--</el-button-group>-->`}${`
+    ${`<!--</el-button-group>-->`}${`
   `}${'</div>'}
 
   <!--数据表格-->

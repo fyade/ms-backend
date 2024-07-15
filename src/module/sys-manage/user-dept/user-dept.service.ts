@@ -27,7 +27,7 @@ export class UserDeptService {
   }
 
   async selAll(dto: userDeptSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_user_dept', {
+    const res = await this.prisma.findAll<userDeptDto>('sys_user_dept', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'deptId'],
@@ -37,12 +37,12 @@ export class UserDeptService {
   }
 
   async selOnes(ids: any[]): Promise<R> {
-    const res = await this.prisma.findByIds('sys_user_dept', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<userDeptDto>('sys_user_dept', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOne(id: number): Promise<R> {
-    const res = await this.prisma.findById('sys_user_dept', Number(id));
+    const res = await this.prisma.findById<userDeptDto>('sys_user_dept', Number(id));
     return R.ok(res);
   }
 
@@ -86,7 +86,7 @@ export class UserDeptService {
 
   async delUserDept(ids: any[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    const res = await this.prisma.deleteById('sys_user_dept', ids);
+    const res = await this.prisma.deleteById<userDeptDto>('sys_user_dept', ids);
     return R.ok(res);
   }
 }

@@ -4,7 +4,7 @@ import { DicDataService } from './dic-data.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
-import { dicDataInsOneDto, dicDataSelAllDto, dicDataSelListDto, dicDataUpdOneDto } from './dto';
+import { dicDataSelListDto, dicDataSelAllDto, dicDataInsOneDto, dicDataUpdOneDto } from './dto';
 
 @Controller('/sys-manage/dic-data')
 @ApiTags('字典数据')
@@ -96,8 +96,8 @@ export class DicDataController {
     new ParseArrayPipe({
       items: dicDataInsOneDto,
     }),
-  ) dto: dicDataInsOneDto[]): Promise<R> {
-    return this.dicDataService.insDicDatas(dto);
+  ) dtos: dicDataInsOneDto[]): Promise<R> {
+    return this.dicDataService.insDicDatas(dtos);
   }
 
   @Put()
@@ -128,8 +128,8 @@ export class DicDataController {
     new ParseArrayPipe({
       items: dicDataUpdOneDto,
     }),
-  ) dto: dicDataUpdOneDto[]): Promise<R> {
-    return this.dicDataService.updDicDatas(dto);
+  ) dtos: dicDataUpdOneDto[]): Promise<R> {
+    return this.dicDataService.updDicDatas(dtos);
   }
 
   @Delete()

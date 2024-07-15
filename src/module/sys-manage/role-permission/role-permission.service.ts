@@ -13,12 +13,12 @@ export class RolePermissionService {
   }
 
   async selRolePermission(dto: rolePermissionSelListDto): Promise<R> {
-    const res = await this.prisma.findPage('sys_role_permission', { data: dto });
+    const res = await this.prisma.findPage<rolePermissionDto, rolePermissionSelListDto>('sys_role_permission', { data: dto });
     return R.ok(res);
   }
 
   async selAll(dto: rolePermissionSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_role_permission', {
+    const res = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
       data: dto,
       orderBy: false,
       notNullKeys: ['roleId', 'type', 'permissionId'],
@@ -100,7 +100,7 @@ export class RolePermissionService {
 
   async delRolePermission(ids: any[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    await this.prisma.delete('sys_role_permission', 'permission_id', ids);
+    await this.prisma.delete<rolePermissionDto>('sys_role_permission', 'permission_id', ids);
     return R.ok();
   }
 }

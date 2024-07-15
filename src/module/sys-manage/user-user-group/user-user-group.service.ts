@@ -32,7 +32,7 @@ export class UserUserGroupService {
   }
 
   async selAll(dto: userUserGroupSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_user_user_group', {
+    const res = await this.prisma.findAll<userUserGroupDto>('sys_user_user_group', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'userGroupId'],
@@ -42,12 +42,12 @@ export class UserUserGroupService {
   }
 
   async selOnes(ids: any[]): Promise<R> {
-    const res = await this.prisma.findByIds('sys_user_user_group', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<userUserGroupDto>('sys_user_user_group', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOne(id: number): Promise<R> {
-    const res = await this.prisma.findById('sys_user_user_group', Number(id));
+    const res = await this.prisma.findById<userUserGroupDto>('sys_user_user_group', Number(id));
     return R.ok(res);
   }
 
@@ -69,7 +69,7 @@ export class UserUserGroupService {
   }
 
   async delUserUserGroup(ids: any[]): Promise<R> {
-    const res = await this.prisma.deleteById('sys_user_user_group', ids);
+    const res = await this.prisma.deleteById<userUserGroupDto>('sys_user_user_group', ids);
     return R.ok(res);
   }
 }

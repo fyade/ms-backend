@@ -48,6 +48,29 @@ export class dicDataSelListDto extends pageSelDto {
   remark: string;
 }
 
+export class dicDataSelAllDto {
+  @ApiProperty({ description: '标签', required: false })
+  label: string;
+
+  @ApiProperty({ description: '值', required: false })
+  value: string;
+
+  @ApiProperty({ description: '字典类型', required: false })
+  dicType: string;
+
+  @ApiProperty({ description: '是否默认', required: false })
+  ifDefault: string;
+
+  @ApiProperty({ description: '是否禁用', required: false })
+  ifDisabled: string;
+
+  @ApiProperty({ description: '顺序', required: false })
+  orderNum: number;
+
+  @ApiProperty({ description: '备注', required: false })
+  remark: string;
+}
+
 export class dicDataInsOneDto {
   @ApiProperty({ description: '标签', required: true })
   @IsNotEmpty({ message: '标签不能为空' })
@@ -72,29 +95,6 @@ export class dicDataInsOneDto {
   @ApiProperty({ description: '顺序', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '顺序不能为空' })
-  orderNum: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
-}
-
-export class dicDataSelAllDto {
-  @ApiProperty({ description: '标签', required: false })
-  label: string;
-
-  @ApiProperty({ description: '值', required: false })
-  value: string;
-
-  @ApiProperty({ description: '字典类型', required: false })
-  dicType: string;
-
-  @ApiProperty({ description: '是否默认', required: false })
-  ifDefault: string;
-
-  @ApiProperty({ description: '是否禁用', required: false })
-  ifDisabled: string;
-
-  @ApiProperty({ description: '顺序', required: false })
   orderNum: number;
 
   @ApiProperty({ description: '备注', required: false })

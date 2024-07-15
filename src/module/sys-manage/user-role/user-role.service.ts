@@ -24,17 +24,17 @@ export class UserRoleService {
   }
 
   async selUserRole(dto: userRoleSelListDto): Promise<R> {
-    const res = await this.prisma.findPage('sys_user_role', { data: dto });
+    const res = await this.prisma.findPage<userRoleDto, userRoleSelListDto>('sys_user_role', { data: dto });
     return R.ok(res);
   }
 
   async selAll(dto: userRoleSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_user_role', { data: dto, numberKeys: ['roleId'] });
+    const res = await this.prisma.findAll<userRoleDto>('sys_user_role', { data: dto, numberKeys: ['roleId'] });
     return R.ok(res);
   }
 
   async selOne(id: any): Promise<R> {
-    const one = await this.prisma.findById('sys_user_role', Number(id));
+    const one = await this.prisma.findById<userRoleDto>('sys_user_role', Number(id));
     return R.ok(one);
   }
 
@@ -78,7 +78,7 @@ export class UserRoleService {
 
   async delUserRole(ids: any[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    await this.prisma.deleteById('sys_user_role', ids);
+    await this.prisma.deleteById<userRoleDto>('sys_user_role', ids);
     return R.ok();
   }
 }

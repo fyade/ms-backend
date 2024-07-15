@@ -4,7 +4,7 @@ import { DeptService } from './dept.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
-import { deptInsOneDto, deptSelAllDto, deptSelListDto, deptUpdOneDto } from './dto';
+import { deptSelListDto, deptSelAllDto, deptInsOneDto, deptUpdOneDto } from './dto';
 
 @Controller('/sys-manage/dept')
 @ApiTags('部门')
@@ -96,8 +96,8 @@ export class DeptController {
     new ParseArrayPipe({
       items: deptInsOneDto,
     }),
-  ) dto: deptInsOneDto[]): Promise<R> {
-    return this.deptService.insDepts(dto);
+  ) dtos: deptInsOneDto[]): Promise<R> {
+    return this.deptService.insDepts(dtos);
   }
 
   @Put()
@@ -128,8 +128,8 @@ export class DeptController {
     new ParseArrayPipe({
       items: deptUpdOneDto,
     }),
-  ) dto: deptUpdOneDto[]): Promise<R> {
-    return this.deptService.updDepts(dto);
+  ) dtos: deptUpdOneDto[]): Promise<R> {
+    return this.deptService.updDepts(dtos);
   }
 
   @Delete()

@@ -25,7 +25,7 @@ export class roleSelListDto extends pageSelDto {
   @ApiProperty({ description: '角色名', required: false })
   label: string;
 
-  @ApiProperty({ description: '是否管理员角色', required: false })
+  @ApiProperty({ description: '是否管理员权限', required: false })
   ifAdmin: string;
 
   @ApiProperty({ description: '是否禁用', required: false })
@@ -42,7 +42,7 @@ export class roleSelAllDto {
   @ApiProperty({ description: '角色名', required: false })
   label: string;
 
-  @ApiProperty({ description: '是否管理员角色', required: false })
+  @ApiProperty({ description: '是否管理员权限', required: false })
   ifAdmin: string;
 
   @ApiProperty({ description: '是否禁用', required: false })
@@ -60,8 +60,8 @@ export class roleInsOneDto {
   @IsNotEmpty({ message: '角色名不能为空' })
   label: string;
 
-  @ApiProperty({ description: '是否管理员角色', required: true })
-  @IsNotEmpty({ message: '是否管理员角色不能为空' })
+  @ApiProperty({ description: '是否管理员权限', required: true })
+  @IsNotEmpty({ message: '是否管理员权限不能为空' })
   ifAdmin: string;
 
   @ApiProperty({ description: '是否禁用', required: true })

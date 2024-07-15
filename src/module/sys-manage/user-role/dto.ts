@@ -18,10 +18,10 @@ export class userRoleSelListDto extends pageSelDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
-  @ApiProperty({ description: '用户id', required: false })
+  @ApiProperty({ description: '用户', required: false })
   userId: string;
 
-  @ApiProperty({ description: '角色id', required: false })
+  @ApiProperty({ description: '角色', required: false })
   roleId: number;
 
   @ApiProperty({ description: '备注', required: false })
@@ -29,10 +29,10 @@ export class userRoleSelListDto extends pageSelDto {
 }
 
 export class userRoleSelAllDto {
-  @ApiProperty({ description: '用户id', required: false })
+  @ApiProperty({ description: '用户', required: false })
   userId: string;
 
-  @ApiProperty({ description: '角色id', required: false })
+  @ApiProperty({ description: '角色', required: false })
   roleId: number;
 
   @ApiProperty({ description: '备注', required: false })
@@ -40,13 +40,13 @@ export class userRoleSelAllDto {
 }
 
 export class userRoleInsOneDto {
-  @ApiProperty({ description: '用户id', required: true })
-  @IsNotEmpty({ message: '用户id不能为空' })
+  @ApiProperty({ description: '用户', required: true })
+  @IsNotEmpty({ message: '用户不能为空' })
   userId: string;
 
-  @ApiProperty({ description: '角色id', required: true })
+  @ApiProperty({ description: '角色', required: true })
   @Type(() => Number)
-  @IsNotEmpty({ message: '角色id不能为空' })
+  @IsNotEmpty({ message: '角色不能为空' })
   roleId: number;
 
   @ApiProperty({ description: '备注', required: false })
@@ -60,12 +60,12 @@ export class userRoleUpdOneDto extends userRoleInsOneDto {
 }
 
 export class userRoleUpdManyURDto {
-  @ApiProperty({ description: '用户id', required: true })
-  @IsNotEmpty({ message: '用户id不能为空' })
+  @ApiProperty({ description: '用户', required: true })
+  @IsNotEmpty({ message: '用户不能为空' })
   userId: string;
 
-  @ApiProperty({ description: '角色id', required: true })
-  @IsArray({ message: '角色id应为数组' })
+  @ApiProperty({ description: '角色', required: true })
+  @IsArray({ message: '角色应为数组' })
   roleId: number[];
 
   @ApiProperty({ description: '备注', required: false })
@@ -73,12 +73,12 @@ export class userRoleUpdManyURDto {
 }
 
 export class userRoleUpdManyRUDto {
-  @ApiProperty({ description: '用户id', required: true })
-  @IsArray({ message: '用户id应为数组' })
+  @ApiProperty({ description: '用户', required: true })
+  @IsArray({ message: '用户应为数组' })
   userId: string[];
 
-  @ApiProperty({ description: '角色id', required: true })
-  @IsNotEmpty({ message: '角色id不能为空' })
+  @ApiProperty({ description: '角色', required: true })
+  @IsNotEmpty({ message: '角色不能为空' })
   roleId: number;
 
   @ApiProperty({ description: '备注', required: false })

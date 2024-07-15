@@ -9,6 +9,8 @@ export class deptDto extends baseInterface {
 
   label: string;
 
+  ifAdmin: string;
+
   parentId: number;
 
   orderNum: number;
@@ -22,6 +24,26 @@ export class deptSelListDto extends pageSelDto {
 
   @ApiProperty({ description: '部门名', required: false })
   label: string;
+
+  @ApiProperty({ description: '是否管理员权限', required: false })
+  ifAdmin: string;
+
+  @ApiProperty({ description: '父级部门', required: false })
+  parentId: number;
+
+  @ApiProperty({ description: '顺序', required: false })
+  orderNum: number;
+
+  @ApiProperty({ description: '备注', required: false })
+  remark: string;
+}
+
+export class deptSelAllDto {
+  @ApiProperty({ description: '部门名', required: false })
+  label: string;
+
+  @ApiProperty({ description: '是否管理员权限', required: false })
+  ifAdmin: string;
 
   @ApiProperty({ description: '父级部门', required: false })
   parentId: number;
@@ -38,6 +60,10 @@ export class deptInsOneDto {
   @IsNotEmpty({ message: '部门名不能为空' })
   label: string;
 
+  @ApiProperty({ description: '是否管理员权限', required: true })
+  @IsNotEmpty({ message: '是否管理员权限不能为空' })
+  ifAdmin: string;
+
   @ApiProperty({ description: '父级部门', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '父级部门不能为空' })
@@ -46,20 +72,6 @@ export class deptInsOneDto {
   @ApiProperty({ description: '顺序', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '顺序不能为空' })
-  orderNum: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
-}
-
-export class deptSelAllDto {
-  @ApiProperty({ description: '部门名', required: false })
-  label: string;
-
-  @ApiProperty({ description: '父级部门', required: false })
-  parentId: number;
-
-  @ApiProperty({ description: '顺序', required: false })
   orderNum: number;
 
   @ApiProperty({ description: '备注', required: false })

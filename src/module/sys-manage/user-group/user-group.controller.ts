@@ -96,8 +96,8 @@ export class UserGroupController {
     new ParseArrayPipe({
       items: userGroupInsOneDto,
     }),
-  ) dto: userGroupInsOneDto[]): Promise<R> {
-    return this.userGroupService.insUserGroups(dto);
+  ) dtos: userGroupInsOneDto[]): Promise<R> {
+    return this.userGroupService.insUserGroups(dtos);
   }
 
   @Put()
@@ -128,8 +128,8 @@ export class UserGroupController {
     new ParseArrayPipe({
       items: userGroupUpdOneDto,
     }),
-  ) dto: userGroupUpdOneDto[]): Promise<R> {
-    return this.userGroupService.updUserGroups(dto);
+  ) dtos: userGroupUpdOneDto[]): Promise<R> {
+    return this.userGroupService.updUserGroups(dtos);
   }
 
   @Delete()

@@ -4,7 +4,7 @@ import { DicTypeService } from './dic-type.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
-import { dicTypeInsOneDto, dicTypeSelAllDto, dicTypeSelListDto, dicTypeUpdOneDto } from './dto';
+import { dicTypeSelListDto, dicTypeSelAllDto, dicTypeInsOneDto, dicTypeUpdOneDto } from './dto';
 
 @Controller('/sys-manage/dic-type')
 @ApiTags('字典类型')
@@ -96,8 +96,8 @@ export class DicTypeController {
     new ParseArrayPipe({
       items: dicTypeInsOneDto,
     }),
-  ) dto: dicTypeInsOneDto[]): Promise<R> {
-    return this.dicTypeService.insDicTypes(dto);
+  ) dtos: dicTypeInsOneDto[]): Promise<R> {
+    return this.dicTypeService.insDicTypes(dtos);
   }
 
   @Put()
@@ -128,8 +128,8 @@ export class DicTypeController {
     new ParseArrayPipe({
       items: dicTypeUpdOneDto,
     }),
-  ) dto: dicTypeUpdOneDto[]): Promise<R> {
-    return this.dicTypeService.updDicTypes(dto);
+  ) dtos: dicTypeUpdOneDto[]): Promise<R> {
+    return this.dicTypeService.updDicTypes(dtos);
   }
 
   @Delete()

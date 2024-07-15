@@ -19,7 +19,7 @@ export class DicDataService {
   }
 
   async selAll(dto: dicDataSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_dic_data', {
+    const res = await this.prisma.findAll<dicDataDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'value', 'dicType', 'ifDefault', 'ifDisabled', 'orderNum'],
@@ -29,37 +29,37 @@ export class DicDataService {
   }
 
   async selOnes(ids: any[]): Promise<R> {
-    const res = await this.prisma.findByIds('sys_dic_data', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<dicDataDto>('sys_dic_data', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOne(id: number): Promise<R> {
-    const res = await this.prisma.findById('sys_dic_data', Number(id));
+    const res = await this.prisma.findById<dicDataDto>('sys_dic_data', Number(id));
     return R.ok(res);
   }
 
   async insDicData(dto: dicDataInsOneDto): Promise<R> {
-    const res = await this.prisma.create('sys_dic_data', dto);
+    const res = await this.prisma.create<dicDataDto>('sys_dic_data', dto);
     return R.ok(res);
   }
 
-  async insDicDatas(dto: dicDataInsOneDto[]): Promise<R> {
-    const res = await this.prisma.createMany('sys_dic_data', dto);
+  async insDicDatas(dtos: dicDataInsOneDto[]): Promise<R> {
+    const res = await this.prisma.createMany<dicDataDto>('sys_dic_data', dtos);
     return R.ok(res);
   }
 
   async updDicData(dto: dicDataUpdOneDto): Promise<R> {
-    const res = await this.prisma.updateById('sys_dic_data', dto);
+    const res = await this.prisma.updateById<dicDataDto>('sys_dic_data', dto);
     return R.ok(res);
   }
 
-  async updDicDatas(dto: dicDataUpdOneDto[]): Promise<R> {
-    const res = await this.prisma.updateMany('sys_dic_data', dto);
+  async updDicDatas(dtos: dicDataUpdOneDto[]): Promise<R> {
+    const res = await this.prisma.updateMany<dicDataDto>('sys_dic_data', dtos);
     return R.ok(res);
   }
 
   async delDicData(ids: any[]): Promise<R> {
-    const res = await this.prisma.deleteById('sys_dic_data', ids);
+    const res = await this.prisma.deleteById<dicDataDto>('sys_dic_data', ids);
     return R.ok(res);
   }
 }
