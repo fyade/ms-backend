@@ -9,7 +9,7 @@ export class UserGroupService {
   }
 
   async selUserGroup(dto: userGroupSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<userGroupDto, userGroupSelListDto>('sys_usergroup', {
+    const res = await this.prisma.findPage<userGroupDto, userGroupSelListDto>('sys_user_group', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'parentId', 'orderNum'],
@@ -19,7 +19,7 @@ export class UserGroupService {
   }
 
   async selAll(dto: userGroupSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll('sys_usergroup', {
+    const res = await this.prisma.findAll('sys_user_group', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'parentId', 'orderNum'],
@@ -29,37 +29,37 @@ export class UserGroupService {
   }
 
   async selOnes(ids: any[]): Promise<R> {
-    const res = await this.prisma.findByIds('sys_usergroup', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds('sys_user_group', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOne(id: number): Promise<R> {
-    const res = await this.prisma.findById('sys_usergroup', Number(id));
+    const res = await this.prisma.findById('sys_user_group', Number(id));
     return R.ok(res);
   }
 
   async insUserGroup(dto: userGroupInsOneDto): Promise<R> {
-    const res = await this.prisma.create('sys_usergroup', dto);
+    const res = await this.prisma.create('sys_user_group', dto);
     return R.ok(res);
   }
 
   async insUserGroups(dtos: userGroupInsOneDto[]): Promise<R> {
-    const res = await this.prisma.createMany('sys_usergroup', dtos);
+    const res = await this.prisma.createMany('sys_user_group', dtos);
     return R.ok(res);
   }
 
   async updUserGroup(dto: userGroupUpdOneDto): Promise<R> {
-    const res = await this.prisma.updateById('sys_usergroup', dto);
+    const res = await this.prisma.updateById('sys_user_group', dto);
     return R.ok(res);
   }
 
   async updUserGroups(dtos: userGroupUpdOneDto[]): Promise<R> {
-    const res = await this.prisma.updateMany('sys_usergroup', dtos);
+    const res = await this.prisma.updateMany('sys_user_group', dtos);
     return R.ok(res);
   }
 
   async delUserGroup(ids: any[]): Promise<R> {
-    const res = await this.prisma.deleteById('sys_usergroup', ids);
+    const res = await this.prisma.deleteById('sys_user_group', ids);
     return R.ok(res);
   }
 }

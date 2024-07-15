@@ -3,7 +3,12 @@ import { FileUploadService } from './file-upload.service';
 import { R } from '../../../common/R';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { currentEnv } from '../../../../config/config';
-import { fileUploadSelListDto, fileUploadOneChunk_check, fileUploadOneChunk_merge } from './dto';
+import {
+  fileUploadSelListDto,
+  fileUploadOneChunk_check,
+  fileUploadOneChunk_merge,
+  fileUploadOneChunk_upload,
+} from './dto';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
@@ -100,7 +105,7 @@ export class FileUploadController {
     permission: 'system:fileupload:onechunkupload',
     label: '文件上传-单文件分片上传',
   })
-  async fileUploadOneChunkUpload(@Param() param, @UploadedFile() file): Promise<R> {
+  async fileUploadOneChunkUpload(@Param() param: fileUploadOneChunk_upload, @UploadedFile() file): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkUpload({
       fileMd5: param.fileMd5,
       chunkIndex: param.chunkIndex,

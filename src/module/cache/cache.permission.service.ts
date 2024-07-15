@@ -58,7 +58,7 @@ export class CachePermissionService {
   /**
    * 删除缓存中的所有权限记录
    */
-  async delAllPermissionsInCache() {
+  async clearPermissionsInCache() {
     const allPPs = await this.redis.hgetall('permission:public');
     await this.redis.hdel('permission:public', ...Object.keys(allPPs));
     const allUPs = await this.redis.hgetall('user:permission');

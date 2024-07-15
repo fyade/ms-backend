@@ -39,7 +39,7 @@ export class UserRoleService {
   }
 
   async updUserRoleUR(dto: userRoleUpdManyURDto): Promise<R> {
-    await this.cachePermissionService.delAllPermissionsInCache();
+    await this.cachePermissionService.clearPermissionsInCache();
     if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
@@ -54,7 +54,7 @@ export class UserRoleService {
   }
 
   async updUserRoleRU(dto: userRoleUpdManyRUDto): Promise<R> {
-    await this.cachePermissionService.delAllPermissionsInCache();
+    await this.cachePermissionService.clearPermissionsInCache();
     const data = [];
     const allUsersOfThisRole = await this.prisma.findAll<userRoleDto>('sys_user_role', {
       data: { roleId: dto.roleId },
@@ -77,7 +77,7 @@ export class UserRoleService {
   }
 
   async delUserRole(ids: any[]): Promise<R> {
-    await this.cachePermissionService.delAllPermissionsInCache();
+    await this.cachePermissionService.clearPermissionsInCache();
     await this.prisma.deleteById('sys_user_role', ids);
     return R.ok();
   }

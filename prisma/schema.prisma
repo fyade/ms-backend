@@ -230,7 +230,7 @@ model sys_dept_permission {
 }
 
 // 2.8 用户组表
-model sys_usergroup {
+model sys_user_group {
   id          Int      @id @default(autoincrement()) @db.Int
   label       String   @db.VarChar(30)
   parent_id   Int      @db.Int
@@ -244,16 +244,16 @@ model sys_usergroup {
 }
 
 // 2.9 用户用户组表
-model sys_user_usergroup {
-  id           Int      @id @default(autoincrement()) @db.Int
-  user_id      String   @db.VarChar(10)
-  usergroup_id Int      @db.Int
-  remark       String?  @db.VarChar(300)
-  create_by    String   @db.VarChar(10)
-  update_by    String   @db.VarChar(10)
-  create_time  DateTime @default(now())
-  update_time  DateTime @updatedAt
-  deleted      String   @default("N") @db.Char(1)
+model sys_user_user_group {
+  id            Int      @id @default(autoincrement()) @db.Int
+  user_id       String   @db.VarChar(10)
+  user_group_id Int      @db.Int
+  remark        String?  @db.VarChar(300)
+  create_by     String   @db.VarChar(10)
+  update_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  update_time   DateTime @updatedAt
+  deleted       String   @default("N") @db.Char(1)
 }
 
 // 2.10 接口表
@@ -274,7 +274,7 @@ model sys_interface {
 }
 
 // 2.11 接口组表
-model sys_interfacegroup {
+model sys_interface_group {
   id          Int      @id @default(autoincrement()) @db.Int
   label       String   @db.VarChar(30)
   parent_id   Int      @db.Int
@@ -288,29 +288,29 @@ model sys_interfacegroup {
 }
 
 // 2.12 接口接口组
-model sys_interface_interfacegroup {
-  id                Int      @id @default(autoincrement()) @db.Int
-  interface_id      Int      @db.Int
-  interfacegroup_id Int      @db.Int
-  remark            String?  @db.VarChar(300)
-  create_by         String   @db.VarChar(10)
-  update_by         String   @db.VarChar(10)
-  create_time       DateTime @default(now())
-  update_time       DateTime @updatedAt
-  deleted           String   @default("N") @db.Char(1)
+model sys_interface_interface_group {
+  id                 Int      @id @default(autoincrement()) @db.Int
+  interface_id       Int      @db.Int
+  interface_group_id Int      @db.Int
+  remark             String?  @db.VarChar(300)
+  create_by          String   @db.VarChar(10)
+  update_by          String   @db.VarChar(10)
+  create_time        DateTime @default(now())
+  update_time        DateTime @updatedAt
+  deleted            String   @default("N") @db.Char(1)
 }
 
 // 2.13 用户组接口组表
-model sys_usergroup_interfacegroup {
-  id                Int      @id @default(autoincrement()) @db.Int
-  usergroup_id      Int      @db.Int
-  interfacegroup_id Int      @db.Int
-  remark            String?  @db.VarChar(300)
-  create_by         String   @db.VarChar(10)
-  update_by         String   @db.VarChar(10)
-  create_time       DateTime @default(now())
-  update_time       DateTime @updatedAt
-  deleted           String   @default("N") @db.Char(1)
+model sys_user_group_permission {
+  id            Int      @id @default(autoincrement()) @db.Int
+  user_group_id Int      @db.Int
+  permission_id Int      @db.Int
+  remark        String?  @db.VarChar(300)
+  create_by     String   @db.VarChar(10)
+  update_by     String   @db.VarChar(10)
+  create_time   DateTime @default(now())
+  update_time   DateTime @updatedAt
+  deleted       String   @default("N") @db.Char(1)
 }
 
 // 3.1 sms记录表

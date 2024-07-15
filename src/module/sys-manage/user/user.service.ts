@@ -15,6 +15,10 @@ import { generateToken } from '../../../util/AuthUtils';
 import { LogUserLoginService } from '../../sys-monitor/log-user-login/log-user-login.service';
 import { comparePassword, hashPassword } from '../../../util/EncryptUtils';
 import { userDeptDto } from '../user-dept/dto';
+import { userGroupDto } from '../user-group/dto';
+import { userUserGroupDto } from '../user-user-group/dto';
+import { roleDto } from '../role/dto';
+import { deptDto } from '../dept/dto';
 
 @Injectable()
 export class UserService {
@@ -56,31 +60,64 @@ export class UserService {
       },
     }, false);
     const res2 = [];
+    const userIds = res.list.map(item => item.id);
+    const allUserRolesOfThoseUsers = await this.prisma.findAll<userRoleDto>('sys_user_role', {
+      data: {
+        userId: {
+          in: userIds,
+        },
+      },
+    }, false);
+    const allRoleIdsOfThoseUsers = allUserRolesOfThoseUsers.map(item => item.roleId);
+    const allRolesOfThoseUsers = await this.prisma.findAll<roleDto>('sys_role', {
+      data: {
+        id: {
+          in: allRoleIdsOfThoseUsers,
+        },
+      },
+    }, false);
+    const allUserDeptsOfThoseUsers = await this.prisma.findAll<userDeptDto>('sys_user_dept', {
+      data: {
+        userId: {
+          in: userIds,
+        },
+      },
+    }, false);
+    const allUserDeptIdsOfThoseUsers = allUserDeptsOfThoseUsers.map(item => item.deptId);
+    const allDeptsOfThoseUsers = await this.prisma.findAll<deptDto>('sys_dept', {
+      data: {
+        id: {
+          in: allUserDeptIdsOfThoseUsers,
+        },
+      },
+    }, false);
+    const allUserUserGroupsOfThoseUsers = await this.prisma.findAll<userUserGroupDto>('sys_user_user_group', {
+      data: {
+        userId: {
+          in: userIds,
+        },
+      },
+    }, false);
+    const allUserUserGroupIdsOfThoseUsers = allUserUserGroupsOfThoseUsers.map(item => item.userGroupId);
+    const allUserGroupsOfThoseUsers = await this.prisma.findAll<userGroupDto>('sys_user_group', {
+      data: {
+        id: {
+          in: allUserUserGroupIdsOfThoseUsers,
+        },
+      },
+    }, false);
     for (let i = 0; i < res.list.length; i++) {
-      const roles = await this.prisma.findAll<userRoleDto>('sys_user_role', { data: { userId: res.list[i].id } });
-      const roleids = roles.map(item => item.roleId);
-      const rols = await this.prisma.findAll('sys_role', {
-        data: {
-          id: {
-            in: roleids,
-          },
-        },
-        orderBy: true,
-      }, false);
-      const depts = await this.prisma.findAll<userDeptDto>('sys_user_dept', { data: { userId: res.list[i].id } });
-      const deptids = depts.map(item => item.deptId);
-      const deps = await this.prisma.findAll('sys_dept', {
-        data: {
-          id: {
-            in: deptids,
-          },
-        },
-        orderBy: true,
-      }, false);
+      const roleIdsOfThisUser = allUserRolesOfThoseUsers.filter(item => item.userId === res.list[i].id).map(item => item.roleId);
+      const rolesOfThisUser = allRolesOfThoseUsers.filter(item => roleIdsOfThisUser.indexOf(item.id) > -1);
+      const deptIdsOfThisUser = allUserDeptsOfThoseUsers.filter(item => item.userId === res.list[i].id).map(item => item.deptId);
+      const deptsOfThisUser = allDeptsOfThoseUsers.filter(item => deptIdsOfThisUser.indexOf(item.id) > -1);
+      const ugIdsOfThisUser = allUserUserGroupsOfThoseUsers.filter(item => item.userId === res.list[i].id).map(item => item.userGroupId);
+      const ugsOfThisUser = allUserGroupsOfThoseUsers.filter(item => ugIdsOfThisUser.indexOf(item.id) > -1);
       res2.push({
         ...res.list[i],
-        roles: rols,
-        depts: deps,
+        roles: rolesOfThisUser,
+        depts: deptsOfThisUser,
+        ugs: ugsOfThisUser,
         ifTopAdmin: topAdminUser.findIndex(item => item.userId === res.list[i].id) > -1,
       });
     }
