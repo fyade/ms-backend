@@ -1,4 +1,4 @@
-import { pageSelDto } from '../../../common/dto/PageDto';
+import { pageDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
 import { IsArray, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -14,7 +14,7 @@ export class userDeptDto extends baseInterface {
   remark: string;
 }
 
-export class userDeptSelListDto extends pageSelDto {
+export class userDeptSelListDto extends pageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 

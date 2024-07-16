@@ -1,5 +1,5 @@
 import { baseInterface } from '../../../util/base';
-import { pageSelDto } from '../../../common/dto/PageDto';
+import { pageDto } from '../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -22,7 +22,7 @@ export class dicDataDto extends baseInterface {
   remark: string;
 }
 
-export class dicDataSelListDto extends pageSelDto {
+export class dicDataSelListDto extends pageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 

@@ -2,7 +2,7 @@ import { Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class pageSelDto {
+export class pageDto {
   @ApiProperty({ description: 'pageNum', required: true })
   @Type(() => Number)
   @Min(1, { message: 'pageNum最小值为1' })

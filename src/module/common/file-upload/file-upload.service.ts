@@ -12,7 +12,7 @@ import {
   fileUploadOneChunk_upload,
 } from './dto';
 import { pageVo } from '../../../common/vo/PageVo';
-import { pageSelDto } from '../../../common/dto/PageDto';
+import { pageDto } from '../../../common/dto/PageDto';
 import { randomUUID } from '../../../util/IdUtils';
 import { getCurrentUser } from '../../../util/baseContext';
 
@@ -363,7 +363,7 @@ export class FileUploadService {
     return R.ok();
   }
 
-  async getImageWaterfallFlow(dto: pageSelDto) {
+  async getImageWaterfallFlow(dto: pageDto) {
     return this.prisma.tbl_file.findMany({
       skip: (Number(dto.pageNum) - 1) * Number(dto.pageSize),
       take: Number(dto.pageSize),

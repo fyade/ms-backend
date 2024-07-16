@@ -1,4 +1,4 @@
-import { pageSelDto } from '../../../common/dto/PageDto';
+import { pageDto } from '../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -69,7 +69,7 @@ export class userDto2 extends loginDto {
 export class adminNewUserDto extends loginDto {
 }
 
-export class userListSelDto extends pageSelDto {
+export class userListSelDto extends pageDto {
   @ApiProperty({ description: '用户id', required: false })
   id: string;
 

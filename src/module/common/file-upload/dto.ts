@@ -1,7 +1,7 @@
-import { pageSelDto } from '../../../common/dto/PageDto';
+import { pageDto } from '../../../common/dto/PageDto';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class fileUploadSelListDto extends pageSelDto {
+export class fileUploadSelListDto extends pageDto {
   @ApiProperty({ description: '过滤相同文件', required: false })
   filterSame: string;
 }

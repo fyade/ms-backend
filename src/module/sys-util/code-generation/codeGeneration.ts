@@ -392,7 +392,7 @@ export class ${capitalizeFirstLetter(moduleName)}Service {
 }
 `;
   const hd3 =
-`import { pageSelDto } from '../../../common/dto/PageDto';
+`import { pageDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -407,7 +407,7 @@ ${
 }
 }
 
-export class ${moduleName}SelListDto extends pageSelDto {
+export class ${moduleName}SelListDto extends pageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: ${columns.find(item => item.colName === 'id').tsType};
 
@@ -550,7 +550,7 @@ export function ${moduleName}Del(ids: any[]) {
 }
 `;
   const qd2 =
-`import { pageSelDto } from "@/type/tablePage.ts";
+`import { pageDto } from "@/type/tablePage.ts";
 import { baseInterface } from "@/utils/base.ts";
 
 export class ${moduleName}Dto extends baseInterface {
@@ -562,7 +562,7 @@ ${
 }
 }
 
-export class ${moduleName}SelDto extends pageSelDto {
+export class ${moduleName}SelDto extends pageDto {
 }
 
 export class ${moduleName}SelAllDto {

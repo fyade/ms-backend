@@ -128,7 +128,7 @@ export class FileUploadController {
 
   // @Get('/image-waterfall-flow')
   // @Authorize('system:fileupload:waterfall')
-  // async getImageWaterfallFlow(@Query() dto: pageSelDto) {
+  // async getImageWaterfallFlow(@Query() dto: pageDto) {
   //   return this.fileUploadService.getImageWaterfallFlow(dto);
   // }
 }

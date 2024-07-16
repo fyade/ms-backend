@@ -1,4 +1,4 @@
-import { pageSelDto } from '../../../common/dto/PageDto';
+import { pageDto } from '../../../common/dto/PageDto';
 import { baseInterface } from '../../../util/base';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -22,7 +22,7 @@ export class logUserLoginDto extends baseInterface {
   remark: string;
 }
 
-export class logUserLoginSelListDto extends pageSelDto {
+export class logUserLoginSelListDto extends pageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
