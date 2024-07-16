@@ -24,12 +24,22 @@ export class UserRoleService {
   }
 
   async selUserRole(dto: userRoleSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<userRoleDto, userRoleSelListDto>('sys_user_role', { data: dto });
+    const res = await this.prisma.findPage<userRoleDto, userRoleSelListDto>('sys_user_role', {
+      data: dto,
+      orderBy: false,
+      notNullKeys: ['userId', 'roleId'],
+      numberKeys: ['roleId'],
+    });
     return R.ok(res);
   }
 
   async selAll(dto: userRoleSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll<userRoleDto>('sys_user_role', { data: dto, numberKeys: ['roleId'] });
+    const res = await this.prisma.findAll<userRoleDto>('sys_user_role', {
+      data: dto,
+      orderBy: false,
+      notNullKeys: ['userId', 'roleId'],
+      numberKeys: ['roleId'],
+    });
     return R.ok(res);
   }
 

@@ -10,6 +10,7 @@ import {
   userUserGroupInsOneDto,
   userUserGroupUpdOneDto,
   userUserGroupUpdUUGDtp,
+  userUserGroupUpdUGUDtp,
 } from './dto';
 
 @Controller('/sys-manage/user-user-group')
@@ -84,6 +85,18 @@ export class UserUserGroupController {
   })
   async updUUG(@Body() dto: userUserGroupUpdUUGDtp): Promise<R> {
     return this.userUserGroupService.updUUG(dto);
+  }
+
+  @Post('/ugu')
+  @ApiOperation({
+    summary: '更新用户用户组（ugu）',
+  })
+  @Authorize({
+    permission: 'sysManage:userUserGroup:updUgu',
+    label: '更新用户用户组（ugu）',
+  })
+  async updUGU(@Body() dto: userUserGroupUpdUGUDtp): Promise<R> {
+    return this.userUserGroupService.updUGU(dto);
   }
 
   @Delete()

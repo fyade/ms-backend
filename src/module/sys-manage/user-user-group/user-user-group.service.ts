@@ -8,6 +8,7 @@ import {
   userUserGroupInsOneDto,
   userUserGroupUpdOneDto,
   userUserGroupUpdUUGDtp,
+  userUserGroupUpdUGUDtp,
 } from './dto';
 import { AuthService } from '../../auth/auth.service';
 import { getCurrentUser } from '../../../util/baseContext';
@@ -65,6 +66,28 @@ export class UserUserGroupService {
       userId: dto.userId,
       userGroupId: item,
     })));
+    return R.ok();
+  }
+
+  async updUGU(dto: userUserGroupUpdUGUDtp): Promise<R> {
+    const data = [];
+    const allUsersOfThisUserGroup = await this.prisma.findAll<userUserGroupDto>('sys_user_user_group', {
+      data: { userGroupId: dto.userGroupId },
+      numberKeys: ['userGroupId'],
+    });
+    const allUserIdsOfThisUserGroup = allUsersOfThisUserGroup.map(item => item.userId);
+    const userIds = dto.userId.filter(item => allUserIdsOfThisUserGroup.indexOf(item) === -1);
+    for (let i = 0; i < userIds.length; i++) {
+      const userId = userIds[i];
+      if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, userId)) {
+        throw new UserPermissionDeniedException();
+      }
+      data.push({
+        userId: userId,
+        userGroupId: dto.userGroupId,
+      });
+    }
+    await this.prisma.createMany('sys_user_user_group', data);
     return R.ok();
   }
 
