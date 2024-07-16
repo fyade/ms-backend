@@ -24,7 +24,7 @@ export class R {
   }
 }
 
-export interface RType {
+export class RType {
   code: number;
   data: any;
   msg: string;
