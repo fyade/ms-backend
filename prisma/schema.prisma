@@ -302,15 +302,22 @@ model sys_interface_interface_group {
 
 // 2.13 用户组接口组表
 model sys_user_group_permission {
-  id            Int      @id @default(autoincrement()) @db.Int
-  user_group_id Int      @db.Int
-  permission_id Int      @db.Int
-  remark        String?  @db.VarChar(300)
-  create_by     String   @db.VarChar(10)
-  update_by     String   @db.VarChar(10)
-  create_time   DateTime @default(now())
-  update_time   DateTime @updatedAt
-  deleted       String   @default("N") @db.Char(1)
+  id                       Int      @id @default(autoincrement()) @db.Int
+  user_group_id            Int      @db.Int
+  permission_id            Int      @db.Int
+  if_limit_request_times   String   @db.Char(1)
+  if_reject_request_use_up String   @db.Char(1)
+  if_long_term             String   @db.Char(1)
+  permission_start_time    DateTime @db.DateTime()
+  permission_end_time      DateTime @db.DateTime()
+  limit_request_times      Int      @db.Int
+  if_use_up                String   @default("N") @db.Char(1)
+  remark                   String?  @db.VarChar(300)
+  create_by                String   @db.VarChar(10)
+  update_by                String   @db.VarChar(10)
+  create_time              DateTime @default(now())
+  update_time              DateTime @updatedAt
+  deleted                  String   @default("N") @db.Char(1)
 }
 
 // 3.1 sms记录表

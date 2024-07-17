@@ -32,6 +32,10 @@ import { DeptPermissionModule } from './module/sys-manage/dept-permission/dept-p
 import { RedisModule } from './redis/redis.module';
 import { CachePermissionService } from './module/cache/cache.permission.service';
 import { UserUserGroupModule } from './module/sys-manage/user-user-group/user-user-group.module';
+import { InterfaceModule } from './module/sys-manage/interface/interface.module';
+import { InterfaceInterfaceGroupModule } from './module/sys-manage/interface-interface-group/interface-interface-group.module';
+import { AlgorithmV1Module } from './module/algorithm-v1/algorithm-v1.module';
+import { UserGroupPermissionModule } from './module/sys-manage/user-group-permission/user-group-permission.module';
 
 @Module({
   imports: [
@@ -67,6 +71,10 @@ import { UserUserGroupModule } from './module/sys-manage/user-user-group/user-us
     InterfaceGroupModule,
     DeptPermissionModule,
     UserUserGroupModule,
+    InterfaceModule,
+    InterfaceInterfaceGroupModule,
+    AlgorithmV1Module,
+    UserGroupPermissionModule,
   ],
   controllers: [
     AppController,
