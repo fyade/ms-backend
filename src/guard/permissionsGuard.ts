@@ -6,9 +6,9 @@ import { adminLoginUrl, reqWhiteList } from '../../config/authConfig';
 import { ForbiddenException } from '../exception/ForbiddenException';
 import { UserUnknownException } from '../exception/UserUnknownException';
 import { CachePermissionService } from '../module/cache/cache.permission.service';
-import { userDto2 } from '../module/sys-manage/user/dto';
 import { base } from '../util/base';
 import { getCurrentUser } from '../util/baseContext';
+import { Exception } from '../exception/Exception';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -48,6 +48,14 @@ export class PermissionsGuard implements CanActivate {
     }
     // 算法接口权限控制
     if (ifSF) {
+      if (user) {
+        const permissionsOfUser = await this.authService.hasSFPermissionByUserid(user.userid, permission, request);
+        if (permissionsOfUser) {
+          return true;
+        }
+      }
+      throw new Exception('您无当前算法权限。');
+      // throw new ForbiddenException(label);
     }
     // 页面接口权限控制
     else {

@@ -179,20 +179,20 @@ export class PrismaService extends PrismaClient {
    * @param ifUseGenSelParams
    */
   async findPage<T, P extends pageDto>(model: string, {
-                                            data,
-                                            orderBy,
-                                            range = {},
-                                            notNullKeys = [],
-                                            numberKeys = [],
-                                            ifDeleted = true,
-                                          }: {
-                                            data?: P,
-                                            orderBy?: boolean | object,
-                                            range?: object,
-                                            notNullKeys?: string[]
-                                            numberKeys?: string[],
-                                            ifDeleted?: boolean,
-                                          } = {}, ifUseGenSelParams = true,
+                                         data,
+                                         orderBy,
+                                         range = {},
+                                         notNullKeys = [],
+                                         numberKeys = [],
+                                         ifDeleted = true,
+                                       }: {
+                                         data?: P,
+                                         orderBy?: boolean | object,
+                                         range?: object,
+                                         notNullKeys?: string[]
+                                         numberKeys?: string[],
+                                         ifDeleted?: boolean,
+                                       } = {}, ifUseGenSelParams = true,
   ): Promise<{
     list: T[]
     total: number

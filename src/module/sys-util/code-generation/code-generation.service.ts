@@ -3,7 +3,6 @@ import { R } from '../../../common/R';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { NonSupportedException } from '../../../exception/NonSupportedException';
-import { sleep } from '../../../util/BaseUtils';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { codeGeneration } from './codeGeneration';
 import { codeGenTableDto } from '../code-gen-table/dto';
@@ -69,6 +68,7 @@ export class CodeGenerationService {
     const columns: codeGenColumnDto[] = await this.prisma.findAll('sys_code_gen_column', {
       data: { tableId: Number(id) },
       numberKeys: ['tableId'],
+      orderBy: true,
     });
     const cgRes = codeGeneration({ table, columns });
     return R.ok({
@@ -79,7 +79,6 @@ export class CodeGenerationService {
   }
 
   async genCodeZip(id: number): Promise<R> {
-    await sleep(2000);
     return R.ok('codeZip');
   }
 }

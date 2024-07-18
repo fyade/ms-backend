@@ -51,27 +51,27 @@ export class UserGroupPermissionService {
     return R.ok(res);
   }
 
-  async insUserGroupPermissions(dtos: userGroupPermissionInsOneDto[]): Promise<R> {
-    dtos.forEach(dto => {
-      dto.ifUseUp = base.N;
-    });
-    const res = await this.prisma.createMany<userGroupPermissionDto>('sys_user_group_permission', dtos);
-    return R.ok(res);
-  }
-
-  async updUserGroupPermission(dto: userGroupPermissionUpdOneDto): Promise<R> {
-    dto.ifUseUp = base.N;
-    const res = await this.prisma.updateById<userGroupPermissionDto>('sys_user_group_permission', dto);
-    return R.ok(res);
-  }
-
-  async updUserGroupPermissions(dtos: userGroupPermissionUpdOneDto[]): Promise<R> {
-    dtos.forEach(dto => {
-      dto.ifUseUp = base.N;
-    });
-    const res = await this.prisma.updateMany<userGroupPermissionDto>('sys_user_group_permission', dtos);
-    return R.ok(res);
-  }
+  // async insUserGroupPermissions(dtos: userGroupPermissionInsOneDto[]): Promise<R> {
+  //   dtos.forEach(dto => {
+  //     dto.ifUseUp = base.N;
+  //   });
+  //   const res = await this.prisma.createMany<userGroupPermissionDto>('sys_user_group_permission', dtos);
+  //   return R.ok(res);
+  // }
+  //
+  // async updUserGroupPermission(dto: userGroupPermissionUpdOneDto): Promise<R> {
+  //   dto.ifUseUp = base.N;
+  //   const res = await this.prisma.updateById<userGroupPermissionDto>('sys_user_group_permission', dto);
+  //   return R.ok(res);
+  // }
+  //
+  // async updUserGroupPermissions(dtos: userGroupPermissionUpdOneDto[]): Promise<R> {
+  //   dtos.forEach(dto => {
+  //     dto.ifUseUp = base.N;
+  //   });
+  //   const res = await this.prisma.updateMany<userGroupPermissionDto>('sys_user_group_permission', dtos);
+  //   return R.ok(res);
+  // }
 
   async delUserGroupPermission(ids: any[]): Promise<R> {
     const res = await this.prisma.deleteById<userGroupPermissionDto>('sys_user_group_permission', ids);

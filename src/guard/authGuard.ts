@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
     //   reqBody: request.body,
     // };
     const oauth = request.headers['authorization'];
-    const token = (typeof oauth === 'string' && oauth.length >= 7 && oauth.startsWith('Bearer ')) ? oauth.substring(7) : '';
+    const token = typeof oauth === 'string' ? (oauth.startsWith('Bearer ') ? oauth.substring(7) : oauth) : '';
     if (reqWhiteList.indexOf(request.url) > -1 || request.url === adminLoginUrl) {
     } else if (token) {
       try {

@@ -11,11 +11,11 @@ export class userGroupPermissionDto extends baseInterface {
 
   permissionId: number;
 
+  ifLongTerm: string;
+
   ifLimitRequestTimes: string;
 
   ifRejectRequestUseUp: string;
-
-  ifLongTerm: string;
 
   permissionStartTime: string;
 
@@ -38,14 +38,14 @@ export class userGroupPermissionSelListDto extends pageDto {
   @ApiProperty({ description: '接口组', required: false })
   permissionId: number;
 
+  @ApiProperty({ description: '是否长期权限', required: false })
+  ifLongTerm: string;
+
   @ApiProperty({ description: '是否限制次数', required: false })
   ifLimitRequestTimes: string;
 
   @ApiProperty({ description: '次数用尽后是否拒绝请求', required: false })
   ifRejectRequestUseUp: string;
-
-  @ApiProperty({ description: '是否长期权限', required: false })
-  ifLongTerm: string;
 
   @ApiProperty({ description: '权限开始时间', required: false })
   permissionStartTime: string;
@@ -70,14 +70,14 @@ export class userGroupPermissionSelAllDto {
   @ApiProperty({ description: '接口组', required: false })
   permissionId: number;
 
+  @ApiProperty({ description: '是否长期权限', required: false })
+  ifLongTerm: string;
+
   @ApiProperty({ description: '是否限制次数', required: false })
   ifLimitRequestTimes: string;
 
   @ApiProperty({ description: '次数用尽后是否拒绝请求', required: false })
   ifRejectRequestUseUp: string;
-
-  @ApiProperty({ description: '是否长期权限', required: false })
-  ifLongTerm: string;
 
   @ApiProperty({ description: '权限开始时间', required: false })
   permissionStartTime: string;
@@ -106,6 +106,10 @@ export class userGroupPermissionInsOneDto {
   @IsNotEmpty({ message: '接口组不能为空' })
   permissionId: number;
 
+  @ApiProperty({ description: '是否长期权限', required: true })
+  @IsNotEmpty({ message: '是否长期权限不能为空' })
+  ifLongTerm: string;
+
   @ApiProperty({ description: '是否限制次数', required: true })
   @IsNotEmpty({ message: '是否限制次数不能为空' })
   ifLimitRequestTimes: string;
@@ -113,10 +117,6 @@ export class userGroupPermissionInsOneDto {
   @ApiProperty({ description: '次数用尽后是否拒绝请求', required: true })
   @IsNotEmpty({ message: '次数用尽后是否拒绝请求不能为空' })
   ifRejectRequestUseUp: string;
-
-  @ApiProperty({ description: '是否长期权限', required: true })
-  @IsNotEmpty({ message: '是否长期权限不能为空' })
-  ifLongTerm: string;
 
   @ApiProperty({ description: '权限开始时间', required: true })
   @IsNotEmpty({ message: '权限开始时间不能为空' })

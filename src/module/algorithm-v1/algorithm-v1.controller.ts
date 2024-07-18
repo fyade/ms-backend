@@ -5,7 +5,7 @@ import { AlgorithmV1Service } from './algorithm-v1.service';
 import { Authorize } from '../../decorator/authorizeDecorator';
 import { R } from '../../common/R';
 
-@Controller('algorithm-v1')
+@Controller('/algorithm-v1')
 @ApiTags('算法接口')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserGroupPermissionService } from './user-group-permission.service';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
-import { userGroupPermissionSelListDto, userGroupPermissionSelAllDto, userGroupPermissionInsOneDto, userGroupPermissionUpdOneDto } from './dto';
+import { userGroupPermissionInsOneDto, userGroupPermissionSelAllDto, userGroupPermissionSelListDto } from './dto';
 
 @Controller('/sys-manage/user-group-permission')
 @ApiTags('用户组接口组')
@@ -80,57 +80,57 @@ export class UserGroupPermissionController {
     return this.userGroupPermissionService.insUserGroupPermission(dto);
   }
 
-  @Post('/s')
-  @ApiOperation({
-    summary: '批量新增用户组接口组',
-  })
-  @ApiBody({
-    isArray: true,
-    type: userGroupPermissionInsOneDto,
-  })
-  @Authorize({
-    permission: 'sysManage:userGroupPermission:inss',
-    label: '批量新增用户组接口组',
-  })
-  async insUserGroupPermissions(@Body(
-    new ParseArrayPipe({
-      items: userGroupPermissionInsOneDto,
-    }),
-  ) dtos: userGroupPermissionInsOneDto[]): Promise<R> {
-    return this.userGroupPermissionService.insUserGroupPermissions(dtos);
-  }
-
-  @Put()
-  @ApiOperation({
-    summary: '修改用户组接口组',
-  })
-  @Authorize({
-    permission: 'sysManage:userGroupPermission:upd',
-    label: '修改用户组接口组',
-  })
-  async updUserGroupPermission(@Body() dto: userGroupPermissionUpdOneDto): Promise<R> {
-    return this.userGroupPermissionService.updUserGroupPermission(dto);
-  }
-
-  @Put('/s')
-  @ApiOperation({
-    summary: '批量修改用户组接口组',
-  })
-  @ApiBody({
-    isArray: true,
-    type: userGroupPermissionUpdOneDto,
-  })
-  @Authorize({
-    permission: 'sysManage:userGroupPermission:upds',
-    label: '批量修改用户组接口组',
-  })
-  async updUserGroupPermissions(@Body(
-    new ParseArrayPipe({
-      items: userGroupPermissionUpdOneDto,
-    }),
-  ) dtos: userGroupPermissionUpdOneDto[]): Promise<R> {
-    return this.userGroupPermissionService.updUserGroupPermissions(dtos);
-  }
+  // @Post('/s')
+  // @ApiOperation({
+  //   summary: '批量新增用户组接口组',
+  // })
+  // @ApiBody({
+  //   isArray: true,
+  //   type: userGroupPermissionInsOneDto,
+  // })
+  // @Authorize({
+  //   permission: 'sysManage:userGroupPermission:inss',
+  //   label: '批量新增用户组接口组',
+  // })
+  // async insUserGroupPermissions(@Body(
+  //   new ParseArrayPipe({
+  //     items: userGroupPermissionInsOneDto,
+  //   }),
+  // ) dtos: userGroupPermissionInsOneDto[]): Promise<R> {
+  //   return this.userGroupPermissionService.insUserGroupPermissions(dtos);
+  // }
+  //
+  // @Put()
+  // @ApiOperation({
+  //   summary: '修改用户组接口组',
+  // })
+  // @Authorize({
+  //   permission: 'sysManage:userGroupPermission:upd',
+  //   label: '修改用户组接口组',
+  // })
+  // async updUserGroupPermission(@Body() dto: userGroupPermissionUpdOneDto): Promise<R> {
+  //   return this.userGroupPermissionService.updUserGroupPermission(dto);
+  // }
+  //
+  // @Put('/s')
+  // @ApiOperation({
+  //   summary: '批量修改用户组接口组',
+  // })
+  // @ApiBody({
+  //   isArray: true,
+  //   type: userGroupPermissionUpdOneDto,
+  // })
+  // @Authorize({
+  //   permission: 'sysManage:userGroupPermission:upds',
+  //   label: '批量修改用户组接口组',
+  // })
+  // async updUserGroupPermissions(@Body(
+  //   new ParseArrayPipe({
+  //     items: userGroupPermissionUpdOneDto,
+  //   }),
+  // ) dtos: userGroupPermissionUpdOneDto[]): Promise<R> {
+  //   return this.userGroupPermissionService.updUserGroupPermissions(dtos);
+  // }
 
   @Delete()
   @ApiOperation({

@@ -14,7 +14,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { FileUploadModule } from './module/common/file-upload/file-upload.module';
 import { SmsModule } from './module/common/sms/sms.module';
 import { MenuModule } from './module/sys-manage/menu/menu.module';
-import { AuthService } from './module/auth/auth.service';
 import { RoleModule } from './module/sys-manage/role/role.module';
 import { UserRoleModule } from './module/sys-manage/user-role/user-role.module';
 import { RolePermissionModule } from './module/sys-manage/role-permission/role-permission.module';
@@ -30,12 +29,16 @@ import { UserDeptModule } from './module/sys-manage/user-dept/user-dept.module';
 import { InterfaceGroupModule } from './module/sys-manage/interface-group/interface-group.module';
 import { DeptPermissionModule } from './module/sys-manage/dept-permission/dept-permission.module';
 import { RedisModule } from './redis/redis.module';
-import { CachePermissionService } from './module/cache/cache.permission.service';
 import { UserUserGroupModule } from './module/sys-manage/user-user-group/user-user-group.module';
 import { InterfaceModule } from './module/sys-manage/interface/interface.module';
-import { InterfaceInterfaceGroupModule } from './module/sys-manage/interface-interface-group/interface-interface-group.module';
+import {
+  InterfaceInterfaceGroupModule,
+} from './module/sys-manage/interface-interface-group/interface-interface-group.module';
 import { AlgorithmV1Module } from './module/algorithm-v1/algorithm-v1.module';
 import { UserGroupPermissionModule } from './module/sys-manage/user-group-permission/user-group-permission.module';
+import { LogAlgorithmCallModule } from './module/sys-monitor/log-algorithm-call/log-algorithm-call.module';
+import { AuthModule } from './module/auth/auth.module';
+import { CacheModule } from './module/cache/cache.module';
 
 @Module({
   imports: [
@@ -52,6 +55,8 @@ import { UserGroupPermissionModule } from './module/sys-manage/user-group-permis
     }),
     PrismaModule,
     RedisModule,
+    AuthModule,
+    CacheModule,
     FileUploadModule,
     SmsModule,
     UserModule,
@@ -75,9 +80,7 @@ import { UserGroupPermissionModule } from './module/sys-manage/user-group-permis
     InterfaceInterfaceGroupModule,
     AlgorithmV1Module,
     UserGroupPermissionModule,
-  ],
-  controllers: [
-    AppController,
+    LogAlgorithmCallModule,
   ],
   providers: [
     {
@@ -86,9 +89,10 @@ import { UserGroupPermissionModule } from './module/sys-manage/user-group-permis
     },
     GlobalExceptionFilter,
     AppService,
-    AuthService,
     JwtService,
-    CachePermissionService,
+  ],
+  controllers: [
+    AppController,
   ],
 })
 export class AppModule {

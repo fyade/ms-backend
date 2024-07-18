@@ -305,9 +305,9 @@ model sys_user_group_permission {
   id                       Int      @id @default(autoincrement()) @db.Int
   user_group_id            Int      @db.Int
   permission_id            Int      @db.Int
+  if_long_term             String   @db.Char(1)
   if_limit_request_times   String   @db.Char(1)
   if_reject_request_use_up String   @db.Char(1)
-  if_long_term             String   @db.Char(1)
   permission_start_time    DateTime @db.DateTime()
   permission_end_time      DateTime @db.DateTime()
   limit_request_times      Int      @db.Int
@@ -410,4 +410,15 @@ model log_user_login {
   if_success     String   @db.Char(1)
   remark         String?  @db.VarChar(100)
   create_time    DateTime @default(now())
+}
+
+// 0.2 算法调用日志表
+model log_algorithm_call {
+  id                       Int      @id @default(autoincrement()) @db.Int
+  user_group_permission_id Int      @db.Int
+  user_id                  String   @db.VarChar(10)
+  call_ip                  String?  @db.VarChar(20)
+  if_success               String?  @db.Char(1)
+  remark                   String?  @db.VarChar(100)
+  create_time              DateTime @default(now())
 }

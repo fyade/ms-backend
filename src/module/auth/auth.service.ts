@@ -3,6 +3,10 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { base } from '../../util/base';
 import { Injectable } from '@nestjs/common';
 import { adminTopDto } from '../admin-top/dto';
+import { logAlgorithmCallDto } from '../sys-monitor/log-algorithm-call/dto';
+import { getIpInfoFromRequest } from '../../util/RequestUtils';
+import { userGroupPermissionDto } from '../sys-manage/user-group-permission/dto';
+import { Exception } from '../../exception/Exception';
 
 @Injectable()
 export class AuthService {
@@ -217,5 +221,122 @@ export class AuthService {
     }, false);
     return (controlUserId === controledUserId)
       || (topAdminUser.findIndex(item => item.userId === controlUserId) > -1 && topAdminUser.findIndex(item => item.userId === controledUserId) === -1);
+  }
+
+  /**
+   * 当前用户是否有此算法权限
+   * @param userid
+   * @param permission
+   */
+  async hasSFPermissionByUserid(userid: string, permission: string, request?: Request) {
+    const permissions = await this.getSFPermissionsOfUserid(userid, permission);
+    if (permissions.length === 0) {
+      const permissions2 = await this.getSFPermissionsOfUserid(userid, permission, base.Y);
+      if (permissions2.length > 0) {
+        throw new Exception('请求次数已使用完。');
+      } else {
+        return false;
+      }
+    }
+    const userGroupPermission = permissions[0] as userGroupPermissionDto;
+    const algorithmCallDto = new logAlgorithmCallDto();
+    algorithmCallDto.userGroupPermissionId = userGroupPermission.id;
+    algorithmCallDto.userId = userid;
+    algorithmCallDto.callIp = '';
+    algorithmCallDto.ifSuccess = '?';
+    if (request) {
+      try {
+        const ipInfoFromRequest = getIpInfoFromRequest(request);
+        algorithmCallDto.callIp = ipInfoFromRequest.ip;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    // 有长期权限，则放行
+    if (userGroupPermission.ifLongTerm === base.Y) {
+      await this.prisma.$queryRaw`
+        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
+        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
+      `;
+      return true;
+    }
+    // 没长期权限，不在时间期限内，则阻止
+    if (new Date().getTime() < new Date(userGroupPermission.permissionStartTime).getTime() || new Date().getTime() > new Date(userGroupPermission.permissionEndTime).getTime()) {
+      throw new Exception('您不在权限期限内。');
+    }
+    // 在时间期限内，次数还没用光，则放行
+    const limitRequestTimes = userGroupPermission.limitRequestTimes;
+    const count1 = await this.prisma.$queryRaw`
+      select count(id) as count
+      from log_algorithm_call
+      where user_group_permission_id = ${userGroupPermission.id};
+    `;
+    const count = count1[0].count;
+    if (limitRequestTimes > count) {
+      await this.prisma.$queryRaw`
+        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
+        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
+      `;
+      return true;
+    }
+    // 次数用光后是否停止服务
+    if (userGroupPermission.ifRejectRequestUseUp === base.N) {
+      await this.prisma.$queryRaw`
+        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
+        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
+      `;
+      return true;
+    } else {
+      // 把状态更改为已用完
+      await this.prisma.$queryRaw`
+        update sys_user_group_permission
+        set if_use_up = ${base.Y}
+        where id = ${userGroupPermission.id};
+      `;
+      throw new Exception('请求次数已使用完。');
+    }
+  }
+
+  /**
+   * 当前用户的算法权限列表
+   * @param userid
+   * @param permission
+   */
+  async getSFPermissionsOfUserid(userid: string, permission: string, ifIgnoreUseUp = base.N) {
+    const userSFPermissions = await this.prisma.$queryRaw`
+      select sugp.id                       as id,
+             sugp.user_group_id            as userGroupId,
+             sugp.permission_id            as permissionId,
+             sugp.if_long_term             as ifLongTerm,
+             sugp.if_limit_request_times   as ifLimitRequestTimes,
+             sugp.if_reject_request_use_up as ifRejectRequestUseUp,
+             sugp.permission_start_time    as permissionStartTime,
+             sugp.permission_end_time      as permissionEndTime,
+             sugp.limit_request_times      as limitRequestTimes,
+             sugp.if_use_up                as ifUseUp,
+             sugp.remark                   as remark,
+             sugp.create_by                as createBy,
+             sugp.update_by                as updateBy,
+             sugp.create_time              as createTime,
+             sugp.update_time              as updateTime,
+             sugp.deleted                  as deleted
+      from sys_user_group_permission sugp
+      where sugp.deleted = ${base.N}
+        and sugp.if_use_up = ${ifIgnoreUseUp}
+        and sugp.user_group_id in
+            (select suug.user_group_id
+             from sys_user_user_group suug
+             where suug.deleted = ${base.N}
+               and suug.user_id = ${userid})
+        and sugp.permission_id in
+            (select siig.interface_group_id
+             from sys_interface_interface_group siig
+             where siig.deleted = ${base.N}
+               and siig.interface_id = (select si.id
+                                        from sys_interface si
+                                        where si.deleted = ${base.N}
+                                          and si.perms = ${permission}));
+    `;
+    return userSFPermissions;
   }
 }

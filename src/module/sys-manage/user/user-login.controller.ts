@@ -6,7 +6,7 @@ import { Authorize } from '../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { decrypt } from '../../../util/EncryptUtils';
-import * as uaparser from 'ua-parser-js';
+import { getIpInfoFromRequest } from '../../../util/RequestUtils';
 
 @Controller('/sys/user')
 @ApiTags('用户')
@@ -29,9 +29,9 @@ export class UserLoginController {
   @ApiOperation({
     summary: '用户登录',
   })
-  async login(@Body() dto: loginDto, @Req() request): Promise<R> {
+  async login(@Body() dto: loginDto, @Req() request: Request): Promise<R> {
     dto.password = decrypt(dto.password);
-    const { loginIp, loginBrowser, loginOs } = this.getLoginInfo(request);
+    const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);
     return this.userService.login(dto, { loginIp, loginBrowser, loginOs });
   }
 
@@ -43,20 +43,9 @@ export class UserLoginController {
     permission: 'system:user:adminlogin',
     label: '管理员登录',
   })
-  async adminLogin(@Body() dto: loginDto, @Req() request): Promise<R> {
+  async adminLogin(@Body() dto: loginDto, @Req() request: Request): Promise<R> {
     dto.password = decrypt(dto.password);
-    const { loginIp, loginBrowser, loginOs } = this.getLoginInfo(request);
+    const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);
     return this.userService.adminlogin(dto, { loginIp, loginBrowser, loginOs });
-  }
-
-  getLoginInfo(request) {
-    const loginIp = request.headers['x-real-ip'] || request.headers['x-forwarded-for'] || request.ip;
-    const userAgentString = request.headers['user-agent'];
-    const userAgent = uaparser(userAgentString);
-    const browser = userAgent.browser;
-    const os = userAgent.os;
-    const loginBrowser = `${browser.name} ${browser.version}`;
-    const loginOs = `${os.name} ${os.version}`;
-    return { loginIp, loginBrowser, loginOs };
   }
 }
