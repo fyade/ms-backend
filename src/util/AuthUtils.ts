@@ -3,8 +3,10 @@ import * as jwt from 'jsonwebtoken';
 import { jwtConstants } from '../../config/authConfig';
 
 export function generateToken(user: userDto) {
-  const payload = { username: user.username, userid: user.id };
-  return jwt.sign(payload, jwtConstants.secret);
+  const payload = { username: user.username, userid: user.id || (user as any).userid };
+  return jwt.sign(payload, jwtConstants.secret, {
+    expiresIn: jwtConstants.expireTime,
+  });
 }
 
 export function verifyToken(token: string) {

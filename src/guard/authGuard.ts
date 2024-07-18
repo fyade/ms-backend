@@ -1,13 +1,18 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { adminLoginUrl, reqWhiteList } from '../../config/authConfig';
 import { UnauthorizedException } from '../exception/UnauthorizedException';
 import { clearCurrentUser, setCurrentUser } from '../util/baseContext';
 import { userDto2 } from '../module/sys-manage/user/dto';
-import { verifyToken } from '../util/AuthUtils';
+import { CacheTokenService } from '../module/cache/cache.token.service';
 
+@Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  constructor(
+    private readonly cacheTokenService: CacheTokenService,
+  ) {
+  }
+
+  async canActivate(context: ExecutionContext) {
     clearCurrentUser();
     const request = context.switchToHttp().getRequest();
     // request.body = {
@@ -18,7 +23,7 @@ export class AuthGuard implements CanActivate {
     if (reqWhiteList.indexOf(request.url) > -1 || request.url === adminLoginUrl) {
     } else if (token) {
       try {
-        const decoded = verifyToken(token);
+        const decoded = await this.cacheTokenService.verifyToken(token);
         if (decoded) {
           // Token is valid and not expired
           // request.body.user = decoded;

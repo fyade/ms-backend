@@ -90,4 +90,10 @@ export class RedisService {
   async hlen(key: string): Promise<number> {
     return await this.redis.hlen(key);
   }
+
+  // setex操作
+
+  async setex(key: string, seconds: number, value: string) {
+    await this.redis.setex(key, seconds, value);
+  }
 }

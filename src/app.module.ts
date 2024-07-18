@@ -6,8 +6,7 @@ import { UserModule } from './module/sys-manage/user/user.module';
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
 import { AuthGuard } from './guard/authGuard';
 import { APP_GUARD } from '@nestjs/core';
-import { expireTime, jwtConstants } from '../config/authConfig';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { currentEnv } from '../config/config';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -48,10 +47,6 @@ import { CacheModule } from './module/cache/cache.module';
     ServeStaticModule.forRoot({
       rootPath: currentEnv().file.fileUploadPath,
       serveRoot: currentEnv().staticRoot,
-    }),
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: expireTime },
     }),
     PrismaModule,
     RedisModule,

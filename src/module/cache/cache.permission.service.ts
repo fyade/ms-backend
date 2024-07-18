@@ -4,6 +4,9 @@ import { base } from '../../util/base';
 
 @Injectable()
 export class CachePermissionService {
+  USER_PERMISSION: 'user:permission';
+  PERMISSION_PUBLIC: 'permission:public';
+
   constructor(
     private readonly redis: RedisService,
   ) {
@@ -15,7 +18,7 @@ export class CachePermissionService {
    * @param permission
    */
   async ifHavePermissionInCache(userId: string, permission: string) {
-    const value = await this.redis.hget('user:permission', `${permission}---${userId}`);
+    const value = await this.redis.hget(this.USER_PERMISSION, `${permission}---${userId}`);
     return value === base.Y;
   }
 
@@ -25,7 +28,7 @@ export class CachePermissionService {
    * @param permission
    */
   async addPermissionInCache(userId: string, permission: string) {
-    await this.redis.hset('user:permission', `${permission}---${userId}`, base.Y);
+    await this.redis.hset(this.USER_PERMISSION, `${permission}---${userId}`, base.Y);
   }
 
   /**
@@ -33,7 +36,7 @@ export class CachePermissionService {
    * @param permission
    */
   async ifPublicPermissionInCache(permission: string) {
-    const value = await this.redis.hget('permission:public', `${permission}`);
+    const value = await this.redis.hget(this.PERMISSION_PUBLIC, `${permission}`);
     return value === base.Y;
   }
 
@@ -42,7 +45,7 @@ export class CachePermissionService {
    * @param permission
    */
   async getIfPublicPermissionInCache(permission: string) {
-    const value = await this.redis.hget('permission:public', `${permission}`);
+    const value = await this.redis.hget(this.PERMISSION_PUBLIC, `${permission}`);
     return value;
   }
 
@@ -52,16 +55,16 @@ export class CachePermissionService {
    * @param value
    */
   async addPublicPermissionInCache(permission: string, value = base.Y) {
-    await this.redis.hset('permission:public', `${permission}`, value);
+    await this.redis.hset(this.PERMISSION_PUBLIC, `${permission}`, value);
   }
 
   /**
    * 删除缓存中的所有权限记录
    */
   async clearPermissionsInCache() {
-    const allPPs = await this.redis.hgetall('permission:public');
-    await this.redis.hdel('permission:public', ...Object.keys(allPPs));
-    const allUPs = await this.redis.hgetall('user:permission');
-    await this.redis.hdel('user:permission', ...Object.keys(allUPs));
+    const allPPs = await this.redis.hgetall(this.PERMISSION_PUBLIC);
+    await this.redis.hdel(this.PERMISSION_PUBLIC, ...Object.keys(allPPs));
+    const allUPs = await this.redis.hgetall(this.USER_PERMISSION);
+    await this.redis.hdel(this.USER_PERMISSION, ...Object.keys(allUPs));
   }
 }

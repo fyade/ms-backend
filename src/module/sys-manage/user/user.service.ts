@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
 import { adminNewUserDto, loginDto, registDto, resetPsdDto, updPsdDto, userDto, userListSelDto } from './dto';
-import { genId } from '../../../util/IdUtils';
+import { genId, randomUUID } from '../../../util/IdUtils';
 import { AuthService } from '../../auth/auth.service';
 import { HTTP } from '../../../common/Enum';
 import { base } from '../../../util/base';
@@ -19,6 +19,7 @@ import { userGroupDto } from '../user-group/dto';
 import { userUserGroupDto } from '../user-user-group/dto';
 import { roleDto } from '../role/dto';
 import { deptDto } from '../dept/dto';
+import { CacheTokenService } from '../../cache/cache.token.service';
 
 @Injectable()
 export class UserService {
@@ -28,6 +29,7 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
     private readonly logUserLoginService: LogUserLoginService,
+    private readonly cacheTokenService: CacheTokenService,
   ) {
     this.maxLoginFailCount = 10;
   }
@@ -232,7 +234,7 @@ export class UserService {
         ifUpdateTime: false,
         ifDeleted: false,
       });
-      const token = generateToken(user);
+      const token = await this.cacheTokenService.genToken(user);
       return R.ok({
         token: token,
         user: user,
