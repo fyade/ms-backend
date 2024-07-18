@@ -33,7 +33,7 @@ import { InterfaceModule } from './module/sys-manage/interface/interface.module'
 import {
   InterfaceInterfaceGroupModule,
 } from './module/sys-manage/interface-interface-group/interface-interface-group.module';
-import { AlgorithmV1Module } from './module/algorithm-v1/algorithm-v1.module';
+import { AlgorithmV1Module } from './module/algorithm/algorithm-v1/algorithm-v1.module';
 import { UserGroupPermissionModule } from './module/sys-manage/user-group-permission/user-group-permission.module';
 import { LogAlgorithmCallModule } from './module/sys-monitor/log-algorithm-call/log-algorithm-call.module';
 import { AuthModule } from './module/auth/auth.module';

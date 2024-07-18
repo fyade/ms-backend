@@ -4,8 +4,8 @@ import { base } from '../../util/base';
 
 @Injectable()
 export class CachePermissionService {
-  USER_PERMISSION: 'user:permission';
-  PERMISSION_PUBLIC: 'permission:public';
+  private readonly USER_PERMISSION = 'user:permission';
+  private readonly PERMISSION_PUBLIC = 'permission:public';
 
   constructor(
     private readonly redis: RedisService,
@@ -63,8 +63,12 @@ export class CachePermissionService {
    */
   async clearPermissionsInCache() {
     const allPPs = await this.redis.hgetall(this.PERMISSION_PUBLIC);
-    await this.redis.hdel(this.PERMISSION_PUBLIC, ...Object.keys(allPPs));
+    if (Object.keys(allPPs).length > 0) {
+      await this.redis.hdel(this.PERMISSION_PUBLIC, ...Object.keys(allPPs));
+    }
     const allUPs = await this.redis.hgetall(this.USER_PERMISSION);
-    await this.redis.hdel(this.USER_PERMISSION, ...Object.keys(allUPs));
+    if (Object.keys(allUPs).length > 0) {
+      await this.redis.hdel(this.USER_PERMISSION, ...Object.keys(allUPs));
+    }
   }
 }

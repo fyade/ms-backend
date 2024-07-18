@@ -1,9 +1,9 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from '../../pipe/validation/validation.pipe';
+import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { AlgorithmV1Service } from './algorithm-v1.service';
-import { Authorize } from '../../decorator/authorizeDecorator';
-import { R } from '../../common/R';
+import { Authorize } from '../../../decorator/authorizeDecorator';
+import { R } from '../../../common/R';
 
 @Controller('/algorithm-v1')
 @ApiTags('算法接口')

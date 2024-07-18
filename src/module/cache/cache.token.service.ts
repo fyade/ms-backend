@@ -5,8 +5,8 @@ import { randomUUID } from '../../util/IdUtils';
 
 @Injectable()
 export class CacheTokenService {
-  UUID_TOKEN: 'uuid:token';
-  USERID_UUID: 'userid:uuid';
+  private readonly UUID_TOKEN = 'uuid:token';
+  private readonly USERID_UUID = 'userid:uuid';
 
   constructor(
     private readonly redis: RedisService,
