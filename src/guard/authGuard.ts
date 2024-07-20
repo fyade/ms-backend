@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
         if (decoded) {
           // Token is valid and not expired
           // request.body.user = decoded;
-          setCurrentUser(decoded as userDto2, token);
+          await setCurrentUser(decoded as userDto2, token);
         } else {
           // Token is invalid or expired
           throw new UnauthorizedException();
