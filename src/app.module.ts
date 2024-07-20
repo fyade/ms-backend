@@ -21,7 +21,7 @@ import { DicDataModule } from './module/sys-manage/dic-data/dic-data.module';
 import { CodeGenerationModule } from './module/sys-util/code-generation/code-generation.module';
 import { CodeGenTableModule } from './module/sys-util/code-gen-table/code-gen-table.module';
 import { CodeGenColumnModule } from './module/sys-util/code-gen-column/code-gen-column.module';
-import { LogUserLoginModule } from './module/sys-monitor/log-user-login/log-user-login.module';
+import { LogUserLoginModule } from './module/sys-log/log-user-login/log-user-login.module';
 import { DeptModule } from './module/sys-manage/dept/dept.module';
 import { UserGroupModule } from './module/sys-manage/user-group/user-group.module';
 import { UserDeptModule } from './module/sys-manage/user-dept/user-dept.module';
@@ -35,9 +35,10 @@ import {
 } from './module/sys-manage/interface-interface-group/interface-interface-group.module';
 import { AlgorithmV1Module } from './module/algorithm/algorithm-v1/algorithm-v1.module';
 import { UserGroupPermissionModule } from './module/sys-manage/user-group-permission/user-group-permission.module';
-import { LogAlgorithmCallModule } from './module/sys-monitor/log-algorithm-call/log-algorithm-call.module';
+import { LogAlgorithmCallModule } from './module/sys-log/log-algorithm-call/log-algorithm-call.module';
 import { AuthModule } from './module/auth/auth.module';
 import { CacheModule } from './module/cache/cache.module';
+import { OnlineUserModule } from './module/sys-monitor/online-user/online-user.module';
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { CacheModule } from './module/cache/cache.module';
     AlgorithmV1Module,
     UserGroupPermissionModule,
     LogAlgorithmCallModule,
+    OnlineUserModule,
   ],
   providers: [
     {

@@ -12,7 +12,7 @@ import { adminTopDto } from '../../admin-top/dto';
 import { getCurrentUser } from '../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../exception/UserPermissionDeniedException';
 import { generateToken } from '../../../util/AuthUtils';
-import { LogUserLoginService } from '../../sys-monitor/log-user-login/log-user-login.service';
+import { LogUserLoginService } from '../../sys-log/log-user-login/log-user-login.service';
 import { comparePassword, hashPassword } from '../../../util/EncryptUtils';
 import { userDeptDto } from '../user-dept/dto';
 import { userGroupDto } from '../user-group/dto';

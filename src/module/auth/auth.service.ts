@@ -3,7 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { base } from '../../util/base';
 import { Injectable } from '@nestjs/common';
 import { adminTopDto } from '../admin-top/dto';
-import { logAlgorithmCallDto } from '../sys-monitor/log-algorithm-call/dto';
+import { logAlgorithmCallDto } from '../sys-log/log-algorithm-call/dto';
 import { getIpInfoFromRequest } from '../../util/RequestUtils';
 import { userGroupPermissionDto } from '../sys-manage/user-group-permission/dto';
 import { Exception } from '../../exception/Exception';

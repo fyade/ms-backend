@@ -6,7 +6,7 @@ import { R } from '../../../common/R';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { logUserLoginSelListDto, logUserLoginSelAllDto, logUserLoginInsOneDto, logUserLoginUpdOneDto } from './dto';
 
-@Controller('/sys-monitor/log-user-login')
+@Controller('/sys-log/log-user-login')
 @ApiTags('登录日志')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
@@ -19,7 +19,7 @@ export class LogUserLoginController {
     summary: '分页查询登录日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logUserLogin:selList',
+    permission: 'sysLog:logUserLogin:selList',
     label: '分页查询登录日志',
   })
   async selLogUserLogin(@Query() dto: logUserLoginSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class LogUserLoginController {
     summary: '查询所有登录日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logUserLogin:selAll',
+    permission: 'sysLog:logUserLogin:selAll',
     label: '查询所有登录日志',
   })
   async selAll(@Query() dto: logUserLoginSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class LogUserLoginController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysMonitor:logUserLogin:selOnes',
+    permission: 'sysLog:logUserLogin:selOnes',
     label: '查询多个登录日志（根据id）',
   })
   async selOnes(@Query() ids: any[]): Promise<R> {
@@ -61,7 +61,7 @@ export class LogUserLoginController {
     summary: '查询单个登录日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logUserLogin:selOne',
+    permission: 'sysLog:logUserLogin:selOne',
     label: '查询单个登录日志',
   })
   async selOne(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class LogUserLoginController {
     summary: '新增登录日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logUserLogin:ins',
+    permission: 'sysLog:logUserLogin:ins',
     label: '新增登录日志',
   })
   async insLogUserLogin(@Body() dto: logUserLoginInsOneDto): Promise<R> {
@@ -89,7 +89,7 @@ export class LogUserLoginController {
     type: logUserLoginInsOneDto,
   })
   @Authorize({
-    permission: 'sysMonitor:logUserLogin:inss',
+    permission: 'sysLog:logUserLogin:inss',
     label: '批量新增登录日志',
   })
   async insLogUserLogins(@Body(
@@ -105,7 +105,7 @@ export class LogUserLoginController {
     summary: '修改登录日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logUserLogin:upd',
+    permission: 'sysLog:logUserLogin:upd',
     label: '修改登录日志',
   })
   async updLogUserLogin(@Body() dto: logUserLoginUpdOneDto): Promise<R> {
@@ -121,7 +121,7 @@ export class LogUserLoginController {
     type: logUserLoginUpdOneDto,
   })
   @Authorize({
-    permission: 'sysMonitor:logUserLogin:upds',
+    permission: 'sysLog:logUserLogin:upds',
     label: '批量修改登录日志',
   })
   async updLogUserLogins(@Body(
@@ -141,7 +141,7 @@ export class LogUserLoginController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysMonitor:logUserLogin:del',
+    permission: 'sysLog:logUserLogin:del',
     label: '删除登录日志',
   })
   async delLogUserLogin(@Body() ids: any[]): Promise<R> {

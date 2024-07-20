@@ -11,7 +11,7 @@ import {
   logAlgorithmCallUpdOneDto,
 } from './dto';
 
-@Controller('/sys-monitor/log-algorithm-call')
+@Controller('/sys-log/log-algorithm-call')
 @ApiTags('算法调用日志')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
@@ -24,7 +24,7 @@ export class LogAlgorithmCallController {
     summary: '分页查询算法调用日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logAlgorithmCall:selList',
+    permission: 'sysLog:logAlgorithmCall:selList',
     label: '分页查询算法调用日志',
   })
   async selLogAlgorithmCall(@Query() dto: logAlgorithmCallSelListDto): Promise<R> {
@@ -36,7 +36,7 @@ export class LogAlgorithmCallController {
     summary: '查询所有算法调用日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logAlgorithmCall:selAll',
+    permission: 'sysLog:logAlgorithmCall:selAll',
     label: '查询所有算法调用日志',
   })
   async selAll(@Query() dto: logAlgorithmCallSelAllDto): Promise<R> {
@@ -54,7 +54,7 @@ export class LogAlgorithmCallController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysMonitor:logAlgorithmCall:selOnes',
+    permission: 'sysLog:logAlgorithmCall:selOnes',
     label: '查询多个算法调用日志（根据id）',
   })
   async selOnes(@Query() ids: any[]): Promise<R> {
@@ -66,7 +66,7 @@ export class LogAlgorithmCallController {
     summary: '查询单个算法调用日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logAlgorithmCall:selOne',
+    permission: 'sysLog:logAlgorithmCall:selOne',
     label: '查询单个算法调用日志',
   })
   async selOne(@Param('id') id: number): Promise<R> {
@@ -78,7 +78,7 @@ export class LogAlgorithmCallController {
     summary: '新增算法调用日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logAlgorithmCall:ins',
+    permission: 'sysLog:logAlgorithmCall:ins',
     label: '新增算法调用日志',
   })
   async insLogAlgorithmCall(@Body() dto: logAlgorithmCallInsOneDto): Promise<R> {
@@ -94,7 +94,7 @@ export class LogAlgorithmCallController {
     type: logAlgorithmCallInsOneDto,
   })
   @Authorize({
-    permission: 'sysMonitor:logAlgorithmCall:inss',
+    permission: 'sysLog:logAlgorithmCall:inss',
     label: '批量新增算法调用日志',
   })
   async insLogAlgorithmCalls(@Body(
@@ -110,7 +110,7 @@ export class LogAlgorithmCallController {
     summary: '修改算法调用日志',
   })
   @Authorize({
-    permission: 'sysMonitor:logAlgorithmCall:upd',
+    permission: 'sysLog:logAlgorithmCall:upd',
     label: '修改算法调用日志',
   })
   async updLogAlgorithmCall(@Body() dto: logAlgorithmCallUpdOneDto): Promise<R> {
@@ -126,7 +126,7 @@ export class LogAlgorithmCallController {
     type: logAlgorithmCallUpdOneDto,
   })
   @Authorize({
-    permission: 'sysMonitor:logAlgorithmCall:upds',
+    permission: 'sysLog:logAlgorithmCall:upds',
     label: '批量修改算法调用日志',
   })
   async updLogAlgorithmCalls(@Body(
@@ -146,7 +146,7 @@ export class LogAlgorithmCallController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysMonitor:logAlgorithmCall:del',
+    permission: 'sysLog:logAlgorithmCall:del',
     label: '删除算法调用日志',
   })
   async delLogAlgorithmCall(@Body() ids: any[]): Promise<R> {
