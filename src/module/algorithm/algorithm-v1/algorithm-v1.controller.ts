@@ -26,16 +26,16 @@ export class AlgorithmV1Controller {
     return this.algorithmV1Service.helloWorld(dto);
   }
 
-  @Post('/test')
+  @Post('/polygons-intersect')
   @ApiOperation({
-    summary: '测试',
+    summary: '多边形是否重合',
   })
   @Authorize({
-    permission: 'algorithmV1:test',
-    label: '测试接口',
+    permission: 'algorithmV1:polygonsIntersect',
+    label: '多边形是否重合',
     ifSF: true,
   })
-  async test(@Body() dto: any): Promise<R> {
-    return this.algorithmV1Service.test(dto);
+  async polygonsIntersect(@Body() dto: any): Promise<R> {
+    return this.algorithmV1Service.polygonsIntersect(dto);
   }
 }

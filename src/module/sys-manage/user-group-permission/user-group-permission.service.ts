@@ -9,6 +9,7 @@ import {
   userGroupPermissionUpdOneDto,
 } from './dto';
 import { base } from '../../../util/base';
+import { logAlgorithmCallDto } from '../../sys-log/log-algorithm-call/dto';
 
 @Injectable()
 export class UserGroupPermissionService {
@@ -42,11 +43,24 @@ export class UserGroupPermissionService {
 
   async selOne(id: number): Promise<R> {
     const res = await this.prisma.findById<userGroupPermissionDto>('sys_user_group_permission', Number(id));
+    const count = await this.prisma.count<logAlgorithmCallDto>('log_algorithm_call', {
+      data: { userGroupPermissionId: id },
+      numberKeys: ['userGroupPermissionId'],
+      ifDeleted: false,
+    });
+    (res as any).count = count;
     return R.ok(res);
   }
 
   async insUserGroupPermission(dto: userGroupPermissionInsOneDto): Promise<R> {
     dto.ifUseUp = base.N;
+    const dto1 = await this.prisma.findFirst<userGroupPermissionDto>('sys_user_group_permission', {
+      userGroupId: dto.userGroupId,
+      permissionId: dto.permissionId,
+    });
+    if (dto1) {
+      return R.err('已存在用户组-权限对，不可重复添加。');
+    }
     const res = await this.prisma.create<userGroupPermissionDto>('sys_user_group_permission', dto);
     return R.ok(res);
   }

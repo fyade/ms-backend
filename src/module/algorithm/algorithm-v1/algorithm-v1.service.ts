@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { R } from '../../../common/R';
+import { request } from '../../../api/request';
 
 @Injectable()
 export class AlgorithmV1Service {
@@ -7,7 +8,8 @@ export class AlgorithmV1Service {
     return R.ok('Hello World!');
   }
 
-  async test(dto: any): Promise<R> {
-    return R.ok(dto);
+  async polygonsIntersect(dto: any): Promise<R> {
+    const response = await request('/polygons-intersect', dto);
+    return R.ok(response);
   }
 }

@@ -5,8 +5,8 @@ import { randomUUID } from '../../util/IdUtils';
 
 @Injectable()
 export class CacheTokenService {
-  private readonly UUID_TOKEN = 'uuid:token';
-  private readonly USERID_UUID = 'userid:uuid';
+  readonly UUID_TOKEN = 'uuid:token';
+  readonly USERID_UUID = 'userid:uuid';
 
   constructor(
     private readonly redis: RedisService,
@@ -23,9 +23,10 @@ export class CacheTokenService {
     await this.redis.hset(this.UUID_TOKEN, uuid, token);
     const uuidOfThisUser = await this.redis.hget(this.USERID_UUID, user.id);
     if (uuidOfThisUser) {
-      await this.redis.hdel(this.UUID_TOKEN, uuidOfThisUser);
+      await this.redis.hset(this.USERID_UUID, user.id, JSON.stringify([...JSON.parse(uuidOfThisUser), { uuid }]));
+    } else {
+      await this.redis.hset(this.USERID_UUID, user.id, JSON.stringify([{ uuid }]));
     }
-    await this.redis.hset(this.USERID_UUID, user.id, uuid);
     return uuid;
   }
 

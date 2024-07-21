@@ -367,6 +367,46 @@ export class PrismaService extends PrismaClient {
   }
 
   /**
+   * 数量
+   * @param model
+   * @param data
+   * @param range
+   * @param notNullKeys
+   * @param numberKeys
+   * @param ifDeleted
+   * @param ifUseGenSelParams
+   */
+  async count<T>(model: string, {
+                   data,
+                   range = {},
+                   notNullKeys = [],
+                   numberKeys = [],
+                   ifDeleted = true,
+                 }: {
+                   data?: object,
+                   range?: object,
+                   notNullKeys?: string[]
+                   numberKeys?: string[]
+                   ifDeleted?: boolean,
+                 } = {}, ifUseGenSelParams = true,
+  ): Promise<number> {
+    const arg: any = {
+      where: ifUseGenSelParams ? this.genSelParams<T, object>({
+        data,
+        range,
+        notNullKeys,
+        numberKeys,
+        ifDeleted,
+      }) : {
+        ...this.defaultSelArg({ ifDeleted }).where,
+        ...(objToSnakeCase(data) || {}),
+      },
+    };
+    const count = await this.getModel(model).count(arg);
+    return new Promise(resolve => resolve(count));
+  }
+
+  /**
    * 新增
    * @param model
    * @param data

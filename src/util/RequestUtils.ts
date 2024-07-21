@@ -1,4 +1,5 @@
 import * as uaparser from 'ua-parser-js';
+import { Request } from 'express';
 
 /**
  * 从请求中读取ip信息

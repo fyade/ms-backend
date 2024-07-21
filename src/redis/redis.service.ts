@@ -91,6 +91,23 @@ export class RedisService {
     return await this.redis.hlen(key);
   }
 
+  async hscan(hashKey: string, cursor: number, pageSize: number): Promise<{
+    nextCursor: string;
+    entries: { [key: string]: string }
+  }> {
+    const result = await this.redis.hscan(hashKey, cursor, 'COUNT', pageSize);
+    const nextCursor = result[0]; // 下一个游标
+    const entries = result[1]; // 当前页的键值对数组
+    // 将键值对数组转换为对象
+    const entriesObject: { [key: string]: string } = {};
+    for (let i = 0; i < entries.length; i += 2) {
+      const key = entries[i];
+      const value = entries[i + 1];
+      entriesObject[key] = value;
+    }
+    return { nextCursor, entries: entriesObject };
+  }
+
   // setex操作
 
   async setex(key: string, seconds: number, value: string) {

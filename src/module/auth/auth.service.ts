@@ -7,6 +7,7 @@ import { logAlgorithmCallDto } from '../sys-log/log-algorithm-call/dto';
 import { getIpInfoFromRequest } from '../../util/RequestUtils';
 import { userGroupPermissionDto } from '../sys-manage/user-group-permission/dto';
 import { Exception } from '../../exception/Exception';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -252,17 +253,19 @@ export class AuthService {
         console.error(e);
       }
     }
-    // 有长期权限，则放行
-    if (userGroupPermission.ifLongTerm === base.Y) {
+    // 没长期权限，不在时间期限内，则阻止
+    if (userGroupPermission.ifLongTerm === base.N) {
+      if (new Date().getTime() < new Date(userGroupPermission.permissionStartTime).getTime() || new Date().getTime() > new Date(userGroupPermission.permissionEndTime).getTime()) {
+        throw new Exception('您不在权限期限内。');
+      }
+    }
+    // 在期限内，且不限制次数，则放行
+    if (userGroupPermission.ifLimitRequestTimes === base.N) {
       await this.prisma.$queryRaw`
         insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
         values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
       `;
       return true;
-    }
-    // 没长期权限，不在时间期限内，则阻止
-    if (new Date().getTime() < new Date(userGroupPermission.permissionStartTime).getTime() || new Date().getTime() > new Date(userGroupPermission.permissionEndTime).getTime()) {
-      throw new Exception('您不在权限期限内。');
     }
     // 在时间期限内，次数还没用光，则放行
     const limitRequestTimes = userGroupPermission.limitRequestTimes;

@@ -7,6 +7,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { decrypt } from '../../../util/EncryptUtils';
 import { getIpInfoFromRequest } from '../../../util/RequestUtils';
+import { Request } from 'express';
 
 @Controller('/sys/user')
 @ApiTags('用户')
