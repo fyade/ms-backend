@@ -1,13 +1,13 @@
-import * as process from "process";
-import { base } from "../src/util/base";
+import * as process from 'process';
+import { base } from '../src/util/base';
 
 export const currentEnv = () => {
-  const env = process.env.NODE_ENV || base.DEV
-  return config[env]
-}
+  const env = process.env.NODE_ENV || base.DEV;
+  return config[env];
+};
 
-const portFromCmd = process.env.PORT
-const mysqlConnectParam = ''
+const portFromCmd = process.env.PORT;
+const mysqlConnectParam = '';
 const publicConfig = {
   sms: {
     secretId: '',
@@ -16,8 +16,8 @@ const publicConfig = {
     signName: '',
     templateId: '', // 低电量提醒
     timeout:  // 过期时间，单位分钟
-  }
-}
+  },
+};
 const config = {
   dev: {
     ...publicConfig,
@@ -41,11 +41,14 @@ const config = {
     file: {
       fileUploadPath: '',
       fileChunkPath: '',
-      maxSizeOfFull: 1024 * 1024 * 10
+      maxSizeOfFull: 1024 * 1024 * 10,
     },
     log: {
-      logSavePath: ''
-    }
+      logSavePath: '',
+    },
+    sf: {
+      baseUrl: '',
+    },
   },
   test: {
     ...
