@@ -548,9 +548,9 @@ export function ${moduleName}Del(ids: any[]) {
 `;
   const qd2 =
 `import { pageDto } from "@/type/tablePage.ts";
-import { baseInterface } from "@/utils/base.ts";
+import { baseClass } from "@/utils/base.ts";
 
-export class ${moduleName}Dto extends baseInterface {
+export class ${moduleName}Dto extends baseClass {
 ${
   columns
     .filter(column => baseInterfaceColumns.indexOf(column.tsName) === -1)
