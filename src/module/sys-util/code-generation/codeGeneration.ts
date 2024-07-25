@@ -559,7 +559,7 @@ export function ${moduleName}Del(ids: any[]): t_funcMap_iud_ret {
   })
 }
 
-export const ${moduleName}Func: t_funcMap = {
+export const ${moduleName}Func: t_funcMap<${moduleName}Dto, ${moduleName}SelDto, ${moduleName}SelAllDto, ${moduleName}InsDto, ${moduleName}UpdDto> = {
   /**
    * 分页查询
    * @param params
