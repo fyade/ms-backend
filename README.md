@@ -13,7 +13,20 @@
 ## 使用说明 Description
 
 在 /config 目录下新建 config.ts 文件，随后将 config.txt 内的内容复制进去并根据自身情况做修改；
+
 在 /config 目录下新建 authConfig.ts 文件，随后将 authConfig.txt 内的内容复制进去并根据自身情况做修改；
+
+在根目录下新建 .env 文件，随后讲以下内容复制进，并根据自身情况做修改：
+```
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
+
+```
 
 ## 命令 Bin
 
