@@ -473,9 +473,22 @@ ${capitalizeFirstLetter(moduleName)}Module
 `;
   const qd1 =
 `import request from "@/api/request.ts";
-import { ${moduleName}InsDto, ${moduleName}SelAllDto, ${moduleName}SelDto, ${moduleName}UpdDto } from "@/type/api/${businessName}/${moduleName}.ts";
+import {
+  ${moduleName}Dto,
+  ${moduleName}SelDto,
+  ${moduleName}SelAllDto,
+  ${moduleName}InsDto,
+  ${moduleName}UpdDto
+} from "@/type/api/${businessName}/${moduleName}.ts";
+import {
+  t_funcMap,
+  t_funcMap_selList_ret,
+  t_funcMap_selMore_ret,
+  t_funcMap_selOne_ret,
+  t_funcMap_iud_ret
+} from "@/type/tablePage.ts";
 
-export function ${moduleName}Sel(params: ${moduleName}SelDto) {
+export function ${moduleName}Sel(params: ${moduleName}SelDto): t_funcMap_selList_ret<${moduleName}Dto> {
   return request({
     url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}',
     method: 'GET',
@@ -483,7 +496,7 @@ export function ${moduleName}Sel(params: ${moduleName}SelDto) {
   })
 }
 
-export function ${moduleName}SelAll(params: ${moduleName}SelAllDto) {
+export function ${moduleName}SelAll(params: ${moduleName}SelAllDto): t_funcMap_selMore_ret<${moduleName}Dto> {
   return request({
     url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/all',
     method: 'GET',
@@ -491,14 +504,14 @@ export function ${moduleName}SelAll(params: ${moduleName}SelAllDto) {
   })
 }
 
-export function ${moduleName}SelById(id: number) {
+export function ${moduleName}SelById(id: number): t_funcMap_selOne_ret<${moduleName}Dto> {
   return request({
     url: \`/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/\${id}\`,
     method: 'GET'
   })
 }
 
-export function ${moduleName}SelByIds(ids: any[]) {
+export function ${moduleName}SelByIds(ids: any[]): t_funcMap_selMore_ret<${moduleName}Dto> {
   return request({
     url: \`/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/ids\`,
     method: 'GET',
@@ -506,7 +519,7 @@ export function ${moduleName}SelByIds(ids: any[]) {
   })
 }
 
-export function ${moduleName}Ins(params: ${moduleName}InsDto) {
+export function ${moduleName}Ins(params: ${moduleName}InsDto): t_funcMap_iud_ret {
   return request({
     url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}',
     method: 'POST',
@@ -514,7 +527,7 @@ export function ${moduleName}Ins(params: ${moduleName}InsDto) {
   })
 }
 
-export function ${moduleName}Upd(params: ${moduleName}UpdDto) {
+export function ${moduleName}Upd(params: ${moduleName}UpdDto): t_funcMap_iud_ret {
   return request({
     url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}',
     method: 'PUT',
@@ -522,7 +535,7 @@ export function ${moduleName}Upd(params: ${moduleName}UpdDto) {
   })
 }
 
-export function ${moduleName}Inss(params: ${moduleName}InsDto[]) {
+export function ${moduleName}Inss(params: ${moduleName}InsDto[]): t_funcMap_iud_ret {
   return request({
     url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/s',
     method: 'POST',
@@ -530,7 +543,7 @@ export function ${moduleName}Inss(params: ${moduleName}InsDto[]) {
   })
 }
 
-export function ${moduleName}Upds(params: ${moduleName}UpdDto[]) {
+export function ${moduleName}Upds(params: ${moduleName}UpdDto[]): t_funcMap_iud_ret {
   return request({
     url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/s',
     method: 'PUT',
@@ -538,12 +551,78 @@ export function ${moduleName}Upds(params: ${moduleName}UpdDto[]) {
   })
 }
 
-export function ${moduleName}Del(ids: any[]) {
+export function ${moduleName}Del(ids: any[]): t_funcMap_iud_ret {
   return request({
     url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}',
     method: 'DELETE',
     data: ids
   })
+}
+
+export const ${moduleName}Func: t_funcMap = {
+  /**
+   * 分页查询
+   * @param params
+   */
+  selectList: (params: ${moduleName}SelDto) => {
+    return ${moduleName}Sel(params)
+  },
+  /**
+   * 查询所有
+   * @param params
+   */
+  selectAll: (params: ${moduleName}SelAllDto) => {
+    return ${moduleName}SelAll(params)
+  },
+  /**
+   * 查询单个
+   * @param id
+   */
+  selectById: (id: any) => {
+    return ${moduleName}SelById(id)
+  },
+  /**
+   * 查询多个
+   * @param ids
+   */
+  selectByIds: (ids: any[]) => {
+    return ${moduleName}SelByIds(ids)
+  },
+  /**
+   * 新增
+   * @param obj
+   */
+  insertOne: (obj: ${moduleName}InsDto) => {
+    return ${moduleName}Ins(obj)
+  },
+  /**
+   * 修改
+   * @param obj
+   */
+  updateOne: (obj: ${moduleName}UpdDto) => {
+    return ${moduleName}Upd(obj)
+  },
+  /**
+   * 新增多个
+   * @param objs
+   */
+  insertMore: (objs: ${moduleName}InsDto[]) => {
+    return ${moduleName}Inss(objs)
+  },
+  /**
+   * 修改多个
+   * @param objs
+   */
+  updateMore: (objs: ${moduleName}UpdDto[]) => {
+    return ${moduleName}Upds(objs)
+  },
+  /**
+   * 删除
+   * @param ids
+   */
+  deleteList: (...ids: any[]) => {
+    return ${moduleName}Del(ids)
+  }
 }
 `;
   const qd2 =
@@ -586,26 +665,16 @@ export default {
 </script>
 ` + `
 <script setup lang="ts">
-import { reactive, ref } from "vue"
-import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts"
-import Pagination from "@/components/pagination/pagination.vue"
-import { funcTablePage } from "@/composition/tablePage/tablePage.js"
-import { State, t_config, t_FuncMap } from "@/type/tablePage.ts"
-import type { FormRules } from 'element-plus'
+import { reactive, ref } from "vue";
+import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";
+import Pagination from "@/components/pagination/pagination.vue";
+import { funcTablePage } from "@/composition/tablePage/tablePage.js";
+import { State, t_config } from "@/type/tablePage.ts";
+import type { FormRules } from 'element-plus';
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
-import { MORE, ONE } from "@/type/utils/base.ts"
+import { MORE, ONE } from "@/type/utils/base.ts";
 import { ${moduleName}Dto } from "@/type/api/${businessName}/${moduleName}.ts";
-import {
-  ${moduleName}Sel,
-  ${moduleName}SelById,
-  ${moduleName}SelByIds,
-  ${moduleName}SelAll,
-  ${moduleName}Ins,
-  ${moduleName}Upd,
-  ${moduleName}Inss,
-  ${moduleName}Upds,
-  ${moduleName}Del,
-} from "@/api/module/${businessName}/${moduleName}.ts"
+import { ${moduleName}Func } from "@/api/module/${businessName}/${moduleName}.ts";
 
 const state = reactive<State<${moduleName}Dto>>({
   dialogType: {
@@ -712,72 +781,6 @@ const config: t_config = reactive({
   }
 })
 
-const func: t_FuncMap = {
-  /**
-   * 分页查询
-   * @param params
-   */
-  selectList: (params: any) => {
-    return ${moduleName}Sel(params)
-  },
-  /**
-   * 查询所有
-   * @param params
-   */
-  selectAll: (params: any) => {
-    return ${moduleName}SelAll(params)
-  },
-  /**
-   * 查询单个
-   * @param id
-   */
-  selectById: (id: any) => {
-    return ${moduleName}SelById(id)
-  },
-  /**
-   * 查询多个
-   * @param ids
-   */
-  selectByIds: (ids: any[]) => {
-    return ${moduleName}SelByIds(ids)
-  },
-  /**
-   * 新增
-   * @param obj
-   */
-  insertOne: (obj: any) => {
-    return ${moduleName}Ins(obj)
-  },
-  /**
-   * 修改
-   * @param obj
-   */
-  updateOne: (obj: any) => {
-    return ${moduleName}Upd(obj)
-  },
-  /**
-   * 新增多个
-   * @param objs
-   */
-  insertMore: (objs: any[]) => {
-    return ${moduleName}Inss(objs)
-  },
-  /**
-   * 修改多个
-   * @param objs
-   */
-  updateMore: (objs: any[]) => {
-    return ${moduleName}Upds(objs)
-  },
-  /**
-   * 删除
-   * @param ids
-   */
-  deleteList: (...ids: any[]) => {
-    return ${moduleName}Del(ids)
-  }
-}
-
 const {
   refresh,
   dCan,
@@ -810,7 +813,7 @@ const {
   tableLoadingRef,
   switchLoadingRef,
   activeTabName,
-  func
+  func: ${moduleName}Func
 })
 </script>
 ` + `
