@@ -673,10 +673,10 @@ import { State, t_config } from "@/type/tablePage.ts";
 import type { FormRules } from 'element-plus';
 import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";
 import { MORE, ONE } from "@/type/utils/base.ts";
-import { ${moduleName}Dto } from "@/type/api/${businessName}/${moduleName}.ts";
+import { ${moduleName}Dto, ${moduleName}UpdDto } from "@/type/api/${businessName}/${moduleName}.ts";
 import { ${moduleName}Func } from "@/api/module/${businessName}/${moduleName}.ts";
 
-const state = reactive<State<${moduleName}Dto>>({
+const state = reactive<State<${moduleName}Dto, ${moduleName}UpdDto>>({
   dialogType: {
     value: '',
     label: ''
