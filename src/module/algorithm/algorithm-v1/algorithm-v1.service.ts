@@ -9,7 +9,10 @@ export class AlgorithmV1Service {
   }
 
   async polygonsIntersect(dto: any): Promise<R> {
-    const response = await request('/polygons-intersect', dto);
+    const response = await request({
+      url: '/polygons-intersect',
+      data: dto,
+    });
     return R.ok(response);
   }
 }

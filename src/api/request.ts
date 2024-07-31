@@ -1,18 +1,23 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { currentEnv } from '../../config/config';
 
 const axi = axios.create({
-  baseURL: currentEnv().sf.baseUrl,
+  baseURL: currentEnv().req.baseUrl,
   timeout: 1000 * 60 * 10,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-export async function request(url: string, data: any) {
+export async function request(config: AxiosRequestConfig) {
   const ret = await axi({
-    url: url,
-    method: 'POST',
-    data: data,
+    baseURL: config.baseURL || currentEnv().req.baseUrl,
+    url: config.url,
+    method: config.method || 'POST',
+    params: config.params,
+    data: config.data,
   });
-  return new Promise((resolve, reject) => {
-    resolve(ret.data.data);
+  return new Promise((resolve) => {
+    resolve(ret.data);
   });
 }
