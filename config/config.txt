@@ -6,16 +6,16 @@ export const currentEnv = () => {
   return config[env];
 };
 
-const portFromCmd = process.env.PORT;
+export const portFromCmd = process.env.PORT;
 const mysqlConnectParam = '';
-const publicConfig = {
+export const publicConfig = {
   sms: {
     secretId: '',
     secretKey: '',
     appId: '',
     signName: '',
     templateId: '', // 低电量提醒
-    timeout:  // 过期时间，单位分钟
+    timeout: 10, // 过期时间，单位分钟
   },
 };
 const config = {
@@ -46,8 +46,11 @@ const config = {
     log: {
       logSavePath: '',
     },
+    req: {
+      baseURL: '',
+    },
     sf: {
-      baseUrl: '',
+      baseURL: '',
     },
   },
   test: {
