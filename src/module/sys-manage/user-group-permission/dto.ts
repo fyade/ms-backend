@@ -25,6 +25,8 @@ export class userGroupPermissionDto extends baseInterface {
 
   ifUseUp: string;
 
+  orderNum: number;
+
   remark: string;
 }
 
@@ -59,6 +61,9 @@ export class userGroupPermissionSelListDto extends pageDto {
   @ApiProperty({ description: '是否已用尽', required: false })
   ifUseUp: string;
 
+  @ApiProperty({ description: '顺序', required: false })
+  orderNum: number;
+
   @ApiProperty({ description: '备注', required: false })
   remark: string;
 }
@@ -90,6 +95,9 @@ export class userGroupPermissionSelAllDto {
 
   @ApiProperty({ description: '是否已用尽', required: false })
   ifUseUp: string;
+
+  @ApiProperty({ description: '顺序', required: false })
+  orderNum: number;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;
@@ -133,6 +141,11 @@ export class userGroupPermissionInsOneDto {
 
   @ApiProperty({ description: '是否已用尽', required: false })
   ifUseUp: string;
+
+  @ApiProperty({ description: '顺序', required: true })
+  @Type(() => Number)
+  @IsNotEmpty({ message: '顺序不能为空' })
+  orderNum: number;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;

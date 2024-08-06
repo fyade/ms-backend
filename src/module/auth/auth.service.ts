@@ -280,6 +280,17 @@ export class AuthService {
         insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
         values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
       `;
+      if (Number(count) === limitRequestTimes - 1) {
+        if (userGroupPermission.ifRejectRequestUseUp === base.N) {
+        } else {
+          // 把状态更改为已用完
+          await this.prisma.$queryRaw`
+            update sys_user_group_permission
+            set if_use_up = ${base.Y}
+            where id = ${userGroupPermission.id};
+          `;
+        }
+      }
       return true;
     }
     // 次数用光后是否停止服务
@@ -317,6 +328,7 @@ export class AuthService {
              sugp.permission_end_time      as permissionEndTime,
              sugp.limit_request_times      as limitRequestTimes,
              sugp.if_use_up                as ifUseUp,
+             sugp.order_num                as orderNum,
              sugp.remark                   as remark,
              sugp.create_by                as createBy,
              sugp.update_by                as updateBy,
@@ -338,7 +350,8 @@ export class AuthService {
                and siig.interface_id = (select si.id
                                         from sys_interface si
                                         where si.deleted = ${base.N}
-                                          and si.perms = ${permission}));
+                                          and si.perms = ${permission}))
+      order by sugp.order_num;
     `;
     return userSFPermissions;
   }

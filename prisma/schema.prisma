@@ -312,6 +312,7 @@ model sys_user_group_permission {
   permission_end_time      DateTime @db.DateTime()
   limit_request_times      Int      @db.Int
   if_use_up                String   @default("N") @db.Char(1)
+  order_num                Int      @db.Int
   remark                   String?  @db.VarChar(300)
   create_by                String   @db.VarChar(10)
   update_by                String   @db.VarChar(10)

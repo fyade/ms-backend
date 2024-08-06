@@ -19,7 +19,7 @@ export class UserGroupPermissionService {
   async selUserGroupPermission(dto: userGroupPermissionSelListDto): Promise<R> {
     const res = await this.prisma.findPage<userGroupPermissionDto, userGroupPermissionSelListDto>('sys_user_group_permission', {
       data: dto,
-      orderBy: false,
+      orderBy: true,
       notNullKeys: ['userGroupId', 'permissionId'],
       numberKeys: ['userGroupId', 'permissionId'],
     });
@@ -29,7 +29,7 @@ export class UserGroupPermissionService {
   async selAll(dto: userGroupPermissionSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<userGroupPermissionDto>('sys_user_group_permission', {
       data: dto,
-      orderBy: false,
+      orderBy: true,
       notNullKeys: ['userGroupId', 'permissionId'],
       numberKeys: ['userGroupId', 'permissionId'],
     });
@@ -54,13 +54,13 @@ export class UserGroupPermissionService {
 
   async insUserGroupPermission(dto: userGroupPermissionInsOneDto): Promise<R> {
     dto.ifUseUp = base.N;
-    const dto1 = await this.prisma.findFirst<userGroupPermissionDto>('sys_user_group_permission', {
-      userGroupId: dto.userGroupId,
-      permissionId: dto.permissionId,
-    });
-    if (dto1) {
-      return R.err('已存在用户组-权限对，不可重复添加。');
-    }
+    // const dto1 = await this.prisma.findFirst<userGroupPermissionDto>('sys_user_group_permission', {
+    //   userGroupId: dto.userGroupId,
+    //   permissionId: dto.permissionId,
+    // });
+    // if (dto1) {
+    //   return R.err('已存在用户组-权限对，不可重复添加。');
+    // }
     const res = await this.prisma.create<userGroupPermissionDto>('sys_user_group_permission', dto);
     return R.ok(res);
   }

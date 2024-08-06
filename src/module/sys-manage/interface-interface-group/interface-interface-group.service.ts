@@ -56,7 +56,9 @@ export class InterfaceInterfaceGroupService {
       interfaceGroupId: interfaceGroupId,
       interfaceId: dto.interfaceId,
     }));
+    const deleteIds = allInterfaceGroupsOfThisInterface.filter(item => dto.interfaceGroupId.indexOf(item.interfaceGroupId) === -1).map(item => item.id);
     await this.prisma.createMany('sys_interface_interface_group', data);
+    await this.prisma.deleteById('sys_interface_interface_group', deleteIds);
     return R.ok();
   }
 
