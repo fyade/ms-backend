@@ -41,8 +41,8 @@ export class UserUserGroupController {
     permission: 'sysManage:userUserGroup:selAll',
     label: '查询所有用户用户组',
   })
-  async selAll(@Query() dto: userUserGroupSelAllDto): Promise<R> {
-    return this.userUserGroupService.selAll(dto);
+  async selAllUserUserGroup(@Query() dto: userUserGroupSelAllDto): Promise<R> {
+    return this.userUserGroupService.selAllUserUserGroup(dto);
   }
 
   @Get('/ids')
@@ -59,8 +59,8 @@ export class UserUserGroupController {
     permission: 'sysManage:userUserGroup:selOnes',
     label: '查询多个用户用户组（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.userUserGroupService.selOnes(ids);
+  async selOnesUserUserGroup(@Query() ids: any[]): Promise<R> {
+    return this.userUserGroupService.selOnesUserUserGroup(ids);
   }
 
   @Get('/:id')
@@ -71,8 +71,8 @@ export class UserUserGroupController {
     permission: 'sysManage:userUserGroup:selOne',
     label: '查询单个用户用户组',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.userUserGroupService.selOne(id);
+  async selOneUserUserGroup(@Param('id') id: number): Promise<R> {
+    return this.userUserGroupService.selOneUserUserGroup(id);
   }
 
   @Post('/uug')

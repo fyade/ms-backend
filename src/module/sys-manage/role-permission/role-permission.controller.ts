@@ -34,8 +34,8 @@ export class RolePermissionController {
     permission: 'sysManage:rolePermission:selAll',
     label: '查询所有角色权限',
   })
-  async selAll(@Query() dto: rolePermissionSelAllDto): Promise<R> {
-    return this.rolePermissionService.selAll(dto);
+  async selAllRolePermission(@Query() dto: rolePermissionSelAllDto): Promise<R> {
+    return this.rolePermissionService.selAllRolePermission(dto);
   }
 
   // @Get('/all')
@@ -43,8 +43,8 @@ export class RolePermissionController {
   //   permission: 'sysManage:rolePermission:selAll',
   //   label: '查询所有角色权限',
   // })
-  // async selAll(@Query() dto: selByRoleIdDto): Promise<R> {
-  //   return this.rolePermissionService.selAll({
+  // async selAllRolePermission(@Query() dto: selByRoleIdDto): Promise<R> {
+  //   return this.rolePermissionService.selAllRolePermission({
   //     roleId: dto.roleId ? Number(dto.roleId) : dto.roleId,
   //   });
   // }
@@ -57,8 +57,8 @@ export class RolePermissionController {
     permission: 'sysManage:rolePermission:selOne',
     label: '查询单个角色权限',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.rolePermissionService.selOne(id);
+  async selOneRolePermission(@Param('id') id: number): Promise<R> {
+    return this.rolePermissionService.selOneRolePermission(id);
   }
 
   // @Post()

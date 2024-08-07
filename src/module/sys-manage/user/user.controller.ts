@@ -53,8 +53,8 @@ export class UserController {
     permission: 'sysManage:user:selOnes',
     label: '查询多个用户（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.userService.selOnes(ids);
+  async selOnesUser(@Query() ids: any[]): Promise<R> {
+    return this.userService.selOnesUser(ids);
   }
 
   @Post()

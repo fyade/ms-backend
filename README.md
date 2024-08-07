@@ -10,13 +10,22 @@
 - https://github.com/fyade/ms-backend
 - https://gitee.com/fyade/ms-backend
 
-## 使用说明 Description
+## 运行教程 How to run
 
-在 /config 目录下新建 config.ts 文件，随后将 config.txt 内的内容复制进去并根据自身情况做修改；
+环境要求：node、mysql、redis
 
-在 /config 目录下新建 authConfig.ts 文件，随后将 authConfig.txt 内的内容复制进去并根据自身情况做修改；
+1. 从仓库中拉取项目
+```bash
+git clone https://github.com/fyade/ms-backend.git
+```
 
-在根目录下新建 .env 文件，随后讲以下内容复制进，并根据自身情况做修改：
+2. 配置
+
+在 /config 目录下新建 config.ts 文件，然后将 config.txt 内的内容复制进去并根据自身情况做修改；
+
+在 /config 目录下新建 authConfig.ts 文件，然后将 authConfig.txt 内的内容复制进去并根据自身情况做修改；
+
+在根目录下新建 .env 文件，然后将以下内容复制进去，并根据自身情况做修改：
 ```
 # Environment variables declared in this file are automatically made available to Prisma.
 # See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
@@ -27,6 +36,28 @@
 DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 ```
+
+3. 初始化数据库
+
+运行 `npx prisma migrate dev --name init` 命令
+
+4. 运行
+
+```bash
+npm run start:dev
+```
+
+## 打包教程 How to build
+
+注意：以生产环境为例子：在 config.ts 中有一个变量，叫 config ，其第一个键为 dev ，表示开发环境的配置，接下来你需要加一个键 prod ，表示生产环境的配置，然后你需要把 dev 的值复制进去并修改为生产环境的配置。
+
+1. 将 /prisma/schema.prisma 中的 generator client.output （第9行）配置为 '../src/generated/client'
+
+2. 运行 `npx prisma generate` 命令，然后将 /src/generated 目录复制至 生产环境根目录/src/generated
+
+3. 运行 `npm run build` 命令，然后将 /dist/main.js 复制至 生产环境根目录
+
+4. 运行 `$env:NODE_ENV="prod"; node .\main.js` 命令，其中 NODE_ENV 是命令行变量，在不同系统、不同命令行工具中写法不一样，请根据自身情况修改。
 
 ## 命令 Bin
 
@@ -40,12 +71,14 @@ $env:NODE_ENV="dev"; node ./main.js
 npx prisma init
 ```
 
+更新数据库：
 ```bash
-$ npx prisma migrate dev --name init # 数据库
+$ npx prisma migrate dev --name init
 ```
 
+生成 Prisma Client
 ```bash
-$ npx prisma generate # 生成 Prisma Client
+$ npx prisma generate
 ```
 
 ```bash

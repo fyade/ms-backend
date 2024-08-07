@@ -34,8 +34,8 @@ export class DeptPermissionController {
     permission: 'sysManage:deptPermission:selAll',
     label: '查询所有部门权限',
   })
-  async selAll(@Query() dto: deptPermissionSelAllDto): Promise<R> {
-    return this.deptPermissionService.selAll(dto);
+  async selAllDeptPermission(@Query() dto: deptPermissionSelAllDto): Promise<R> {
+    return this.deptPermissionService.selAllDeptPermission(dto);
   }
 
   @Get('/ids')
@@ -52,8 +52,8 @@ export class DeptPermissionController {
     permission: 'sysManage:deptPermission:selOnes',
     label: '查询多个部门权限（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.deptPermissionService.selOnes(ids);
+  async selOnesDeptPermission(@Query() ids: any[]): Promise<R> {
+    return this.deptPermissionService.selOnesDeptPermission(ids);
   }
 
   @Get('/:id')
@@ -64,8 +64,8 @@ export class DeptPermissionController {
     permission: 'sysManage:deptPermission:selOne',
     label: '查询单个部门权限',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.deptPermissionService.selOne(id);
+  async selOneDeptPermission(@Param('id') id: number): Promise<R> {
+    return this.deptPermissionService.selOneDeptPermission(id);
   }
 
   @Post('/dp')

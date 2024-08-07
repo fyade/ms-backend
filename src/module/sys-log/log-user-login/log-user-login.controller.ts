@@ -34,8 +34,8 @@ export class LogUserLoginController {
     permission: 'sysLog:logUserLogin:selAll',
     label: '查询所有登录日志',
   })
-  async selAll(@Query() dto: logUserLoginSelAllDto): Promise<R> {
-    return this.logUserLoginService.selAll(dto);
+  async selAllLogUserLogin(@Query() dto: logUserLoginSelAllDto): Promise<R> {
+    return this.logUserLoginService.selAllLogUserLogin(dto);
   }
 
   @Get('/ids')
@@ -52,8 +52,8 @@ export class LogUserLoginController {
     permission: 'sysLog:logUserLogin:selOnes',
     label: '查询多个登录日志（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.logUserLoginService.selOnes(ids);
+  async selOnesLogUserLogin(@Query() ids: any[]): Promise<R> {
+    return this.logUserLoginService.selOnesLogUserLogin(ids);
   }
 
   @Get('/:id')
@@ -64,8 +64,8 @@ export class LogUserLoginController {
     permission: 'sysLog:logUserLogin:selOne',
     label: '查询单个登录日志',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.logUserLoginService.selOne(id);
+  async selOneLogUserLogin(@Param('id') id: number): Promise<R> {
+    return this.logUserLoginService.selOneLogUserLogin(id);
   }
 
   @Post()

@@ -17,7 +17,7 @@ export class RolePermissionService {
     return R.ok(res);
   }
 
-  async selAll(dto: rolePermissionSelAllDto): Promise<R> {
+  async selAllRolePermission(dto: rolePermissionSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
       data: dto,
       orderBy: false,
@@ -27,7 +27,7 @@ export class RolePermissionService {
     return R.ok(res);
   }
 
-  // async selAll(dto: selByRoleIdDto): Promise<R> {
+  // async selAllRolePermission(dto: selByRoleIdDto): Promise<R> {
   //   const res = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
   //     data: dto,
   //     numberKeys: ['roleId'],
@@ -53,7 +53,7 @@ export class RolePermissionService {
   //   return R.ok(ret);
   // }
 
-  async selOne(id: any): Promise<R> {
+  async selOneRolePermission(id: any): Promise<R> {
     const one = await this.prisma.findById<rolePermissionDto>('sys_role_permission', Number(id));
     return R.ok(one);
   }

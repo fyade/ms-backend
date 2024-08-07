@@ -41,8 +41,8 @@ export class UserDeptController {
     permission: 'sysManage:userDept:selAll',
     label: '查询所有用户部门',
   })
-  async selAll(@Query() dto: userDeptSelAllDto): Promise<R> {
-    return this.userDeptService.selAll(dto);
+  async selAllUserDept(@Query() dto: userDeptSelAllDto): Promise<R> {
+    return this.userDeptService.selAllUserDept(dto);
   }
 
   @Get('/ids')
@@ -59,8 +59,8 @@ export class UserDeptController {
     permission: 'sysManage:userDept:selOnes',
     label: '查询多个用户部门（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.userDeptService.selOnes(ids);
+  async selOnesUserDept(@Query() ids: any[]): Promise<R> {
+    return this.userDeptService.selOnesUserDept(ids);
   }
 
   @Get('/:id')
@@ -71,8 +71,8 @@ export class UserDeptController {
     permission: 'sysManage:userDept:selOne',
     label: '查询单个用户部门',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.userDeptService.selOne(id);
+  async selOneUserDept(@Param('id') id: number): Promise<R> {
+    return this.userDeptService.selOneUserDept(id);
   }
 
   @Post('/ud')

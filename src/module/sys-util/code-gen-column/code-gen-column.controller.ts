@@ -34,8 +34,8 @@ export class CodeGenColumnController {
     permission: 'sysUtil:codeGenColumn:selAll',
     label: '查询所有代码生成-列信息',
   })
-  async selAll(@Query() dto: codeGenColumnSelAllDto): Promise<R> {
-    return this.codeGenColumnService.selAll(dto);
+  async selAllCodeGenColumn(@Query() dto: codeGenColumnSelAllDto): Promise<R> {
+    return this.codeGenColumnService.selAllCodeGenColumn(dto);
   }
 
   @Get('/ids')
@@ -52,8 +52,8 @@ export class CodeGenColumnController {
     permission: 'sysUtil:codeGenColumn:selOnes',
     label: '查询多个代码生成-列信息（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.codeGenColumnService.selOnes(ids);
+  async selOnesCodeGenColumn(@Query() ids: any[]): Promise<R> {
+    return this.codeGenColumnService.selOnesCodeGenColumn(ids);
   }
 
   @Get('/:id')
@@ -64,8 +64,8 @@ export class CodeGenColumnController {
     permission: 'sysUtil:codeGenColumn:selOne',
     label: '查询单个代码生成-列信息',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.codeGenColumnService.selOne(id);
+  async selOneCodeGenColumn(@Param('id') id: number): Promise<R> {
+    return this.codeGenColumnService.selOneCodeGenColumn(id);
   }
 
   @Post()

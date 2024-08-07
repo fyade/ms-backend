@@ -32,7 +32,7 @@ export class UserUserGroupService {
     return R.ok(res);
   }
 
-  async selAll(dto: userUserGroupSelAllDto): Promise<R> {
+  async selAllUserUserGroup(dto: userUserGroupSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<userUserGroupDto>('sys_user_user_group', {
       data: dto,
       orderBy: false,
@@ -42,12 +42,12 @@ export class UserUserGroupService {
     return R.ok(res);
   }
 
-  async selOnes(ids: any[]): Promise<R> {
+  async selOnesUserUserGroup(ids: any[]): Promise<R> {
     const res = await this.prisma.findByIds<userUserGroupDto>('sys_user_user_group', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
-  async selOne(id: number): Promise<R> {
+  async selOneUserUserGroup(id: number): Promise<R> {
     const res = await this.prisma.findById<userUserGroupDto>('sys_user_user_group', Number(id));
     return R.ok(res);
   }

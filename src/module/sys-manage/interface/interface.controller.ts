@@ -34,8 +34,8 @@ export class InterfaceController {
     permission: 'sysManage:interface:selAll',
     label: '查询所有接口',
   })
-  async selAll(@Query() dto: interfaceSelAllDto): Promise<R> {
-    return this.interfaceService.selAll(dto);
+  async selAllInterface(@Query() dto: interfaceSelAllDto): Promise<R> {
+    return this.interfaceService.selAllInterface(dto);
   }
 
   @Get('/ids')
@@ -52,8 +52,8 @@ export class InterfaceController {
     permission: 'sysManage:interface:selOnes',
     label: '查询多个接口（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.interfaceService.selOnes(ids);
+  async selOnesInterface(@Query() ids: any[]): Promise<R> {
+    return this.interfaceService.selOnesInterface(ids);
   }
 
   @Get('/:id')
@@ -64,8 +64,8 @@ export class InterfaceController {
     permission: 'sysManage:interface:selOne',
     label: '查询单个接口',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.interfaceService.selOne(id);
+  async selOneInterface(@Param('id') id: number): Promise<R> {
+    return this.interfaceService.selOneInterface(id);
   }
 
   @Post()

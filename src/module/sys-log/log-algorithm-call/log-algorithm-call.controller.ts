@@ -39,8 +39,8 @@ export class LogAlgorithmCallController {
     permission: 'sysLog:logAlgorithmCall:selAll',
     label: '查询所有算法调用日志',
   })
-  async selAll(@Query() dto: logAlgorithmCallSelAllDto): Promise<R> {
-    return this.logAlgorithmCallService.selAll(dto);
+  async selAllLogAlgorithmCall(@Query() dto: logAlgorithmCallSelAllDto): Promise<R> {
+    return this.logAlgorithmCallService.selAllLogAlgorithmCall(dto);
   }
 
   @Get('/ids')
@@ -57,8 +57,8 @@ export class LogAlgorithmCallController {
     permission: 'sysLog:logAlgorithmCall:selOnes',
     label: '查询多个算法调用日志（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.logAlgorithmCallService.selOnes(ids);
+  async selOnesLogAlgorithmCall(@Query() ids: any[]): Promise<R> {
+    return this.logAlgorithmCallService.selOnesLogAlgorithmCall(ids);
   }
 
   @Get('/:id')
@@ -69,8 +69,8 @@ export class LogAlgorithmCallController {
     permission: 'sysLog:logAlgorithmCall:selOne',
     label: '查询单个算法调用日志',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.logAlgorithmCallService.selOne(id);
+  async selOneLogAlgorithmCall(@Param('id') id: number): Promise<R> {
+    return this.logAlgorithmCallService.selOneLogAlgorithmCall(id);
   }
 
   @Post()

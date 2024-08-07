@@ -34,8 +34,8 @@ export class RoleController {
     permission: 'sysManage:role:selAll',
     label: '查询所有角色',
   })
-  async selAll(@Query() dto: roleSelAllDto): Promise<R> {
-    return this.roleService.selAll(dto);
+  async selAllRole(@Query() dto: roleSelAllDto): Promise<R> {
+    return this.roleService.selAllRole(dto);
   }
 
   @Get('/:id')
@@ -46,8 +46,8 @@ export class RoleController {
     permission: 'sysManage:role:selOne',
     label: '查询单个角色',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.roleService.selOne(id);
+  async selOneRole(@Param('id') id: number): Promise<R> {
+    return this.roleService.selOneRole(id);
   }
 
   @Post()

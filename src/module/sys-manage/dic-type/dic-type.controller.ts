@@ -34,8 +34,8 @@ export class DicTypeController {
     permission: 'sysManage:dicType:selAll',
     label: '查询所有字典类型',
   })
-  async selAll(@Query() dto: dicTypeSelAllDto): Promise<R> {
-    return this.dicTypeService.selAll(dto);
+  async selAllDicType(@Query() dto: dicTypeSelAllDto): Promise<R> {
+    return this.dicTypeService.selAllDicType(dto);
   }
 
   @Get('/ids')
@@ -52,8 +52,8 @@ export class DicTypeController {
     permission: 'sysManage:dicType:selOnes',
     label: '查询多个字典类型（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.dicTypeService.selOnes(ids);
+  async selOnesDicType(@Query() ids: any[]): Promise<R> {
+    return this.dicTypeService.selOnesDicType(ids);
   }
 
   @Get('/:id')
@@ -64,8 +64,8 @@ export class DicTypeController {
     permission: 'sysManage:dicType:selOne',
     label: '查询单个字典类型',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.dicTypeService.selOne(id);
+  async selOneDicType(@Param('id') id: number): Promise<R> {
+    return this.dicTypeService.selOneDicType(id);
   }
 
   @Post()

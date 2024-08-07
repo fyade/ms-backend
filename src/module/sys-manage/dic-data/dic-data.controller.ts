@@ -34,8 +34,8 @@ export class DicDataController {
     permission: 'sysManage:dicData:selAll',
     label: '查询所有字典数据',
   })
-  async selAll(@Query() dto: dicDataSelAllDto): Promise<R> {
-    return this.dicDataService.selAll(dto);
+  async selAllDicData(@Query() dto: dicDataSelAllDto): Promise<R> {
+    return this.dicDataService.selAllDicData(dto);
   }
 
   @Get('/ids')
@@ -52,8 +52,8 @@ export class DicDataController {
     permission: 'sysManage:dicData:selOnes',
     label: '查询多个字典数据（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.dicDataService.selOnes(ids);
+  async selOnesDicData(@Query() ids: any[]): Promise<R> {
+    return this.dicDataService.selOnesDicData(ids);
   }
 
   @Get('/:id')
@@ -64,8 +64,8 @@ export class DicDataController {
     permission: 'sysManage:dicData:selOne',
     label: '查询单个字典数据',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.dicDataService.selOne(id);
+  async selOneDicData(@Param('id') id: number): Promise<R> {
+    return this.dicDataService.selOneDicData(id);
   }
 
   @Post()

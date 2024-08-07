@@ -34,8 +34,8 @@ export class UserGroupPermissionController {
     permission: 'sysManage:userGroupPermission:selAll',
     label: '查询所有用户组接口组',
   })
-  async selAll(@Query() dto: userGroupPermissionSelAllDto): Promise<R> {
-    return this.userGroupPermissionService.selAll(dto);
+  async selAllUserGroupPermission(@Query() dto: userGroupPermissionSelAllDto): Promise<R> {
+    return this.userGroupPermissionService.selAllUserGroupPermission(dto);
   }
 
   @Get('/ids')
@@ -52,8 +52,8 @@ export class UserGroupPermissionController {
     permission: 'sysManage:userGroupPermission:selOnes',
     label: '查询多个用户组接口组（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.userGroupPermissionService.selOnes(ids);
+  async selOnesUserGroupPermission(@Query() ids: any[]): Promise<R> {
+    return this.userGroupPermissionService.selOnesUserGroupPermission(ids);
   }
 
   @Get('/:id')
@@ -64,8 +64,8 @@ export class UserGroupPermissionController {
     permission: 'sysManage:userGroupPermission:selOne',
     label: '查询单个用户组接口组',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.userGroupPermissionService.selOne(id);
+  async selOneUserGroupPermission(@Param('id') id: number): Promise<R> {
+    return this.userGroupPermissionService.selOneUserGroupPermission(id);
   }
 
   @Post()

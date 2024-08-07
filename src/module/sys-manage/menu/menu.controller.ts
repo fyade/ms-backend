@@ -22,8 +22,8 @@ export class MenuController {
     permission: 'sysManage:menu:selAll',
     label: '查询所有菜单',
   })
-  async selAll(@Query() dto: menuSelAllDto): Promise<R> {
-    return this.menuService.selAll(dto);
+  async selAllMenu(@Query() dto: menuSelAllDto): Promise<R> {
+    return this.menuService.selAllMenu(dto);
   }
 
   @Get('/ids')
@@ -40,8 +40,8 @@ export class MenuController {
     permission: 'sysManage:menu:selOnes',
     label: '查询多个菜单（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.menuService.selOnes(ids);
+  async selOnesMenu(@Query() ids: any[]): Promise<R> {
+    return this.menuService.selOnesMenu(ids);
   }
 
   @Get('/:id')
@@ -52,8 +52,8 @@ export class MenuController {
     permission: 'sysManage:menu:selOne',
     label: '查询单个菜单',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.menuService.selOne(id);
+  async selOneMenu(@Param('id') id: number): Promise<R> {
+    return this.menuService.selOneMenu(id);
   }
 
   @Post()

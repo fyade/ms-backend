@@ -12,7 +12,7 @@ export class MenuService {
   ) {
   }
 
-  async selAll(dto: menuSelAllDto): Promise<R> {
+  async selAllMenu(dto: menuSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<menuDto>('sys_menu', {
       data: dto,
       orderBy: true,
@@ -22,24 +22,24 @@ export class MenuService {
     return R.ok(res);
   }
 
-  async selOnes(ids: any[]): Promise<R> {
+  async selOnesMenu(ids: any[]): Promise<R> {
     const res = await this.prisma.findByIds<menuDto>('sys_menu', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
-  async selOne(id: any): Promise<R> {
-    const one = await this.prisma.findById<menuDto>('sys_menu', Number(id));
-    return R.ok(one);
+  async selOneMenu(id: number): Promise<R> {
+    const res = await this.prisma.findById<menuDto>('sys_menu', Number(id));
+    return R.ok(res);
   }
 
   async insMenu(dto: menuInsOneDto): Promise<R> {
-    await this.prisma.create<menuDto>('sys_menu', dto);
-    return R.ok();
+    const res = await this.prisma.create<menuDto>('sys_menu', dto);
+    return R.ok(res);
   }
 
   async insMenus(dtos: menuInsOneDto[]): Promise<R> {
-    await this.prisma.createMany<menuDto>('sys_menu', dtos);
-    return R.ok();
+    const res = await this.prisma.createMany<menuDto>('sys_menu', dtos);
+    return R.ok(res);
   }
 
   async updMenu(dto: menuUpdOneDto): Promise<R> {
@@ -47,8 +47,8 @@ export class MenuService {
     if (dto.id === dto.parentId) {
       return R.err('父级菜单不可选自己！');
     }
-    await this.prisma.updateById<menuDto>('sys_menu', dto);
-    return R.ok();
+    const res = await this.prisma.updateById<menuDto>('sys_menu', dto);
+    return R.ok(res);
   }
 
   async updMenus(dtos: menuUpdOneDto[]): Promise<R> {
@@ -56,13 +56,13 @@ export class MenuService {
     if (dtos.some(item => item.id === item.parentId)) {
       return R.err('父级菜单不可选自己！');
     }
-    await this.prisma.updateMany<menuDto>('sys_menu', dtos);
-    return R.ok();
+    const res = await this.prisma.updateMany<menuDto>('sys_menu', dtos);
+    return R.ok(res);
   }
 
   async delMenu(ids: any[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    await this.prisma.deleteById<menuDto>('sys_menu', ids);
-    return R.ok();
+    const res = await this.prisma.deleteById<menuDto>('sys_menu', ids);
+    return R.ok(res);
   }
 }

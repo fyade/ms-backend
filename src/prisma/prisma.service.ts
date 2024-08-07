@@ -120,6 +120,7 @@ export class PrismaService extends PrismaClient {
                        range = {},
                        notNullKeys = [],
                        numberKeys = [],
+                       completeMatchingKeys = [],
                        ifDeleted = true,
                      }: {
                        data?: P,
@@ -127,6 +128,7 @@ export class PrismaService extends PrismaClient {
                        range?: object,
                        notNullKeys?: string[]
                        numberKeys?: string[]
+                       completeMatchingKeys?: string[]
                        ifDeleted?: boolean
                      } = {},
   ) {
@@ -145,9 +147,13 @@ export class PrismaService extends PrismaClient {
           {
             OR: [
               {
-                [item]: toSnakeCases(numberKeys).indexOf(item) > -1 ? Number(data_[item]) : {
-                  contains: `${data_[item]}`,
-                },
+                [item]: toSnakeCases(numberKeys).indexOf(item) > -1
+                  ? Number(data_[item])
+                  : (toSnakeCases(completeMatchingKeys).indexOf(item) > -1 && !!data_[item])
+                    ? data_[item]
+                    : {
+                      contains: `${data_[item]}`,
+                    },
               },
               {
                 [item]: null,
@@ -175,6 +181,7 @@ export class PrismaService extends PrismaClient {
    * @param range
    * @param notNullKeys
    * @param numberKeys
+   * @param completeMatchingKeys
    * @param ifDeleted
    * @param ifUseGenSelParams
    */
@@ -184,6 +191,7 @@ export class PrismaService extends PrismaClient {
                                          range = {},
                                          notNullKeys = [],
                                          numberKeys = [],
+                                         completeMatchingKeys = [],
                                          ifDeleted = true,
                                        }: {
                                          data?: P,
@@ -191,6 +199,7 @@ export class PrismaService extends PrismaClient {
                                          range?: object,
                                          notNullKeys?: string[]
                                          numberKeys?: string[],
+                                         completeMatchingKeys?: string[],
                                          ifDeleted?: boolean,
                                        } = {}, ifUseGenSelParams = true,
   ): Promise<{
@@ -209,6 +218,7 @@ export class PrismaService extends PrismaClient {
         range,
         notNullKeys,
         numberKeys,
+        completeMatchingKeys,
         ifDeleted,
       }) : {
         ...publicData,
@@ -253,6 +263,7 @@ export class PrismaService extends PrismaClient {
    * @param range
    * @param notNullKeys
    * @param numberKeys
+   * @param completeMatchingKeys
    * @param ifDeleted
    * @param ifUseGenSelParams
    */
@@ -262,6 +273,7 @@ export class PrismaService extends PrismaClient {
                      range = {},
                      notNullKeys = [],
                      numberKeys = [],
+                     completeMatchingKeys = [],
                      ifDeleted = true,
                    }: {
                      data?: object,
@@ -269,6 +281,7 @@ export class PrismaService extends PrismaClient {
                      range?: object,
                      notNullKeys?: string[]
                      numberKeys?: string[]
+                     completeMatchingKeys?: string[]
                      ifDeleted?: boolean,
                    } = {}, ifUseGenSelParams = true,
   ): Promise<T[]> {
@@ -279,6 +292,7 @@ export class PrismaService extends PrismaClient {
         range,
         notNullKeys,
         numberKeys,
+        completeMatchingKeys,
         ifDeleted,
       }) : {
         ...this.defaultSelArg({ ifDeleted }).where,
@@ -373,6 +387,7 @@ export class PrismaService extends PrismaClient {
    * @param range
    * @param notNullKeys
    * @param numberKeys
+   * @param completeMatchingKeys
    * @param ifDeleted
    * @param ifUseGenSelParams
    */
@@ -381,12 +396,14 @@ export class PrismaService extends PrismaClient {
                    range = {},
                    notNullKeys = [],
                    numberKeys = [],
+                   completeMatchingKeys = [],
                    ifDeleted = true,
                  }: {
                    data?: object,
                    range?: object,
                    notNullKeys?: string[]
                    numberKeys?: string[]
+                   completeMatchingKeys?: string[]
                    ifDeleted?: boolean,
                  } = {}, ifUseGenSelParams = true,
   ): Promise<number> {
@@ -396,6 +413,7 @@ export class PrismaService extends PrismaClient {
         range,
         notNullKeys,
         numberKeys,
+        completeMatchingKeys,
         ifDeleted,
       }) : {
         ...this.defaultSelArg({ ifDeleted }).where,

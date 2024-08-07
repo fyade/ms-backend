@@ -129,7 +129,7 @@ export class UserService {
     });
   }
 
-  async selOnes(ids: any[]): Promise<R> {
+  async selOnesUser(ids: any[]): Promise<R> {
     const res = await this.prisma.findByIds('sys_user', Object.values(ids));
     res.forEach((item: any) => {
       delete item.password;
@@ -203,7 +203,7 @@ export class UserService {
     }
     if (user) {
       delete user.password;
-      const loginLog = await this.logUserLoginService.selAll({
+      const loginLog = await this.logUserLoginService.selAllLogUserLogin({
         userId: user.id,
         ifSuccess: base.N,
       }, {
@@ -258,7 +258,7 @@ export class UserService {
         ifUpdateTime: false,
         ifDeleted: false,
       });
-      const loginLog = await this.logUserLoginService.selAll({
+      const loginLog = await this.logUserLoginService.selAllLogUserLogin({
         userId: user2.id,
         ifSuccess: base.N,
       }, {

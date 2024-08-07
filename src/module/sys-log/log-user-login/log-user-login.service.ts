@@ -25,7 +25,7 @@ export class LogUserLoginService {
     return R.ok(res);
   }
 
-  async selAll(dto: logUserLoginSelAllDto, {
+  async selAllLogUserLogin(dto: logUserLoginSelAllDto, {
                  orderBy = false,
                  range = {},
                }: {
@@ -44,12 +44,12 @@ export class LogUserLoginService {
     return R.ok(res);
   }
 
-  async selOnes(ids: any[]): Promise<R> {
+  async selOnesLogUserLogin(ids: any[]): Promise<R> {
     const res = await this.prisma.findByIds<logUserLoginDto>('log_user_login', Object.values(ids).map(n => Number(n)), { ifDeleted: false });
     return R.ok(res);
   }
 
-  async selOne(id: number): Promise<R> {
+  async selOneLogUserLogin(id: number): Promise<R> {
     const res = await this.prisma.findById<logUserLoginDto>('log_user_login', Number(id), { ifDeleted: false });
     return R.ok(res);
   }

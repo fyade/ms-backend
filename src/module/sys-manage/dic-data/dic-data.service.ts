@@ -18,7 +18,7 @@ export class DicDataService {
     return R.ok(res);
   }
 
-  async selAll(dto: dicDataSelAllDto): Promise<R> {
+  async selAllDicData(dto: dicDataSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<dicDataDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
@@ -28,12 +28,12 @@ export class DicDataService {
     return R.ok(res);
   }
 
-  async selOnes(ids: any[]): Promise<R> {
+  async selOnesDicData(ids: any[]): Promise<R> {
     const res = await this.prisma.findByIds<dicDataDto>('sys_dic_data', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
-  async selOne(id: number): Promise<R> {
+  async selOneDicData(id: number): Promise<R> {
     const res = await this.prisma.findById<dicDataDto>('sys_dic_data', Number(id));
     return R.ok(res);
   }

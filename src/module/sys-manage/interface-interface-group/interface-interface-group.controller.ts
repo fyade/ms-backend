@@ -40,8 +40,8 @@ export class InterfaceInterfaceGroupController {
     permission: 'sysManage:interfaceInterfaceGroup:selAll',
     label: '查询所有接口接口组',
   })
-  async selAll(@Query() dto: interfaceInterfaceGroupSelAllDto): Promise<R> {
-    return this.interfaceInterfaceGroupService.selAll(dto);
+  async selAllInterfaceInterfaceGroup(@Query() dto: interfaceInterfaceGroupSelAllDto): Promise<R> {
+    return this.interfaceInterfaceGroupService.selAllInterfaceInterfaceGroup(dto);
   }
 
   @Get('/ids')
@@ -58,8 +58,8 @@ export class InterfaceInterfaceGroupController {
     permission: 'sysManage:interfaceInterfaceGroup:selOnes',
     label: '查询多个接口接口组（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.interfaceInterfaceGroupService.selOnes(ids);
+  async selOnesInterfaceInterfaceGroup(@Query() ids: any[]): Promise<R> {
+    return this.interfaceInterfaceGroupService.selOnesInterfaceInterfaceGroup(ids);
   }
 
   @Get('/:id')
@@ -70,8 +70,8 @@ export class InterfaceInterfaceGroupController {
     permission: 'sysManage:interfaceInterfaceGroup:selOne',
     label: '查询单个接口接口组',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.interfaceInterfaceGroupService.selOne(id);
+  async selOneInterfaceInterfaceGroup(@Param('id') id: number): Promise<R> {
+    return this.interfaceInterfaceGroupService.selOneInterfaceInterfaceGroup(id);
   }
 
   @Post('/iig')

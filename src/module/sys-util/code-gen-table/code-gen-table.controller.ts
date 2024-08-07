@@ -34,8 +34,8 @@ export class CodeGenTableController {
     permission: 'sysUtil:codeGenTable:selAll',
     label: '查询所有代码生成-表信息',
   })
-  async selAll(@Query() dto: codeGenTableSelAllDto): Promise<R> {
-    return this.codeGenTableService.selAll(dto);
+  async selAllCodeGenTable(@Query() dto: codeGenTableSelAllDto): Promise<R> {
+    return this.codeGenTableService.selAllCodeGenTable(dto);
   }
 
   @Get('/ids')
@@ -52,8 +52,8 @@ export class CodeGenTableController {
     permission: 'sysUtil:codeGenTable:selOnes',
     label: '查询多个代码生成-表信息（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.codeGenTableService.selOnes(ids);
+  async selOnesCodeGenTable(@Query() ids: any[]): Promise<R> {
+    return this.codeGenTableService.selOnesCodeGenTable(ids);
   }
 
   @Get('/:id')
@@ -64,8 +64,8 @@ export class CodeGenTableController {
     permission: 'sysUtil:codeGenTable:selOne',
     label: '查询单个代码生成-表信息',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.codeGenTableService.selOne(id);
+  async selOneCodeGenTable(@Param('id') id: number): Promise<R> {
+    return this.codeGenTableService.selOneCodeGenTable(id);
   }
 
   @Post()

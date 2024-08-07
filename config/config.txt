@@ -9,14 +9,6 @@ export const currentEnv = () => {
 export const portFromCmd = process.env.PORT;
 const mysqlConnectParam = '';
 export const publicConfig = {
-  sms: {
-    secretId: '',
-    secretKey: '',
-    appId: '',
-    signName: '',
-    templateId: '', // 低电量提醒
-    timeout: 10, // 过期时间，单位分钟
-  },
 };
 const config = {
   dev: {
@@ -53,12 +45,8 @@ const config = {
       baseURL: '',
     },
   },
-  test: {
-    ...
-  },
-  prod: {
-    ...
-  }
+  test: {},
+  prod: {}
 }
 
 export function getMysqlUrlFromEnv(env: any): string {

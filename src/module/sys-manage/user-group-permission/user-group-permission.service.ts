@@ -26,7 +26,7 @@ export class UserGroupPermissionService {
     return R.ok(res);
   }
 
-  async selAll(dto: userGroupPermissionSelAllDto): Promise<R> {
+  async selAllUserGroupPermission(dto: userGroupPermissionSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<userGroupPermissionDto>('sys_user_group_permission', {
       data: dto,
       orderBy: true,
@@ -36,12 +36,12 @@ export class UserGroupPermissionService {
     return R.ok(res);
   }
 
-  async selOnes(ids: any[]): Promise<R> {
+  async selOnesUserGroupPermission(ids: any[]): Promise<R> {
     const res = await this.prisma.findByIds<userGroupPermissionDto>('sys_user_group_permission', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
-  async selOne(id: number): Promise<R> {
+  async selOneUserGroupPermission(id: number): Promise<R> {
     const res = await this.prisma.findById<userGroupPermissionDto>('sys_user_group_permission', Number(id));
     const count = await this.prisma.count<logAlgorithmCallDto>('log_algorithm_call', {
       data: { userGroupPermissionId: id },

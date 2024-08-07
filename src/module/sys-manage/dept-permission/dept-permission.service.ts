@@ -27,7 +27,7 @@ export class DeptPermissionService {
     return R.ok(res);
   }
 
-  async selAll(dto: deptPermissionSelAllDto): Promise<R> {
+  async selAllDeptPermission(dto: deptPermissionSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<deptPermissionDto>('sys_dept_permission', {
       data: dto,
       orderBy: false,
@@ -37,12 +37,12 @@ export class DeptPermissionService {
     return R.ok(res);
   }
 
-  async selOnes(ids: any[]): Promise<R> {
+  async selOnesDeptPermission(ids: any[]): Promise<R> {
     const res = await this.prisma.findByIds<deptPermissionDto>('sys_dept_permission', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
-  async selOne(id: number): Promise<R> {
+  async selOneDeptPermission(id: number): Promise<R> {
     const res = await this.prisma.findById<deptPermissionDto>('sys_dept_permission', Number(id));
     return R.ok(res);
   }

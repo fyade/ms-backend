@@ -34,8 +34,8 @@ export class DeptController {
     permission: 'sysManage:dept:selAll',
     label: '查询所有部门',
   })
-  async selAll(@Query() dto: deptSelAllDto): Promise<R> {
-    return this.deptService.selAll(dto);
+  async selAllDept(@Query() dto: deptSelAllDto): Promise<R> {
+    return this.deptService.selAllDept(dto);
   }
 
   @Get('/ids')
@@ -52,8 +52,8 @@ export class DeptController {
     permission: 'sysManage:dept:selOnes',
     label: '查询多个部门（根据id）',
   })
-  async selOnes(@Query() ids: any[]): Promise<R> {
-    return this.deptService.selOnes(ids);
+  async selOnesDept(@Query() ids: any[]): Promise<R> {
+    return this.deptService.selOnesDept(ids);
   }
 
   @Get('/:id')
@@ -64,8 +64,8 @@ export class DeptController {
     permission: 'sysManage:dept:selOne',
     label: '查询单个部门',
   })
-  async selOne(@Param('id') id: number): Promise<R> {
-    return this.deptService.selOne(id);
+  async selOneDept(@Param('id') id: number): Promise<R> {
+    return this.deptService.selOneDept(id);
   }
 
   @Post()

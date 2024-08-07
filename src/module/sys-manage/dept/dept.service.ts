@@ -22,7 +22,7 @@ export class DeptService {
     return R.ok(res);
   }
 
-  async selAll(dto: deptSelAllDto): Promise<R> {
+  async selAllDept(dto: deptSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<deptDto>('sys_dept', {
       data: dto,
       orderBy: true,
@@ -32,12 +32,12 @@ export class DeptService {
     return R.ok(res);
   }
 
-  async selOnes(ids: any[]): Promise<R> {
+  async selOnesDept(ids: any[]): Promise<R> {
     const res = await this.prisma.findByIds<deptDto>('sys_dept', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
-  async selOne(id: number): Promise<R> {
+  async selOneDept(id: number): Promise<R> {
     const res = await this.prisma.findById<deptDto>('sys_dept', Number(id));
     return R.ok(res);
   }

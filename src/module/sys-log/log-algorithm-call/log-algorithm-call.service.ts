@@ -25,7 +25,7 @@ export class LogAlgorithmCallService {
     return R.ok(res);
   }
 
-  async selAll(dto: logAlgorithmCallSelAllDto): Promise<R> {
+  async selAllLogAlgorithmCall(dto: logAlgorithmCallSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<logAlgorithmCallDto>('log_algorithm_call', {
       data: dto,
       orderBy: false,
@@ -36,14 +36,14 @@ export class LogAlgorithmCallService {
     return R.ok(res);
   }
 
-  async selOnes(ids: any[]): Promise<R> {
+  async selOnesLogAlgorithmCall(ids: any[]): Promise<R> {
     const res = await this.prisma.findByIds<logAlgorithmCallDto>('log_algorithm_call', Object.values(ids).map(n => Number(n)), {
       ifDeleted: false,
     });
     return R.ok(res);
   }
 
-  async selOne(id: number): Promise<R> {
+  async selOneLogAlgorithmCall(id: number): Promise<R> {
     const res = await this.prisma.findById<logAlgorithmCallDto>('log_algorithm_call', Number(id), {
       ifDeleted: false,
     });
