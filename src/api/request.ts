@@ -3,6 +3,10 @@ import { currentEnv } from '../../config/config';
 
 const axi = axios.create();
 
+/**
+ * 通用请求
+ * @param config
+ */
 export async function request(config: AxiosRequestConfig) {
   const ret = await axi({
     baseURL: config.baseURL || (Object.keys(currentEnv()).includes('req') ? currentEnv().req.baseURL : ''),
@@ -20,6 +24,10 @@ export async function request(config: AxiosRequestConfig) {
   });
 }
 
+/**
+ * 算法请求
+ * @param config
+ */
 export async function requestSF(config: AxiosRequestConfig) {
   const ret = await axi({
     baseURL: config.baseURL || (Object.keys(currentEnv()).includes('sf') ? currentEnv().sf.baseURL : ''),
