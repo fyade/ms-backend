@@ -341,7 +341,7 @@ ${`      data: dto,`}
 ${`      orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},`}
 ${`      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
 ${`      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}]`}
+${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
 ${`    });`}
 ${`    return R.ok(res);`}
 ${`  }`}
@@ -352,7 +352,7 @@ ${`      data: dto,`}
 ${`      orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},`}
 ${`      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
 ${`      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}]`}
+${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
 ${`    });`}
 ${`    return R.ok(res);`}
 ${`  }`}
