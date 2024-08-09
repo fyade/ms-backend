@@ -59,7 +59,7 @@ export class UserUserGroupController {
     permission: 'sysManage:userUserGroup:selOnes',
     label: '查询多个用户用户组（根据id）',
   })
-  async selOnesUserUserGroup(@Query() ids: any[]): Promise<R> {
+  async selOnesUserUserGroup(@Query() ids: number[]): Promise<R> {
     return this.userUserGroupService.selOnesUserUserGroup(ids);
   }
 
@@ -83,8 +83,8 @@ export class UserUserGroupController {
     permission: 'sysManage:userUserGroup:updUug',
     label: '更新用户用户组（uug）',
   })
-  async updUUG(@Body() dto: userUserGroupUpdUUGDtp): Promise<R> {
-    return this.userUserGroupService.updUUG(dto);
+  async updUserUserGroupUUG(@Body() dto: userUserGroupUpdUUGDtp): Promise<R> {
+    return this.userUserGroupService.updUserUserGroupUUG(dto);
   }
 
   @Post('/ugu')
@@ -95,8 +95,8 @@ export class UserUserGroupController {
     permission: 'sysManage:userUserGroup:updUgu',
     label: '更新用户用户组（ugu）',
   })
-  async updUGU(@Body() dto: userUserGroupUpdUGUDtp): Promise<R> {
-    return this.userUserGroupService.updUGU(dto);
+  async updUserUserGroupUGU(@Body() dto: userUserGroupUpdUGUDtp): Promise<R> {
+    return this.userUserGroupService.updUserUserGroupUGU(dto);
   }
 
   @Delete()
@@ -111,7 +111,7 @@ export class UserUserGroupController {
     permission: 'sysManage:userUserGroup:del',
     label: '删除用户用户组',
   })
-  async delUserUserGroup(@Body() ids: any[]): Promise<R> {
+  async delUserUserGroup(@Body() ids: number[]): Promise<R> {
     return this.userUserGroupService.delUserUserGroup(ids);
   }
 }

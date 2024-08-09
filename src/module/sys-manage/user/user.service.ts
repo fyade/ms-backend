@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { adminNewUserDto, loginDto, registDto, resetPsdDto, updPsdDto, userDto, userListSelDto } from './dto';
+import { adminNewUserDto, loginDto, registDto, resetPsdDto, updPsdDto, userDto, userDto3, userListSelDto } from './dto';
 import { genId, randomUUID } from '../../../util/IdUtils';
 import { AuthService } from '../../auth/auth.service';
 import { HTTP } from '../../../common/Enum';
@@ -39,6 +39,14 @@ export class UserService {
     const user = await this.prisma.findById<userDto>('sys_user', currentUser.userid);
     delete user.password;
     return R.ok(user);
+  }
+
+  async selOnesUser(ids: string[]): Promise<R> {
+    const res = await this.prisma.findByIds<userDto>('sys_user', Object.values(ids));
+    res.forEach(item => {
+      delete item.password;
+    });
+    return R.ok(res);
   }
 
   async userSelList(dto: userListSelDto): Promise<R> {
@@ -129,14 +137,6 @@ export class UserService {
     });
   }
 
-  async selOnesUser(ids: any[]): Promise<R> {
-    const res = await this.prisma.findByIds('sys_user', Object.values(ids));
-    res.forEach((item: any) => {
-      delete item.password;
-    });
-    return R.ok(res);
-  }
-
   async insUser(dto: adminNewUserDto): Promise<R> {
     const user = await this.prisma.findFirst('sys_user', { username: dto.username });
     if (user) {
@@ -193,7 +193,7 @@ export class UserService {
   }
 
   async login(dto: loginDto, { loginIp, loginBrowser, loginOs }): Promise<R> {
-    let user;
+    let user: userDto;
     const user_ = await this.prisma.findFirst<userDto>('sys_user', {
       username: dto.username,
     });

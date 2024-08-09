@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Put, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes } from '@nestjs/common';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { R } from '../../../common/R';
 import { RolePermissionService } from './role-permission.service';
@@ -70,7 +70,7 @@ export class RolePermissionController {
   //   return this.rolePermissionService.insRolePermission(dto);
   // }
 
-  @Put()
+  @Post('/rp')
   @ApiOperation({
     summary: '修改角色权限',
   })
@@ -78,8 +78,8 @@ export class RolePermissionController {
     permission: 'sysManage:rolePermission:upd',
     label: '修改角色权限',
   })
-  async updRolePermission(@Body() dto: rolePermissionUpdManyDto): Promise<R> {
-    return this.rolePermissionService.updRolePermission(dto);
+  async updRolePermissionRp(@Body() dto: rolePermissionUpdManyDto): Promise<R> {
+    return this.rolePermissionService.updRolePermissionRp(dto);
   }
 
   @Delete()
@@ -94,7 +94,7 @@ export class RolePermissionController {
     permission: 'sysManage:rolePermission:del',
     label: '删除角色权限',
   })
-  async delRolePermission(@Body() ids: any[]): Promise<R> {
+  async delRolePermission(@Body() ids: number[]): Promise<R> {
     return this.rolePermissionService.delRolePermission(ids);
   }
 }

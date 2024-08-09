@@ -346,7 +346,7 @@ export class PrismaService extends PrismaClient {
    * @param id
    * @param ifDeleted
    */
-  async findById<T>(model: string, id: any, {
+  async findById<T>(model: string, id: number | string, {
                       ifDeleted = true,
                     }: {
                       ifDeleted?: boolean
@@ -361,7 +361,7 @@ export class PrismaService extends PrismaClient {
    * @param ids
    * @param ifDeleted
    */
-  async findByIds<T>(model: string, ids: any[], {
+  async findByIds<T>(model: string, ids: number[] | string[], {
                        ifDeleted = true,
                      }: {
                        ifDeleted?: boolean
@@ -572,7 +572,7 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param ids
    */
-  async deleteById<T>(model: string, ids: any[]): Promise<{ count: number }> {
+  async deleteById<T>(model: string, ids: number[] | string[]): Promise<{ count: number }> {
     const arg = {
       where: {
         ...this.defaultDelArg().where,

@@ -52,7 +52,7 @@ export class UserGroupController {
     permission: 'sysManage:userGroup:selOnes',
     label: '查询多个用户组（根据id）',
   })
-  async selOnesUserGroup(@Query() ids: any[]): Promise<R> {
+  async selOnesUserGroup(@Query() ids: number[]): Promise<R> {
     return this.userGroupService.selOnesUserGroup(ids);
   }
 
@@ -144,7 +144,7 @@ export class UserGroupController {
     permission: 'sysManage:userGroup:del',
     label: '删除用户组',
   })
-  async delUserGroup(@Body() ids: any[]): Promise<R> {
+  async delUserGroup(@Body() ids: number[]): Promise<R> {
     return this.userGroupService.delUserGroup(ids);
   }
 }

@@ -59,7 +59,7 @@ export class UserDeptController {
     permission: 'sysManage:userDept:selOnes',
     label: '查询多个用户部门（根据id）',
   })
-  async selOnesUserDept(@Query() ids: any[]): Promise<R> {
+  async selOnesUserDept(@Query() ids: number[]): Promise<R> {
     return this.userDeptService.selOnesUserDept(ids);
   }
 
@@ -111,7 +111,7 @@ export class UserDeptController {
     permission: 'sysManage:userDept:del',
     label: '删除用户部门',
   })
-  async delUserDept(@Body() ids: any[]): Promise<R> {
+  async delUserDept(@Body() ids: number[]): Promise<R> {
     return this.userDeptService.delUserDept(ids);
   }
 }

@@ -28,7 +28,7 @@ export class CodeGenColumnService {
     return R.ok(res);
   }
 
-  async selOnesCodeGenColumn(ids: any[]): Promise<R> {
+  async selOnesCodeGenColumn(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<codeGenColumnDto>('sys_code_gen_column', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -58,7 +58,7 @@ export class CodeGenColumnService {
     return R.ok(res);
   }
 
-  async delCodeGenColumn(ids: any[]): Promise<R> {
+  async delCodeGenColumn(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<codeGenColumnDto>('sys_code_gen_column', ids);
     return R.ok(res);
   }

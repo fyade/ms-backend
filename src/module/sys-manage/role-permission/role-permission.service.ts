@@ -53,7 +53,7 @@ export class RolePermissionService {
   //   return R.ok(ret);
   // }
 
-  async selOneRolePermission(id: any): Promise<R> {
+  async selOneRolePermission(id: number): Promise<R> {
     const one = await this.prisma.findById<rolePermissionDto>('sys_role_permission', Number(id));
     return R.ok(one);
   }
@@ -78,7 +78,7 @@ export class RolePermissionService {
   //   return R.ok();
   // }
 
-  async updRolePermission(dto: rolePermissionUpdManyDto): Promise<R> {
+  async updRolePermissionRp(dto: rolePermissionUpdManyDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     const allRolePermissions = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
       data: { roleId: dto.roleId },
@@ -98,7 +98,7 @@ export class RolePermissionService {
     return R.ok();
   }
 
-  async delRolePermission(ids: any[]): Promise<R> {
+  async delRolePermission(ids: number[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     await this.prisma.delete<rolePermissionDto>('sys_role_permission', 'permission_id', ids);
     return R.ok();

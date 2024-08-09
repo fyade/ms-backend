@@ -28,7 +28,7 @@ export class CodeGenTableService {
     return R.ok(res);
   }
 
-  async selOnesCodeGenTable(ids: any[]): Promise<R> {
+  async selOnesCodeGenTable(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<codeGenTableDto>('sys_code_gen_table', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -58,7 +58,7 @@ export class CodeGenTableService {
     return R.ok(res);
   }
 
-  async delCodeGenTable(ids: any[]): Promise<R> {
+  async delCodeGenTable(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<codeGenTableDto>('sys_code_gen_table', ids);
     return R.ok(res);
   }

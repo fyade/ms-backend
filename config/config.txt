@@ -1,6 +1,8 @@
 import * as process from 'process';
 import { base } from '../src/util/base';
 
+export const currentVersion = '0.0.01'
+
 export const currentEnv = () => {
   const env = process.env.NODE_ENV || base.DEV;
   return config[env];

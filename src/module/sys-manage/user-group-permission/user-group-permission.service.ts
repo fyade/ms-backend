@@ -36,7 +36,7 @@ export class UserGroupPermissionService {
     return R.ok(res);
   }
 
-  async selOnesUserGroupPermission(ids: any[]): Promise<R> {
+  async selOnesUserGroupPermission(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<userGroupPermissionDto>('sys_user_group_permission', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -87,7 +87,7 @@ export class UserGroupPermissionService {
   //   return R.ok(res);
   // }
 
-  async delUserGroupPermission(ids: any[]): Promise<R> {
+  async delUserGroupPermission(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<userGroupPermissionDto>('sys_user_group_permission', ids);
     return R.ok(res);
   }

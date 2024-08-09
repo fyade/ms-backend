@@ -52,7 +52,7 @@ export class DicDataController {
     permission: 'sysManage:dicData:selOnes',
     label: '查询多个字典数据（根据id）',
   })
-  async selOnesDicData(@Query() ids: any[]): Promise<R> {
+  async selOnesDicData(@Query() ids: number[]): Promise<R> {
     return this.dicDataService.selOnesDicData(ids);
   }
 
@@ -144,7 +144,7 @@ export class DicDataController {
     permission: 'sysManage:dicData:del',
     label: '删除字典数据',
   })
-  async delDicData(@Body() ids: any[]): Promise<R> {
+  async delDicData(@Body() ids: number[]): Promise<R> {
     return this.dicDataService.delDicData(ids);
   }
 }

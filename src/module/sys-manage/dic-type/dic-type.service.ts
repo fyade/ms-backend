@@ -28,7 +28,7 @@ export class DicTypeService {
     return R.ok(res);
   }
 
-  async selOnesDicType(ids: any[]): Promise<R> {
+  async selOnesDicType(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<dicTypeDto>('sys_dic_type', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -58,7 +58,7 @@ export class DicTypeService {
     return R.ok(res);
   }
 
-  async delDicType(ids: any[]): Promise<R> {
+  async delDicType(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<dicTypeDto>('sys_dic_type', ids);
     return R.ok(res);
   }

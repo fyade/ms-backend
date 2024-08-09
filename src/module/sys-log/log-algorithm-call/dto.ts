@@ -1,5 +1,5 @@
 import { pageDto } from '../../../common/dto/PageDto';
-import { baseInterface } from '../../../util/base';
+import { baseInterface } from '../../../common/commonType';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';

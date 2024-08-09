@@ -52,7 +52,7 @@ export class LogUserLoginController {
     permission: 'sysLog:logUserLogin:selOnes',
     label: '查询多个登录日志（根据id）',
   })
-  async selOnesLogUserLogin(@Query() ids: any[]): Promise<R> {
+  async selOnesLogUserLogin(@Query() ids: number[]): Promise<R> {
     return this.logUserLoginService.selOnesLogUserLogin(ids);
   }
 
@@ -144,7 +144,7 @@ export class LogUserLoginController {
     permission: 'sysLog:logUserLogin:del',
     label: '删除登录日志',
   })
-  async delLogUserLogin(@Body() ids: any[]): Promise<R> {
+  async delLogUserLogin(@Body() ids: number[]): Promise<R> {
     return this.logUserLoginService.delLogUserLogin(ids);
   }
 }

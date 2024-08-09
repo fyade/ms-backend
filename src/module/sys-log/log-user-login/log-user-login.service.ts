@@ -44,7 +44,7 @@ export class LogUserLoginService {
     return R.ok(res);
   }
 
-  async selOnesLogUserLogin(ids: any[]): Promise<R> {
+  async selOnesLogUserLogin(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<logUserLoginDto>('log_user_login', Object.values(ids).map(n => Number(n)), { ifDeleted: false });
     return R.ok(res);
   }
@@ -95,7 +95,7 @@ export class LogUserLoginService {
     return R.ok(res);
   }
 
-  async delLogUserLogin(ids: any[]): Promise<R> {
+  async delLogUserLogin(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<logUserLoginDto>('log_user_login', ids);
     return R.ok(res);
   }

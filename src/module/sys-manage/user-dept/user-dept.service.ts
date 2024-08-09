@@ -36,7 +36,7 @@ export class UserDeptService {
     return R.ok(res);
   }
 
-  async selOnesUserDept(ids: any[]): Promise<R> {
+  async selOnesUserDept(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<userDeptDto>('sys_user_dept', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -84,7 +84,7 @@ export class UserDeptService {
     return R.ok();
   }
 
-  async delUserDept(ids: any[]): Promise<R> {
+  async delUserDept(ids: number[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.deleteById<userDeptDto>('sys_user_dept', ids);
     return R.ok(res);

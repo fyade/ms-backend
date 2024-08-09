@@ -7,6 +7,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { codeGeneration } from './codeGeneration';
 import { codeGenTableDto } from '../code-gen-table/dto';
 import { codeGenColumnDto } from '../code-gen-column/dto';
+import { cgTablesInterface } from './dto';
 
 @Injectable()
 export class CodeGenerationService {
@@ -26,7 +27,7 @@ export class CodeGenerationService {
     const regex2 = /^model (\w+) {/;
     const regex3 = /^ *([\w-]+) +([\w-?]+) +([\w-@(). "']+) */;
     const lines = text.split('\n');
-    const tables: any[] = [];
+    const tables: cgTablesInterface[] = [];
     for (let i = 0; i < lines.length - 1; i++) {
       if (regex1.test(lines[i]) && regex2.test(lines[i + 1])) {
         tables.push({

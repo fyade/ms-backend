@@ -36,7 +36,7 @@ export class LogAlgorithmCallService {
     return R.ok(res);
   }
 
-  async selOnesLogAlgorithmCall(ids: any[]): Promise<R> {
+  async selOnesLogAlgorithmCall(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<logAlgorithmCallDto>('log_algorithm_call', Object.values(ids).map(n => Number(n)), {
       ifDeleted: false,
     });
@@ -88,7 +88,7 @@ export class LogAlgorithmCallService {
     return R.ok(res);
   }
 
-  async delLogAlgorithmCall(ids: any[]): Promise<R> {
+  async delLogAlgorithmCall(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<logAlgorithmCallDto>('log_algorithm_call', ids);
     return R.ok(res);
   }

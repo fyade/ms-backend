@@ -28,7 +28,7 @@ export class InterfaceGroupService {
     return R.ok(res);
   }
 
-  async selOnesInterfaceGroup(ids: any[]): Promise<R> {
+  async selOnesInterfaceGroup(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<interfaceGroupDto>('sys_interface_group', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -58,7 +58,7 @@ export class InterfaceGroupService {
     return R.ok(res);
   }
 
-  async delInterfaceGroup(ids: any[]): Promise<R> {
+  async delInterfaceGroup(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<interfaceGroupDto>('sys_interface_group', ids);
     return R.ok(res);
   }

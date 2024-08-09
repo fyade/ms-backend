@@ -5,6 +5,7 @@ import * as os from 'os';
 import * as process from 'process';
 import * as diskinfo from 'diskinfo';
 import { NonSupportedException } from './exception/NonSupportedException';
+import { currentVersion } from '../config/config';
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -19,6 +20,10 @@ export class AppService {
 
   async getHello(): Promise<R> {
     return R.ok('Hello World!');
+  }
+
+  async getVersion(): Promise<R> {
+    return R.ok(currentVersion);
   }
 
   async getAllAuthApis(): Promise<R> {
@@ -82,7 +87,7 @@ export class AppService {
     return R.ok(allAuthApis);
   }
 
-  async getBaseInfo(): Promise<R> {
+  async getSystemUsingInfo(): Promise<R> {
     const cpuUsage = await this.getCPUUsage();
     const memoryInfo = this.getMemoryInfo();
     const diskInfo = await this.getDiskInfo();

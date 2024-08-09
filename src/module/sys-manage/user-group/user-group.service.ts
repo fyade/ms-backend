@@ -28,7 +28,7 @@ export class UserGroupService {
     return R.ok(res);
   }
 
-  async selOnesUserGroup(ids: any[]): Promise<R> {
+  async selOnesUserGroup(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<userGroupDto>('sys_user_group', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -58,7 +58,7 @@ export class UserGroupService {
     return R.ok(res);
   }
 
-  async delUserGroup(ids: any[]): Promise<R> {
+  async delUserGroup(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<userGroupDto>('sys_user_group', ids);
     return R.ok(res);
   }

@@ -12,7 +12,7 @@ export const PRE_AUTHORIZE_KEY = 'perAuthorize';
 export class PreAuthorizeParams {
   permission: string;
   ifSF?: boolean;
-  label?:string
+  label?: string;
 }
 
 export const PreAuthorize = (param: PreAuthorizeParams) => SetMetadata(PRE_AUTHORIZE_KEY, param);

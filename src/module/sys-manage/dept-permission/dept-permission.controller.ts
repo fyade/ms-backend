@@ -52,7 +52,7 @@ export class DeptPermissionController {
     permission: 'sysManage:deptPermission:selOnes',
     label: '查询多个部门权限（根据id）',
   })
-  async selOnesDeptPermission(@Query() ids: any[]): Promise<R> {
+  async selOnesDeptPermission(@Query() ids: number[]): Promise<R> {
     return this.deptPermissionService.selOnesDeptPermission(ids);
   }
 
@@ -76,8 +76,8 @@ export class DeptPermissionController {
     permission: 'sysManage:deptPermission:upddp',
     label: '更新部门权限（dp）',
   })
-  async upddp(@Body() dto: deptPermissionUpdManyDPDto): Promise<R> {
-    return this.deptPermissionService.upddp(dto);
+  async delDeptPermissionDp(@Body() dto: deptPermissionUpdManyDPDto): Promise<R> {
+    return this.deptPermissionService.delDeptPermissionDp(dto);
   }
 
   @Delete()
@@ -92,7 +92,7 @@ export class DeptPermissionController {
     permission: 'sysManage:deptPermission:del',
     label: '删除部门权限',
   })
-  async delDeptPermission(@Body() ids: any[]): Promise<R> {
+  async delDeptPermission(@Body() ids: number[]): Promise<R> {
     return this.deptPermissionService.delDeptPermission(ids);
   }
 }

@@ -40,7 +40,7 @@ export class MenuController {
     permission: 'sysManage:menu:selOnes',
     label: '查询多个菜单（根据id）',
   })
-  async selOnesMenu(@Query() ids: any[]): Promise<R> {
+  async selOnesMenu(@Query() ids: number[]): Promise<R> {
     return this.menuService.selOnesMenu(ids);
   }
 
@@ -132,7 +132,7 @@ export class MenuController {
     permission: 'sysManage:menu:del',
     label: '删除菜单',
   })
-  async delMenu(@Body() ids: any[]): Promise<R> {
+  async delMenu(@Body() ids: number[]): Promise<R> {
     return this.menuService.delMenu(ids);
   }
 }

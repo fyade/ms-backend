@@ -32,7 +32,7 @@ export class RoleService {
     return R.ok(res);
   }
 
-  async selOneRole(id: any): Promise<R> {
+  async selOneRole(id: number): Promise<R> {
     const one = await this.prisma.findById<roleDto>('sys_role', Number(id));
     return R.ok(one);
   }
@@ -48,7 +48,7 @@ export class RoleService {
     return R.ok();
   }
 
-  async delRole(ids: any[]): Promise<R> {
+  async delRole(ids: number[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     await this.prisma.deleteById<roleDto>('sys_role', ids);
     return R.ok();

@@ -19,7 +19,7 @@ export class OnlineUserService {
     return R.ok(res);
   }
 
-  async delOnlineUser(ids: any[]): Promise<R> {
+  async delOnlineUser(ids: number[]): Promise<R> {
     // this.cacheTokenService.
     return R.ok();
   }

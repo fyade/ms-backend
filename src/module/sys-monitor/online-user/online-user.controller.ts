@@ -38,7 +38,7 @@ export class OnlineUserController {
     permission: 'sysMonitor:onlineUser:del',
     label: '强退用户',
   })
-  async delOnlineUser(@Body() ids: any[]): Promise<R> {
+  async delOnlineUser(@Body() ids: number[]): Promise<R> {
     return this.onlineUserService.delOnlineUser(ids);
   }
 }

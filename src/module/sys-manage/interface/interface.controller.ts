@@ -52,7 +52,7 @@ export class InterfaceController {
     permission: 'sysManage:interface:selOnes',
     label: '查询多个接口（根据id）',
   })
-  async selOnesInterface(@Query() ids: any[]): Promise<R> {
+  async selOnesInterface(@Query() ids: number[]): Promise<R> {
     return this.interfaceService.selOnesInterface(ids);
   }
 
@@ -144,7 +144,7 @@ export class InterfaceController {
     permission: 'sysManage:interface:del',
     label: '删除接口',
   })
-  async delInterface(@Body() ids: any[]): Promise<R> {
+  async delInterface(@Body() ids: number[]): Promise<R> {
     return this.interfaceService.delInterface(ids);
   }
 }

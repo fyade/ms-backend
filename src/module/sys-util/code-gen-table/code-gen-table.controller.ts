@@ -52,7 +52,7 @@ export class CodeGenTableController {
     permission: 'sysUtil:codeGenTable:selOnes',
     label: '查询多个代码生成-表信息（根据id）',
   })
-  async selOnesCodeGenTable(@Query() ids: any[]): Promise<R> {
+  async selOnesCodeGenTable(@Query() ids: number[]): Promise<R> {
     return this.codeGenTableService.selOnesCodeGenTable(ids);
   }
 
@@ -144,7 +144,7 @@ export class CodeGenTableController {
     permission: 'sysUtil:codeGenTable:del',
     label: '删除代码生成-表信息',
   })
-  async delCodeGenTable(@Body() ids: any[]): Promise<R> {
+  async delCodeGenTable(@Body() ids: number[]): Promise<R> {
     return this.codeGenTableService.delCodeGenTable(ids);
   }
 }

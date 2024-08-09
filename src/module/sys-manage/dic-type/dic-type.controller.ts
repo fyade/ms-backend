@@ -52,7 +52,7 @@ export class DicTypeController {
     permission: 'sysManage:dicType:selOnes',
     label: '查询多个字典类型（根据id）',
   })
-  async selOnesDicType(@Query() ids: any[]): Promise<R> {
+  async selOnesDicType(@Query() ids: number[]): Promise<R> {
     return this.dicTypeService.selOnesDicType(ids);
   }
 
@@ -144,7 +144,7 @@ export class DicTypeController {
     permission: 'sysManage:dicType:del',
     label: '删除字典类型',
   })
-  async delDicType(@Body() ids: any[]): Promise<R> {
+  async delDicType(@Body() ids: number[]): Promise<R> {
     return this.dicTypeService.delDicType(ids);
   }
 }

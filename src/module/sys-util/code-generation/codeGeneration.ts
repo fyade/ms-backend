@@ -39,24 +39,24 @@ export function codeGeneration({ table, columns }: { table: codeGenTableDto, col
   };
   const qd3_dialogFormDefaultData = [
     [
-      (key?: any) => key === 'ifDefault',
-      (key?: any) => 'final.N'
+      (key?: string) => key === 'ifDefault',
+      () => 'final.N'
     ],
     [
-      (key?: any) => key === 'ifDisabled',
-      (key?: any) => 'final.N'
+      (key?: string) => key === 'ifDisabled',
+      () => 'final.N'
     ],
     [
-      (key?: any) => key === 'parentId',
-      (key?: any) => 'final.DEFAULT_PARENT_ID'
+      (key?: string) => key === 'parentId',
+      () => 'final.DEFAULT_PARENT_ID'
     ],
     [
-      (key?: any) => key === 'orderNum',
-      (key?: any) => 'final.DEFAULT_ORDER_NUM'
+      (key?: string) => key === 'orderNum',
+      () => 'final.DEFAULT_ORDER_NUM'
     ],
     [
-      (key?: any) => true,
-      (key?: any) => `''`
+      (key?: string) => true,
+      () => `''`
     ]
   ]
   const qd3_dialogFormForm = [
@@ -227,7 +227,7 @@ ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:selOnes',`}
 ${`    label: '查询多个${getDBTableName(table.tableDescr)}（根据id）',`}
 ${`  })`}
-${`  async selOnes${capitalizeFirstLetter(moduleName)}(@Query() ids: any[]): Promise<R> {`}
+${`  async selOnes${capitalizeFirstLetter(moduleName)}(@Query() ids: number[]): Promise<R> {`}
 ${`    return this.${moduleName}Service.selOnes${capitalizeFirstLetter(moduleName)}(ids);`}
 ${`  }`}
 ${``}
@@ -319,7 +319,7 @@ ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:del',`}
 ${`    label: '删除${getDBTableName(table.tableDescr)}',`}
 ${`  })`}
-${`  async del${capitalizeFirstLetter(moduleName)}(@Body() ids: any[]): Promise<R> {`}
+${`  async del${capitalizeFirstLetter(moduleName)}(@Body() ids: number[]): Promise<R> {`}
 ${`    return this.${moduleName}Service.del${capitalizeFirstLetter(moduleName)}(ids);`}
 ${`  }`}
 ${`}`}
@@ -357,7 +357,7 @@ ${`    });`}
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
-${`  async selOnes${capitalizeFirstLetter(moduleName)}(ids: any[]): Promise<R> {`}
+${`  async selOnes${capitalizeFirstLetter(moduleName)}(ids: number[]): Promise<R> {`}
 ${`    const res = await this.prisma.findByIds<${moduleName}Dto>('${table.tableName}', Object.values(ids).map(n => Number(n)));`}
 ${`    return R.ok(res);`}
 ${`  }`}
@@ -387,7 +387,7 @@ ${`    const res = await this.prisma.updateMany<${moduleName}Dto>('${table.table
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
-${`  async del${capitalizeFirstLetter(moduleName)}(ids: any[]): Promise<R> {`}
+${`  async del${capitalizeFirstLetter(moduleName)}(ids: number[]): Promise<R> {`}
 ${`    const res = await this.prisma.deleteById<${moduleName}Dto>('${table.tableName}', ids);`}
 ${`    return R.ok(res);`}
 ${`  }`}
@@ -395,7 +395,7 @@ ${`}`}
 `;
   const hd3 =
 `${`import { pageDto } from '../../../common/dto/PageDto';`}
-${`import { baseInterface } from '../../../util/base';`}
+${`import { baseInterface } from '../../../common/commonType';`}
 ${`import { IsNotEmpty } from 'class-validator';`}
 ${`import { Type } from 'class-transformer';`}
 ${`import { ApiProperty } from '@nestjs/swagger';`}
@@ -513,7 +513,7 @@ ${`    method: 'GET'`}
 ${`  })`}
 ${`}`}
 ${``}
-${`export function ${moduleName}SelByIds(ids: any[]): t_funcMap_selMore_ret<${moduleName}Dto> {`}
+${`export function ${moduleName}SelByIds(ids: number[]): t_funcMap_selMore_ret<${moduleName}Dto> {`}
 ${`  return request({`}
 ${`    url: \`/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/ids\`,`}
 ${`    method: 'GET',`}
@@ -553,7 +553,7 @@ ${`    data: params`}
 ${`  })`}
 ${`}`}
 ${``}
-${`export function ${moduleName}Del(ids: any[]): t_funcMap_iud_ret {`}
+${`export function ${moduleName}Del(ids: number[]): t_funcMap_iud_ret {`}
 ${`  return request({`}
 ${`    url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}',`}
 ${`    method: 'DELETE',`}
@@ -580,14 +580,14 @@ ${`  /**`}
 ${`   * 查询单个`}
 ${`   * @param id`}
 ${`   */`}
-${`  selectById: (id: any) => {`}
+${`  selectById: (id: number) => {`}
 ${`    return ${moduleName}SelById(id)`}
 ${`  },`}
 ${`  /**`}
 ${`   * 查询多个`}
 ${`   * @param ids`}
 ${`   */`}
-${`  selectByIds: (ids: any[]) => {`}
+${`  selectByIds: (ids: number[]) => {`}
 ${`    return ${moduleName}SelByIds(ids)`}
 ${`  },`}
 ${`  /**`}
@@ -622,7 +622,7 @@ ${`  /**`}
 ${`   * 删除`}
 ${`   * @param ids`}
 ${`   */`}
-${`  deleteList: (...ids: any[]) => {`}
+${`  deleteList: (...ids: number[]) => {`}
 ${`    return ${moduleName}Del(ids)`}
 ${`  }`}
 ${`}`}

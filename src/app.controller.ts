@@ -23,6 +23,14 @@ export class AppController {
     return await this.appService.getHello();
   }
 
+  @Get('/v')
+  @ApiOperation({
+    summary: '获取系统版本信息',
+  })
+  async getVersion(): Promise<R> {
+    return await this.appService.getVersion();
+  }
+
   @Get('/apis')
   @ApiOperation({
     summary: '获取全部鉴权接口',
@@ -43,7 +51,7 @@ export class AppController {
     permission: 'system:home:base',
     label: '获取系统基本信息',
   })
-  async getBaseInfo(): Promise<R> {
-    return this.appService.getBaseInfo();
+  async getSystemUsingInfo(): Promise<R> {
+    return this.appService.getSystemUsingInfo();
   }
 }

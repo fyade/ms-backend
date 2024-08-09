@@ -66,6 +66,10 @@ export class userDto2 extends loginDto {
   userid: string;
 }
 
+export class userDto3 extends userDto {
+  userid: string;
+}
+
 export class adminNewUserDto extends loginDto {
 }
 

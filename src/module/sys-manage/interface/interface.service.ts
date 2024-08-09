@@ -28,7 +28,7 @@ export class InterfaceService {
     return R.ok(res);
   }
 
-  async selOnesInterface(ids: any[]): Promise<R> {
+  async selOnesInterface(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<interfaceDto>('sys_interface', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -58,7 +58,7 @@ export class InterfaceService {
     return R.ok(res);
   }
 
-  async delInterface(ids: any[]): Promise<R> {
+  async delInterface(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<interfaceDto>('sys_interface', ids);
     return R.ok(res);
   }

@@ -10,8 +10,8 @@ export function deepClone<T>(obj: T): T {
  * 数组不重复push
  * @param arr
  */
-export function arrNoRepeat(arr: any[]) {
-  return Array.from(new Set(arr))
+export function arrNoRepeat<T = any>(arr: T[]): T[] {
+  return Array.from(new Set(arr));
 }
 
 // export function fit2Obj(obj1: object, obj2: object): object {

@@ -52,7 +52,7 @@ export class CodeGenColumnController {
     permission: 'sysUtil:codeGenColumn:selOnes',
     label: '查询多个代码生成-列信息（根据id）',
   })
-  async selOnesCodeGenColumn(@Query() ids: any[]): Promise<R> {
+  async selOnesCodeGenColumn(@Query() ids: number[]): Promise<R> {
     return this.codeGenColumnService.selOnesCodeGenColumn(ids);
   }
 
@@ -144,7 +144,7 @@ export class CodeGenColumnController {
     permission: 'sysUtil:codeGenColumn:del',
     label: '删除代码生成-列信息',
   })
-  async delCodeGenColumn(@Body() ids: any[]): Promise<R> {
+  async delCodeGenColumn(@Body() ids: number[]): Promise<R> {
     return this.codeGenColumnService.delCodeGenColumn(ids);
   }
 }

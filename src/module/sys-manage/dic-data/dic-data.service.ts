@@ -28,7 +28,7 @@ export class DicDataService {
     return R.ok(res);
   }
 
-  async selOnesDicData(ids: any[]): Promise<R> {
+  async selOnesDicData(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<dicDataDto>('sys_dic_data', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -58,7 +58,7 @@ export class DicDataService {
     return R.ok(res);
   }
 
-  async delDicData(ids: any[]): Promise<R> {
+  async delDicData(ids: number[]): Promise<R> {
     const res = await this.prisma.deleteById<dicDataDto>('sys_dic_data', ids);
     return R.ok(res);
   }

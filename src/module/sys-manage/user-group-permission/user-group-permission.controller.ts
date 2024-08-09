@@ -52,7 +52,7 @@ export class UserGroupPermissionController {
     permission: 'sysManage:userGroupPermission:selOnes',
     label: '查询多个用户组接口组（根据id）',
   })
-  async selOnesUserGroupPermission(@Query() ids: any[]): Promise<R> {
+  async selOnesUserGroupPermission(@Query() ids: number[]): Promise<R> {
     return this.userGroupPermissionService.selOnesUserGroupPermission(ids);
   }
 
@@ -144,7 +144,7 @@ export class UserGroupPermissionController {
     permission: 'sysManage:userGroupPermission:del',
     label: '删除用户组接口组',
   })
-  async delUserGroupPermission(@Body() ids: any[]): Promise<R> {
+  async delUserGroupPermission(@Body() ids: number[]): Promise<R> {
     return this.userGroupPermissionService.delUserGroupPermission(ids);
   }
 }

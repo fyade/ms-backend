@@ -86,7 +86,7 @@ export class RoleController {
     permission: 'sysManage:role:del',
     label: '删除角色',
   })
-  async delRole(@Body() ids: any[]): Promise<R> {
+  async delRole(@Body() ids: number[]): Promise<R> {
     return this.roleService.delRole(ids);
   }
 }

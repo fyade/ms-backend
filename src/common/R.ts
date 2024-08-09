@@ -23,9 +23,3 @@ export class R {
     return new R(HTTP.SERVER_ERROR().code, null, msg || HTTP.SERVER_ERROR().msg);
   }
 }
-
-export class RType {
-  code: number;
-  data: any;
-  msg: string;
-}

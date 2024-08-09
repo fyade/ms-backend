@@ -22,7 +22,7 @@ export class MenuService {
     return R.ok(res);
   }
 
-  async selOnesMenu(ids: any[]): Promise<R> {
+  async selOnesMenu(ids: number[]): Promise<R> {
     const res = await this.prisma.findByIds<menuDto>('sys_menu', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
@@ -60,7 +60,7 @@ export class MenuService {
     return R.ok(res);
   }
 
-  async delMenu(ids: any[]): Promise<R> {
+  async delMenu(ids: number[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.deleteById<menuDto>('sys_menu', ids);
     return R.ok(res);

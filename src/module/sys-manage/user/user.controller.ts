@@ -27,18 +27,6 @@ export class UserController {
     return this.userService.getSelfInfo();
   }
 
-  @Get('/page')
-  @ApiOperation({
-    summary: '分页查询用户',
-  })
-  @Authorize({
-    permission: 'sysManage:user:selList',
-    label: '分页查询用户',
-  })
-  async userSelList(@Query() dto: userListSelDto): Promise<R> {
-    return this.userService.userSelList(dto);
-  }
-
   @Get('/ids')
   @ApiOperation({
     summary: '查询多个用户（根据id）',
@@ -53,8 +41,20 @@ export class UserController {
     permission: 'sysManage:user:selOnes',
     label: '查询多个用户（根据id）',
   })
-  async selOnesUser(@Query() ids: any[]): Promise<R> {
+  async selOnesUser(@Query() ids: string[]): Promise<R> {
     return this.userService.selOnesUser(ids);
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: '分页查询用户',
+  })
+  @Authorize({
+    permission: 'sysManage:user:selList',
+    label: '分页查询用户',
+  })
+  async userSelList(@Query() dto: userListSelDto): Promise<R> {
+    return this.userService.userSelList(dto);
   }
 
   @Post()

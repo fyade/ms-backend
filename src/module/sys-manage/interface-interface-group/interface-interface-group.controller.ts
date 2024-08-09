@@ -58,7 +58,7 @@ export class InterfaceInterfaceGroupController {
     permission: 'sysManage:interfaceInterfaceGroup:selOnes',
     label: '查询多个接口接口组（根据id）',
   })
-  async selOnesInterfaceInterfaceGroup(@Query() ids: any[]): Promise<R> {
+  async selOnesInterfaceInterfaceGroup(@Query() ids: number[]): Promise<R> {
     return this.interfaceInterfaceGroupService.selOnesInterfaceInterfaceGroup(ids);
   }
 
@@ -110,7 +110,7 @@ export class InterfaceInterfaceGroupController {
     permission: 'sysManage:interfaceInterfaceGroup:del',
     label: '删除接口接口组',
   })
-  async delInterfaceInterfaceGroup(@Body() ids: any[]): Promise<R> {
+  async delInterfaceInterfaceGroup(@Body() ids: number[]): Promise<R> {
     return this.interfaceInterfaceGroupService.delInterfaceInterfaceGroup(ids);
   }
 }
