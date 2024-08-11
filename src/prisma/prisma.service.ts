@@ -5,7 +5,7 @@ import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
 import { pageDto } from '../common/dto/PageDto';
-import { objToCamelCase, objToSnakeCase, toCamelCase, toSnakeCase, toSnakeCases } from '../util/BaseUtils';
+import { objToCamelCase, objToSnakeCase, toCamelCase, toSnakeCase, toSnakeCases, typeOf } from '../util/BaseUtils';
 
 const env = currentEnv();
 const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../generated/client');
@@ -147,13 +147,29 @@ export class PrismaService extends PrismaClient {
           {
             OR: [
               {
-                [item]: toSnakeCases(numberKeys).indexOf(item) > -1
-                  ? Number(data_[item])
-                  : (toSnakeCases(completeMatchingKeys).indexOf(item) > -1 && !!data_[item])
-                    ? data_[item]
-                    : {
-                      contains: `${data_[item]}`,
-                    },
+                [item]: typeOf(data_[item]) === 'object'
+                  ? Object.keys(data_[item]).reduce((obj, itm) => ({
+                    ...obj,
+                    [itm]: data_[item][itm].type === 'number'
+                      ? typeOf(data_[item][itm].value) === 'array'
+                        ? data_[item][itm].value.map(item => Number(item))
+                        : typeOf(data_[item][itm].value) === 'object'
+                          ? Object.keys(data_[item][itm].value).reduce((obj, key) => ({
+                            ...obj,
+                            [key]: Number(data_[item][itm].value[key]),
+                          }), {})
+                          : typeOf(data_[item][itm].value) === 'string'
+                            ? Number(data_[item][itm].value)
+                            : data_[item][itm].value
+                      : data_[item][itm].value,
+                  }), {})
+                  : toSnakeCases(numberKeys).indexOf(item) > -1
+                    ? Number(data_[item])
+                    : (toSnakeCases(completeMatchingKeys).indexOf(item) > -1 && !!data_[item])
+                      ? data_[item]
+                      : {
+                        contains: `${data_[item]}`,
+                      },
               },
               {
                 [item]: null,
