@@ -142,41 +142,49 @@ export class PrismaService extends PrismaClient {
             [item]: publicData[item],
           },
         ], []),
-        ...Object.keys(data_).reduce((obj, item) => [
-          ...obj,
-          {
-            OR: [
-              {
-                [item]: typeOf(data_[item]) === 'object'
-                  ? Object.keys(data_[item]).reduce((obj, itm) => ({
-                    ...obj,
-                    [itm]: data_[item][itm].type === 'number'
-                      ? typeOf(data_[item][itm].value) === 'array'
-                        ? data_[item][itm].value.map(item => Number(item))
-                        : typeOf(data_[item][itm].value) === 'object'
-                          ? Object.keys(data_[item][itm].value).reduce((obj, key) => ({
-                            ...obj,
-                            [key]: Number(data_[item][itm].value[key]),
-                          }), {})
-                          : typeOf(data_[item][itm].value) === 'string'
-                            ? Number(data_[item][itm].value)
-                            : data_[item][itm].value
-                      : data_[item][itm].value,
-                  }), {})
-                  : toSnakeCases(numberKeys).indexOf(item) > -1
-                    ? Number(data_[item])
-                    : (toSnakeCases(completeMatchingKeys).indexOf(item) > -1 && !!data_[item])
-                      ? data_[item]
-                      : {
-                        contains: `${data_[item]}`,
-                      },
-              },
-              {
-                [item]: null,
-              },
-            ].slice(0, (toSnakeCases(notNullKeys).indexOf(item) > -1 || data_[item] !== '') ? 1 : 2),
-          },
-        ], []),
+        ...Object.keys(data_).reduce((obj, item) => {
+          let datum = '';
+          try {
+            datum = JSON.parse(data_[item]);
+          } catch (e) {
+            datum = data_[item];
+          }
+          return [
+            ...obj,
+            {
+              OR: [
+                {
+                  [item]: typeOf(datum) === 'object'
+                    ? Object.keys(datum).reduce((obj, itm) => ({
+                      ...obj,
+                      [itm]: datum[itm].type === 'number'
+                        ? typeOf(datum[itm].value) === 'array'
+                          ? datum[itm].value.map(item => Number(item))
+                          : typeOf(datum[itm].value) === 'object'
+                            ? Object.keys(datum[itm].value).reduce((obj, key) => ({
+                              ...obj,
+                              [key]: Number(datum[itm].value[key]),
+                            }), {})
+                            : typeOf(datum[itm].value) === 'string'
+                              ? Number(datum[itm].value)
+                              : datum[itm].value
+                        : datum[itm].value,
+                    }), {})
+                    : toSnakeCases(numberKeys).indexOf(item) > -1
+                      ? Number(datum)
+                      : (toSnakeCases(completeMatchingKeys).indexOf(item) > -1 && !!datum)
+                        ? datum
+                        : {
+                          contains: `${datum}`,
+                        },
+                },
+                {
+                  [item]: null,
+                },
+              ].slice(0, (toSnakeCases(notNullKeys).indexOf(item) > -1 || datum !== '') ? 1 : 2),
+            },
+          ];
+        }, []),
         ...Object.keys(range).map(item => (
           {
             [toSnakeCase(item)]: {
