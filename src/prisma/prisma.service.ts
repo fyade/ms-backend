@@ -172,7 +172,7 @@ export class PrismaService extends PrismaClient {
                     }), {})
                     : toSnakeCases(numberKeys).indexOf(item) > -1
                       ? Number(datum)
-                      : (toSnakeCases(completeMatchingKeys).indexOf(item) > -1 && !!datum)
+                      : toSnakeCases(completeMatchingKeys).indexOf(item) > -1
                         ? datum
                         : {
                           contains: `${datum}`,
