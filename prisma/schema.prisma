@@ -413,15 +413,18 @@ model log_user_login {
   create_time    DateTime @default(now())
 }
 
-// 0.2 系统操作日子表
-// model log_operation {
-//   id          Int      @id @default(autoincrement()) @db.Int
-//   perms       String   @db.VarChar(100)
-//   user_id     String   @db.VarChar(10)
-//   if_success  String?  @db.Char(1)
-//   remark      String?  @db.VarChar(100)
-//   create_time DateTime @default(now())
-// }
+// 0.2 系统操作日志表
+model log_operation {
+  id           Int      @id @default(autoincrement()) @db.Int
+  perms        String   @db.VarChar(100)
+  user_id      String   @db.VarChar(10)
+  req_param    String   @db.Text
+  old_value    String   @db.Text
+  operate_type String   @db.Char(1)
+  if_success   String   @db.Char(1)
+  remark       String?  @db.VarChar(100)
+  create_time  DateTime @default(now())
+}
 
 // 0.3 算法调用日志表
 model log_algorithm_call {

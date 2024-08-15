@@ -39,6 +39,7 @@ import { LogAlgorithmCallModule } from './module/sys-log/log-algorithm-call/log-
 import { AuthModule } from './module/auth/auth.module';
 import { CacheModule } from './module/cache/cache.module';
 import { OnlineUserModule } from './module/sys-monitor/online-user/online-user.module';
+import { LogOperationModule } from './module/sys-log/log-operation/log-operation.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { OnlineUserModule } from './module/sys-monitor/online-user/online-user.m
     UserGroupPermissionModule,
     LogAlgorithmCallModule,
     OnlineUserModule,
+    LogOperationModule,
   ],
   providers: [
     {

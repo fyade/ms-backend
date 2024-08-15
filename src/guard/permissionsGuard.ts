@@ -9,6 +9,7 @@ import { CachePermissionService } from '../module/cache/cache.permission.service
 import { base } from '../util/base';
 import { getCurrentUser } from '../util/baseContext';
 import { Exception } from '../exception/Exception';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -16,6 +17,7 @@ export class PermissionsGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
     private readonly cachePermissionService: CachePermissionService,
+    private readonly prisma: PrismaService,
   ) {
   }
 
@@ -59,6 +61,11 @@ export class PermissionsGuard implements CanActivate {
     }
     // 页面接口权限控制
     else {
+      // 操作日志
+      await this.prisma.$queryRaw`
+        insert into log_operation (perms, user_id, req_param, old_value, operate_type, if_success, remark)
+        values (${permission}, ${getCurrentUser().user.userid}, '', '', '', '', '');
+      `
       // 是否公共接口
       const ifPublicInterfaceInCache = await this.cachePermissionService.getIfPublicPermissionInCache(permission);
       if (ifPublicInterfaceInCache) {
