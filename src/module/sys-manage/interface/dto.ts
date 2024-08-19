@@ -19,6 +19,8 @@ export class interfaceDto extends baseInterface {
 
   perms: string;
 
+  url: string;
+
   remark: string;
 }
 
@@ -41,6 +43,9 @@ export class interfaceSelListDto extends pageDto {
   @ApiProperty({ description: '权限标识', required: false })
   perms: string;
 
+  @ApiProperty({ description: '请求url', required: false })
+  url: string;
+
   @ApiProperty({ description: '备注', required: false })
   remark: string;
 }
@@ -60,6 +65,9 @@ export class interfaceSelAllDto {
 
   @ApiProperty({ description: '权限标识', required: false })
   perms: string;
+
+  @ApiProperty({ description: '请求url', required: false })
+  url: string;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;
@@ -89,6 +97,10 @@ export class interfaceInsOneDto {
   @ApiProperty({ description: '权限标识', required: true })
   @IsNotEmpty({ message: '权限标识不能为空' })
   perms: string;
+
+  @ApiProperty({ description: '请求url', required: true })
+  @IsNotEmpty({ message: '请求url不能为空' })
+  url: string;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;

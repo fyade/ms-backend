@@ -10,6 +10,7 @@ import { base } from '../util/base';
 import { getCurrentUser } from '../util/baseContext';
 import { Exception } from '../exception/Exception';
 import { PrismaService } from '../prisma/prisma.service';
+import { ParameterException } from '../exception/ParameterException';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -32,6 +33,7 @@ export class PermissionsGuard implements CanActivate {
     // const user = request.body.user as userDto2;
     // delete request.body.user;
     // request.body = request.body.reqBody;
+    // 放行白名单接口
     if (reqWhiteList.indexOf(request.url) > -1) {
       return true;
     }
@@ -50,6 +52,10 @@ export class PermissionsGuard implements CanActivate {
     }
     // 算法接口权限控制
     if (ifSF) {
+      const permission = request.body.perms;
+      if (!permission) {
+        throw new ParameterException('参数错误，权限标识不可为空。');
+      }
       if (user) {
         const permissionsOfUser = await this.authService.hasSFPermissionByUserid(user.userid, permission, request);
         if (permissionsOfUser) {
@@ -65,7 +71,7 @@ export class PermissionsGuard implements CanActivate {
       await this.prisma.$queryRaw`
         insert into log_operation (perms, user_id, req_param, old_value, operate_type, if_success, remark)
         values (${permission}, ${getCurrentUser().user.userid}, '', '', '', '', '');
-      `
+      `;
       // 是否公共接口
       const ifPublicInterfaceInCache = await this.cachePermissionService.getIfPublicPermissionInCache(permission);
       if (ifPublicInterfaceInCache) {
@@ -75,10 +81,10 @@ export class PermissionsGuard implements CanActivate {
       } else {
         const ifPublicInterface = await this.authService.ifPublicInterface(permission);
         if (ifPublicInterface) {
-          await this.cachePermissionService.addPublicPermissionInCache(permission);
+          await this.cachePermissionService.setPublicPermissionInCache(permission);
           return true;
         }
-        await this.cachePermissionService.addPublicPermissionInCache(permission, base.N);
+        await this.cachePermissionService.setPublicPermissionInCache(permission, base.N);
       }
       // 用户是否有当前接口的权限
       if (user) {
@@ -88,7 +94,7 @@ export class PermissionsGuard implements CanActivate {
         }
         const ifHasPermission = await this.authService.hasAdminPermissionByUserid(user.userid, permission);
         if (ifHasPermission) {
-          await this.cachePermissionService.addPermissionInCache(user.userid, permission);
+          await this.cachePermissionService.setPermissionInCache(user.userid, permission);
           return true;
         }
       }

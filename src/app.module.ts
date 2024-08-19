@@ -33,13 +33,13 @@ import { InterfaceModule } from './module/sys-manage/interface/interface.module'
 import {
   InterfaceInterfaceGroupModule,
 } from './module/sys-manage/interface-interface-group/interface-interface-group.module';
-import { AlgorithmV1Module } from './module/algorithm/algorithm-v1/algorithm-v1.module';
 import { UserGroupPermissionModule } from './module/sys-manage/user-group-permission/user-group-permission.module';
 import { LogAlgorithmCallModule } from './module/sys-log/log-algorithm-call/log-algorithm-call.module';
 import { AuthModule } from './module/auth/auth.module';
 import { CacheModule } from './module/cache/cache.module';
 import { OnlineUserModule } from './module/sys-monitor/online-user/online-user.module';
 import { LogOperationModule } from './module/sys-log/log-operation/log-operation.module';
+import { AlgorithmModule } from './module/algorithm/algorithm.module';
 
 @Module({
   imports: [
@@ -75,11 +75,11 @@ import { LogOperationModule } from './module/sys-log/log-operation/log-operation
     UserUserGroupModule,
     InterfaceModule,
     InterfaceInterfaceGroupModule,
-    AlgorithmV1Module,
     UserGroupPermissionModule,
     LogAlgorithmCallModule,
     OnlineUserModule,
     LogOperationModule,
+    AlgorithmModule,
   ],
   providers: [
     {

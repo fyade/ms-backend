@@ -76,8 +76,8 @@ export class DeptPermissionController {
     permission: 'sysManage:deptPermission:upddp',
     label: '更新部门权限（dp）',
   })
-  async delDeptPermissionDp(@Body() dto: deptPermissionUpdManyDPDto): Promise<R> {
-    return this.deptPermissionService.delDeptPermissionDp(dto);
+  async updDeptPermissionDp(@Body() dto: deptPermissionUpdManyDPDto): Promise<R> {
+    return this.deptPermissionService.updDeptPermissionDp(dto);
   }
 
   @Delete()

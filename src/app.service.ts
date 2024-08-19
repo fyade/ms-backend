@@ -31,7 +31,7 @@ export class AppService {
     try {
       const directoryPath = path.join(__dirname, '../../src/module');
       const files = await fs.readdir(directoryPath);
-      for (const path1 of files.filter(item => ['admin-top', 'auth', 'cache'].indexOf(item) === -1)) {
+      for (const path1 of files.filter(item => ['admin-top', 'algorithm', 'auth', 'cache'].indexOf(item) === -1)) {
         const files = await fs.readdir(`${directoryPath}/${path1}`);
         for (const path2 of files) {
           const files = await fs.readdir(`${directoryPath}/${path1}/${path2}`);

@@ -8,6 +8,7 @@ import { getIpInfoFromRequest } from '../../util/RequestUtils';
 import { userGroupPermissionDto } from '../sys-manage/user-group-permission/dto';
 import { Exception } from '../../exception/Exception';
 import { Request } from 'express';
+import { interfaceDto } from '../sys-manage/interface/dto';
 
 @Injectable()
 export class AuthService {
@@ -228,20 +229,10 @@ export class AuthService {
    * 当前用户是否有此算法权限
    * @param userid
    * @param permission
+   * @param request
    */
   async hasSFPermissionByUserid(userid: string, permission: string, request?: Request) {
-    const permissions = await this.getSFPermissionsOfUserid(userid, permission);
-    if (permissions.length === 0) {
-      const permissions2 = await this.getSFPermissionsOfUserid(userid, permission, base.Y);
-      if (permissions2.length > 0) {
-        throw new Exception('请求次数已使用完。');
-      } else {
-        return false;
-      }
-    }
-    const userGroupPermission = permissions[0] as userGroupPermissionDto;
     const algorithmCallDto = new logAlgorithmCallDto();
-    algorithmCallDto.userGroupPermissionId = userGroupPermission.id;
     algorithmCallDto.userId = userid;
     algorithmCallDto.callIp = '';
     algorithmCallDto.ifSuccess = '?';
@@ -253,6 +244,53 @@ export class AuthService {
         console.error(e);
       }
     }
+    const interf: interfaceDto[] = await this.prisma.$queryRaw`
+      select si.id          as id,
+             si.label       as label,
+             si.icon        as icon,
+             si.order_num   as orderNum,
+             si.if_disabled as ifDisabled,
+             si.if_public   as ifPublic,
+             si.perms       as perms,
+             si.url         as url,
+             si.remark      as remark,
+             si.create_by   as createBy,
+             si.update_by   as updateBy,
+             si.create_time as createTime,
+             si.update_time as updateTime,
+             si.deleted     as deleted
+      from sys_interface si
+      where deleted = ${base.N}
+        and perms = ${permission};
+    `;
+    if (interf.length === 0) {
+      throw new Exception('当前算法不存在。');
+    }
+    if (interf.length > 0) {
+      // 是否公共算法
+      if (interf[0].ifPublic === base.Y) {
+        await this.prisma.$queryRaw`
+        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
+        values (-1, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
+      `;
+        return true;
+      }
+      // 是否禁用
+      if (interf[0].ifDisabled === base.Y) {
+        throw new Exception('当前算法被禁用。');
+      }
+    }
+    const permissions = await this.getSFPermissionsOfUserid(userid, permission);
+    if (permissions.length === 0) {
+      const permissions2 = await this.getSFPermissionsOfUserid(userid, permission, base.Y);
+      if (permissions2.length > 0) {
+        throw new Exception('请求次数已使用完。');
+      } else {
+        return false;
+      }
+    }
+    const userGroupPermission = permissions[0] as userGroupPermissionDto;
+    algorithmCallDto.userGroupPermissionId = userGroupPermission.id;
     // 没长期权限，不在时间期限内，则阻止
     if (userGroupPermission.ifLongTerm === base.N) {
       if (new Date().getTime() < new Date(userGroupPermission.permissionStartTime).getTime() || new Date().getTime() > new Date(userGroupPermission.permissionEndTime).getTime()) {

@@ -27,7 +27,7 @@ export class CachePermissionService {
    * @param userId
    * @param permission
    */
-  async addPermissionInCache(userId: string, permission: string) {
+  async setPermissionInCache(userId: string, permission: string) {
     await this.redis.hset(this.USER_PERMISSION, `${permission}---${userId}`, base.Y);
   }
 
@@ -54,7 +54,7 @@ export class CachePermissionService {
    * @param permission
    * @param value
    */
-  async addPublicPermissionInCache(permission: string, value = base.Y) {
+  async setPublicPermissionInCache(permission: string, value = base.Y) {
     await this.redis.hset(this.PERMISSION_PUBLIC, `${permission}`, value);
   }
 

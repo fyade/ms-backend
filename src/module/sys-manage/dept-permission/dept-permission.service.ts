@@ -47,7 +47,7 @@ export class DeptPermissionService {
     return R.ok(res);
   }
 
-  async delDeptPermissionDp(dto: deptPermissionUpdManyDPDto): Promise<R> {
+  async updDeptPermissionDp(dto: deptPermissionUpdManyDPDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     const allDeptPermission = await this.prisma.findAll<deptPermissionDto>('sys_dept_permission', {
       data: { deptId: dto.deptId },

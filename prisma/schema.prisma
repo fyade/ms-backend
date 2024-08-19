@@ -265,6 +265,7 @@ model sys_interface {
   if_disabled String   @db.Char(1)
   if_public   String   @db.Char(1)
   perms       String   @db.VarChar(100)
+  url         String   @db.VarChar(100)
   remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)

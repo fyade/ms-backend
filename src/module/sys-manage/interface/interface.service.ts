@@ -12,8 +12,9 @@ export class InterfaceService {
     const res = await this.prisma.findPage<interfaceDto, interfaceSelListDto>('sys_interface', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'orderNum', 'ifDisabled', 'ifPublic', 'perms'],
+      notNullKeys: ['label', 'orderNum', 'ifDisabled', 'ifPublic', 'perms', 'url'],
       numberKeys: ['orderNum'],
+      completeMatchingKeys: ['perms'],
     });
     return R.ok(res);
   }
@@ -22,8 +23,9 @@ export class InterfaceService {
     const res = await this.prisma.findAll<interfaceDto>('sys_interface', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'orderNum', 'ifDisabled', 'ifPublic', 'perms'],
+      notNullKeys: ['label', 'orderNum', 'ifDisabled', 'ifPublic', 'perms', 'url'],
       numberKeys: ['orderNum'],
+      completeMatchingKeys: ['perms'],
     });
     return R.ok(res);
   }
