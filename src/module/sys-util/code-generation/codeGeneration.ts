@@ -18,6 +18,7 @@ import { codeGenColumnDto } from '../code-gen-column/dto';
 import { capitalizeFirstLetter, lowercaseFirstLetter, toCamelCase, toKebabCase } from '../../../util/BaseUtils';
 import { base, publicDict } from '../../../util/base';
 import { getDBTableName } from '../../../util/RegularUtils';
+import { Exception } from '../../../exception/Exception';
 
 const baseInterfaceColumns = [
   'createBy',
@@ -33,6 +34,10 @@ const baseInterfaceColumns = [
  * @param columns
  */
 export function codeGeneration({ table, columns }: { table: codeGenTableDto, columns: codeGenColumnDto[] }) {
+  const find = columns.find(item => item.colName === 'id');
+  if (!find) {
+    throw new Exception('无id字段。');
+  }
   const businessName = lowercaseFirstLetter(table.businessName);
   const moduleName = lowercaseFirstLetter(table.moduleName);
   const getDefaultValue = (tsName: string, tsType: string) => {
@@ -119,8 +124,8 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
       (tsName: any, index: number, length: number) => {
         const string = `            <el-form-item :label="state.dict['${tsName}']" prop="${tsName}">
               <el-radio-group v-model="state.dialogForm['${tsName}']">
-                <el-radio :label="final.Y">是</el-radio>
-                <el-radio :label="final.N">否</el-radio>
+                <el-radio :value="final.Y">是</el-radio>
+                <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>`;
         const ifLastAndSingular = index === length - 1 && length % 2 === 1
@@ -138,7 +143,7 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[\`\${$index}-${tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['${tsName}']" :true-label="final.Y" :false-label="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index]['${tsName}']" :true-value="final.Y" :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>`;
@@ -172,6 +177,7 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
       }
     ]
   ]
+  const dBTableName = getDBTableName(table.tableDescr);
   const hd1 =
 `${`import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';`}
 ${`import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';`}
@@ -182,7 +188,7 @@ ${`import { ValidationPipe } from '../../../pipe/validation/validation.pipe';`}
 ${`import { ${moduleName}SelListDto, ${moduleName}SelAllDto, ${moduleName}InsOneDto, ${moduleName}UpdOneDto } from './dto';`}
 ${``}
 ${`@Controller('/${toKebabCase(businessName)}/${toKebabCase(moduleName)}')`}
-${`@ApiTags('${getDBTableName(table.tableDescr)}')`}
+${`@ApiTags('${dBTableName}')`}
 ${`@ApiBearerAuth()`}
 ${`@UsePipes(new ValidationPipe())`}
 ${`export class ${capitalizeFirstLetter(moduleName)}Controller {`}
@@ -191,11 +197,11 @@ ${`  }`}
 ${``}
 ${`  @Get()`}
 ${`  @ApiOperation({`}
-${`    summary: '分页查询${getDBTableName(table.tableDescr)}',`}
+${`    summary: '分页查询${dBTableName}',`}
 ${`  })`}
 ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:selList',`}
-${`    label: '分页查询${getDBTableName(table.tableDescr)}',`}
+${`    label: '分页查询${dBTableName}',`}
 ${`  })`}
 ${`  async sel${capitalizeFirstLetter(moduleName)}(@Query() dto: ${moduleName}SelListDto): Promise<R> {`}
 ${`    return this.${moduleName}Service.sel${capitalizeFirstLetter(moduleName)}(dto);`}
@@ -203,11 +209,11 @@ ${`  }`}
 ${``}
 ${`  @Get('/all')`}
 ${`  @ApiOperation({`}
-${`    summary: '查询所有${getDBTableName(table.tableDescr)}',`}
+${`    summary: '查询所有${dBTableName}',`}
 ${`  })`}
 ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:selAll',`}
-${`    label: '查询所有${getDBTableName(table.tableDescr)}',`}
+${`    label: '查询所有${dBTableName}',`}
 ${`  })`}
 ${`  async selAll${capitalizeFirstLetter(moduleName)}(@Query() dto: ${moduleName}SelAllDto): Promise<R> {`}
 ${`    return this.${moduleName}Service.selAll${capitalizeFirstLetter(moduleName)}(dto);`}
@@ -215,7 +221,7 @@ ${`  }`}
 ${``}
 ${`  @Get('/ids')`}
 ${`  @ApiOperation({`}
-${`    summary: '查询多个${getDBTableName(table.tableDescr)}（根据id）',`}
+${`    summary: '查询多个${dBTableName}（根据id）',`}
 ${`  })`}
 ${`  @ApiQuery({`}
 ${`    name: 'ids',`}
@@ -225,7 +231,7 @@ ${`    type: Number,`}
 ${`  })`}
 ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:selOnes',`}
-${`    label: '查询多个${getDBTableName(table.tableDescr)}（根据id）',`}
+${`    label: '查询多个${dBTableName}（根据id）',`}
 ${`  })`}
 ${`  async selOnes${capitalizeFirstLetter(moduleName)}(@Query() ids: number[]): Promise<R> {`}
 ${`    return this.${moduleName}Service.selOnes${capitalizeFirstLetter(moduleName)}(ids);`}
@@ -233,11 +239,11 @@ ${`  }`}
 ${``}
 ${`  @Get('/:id')`}
 ${`  @ApiOperation({`}
-${`    summary: '查询单个${getDBTableName(table.tableDescr)}',`}
+${`    summary: '查询单个${dBTableName}',`}
 ${`  })`}
 ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:selOne',`}
-${`    label: '查询单个${getDBTableName(table.tableDescr)}',`}
+${`    label: '查询单个${dBTableName}',`}
 ${`  })`}
 ${`  async selOne${capitalizeFirstLetter(moduleName)}(@Param('id') id: number): Promise<R> {`}
 ${`    return this.${moduleName}Service.selOne${capitalizeFirstLetter(moduleName)}(id);`}
@@ -245,11 +251,11 @@ ${`  }`}
 ${``}
 ${`  @Post()`}
 ${`  @ApiOperation({`}
-${`    summary: '新增${getDBTableName(table.tableDescr)}',`}
+${`    summary: '新增${dBTableName}',`}
 ${`  })`}
 ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:ins',`}
-${`    label: '新增${getDBTableName(table.tableDescr)}',`}
+${`    label: '新增${dBTableName}',`}
 ${`  })`}
 ${`  async ins${capitalizeFirstLetter(moduleName)}(@Body() dto: ${moduleName}InsOneDto): Promise<R> {`}
 ${`    return this.${moduleName}Service.ins${capitalizeFirstLetter(moduleName)}(dto);`}
@@ -257,7 +263,7 @@ ${`  }`}
 ${``}
 ${`  @Post('/s')`}
 ${`  @ApiOperation({`}
-${`    summary: '批量新增${getDBTableName(table.tableDescr)}',`}
+${`    summary: '批量新增${dBTableName}',`}
 ${`  })`}
 ${`  @ApiBody({`}
 ${`    isArray: true,`}
@@ -265,7 +271,7 @@ ${`    type: ${moduleName}InsOneDto,`}
 ${`  })`}
 ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:inss',`}
-${`    label: '批量新增${getDBTableName(table.tableDescr)}',`}
+${`    label: '批量新增${dBTableName}',`}
 ${`  })`}
 ${`  async ins${capitalizeFirstLetter(moduleName)}s(@Body(`}
 ${`    new ParseArrayPipe({`}
@@ -277,11 +283,11 @@ ${`  }`}
 ${``}
 ${`  @Put()`}
 ${`  @ApiOperation({`}
-${`    summary: '修改${getDBTableName(table.tableDescr)}',`}
+${`    summary: '修改${dBTableName}',`}
 ${`  })`}
 ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:upd',`}
-${`    label: '修改${getDBTableName(table.tableDescr)}',`}
+${`    label: '修改${dBTableName}',`}
 ${`  })`}
 ${`  async upd${capitalizeFirstLetter(moduleName)}(@Body() dto: ${moduleName}UpdOneDto): Promise<R> {`}
 ${`    return this.${moduleName}Service.upd${capitalizeFirstLetter(moduleName)}(dto);`}
@@ -289,7 +295,7 @@ ${`  }`}
 ${``}
 ${`  @Put('/s')`}
 ${`  @ApiOperation({`}
-${`    summary: '批量修改${getDBTableName(table.tableDescr)}',`}
+${`    summary: '批量修改${dBTableName}',`}
 ${`  })`}
 ${`  @ApiBody({`}
 ${`    isArray: true,`}
@@ -297,7 +303,7 @@ ${`    type: ${moduleName}UpdOneDto,`}
 ${`  })`}
 ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:upds',`}
-${`    label: '批量修改${getDBTableName(table.tableDescr)}',`}
+${`    label: '批量修改${dBTableName}',`}
 ${`  })`}
 ${`  async upd${capitalizeFirstLetter(moduleName)}s(@Body(`}
 ${`    new ParseArrayPipe({`}
@@ -309,7 +315,7 @@ ${`  }`}
 ${``}
 ${`  @Delete()`}
 ${`  @ApiOperation({`}
-${`    summary: '删除${getDBTableName(table.tableDescr)}',`}
+${`    summary: '删除${dBTableName}',`}
 ${`  })`}
 ${`  @ApiBody({`}
 ${`    isArray: true,`}
@@ -317,7 +323,7 @@ ${`    type: Number,`}
 ${`  })`}
 ${`  @Authorize({`}
 ${`    permission: '${businessName}:${moduleName}:del',`}
-${`    label: '删除${getDBTableName(table.tableDescr)}',`}
+${`    label: '删除${dBTableName}',`}
 ${`  })`}
 ${`  async del${capitalizeFirstLetter(moduleName)}(@Body() ids: number[]): Promise<R> {`}
 ${`    return this.${moduleName}Service.del${capitalizeFirstLetter(moduleName)}(ids);`}
@@ -795,7 +801,7 @@ ${`})`}
 ${`</script>`}
 ` + `
 ${`<template>`}
-${`  <!--弹框-->`}
+${`  <!--弹窗-->`}
 ${`  <el-dialog`}
 ${`      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"`}
 ${`      v-model="dialogVisible"`}
@@ -842,8 +848,8 @@ ${`        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-valu
 ${`        <!--</el-form-item>-->`}
 ${`        <!--<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>-->`}
 ${`        <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->`}
-${`        <!--    <el-radio :label="final.Y">是</el-radio>-->`}
-${`        <!--    <el-radio :label="final.N">否</el-radio>-->`}
+${`        <!--    <el-radio :value="final.Y">是</el-radio>-->`}
+${`        <!--    <el-radio :value="final.N">否</el-radio>-->`}
 ${`        <!--  </el-radio-group>-->`}
 ${`        <!--</el-form-item>-->`}
 ${`        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->`}

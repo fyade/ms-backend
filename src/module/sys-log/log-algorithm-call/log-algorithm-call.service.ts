@@ -18,8 +18,9 @@ export class LogAlgorithmCallService {
     const res = await this.prisma.findPage<logAlgorithmCallDto, logAlgorithmCallSelListDto>('log_algorithm_call', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'callIp', 'ifSuccess'],
-      numberKeys: [],
+      notNullKeys: ['userGroupPermissionId', 'userId'],
+      numberKeys: ['userGroupPermissionId'],
+      completeMatchingKeys: [],
       ifDeleted: false,
     });
     return R.ok(res);
@@ -29,8 +30,9 @@ export class LogAlgorithmCallService {
     const res = await this.prisma.findAll<logAlgorithmCallDto>('log_algorithm_call', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'callIp', 'ifSuccess'],
-      numberKeys: [],
+      notNullKeys: ['userGroupPermissionId', 'userId'],
+      numberKeys: ['userGroupPermissionId'],
+      completeMatchingKeys: [],
       ifDeleted: false,
     });
     return R.ok(res);

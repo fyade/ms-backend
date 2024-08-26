@@ -53,7 +53,7 @@ VALUES (1, '系统管理', 'sys-manage', 0, '#', 'system', 1, 'N', 'Y', 'N', 'N'
        (23, '外链', 'official-website', 0, '#', 'take-off', 5, 'N', 'Y', 'N', 'N', 'officialWebsite', '', 'fyaaa',
         'fyaaa', '2024-08-19 10:59:41.000', '2024-08-19 10:59:41.000', 'N', 'mm'),
        (24, '知笙官网', 'https://github.com/fyade/ms-frontend-admin', 23, '#', 'take-off', 1, 'Y', 'Y', 'N', 'N',
-        'officialWebsite2', '', 'fyaaa', 'fyaaa', '2024-08-19 11:01:06.000', '2024-08-19 11:01:06.000', 'N', 'mm'),
+        'officialWebsite:1', '', 'fyaaa', 'fyaaa', '2024-08-19 11:01:06.000', '2024-08-19 11:01:06.000', 'N', 'mm'),
        (25, '开源地址', 'https://github.com/fyade/ms-frontend-admin', 23, '#', 'take-off', 2, 'Y', 'Y', 'N', 'N',
         'officialWebsite:2', '', 'fyaaa', 'fyaaa', '2024-08-19 11:01:43.000', '2024-08-19 11:01:43.000', 'N', 'mm'),
        (26, '菜单接口组（隐藏）', '#', 0, '#', 'hourglass-null', 1000, 'N', 'N', 'N', 'N', 'i', '', 'fyaaa', 'fyaaa',

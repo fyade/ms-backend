@@ -3,7 +3,8 @@
  * @param str
  */
 export function getDBTableName(str: string): string {
-  let aaa = str.match(/[\u4e00-\u9fa5-]+/)[0];
+  const regExpMatchArray = str.match(/[\u4e00-\u9fa5-]+/);
+  let aaa = (regExpMatchArray && regExpMatchArray.length > 0) ? regExpMatchArray[0] : str;
   if (aaa.endsWith('表')) {
     aaa = aaa.substring(0, aaa.length - 1);
   }
