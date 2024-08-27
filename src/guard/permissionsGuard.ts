@@ -70,7 +70,7 @@ export class PermissionsGuard implements CanActivate {
       // 操作日志
       await this.prisma.$queryRaw`
         insert into log_operation (perms, user_id, req_param, old_value, operate_type, if_success, remark)
-        values (${permission}, ${user.userid}, '', '', '', '', '');
+        values (${permission}, ${user?user.userid:'null'}, '', '', '', '', '');
       `;
       // 是否公共接口
       const ifPublicInterfaceInCache = await this.cachePermissionService.getIfPublicPermissionInCache(permission);
