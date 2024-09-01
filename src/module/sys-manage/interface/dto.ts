@@ -52,25 +52,25 @@ export class interfaceSelListDto extends pageDto {
 
 export class interfaceSelAllDto {
   @ApiProperty({ description: '接口名', required: false })
-  label: string;
+  label?: string;
 
   @ApiProperty({ description: '顺序', required: false })
-  orderNum: number;
+  orderNum?: number;
 
   @ApiProperty({ description: '是否禁用', required: false })
-  ifDisabled: string;
+  ifDisabled?: string;
 
   @ApiProperty({ description: '是否公共接口', required: false })
-  ifPublic: string;
+  ifPublic?: string;
 
   @ApiProperty({ description: '权限标识', required: false })
-  perms: string;
+  perms?: string;
 
   @ApiProperty({ description: '请求url', required: false })
-  url: string;
+  url?: string;
 
   @ApiProperty({ description: '备注', required: false })
-  remark: string;
+  remark?: string;
 }
 
 export class interfaceInsOneDto {

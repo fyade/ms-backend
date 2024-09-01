@@ -353,8 +353,9 @@ export class AuthService {
    * 当前用户的算法权限列表
    * @param userid
    * @param permission
+   * @param ifIgnoreUseUp
    */
-  async getSFPermissionsOfUserid(userid: string, permission: string, ifIgnoreUseUp = base.N) {
+  async getSFPermissionsOfUserid(userid: string, permission: string, ifIgnoreUseUp = base.N): Promise<userGroupPermissionDto[]> {
     const userSFPermissions = await this.prisma.$queryRaw`
       select sugp.id                       as id,
              sugp.user_group_id            as userGroupId,
@@ -375,7 +376,7 @@ export class AuthService {
              sugp.deleted                  as deleted
       from sys_user_group_permission sugp
       where sugp.deleted = ${base.N}
-        and sugp.if_use_up = ${ifIgnoreUseUp}
+        and sugp.if_use_up like ${ifIgnoreUseUp === base.Y ? '%%' : `%${base.N}%`}
         and sugp.user_group_id in
             (select suug.user_group_id
              from sys_user_user_group suug

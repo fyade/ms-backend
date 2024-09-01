@@ -1,8 +1,8 @@
 import { HTTP } from './Enum';
 
-export class R {
+export class R<T = any> {
   public code: number;
-  public data: any;
+  public data: T;
   public msg: string;
   private time: Date;
   private timestamp: number;

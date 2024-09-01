@@ -43,9 +43,6 @@ const config = {
     req: {
       baseURL: '',
     },
-    sf: {
-      baseURL: '',
-    },
   },
   test: {},
   prod: {}

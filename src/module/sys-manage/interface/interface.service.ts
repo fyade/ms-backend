@@ -19,7 +19,7 @@ export class InterfaceService {
     return R.ok(res);
   }
 
-  async selAllInterface(dto: interfaceSelAllDto): Promise<R> {
+  async selAllInterface(dto: interfaceSelAllDto): Promise<R<interfaceDto[]>> {
     const res = await this.prisma.findAll<interfaceDto>('sys_interface', {
       data: dto,
       orderBy: true,

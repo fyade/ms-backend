@@ -11,6 +11,8 @@ export class interfaceGroupDto extends baseInterface {
 
   parentId: number;
 
+  baseURL: string;
+
   orderNum: number;
 
   remark: string;
@@ -26,6 +28,9 @@ export class interfaceGroupSelListDto extends pageDto {
   @ApiProperty({ description: '父级接口组', required: false })
   parentId: number;
 
+  @ApiProperty({ description: 'baseURL', required: false })
+  baseURL: string;
+
   @ApiProperty({ description: '顺序', required: false })
   orderNum: number;
 
@@ -39,6 +44,9 @@ export class interfaceGroupSelAllDto {
 
   @ApiProperty({ description: '父级接口组', required: false })
   parentId: number;
+
+  @ApiProperty({ description: 'baseURL', required: false })
+  baseURL: string;
 
   @ApiProperty({ description: '顺序', required: false })
   orderNum: number;
@@ -56,6 +64,10 @@ export class interfaceGroupInsOneDto {
   @Type(() => Number)
   @IsNotEmpty({ message: '父级接口组不能为空' })
   parentId: number;
+
+  @ApiProperty({ description: 'baseURL', required: true })
+  @IsNotEmpty({ message: 'baseURL不能为空' })
+  baseURL: string;
 
   @ApiProperty({ description: '顺序', required: true })
   @Type(() => Number)

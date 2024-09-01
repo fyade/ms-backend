@@ -12,8 +12,9 @@ export class InterfaceGroupService {
     const res = await this.prisma.findPage<interfaceGroupDto, interfaceGroupSelListDto>('sys_interface_group', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'parentId', 'orderNum'],
+      notNullKeys: ['label', 'parentId', 'baseURL', 'orderNum'],
       numberKeys: ['parentId', 'orderNum'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -22,8 +23,9 @@ export class InterfaceGroupService {
     const res = await this.prisma.findAll<interfaceGroupDto>('sys_interface_group', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'parentId', 'orderNum'],
+      notNullKeys: ['label', 'parentId', 'baseURL', 'orderNum'],
       numberKeys: ['parentId', 'orderNum'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -33,7 +35,7 @@ export class InterfaceGroupService {
     return R.ok(res);
   }
 
-  async selOneInterfaceGroup(id: number): Promise<R> {
+  async selOneInterfaceGroup(id: number): Promise<R<interfaceGroupDto>> {
     const res = await this.prisma.findById<interfaceGroupDto>('sys_interface_group', Number(id));
     return R.ok(res);
   }

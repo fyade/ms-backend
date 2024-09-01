@@ -111,7 +111,7 @@ export function objToSnakeCase<T extends ObjectType>(obj: T): T {
   }
   const newObj = obj instanceof Date ? obj : Array.isArray(obj) ? [] : {} as unknown as T;
   for (const key in obj) {
-    const newKey = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase() as keyof any;
+    const newKey = key.replace(/([A-Z])/g, '_$1').toLowerCase() as keyof any;
     newObj[newKey] = objToSnakeCase(obj[key]) as T[keyof T];
   }
   return newObj as T;
