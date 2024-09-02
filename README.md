@@ -75,6 +75,12 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 4. 运行 `$env:NODE_ENV="prod"; node .\main.js` 命令，其中 NODE_ENV 是命令行变量，在不同系统、不同命令行工具中写法不一样，请根据自身情况修改。
 
+## 修改数据库结构 How to edit database
+
+1. 在 /prisma/schema.prisma 中定义数据库；
+
+2. 在 .env 中定义数据库地址，随后运行 `npx prisma migrate dev --name gx` 命令。
+
 ## 命令 Bin
 
 启动命令：
