@@ -98,6 +98,11 @@ npx prisma init
 $ npx prisma migrate dev --name init
 ```
 
+重置数据库：
+```bash
+$ npx prisma migrate reset
+```
+
 生成 Prisma Client：
 ```bash
 $ npx prisma generate
