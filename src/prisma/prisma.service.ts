@@ -104,6 +104,34 @@ export class PrismaService extends PrismaClient {
       },
       log: env.mode === base.DEV ? ['query', 'info', 'warn'] : [],
     });
+    // 使用中间件对查询结果中的Bigint类型进行序列化
+    super.$use(async (params, next) => {
+      const t1 = Date.now();
+      const result = await next(params);
+      const t2 = Date.now();
+      console.info(`Query ${params.model}.${params.action} took ${t2 - t1}ms`);
+      return this.serialize(result);
+    });
+  }
+
+  private serialize(obj) {
+    if (typeOf(obj) === 'bigint') {
+      return parseInt(`${obj}`);
+    } else if (typeOf(obj) === 'object') {
+      return JSON.parse(
+        JSON.stringify(obj, (key, value) => {
+          if (typeOf(value) === 'bigint') {
+            return parseInt(`${value}`);
+          }
+          return value;
+        }),
+      );
+    } else if (typeOf(obj) === 'array') {
+      return obj.map(item => {
+        return this.serialize(item);
+      });
+    }
+    return obj;
   }
 
   private getModel(model: string): any {
@@ -114,23 +142,23 @@ export class PrismaService extends PrismaClient {
     return modelInstance;
   }
 
-  genSelParams<T, P>({
-                       data,
-                       orderBy,
-                       range = {},
-                       notNullKeys = [],
-                       numberKeys = [],
-                       completeMatchingKeys = [],
-                       ifDeleted = true,
-                     }: {
-                       data?: P,
-                       orderBy?: boolean | object,
-                       range?: object,
-                       notNullKeys?: string[]
-                       numberKeys?: string[]
-                       completeMatchingKeys?: string[]
-                       ifDeleted?: boolean
-                     } = {},
+  private genSelParams<T, P>({
+                               data,
+                               orderBy,
+                               range = {},
+                               notNullKeys = [],
+                               numberKeys = [],
+                               completeMatchingKeys = [],
+                               ifDeleted = true,
+                             }: {
+                               data?: P,
+                               orderBy?: boolean | object,
+                               range?: object,
+                               notNullKeys?: string[]
+                               numberKeys?: string[]
+                               completeMatchingKeys?: string[]
+                               ifDeleted?: boolean
+                             } = {},
   ) {
     const data_ = objToSnakeCase(data);
     const publicData = this.defaultSelArg({ ifDeleted }).where;
