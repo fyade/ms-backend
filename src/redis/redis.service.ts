@@ -31,12 +31,16 @@ export class RedisService {
     return await this.redis.del(key);
   }
 
-  async increment(key: string): Promise<number> {
+  async incr(key: string): Promise<number> {
     return await this.redis.incr(key);
   }
 
-  async decrement(key: string): Promise<number> {
+  async decr(key: string): Promise<number> {
     return await this.redis.decr(key);
+  }
+
+  async setex(key: string, seconds: number, value: string): Promise<void> {
+    await this.redis.setex(key, seconds, value);
   }
 
   // 集合操作
@@ -106,11 +110,5 @@ export class RedisService {
       entriesObject[key] = value;
     }
     return { nextCursor, entries: entriesObject };
-  }
-
-  // setex操作
-
-  async setex(key: string, seconds: number, value: string) {
-    await this.redis.setex(key, seconds, value);
   }
 }

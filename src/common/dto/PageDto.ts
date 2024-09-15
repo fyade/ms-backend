@@ -12,6 +12,4 @@ export class pageDto {
   @Type(() => Number)
   @Min(1, { message: 'pageSize最小值为1' })
   pageSize: number;
-
-  orderBy: boolean;
 }

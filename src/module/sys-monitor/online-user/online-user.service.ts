@@ -14,13 +14,13 @@ export class OnlineUserService {
   ) {
   }
 
-  async selOnlineUser(dto: onlineUserSelListDto): Promise<R> {
-    const res = await this.redis.hscan(this.cacheTokenService.USERID_UUID, dto.pageNum, dto.pageSize);
-    return R.ok(res);
-  }
-
-  async delOnlineUser(ids: number[]): Promise<R> {
-    // this.cacheTokenService.
-    return R.ok();
-  }
+  // async selOnlineUser(dto: onlineUserSelListDto): Promise<R> {
+  //   // const res = await this.redis.hscan(this.cacheTokenService.USERID_UUID, dto.pageNum, dto.pageSize);
+  //   return R.ok(res);
+  // }
+  //
+  // async delOnlineUser(ids: number[]): Promise<R> {
+  //   // this.cacheTokenService.
+  //   return R.ok();
+  // }
 }

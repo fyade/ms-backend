@@ -14,31 +14,31 @@ export class OnlineUserController {
   constructor(private readonly onlineUserService: OnlineUserService) {
   }
 
-  @Get()
-  @ApiOperation({
-    summary: '分页查询在线用户',
-  })
-  @Authorize({
-    permission: 'sysMonitor:onlineUser:selList',
-    label: '分页查询在线用户',
-  })
-  async selOnlineUser(@Query() dto: onlineUserSelListDto): Promise<R> {
-    return this.onlineUserService.selOnlineUser(dto);
-  }
-
-  @Delete()
-  @ApiOperation({
-    summary: '强退用户',
-  })
-  @ApiBody({
-    isArray: true,
-    type: Number,
-  })
-  @Authorize({
-    permission: 'sysMonitor:onlineUser:del',
-    label: '强退用户',
-  })
-  async delOnlineUser(@Body() ids: number[]): Promise<R> {
-    return this.onlineUserService.delOnlineUser(ids);
-  }
+  // @Get()
+  // @ApiOperation({
+  //   summary: '分页查询在线用户',
+  // })
+  // @Authorize({
+  //   permission: 'sysMonitor:onlineUser:selList',
+  //   label: '分页查询在线用户',
+  // })
+  // async selOnlineUser(@Query() dto: onlineUserSelListDto): Promise<R> {
+  //   return this.onlineUserService.selOnlineUser(dto);
+  // }
+  //
+  // @Delete()
+  // @ApiOperation({
+  //   summary: '强退用户',
+  // })
+  // @ApiBody({
+  //   isArray: true,
+  //   type: Number,
+  // })
+  // @Authorize({
+  //   permission: 'sysMonitor:onlineUser:del',
+  //   label: '强退用户',
+  // })
+  // async delOnlineUser(@Body() ids: number[]): Promise<R> {
+  //   return this.onlineUserService.delOnlineUser(ids);
+  // }
 }
