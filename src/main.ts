@@ -12,7 +12,7 @@ async function bootstrap() {
     next();
   });
   const node_env = currentEnv();
-  if ([base.DEV, base.TEST].indexOf(node_env.mode) > -1) {
+  if ([base.DEV, base.TEST].includes(node_env.mode)) {
     const swaggerOptions = new DocumentBuilder()
       .addBearerAuth()
       .setTitle('知笙后台管理系统')

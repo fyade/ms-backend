@@ -66,7 +66,9 @@ export class UserController {
     label: '管理员新建用户',
   })
   async insUser(@Body() dto: adminNewUserDto) {
-    dto.password = decrypt(dto.password);
+    if (dto.psdType === 'b') {
+      dto.password = decrypt(dto.password);
+    }
     return this.userService.insUser(dto);
   }
 
@@ -92,9 +94,15 @@ export class UserController {
     label: '修改密码',
   })
   async updPsd(@Body() dto: updPsdDto) {
-    dto.oldp = decrypt(dto.oldp);
-    dto.newp1 = decrypt(dto.newp1);
-    dto.newp2 = decrypt(dto.newp2);
+    if (dto.oldpType === 'b') {
+      dto.oldp = decrypt(dto.oldp);
+    }
+    if (dto.newp1Type === 'b') {
+      dto.newp1 = decrypt(dto.newp1);
+    }
+    if (dto.newp2Type === 'b') {
+      dto.newp2 = decrypt(dto.newp2);
+    }
     if (dto.newp1 !== dto.newp2) return R.err('新密码不一致。');
     return this.userService.updPsd(dto);
   }
@@ -108,7 +116,9 @@ export class UserController {
     label: '管理员重置用户密码',
   })
   async adminResetUserPsd(@Body() dto: resetPsdDto): Promise<R> {
-    dto.password = decrypt(dto.password);
+    if (dto.psdType === 'b') {
+      dto.password = decrypt(dto.password);
+    }
     return this.userService.adminResetUserPsd(dto);
   }
 }

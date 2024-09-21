@@ -1,6 +1,6 @@
 ## 关于 About
 
-这是一个后台管理系统模板，前端语言为Vue.js（Vue3），后端语言为Nest.js。
+这是一个后台管理系统模板，前端语言为Vue.js（Vue3），后端语言为Nest.js，建议Node版本：20.12.0。
 
 前端开源地址：
 - https://github.com/fyade/ms-frontend-admin
@@ -51,17 +51,23 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 然后还需要向 sys_menu 表中插入初始数据，初始数据位于 /bin/sql.sql；
 
-随后需要插入一个初始用户，由于密码的加密密钥是您自定义的，所以无法直接往数据库中插入用户，所以请遵循以下步骤：
+随后需要插入一个初始用户，步骤如下：
 
-4.1 启动前端项目，f12打开开发者工具，在登录页面输入您的用户名与密码，点登录，随后你可以在开发者工具的网络标签下看到登录请求，复制其请求体参数；
+4.1 打开 api 工具如 postman，调用 /sys/user/regist 接口，请求方法为 POST ，请求体参数如下，其中username和password改成管理员的用户名和密码、psdType勿更改；
 
-4.2 打开 api 工具如 postman，调用 /sys/user/regist 接口，请求方法为 POST ，请求体参数中输入刚才复制的请求体参数，发送请求；
+```json
+{
+  "username": "username",
+  "password": "password",
+  "psdType": "a"
+}
+```
 
-4.3 请求成功后，打开数据库管理软件，打开 sys_user 表，复制刚注册的用户的 id 字段；
+4.2 随后发送请求，请求成功后，打开数据库管理软件，打开 sys_user 表，复制刚注册的用户的 id 字段；
 
-4.4 打开 sys_admin_top 表，添加一条记录，其中 user_id 为刚复制的 id ， deleted 为 'N'，其他随意；
+4.3 打开 sys_admin_top 表，添加一条记录，其中 user_id 为刚复制的 id ， deleted 为 'N'，其他随意；
 
-4.5 `npm run start:dev` 运行；
+4.4 `npm run start:dev` 运行；
 
 ## 打包教程 How to build
 

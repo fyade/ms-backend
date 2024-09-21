@@ -109,7 +109,9 @@ export class PrismaService extends PrismaClient {
       const t1 = Date.now();
       const result = await next(params);
       const t2 = Date.now();
-      console.info(`Query ${params.model}.${params.action} took ${t2 - t1}ms`);
+      if ([base.DEV, base.TEST].includes(currentEnv().mode)) {
+        console.info(`Query ${params.model}.${params.action} took ${t2 - t1}ms`);
+      }
       return this.serialize(result);
     });
   }
@@ -198,9 +200,9 @@ export class PrismaService extends PrismaClient {
                               : datum[itm].value
                         : datum[itm].value,
                     }), {})
-                    : toSnakeCases(numberKeys).indexOf(item) > -1
+                    : toSnakeCases(numberKeys).includes(item)
                       ? Number(datum)
-                      : (toSnakeCases(completeMatchingKeys).indexOf(item) > -1 && !!datum)
+                      : (toSnakeCases(completeMatchingKeys).includes(item) && !!datum)
                         ? datum
                         : {
                           contains: `${datum}`,
@@ -209,7 +211,7 @@ export class PrismaService extends PrismaClient {
                 {
                   [item]: null,
                 },
-              ].slice(0, (toSnakeCases(notNullKeys).indexOf(item) > -1 || datum !== '') ? 1 : 2),
+              ].slice(0, (toSnakeCases(notNullKeys).includes(item) || datum !== '') ? 1 : 2),
             },
           ];
         }, []),

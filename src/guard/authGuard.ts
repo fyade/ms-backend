@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
     // };
     const oauth = request.headers['authorization'];
     const token = typeof oauth === 'string' ? (oauth.startsWith('Bearer ') ? oauth.substring(7) : oauth) : '';
-    if (reqWhiteList.indexOf(request.url) > -1 || request.url === adminLoginUrl) {
+    if (reqWhiteList.includes(request.url) || request.url === adminLoginUrl) {
     } else if (token) {
       try {
         const decoded = await this.cacheTokenService.verifyToken(token);

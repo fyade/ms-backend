@@ -34,7 +34,7 @@ export class PermissionsGuard implements CanActivate {
     // delete request.body.user;
     // request.body = request.body.reqBody;
     // 放行白名单接口
-    if (reqWhiteList.indexOf(request.url) > -1) {
+    if (reqWhiteList.includes(request.url)) {
       return true;
     }
     // 放行管理员登录接口

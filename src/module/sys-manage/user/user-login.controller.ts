@@ -22,7 +22,9 @@ export class UserLoginController {
     summary: '用户注册',
   })
   async regist(@Body() dto: registDto): Promise<R> {
-    dto.password = decrypt(dto.password);
+    if (dto.psdType === 'b') {
+      dto.password = decrypt(dto.password);
+    }
     return this.userService.regist(dto);
   }
 
@@ -31,7 +33,9 @@ export class UserLoginController {
     summary: '用户登录',
   })
   async login(@Body() dto: loginDto, @Req() request: Request): Promise<R> {
-    dto.password = decrypt(dto.password);
+    if (dto.psdType === 'b') {
+      dto.password = decrypt(dto.password);
+    }
     const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);
     return this.userService.login(dto, { loginIp, loginBrowser, loginOs });
   }
@@ -45,7 +49,9 @@ export class UserLoginController {
     label: '管理员登录',
   })
   async adminLogin(@Body() dto: loginDto, @Req() request: Request): Promise<R> {
-    dto.password = decrypt(dto.password);
+    if (dto.psdType === 'b') {
+      dto.password = decrypt(dto.password);
+    }
     const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);
     return this.userService.adminlogin(dto, { loginIp, loginBrowser, loginOs });
   }
