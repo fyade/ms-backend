@@ -69,6 +69,7 @@ export class UserController {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }
+    delete dto.psdType;
     return this.userService.insUser(dto);
   }
 
@@ -103,6 +104,9 @@ export class UserController {
     if (dto.newp2Type === 'b') {
       dto.newp2 = decrypt(dto.newp2);
     }
+    delete dto.oldpType;
+    delete dto.newp1Type;
+    delete dto.newp2Type;
     if (dto.newp1 !== dto.newp2) return R.err('新密码不一致。');
     return this.userService.updPsd(dto);
   }
@@ -119,6 +123,7 @@ export class UserController {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }
+    delete dto.psdType;
     return this.userService.adminResetUserPsd(dto);
   }
 }

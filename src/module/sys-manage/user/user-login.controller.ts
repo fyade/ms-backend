@@ -25,6 +25,7 @@ export class UserLoginController {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }
+    delete dto.psdType;
     return this.userService.regist(dto);
   }
 
@@ -36,6 +37,7 @@ export class UserLoginController {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }
+    delete dto.psdType;
     const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);
     return this.userService.login(dto, { loginIp, loginBrowser, loginOs });
   }
@@ -52,6 +54,7 @@ export class UserLoginController {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }
+    delete dto.psdType;
     const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);
     return this.userService.adminlogin(dto, { loginIp, loginBrowser, loginOs });
   }
