@@ -197,6 +197,9 @@ export class UserService {
     const user_ = await this.prisma.findFirst<userDto>('sys_user', {
       username: dto.username,
     });
+    if (!user_) {
+      throw new UserUnknownException();
+    }
     const b1 = await comparePassword(dto.password, user_.password);
     if (b1) {
       user = user_;
@@ -276,8 +279,6 @@ export class UserService {
         return R.err(`密码错误次数过多，请${number}小时后重试。`);
       }
       return R.err(`密码错误，还剩${this.maxLoginFailCount - loginLog.data.length}次机会。`);
-    } else {
-      throw new UserUnknownException();
     }
   }
 
