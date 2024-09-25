@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { interfaceSelListDto, interfaceSelAllDto, interfaceInsOneDto, interfaceUpdOneDto } from './dto';
 
 @Controller('/sys-manage/interface')
-@ApiTags('接口')
+@ApiTags('系统管理/接口')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class InterfaceController {

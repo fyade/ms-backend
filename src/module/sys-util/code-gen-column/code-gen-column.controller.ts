@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { codeGenColumnSelListDto, codeGenColumnSelAllDto, codeGenColumnInsOneDto, codeGenColumnUpdOneDto } from './dto';
 
 @Controller('/sys-util/code-gen-column')
-@ApiTags('代码生成-列信息')
+@ApiTags('系统工具/代码生成-列信息')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class CodeGenColumnController {

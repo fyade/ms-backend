@@ -14,7 +14,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/sys-common/file-upload')
-@ApiTags('文件上传')
+@ApiTags('通用/文件上传')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class FileUploadController {

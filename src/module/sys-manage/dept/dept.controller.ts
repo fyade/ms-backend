@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { deptSelListDto, deptSelAllDto, deptInsOneDto, deptUpdOneDto } from './dto';
 
 @Controller('/sys-manage/dept')
-@ApiTags('部门')
+@ApiTags('系统管理/部门')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class DeptController {

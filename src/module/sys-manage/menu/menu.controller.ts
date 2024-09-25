@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { menuInsOneDto, menuSelAllDto, menuUpdOneDto } from './dto';
 
 @Controller('/sys-manage/menu')
-@ApiTags('菜单')
+@ApiTags('系统管理/菜单')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class MenuController {

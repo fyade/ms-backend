@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { dicTypeSelListDto, dicTypeSelAllDto, dicTypeInsOneDto, dicTypeUpdOneDto } from './dto';
 
 @Controller('/sys-manage/dic-type')
-@ApiTags('字典类型')
+@ApiTags('系统管理/字典类型')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class DicTypeController {

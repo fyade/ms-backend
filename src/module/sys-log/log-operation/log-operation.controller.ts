@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { logOperationSelListDto, logOperationSelAllDto, logOperationInsOneDto, logOperationUpdOneDto } from './dto';
 
 @Controller('/sys-log/log-operation')
-@ApiTags('系统操作日志')
+@ApiTags('系统日志/系统操作日志')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class LogOperationController {

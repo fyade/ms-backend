@@ -12,7 +12,7 @@ import {
 } from './dto';
 
 @Controller('/sys-log/log-algorithm-call')
-@ApiTags('算法调用日志')
+@ApiTags('系统日志/算法调用日志')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class LogAlgorithmCallController {

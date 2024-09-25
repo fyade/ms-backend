@@ -14,7 +14,7 @@ import {
 } from './dto';
 
 @Controller('/sys-manage/user-user-group')
-@ApiTags('用户用户组')
+@ApiTags('系统管理/用户用户组')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class UserUserGroupController {

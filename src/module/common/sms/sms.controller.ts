@@ -7,7 +7,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 
 @Controller('/sys/sms')
-@ApiTags('腾讯云sms')
+@ApiTags('通用/腾讯云sms')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class SmsController {
