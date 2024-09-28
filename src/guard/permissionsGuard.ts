@@ -11,6 +11,7 @@ import { getCurrentUser } from '../util/baseContext';
 import { Exception } from '../exception/Exception';
 import { PrismaService } from '../prisma/prisma.service';
 import { ParameterException } from '../exception/ParameterException';
+import { UnauthorizedException } from '../exception/UnauthorizedException';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -67,10 +68,13 @@ export class PermissionsGuard implements CanActivate {
     }
     // 页面接口权限控制
     else {
+      if (!user) {
+        throw new UnauthorizedException();
+      }
       // 操作日志
       await this.prisma.$queryRaw`
         insert into log_operation (perms, user_id, req_param, old_value, operate_type, if_success, remark)
-        values (${permission}, ${user?user.userid:'null'}, '', '', '', '', '');
+        values (${permission}, ${user.userid}, '', '', '', '', '');
       `;
       // 是否公共接口
       const ifPublicInterfaceInCache = await this.cachePermissionService.getIfPublicPermissionInCache(permission);

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { menuDto, menuInsOneDto, menuSelAllDto, menuUpdOneDto } from './dto';
+import { menuDto, menuInsOneDto, menuSelAllDto, menuSelListDto, menuUpdOneDto } from './dto';
 import { CachePermissionService } from '../../cache/cache.permission.service';
 
 @Injectable()
@@ -12,12 +12,24 @@ export class MenuService {
   ) {
   }
 
+  async selMenu(dto: menuSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<menuDto, menuSelListDto>('sys_menu', {
+      data: dto,
+      orderBy: true,
+      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysPerms'],
+      numberKeys: ['parentId', 'orderNum'],
+      completeMatchingKeys: ['type'],
+    });
+    return R.ok(res);
+  }
+
   async selAllMenu(dto: menuSelAllDto): Promise<R> {
     const res = await this.prisma.findAll<menuDto>('sys_menu', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms'],
+      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysPerms'],
       numberKeys: ['parentId', 'orderNum'],
+      completeMatchingKeys: ['type'],
     });
     return R.ok(res);
   }

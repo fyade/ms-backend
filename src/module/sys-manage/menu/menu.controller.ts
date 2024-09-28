@@ -4,7 +4,7 @@ import { R } from '../../../common/R';
 import { Authorize } from '../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
-import { menuInsOneDto, menuSelAllDto, menuUpdOneDto } from './dto';
+import { menuInsOneDto, menuSelAllDto, menuSelListDto, menuUpdOneDto } from './dto';
 
 @Controller('/sys-manage/menu')
 @ApiTags('系统管理/菜单')
@@ -12,6 +12,18 @@ import { menuInsOneDto, menuSelAllDto, menuUpdOneDto } from './dto';
 @UsePipes(new ValidationPipe())
 export class MenuController {
   constructor(private readonly menuService: MenuService) {
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: '分页查询菜单',
+  })
+  @Authorize({
+    permission: 'sysManage:menu:selList',
+    label: '分页查询菜单',
+  })
+  async selMenu(@Query() dto: menuSelListDto): Promise<R> {
+    return this.menuService.selMenu(dto);
   }
 
   @Get('/all')

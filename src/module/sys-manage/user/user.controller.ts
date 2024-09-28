@@ -59,11 +59,11 @@ export class UserController {
 
   @Post()
   @ApiOperation({
-    summary: '管理员新建用户',
+    summary: '管理员新增用户',
   })
   @Authorize({
     permission: 'sysManage:user:adminNewUser',
-    label: '管理员新建用户',
+    label: '管理员新增用户',
   })
   async insUser(@Body() dto: adminNewUserDto) {
     if (dto.psdType === 'b') {

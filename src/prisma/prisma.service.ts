@@ -179,27 +179,29 @@ export class PrismaService extends PrismaClient {
           } catch (e) {
             datum = data_[item];
           }
-          return [
+          const ret = [
             ...obj,
             {
               OR: [
                 {
                   [item]: typeOf(datum) === 'object'
-                    ? Object.keys(datum).reduce((obj, itm) => ({
-                      ...obj,
-                      [itm]: datum[itm].type === 'number'
-                        ? typeOf(datum[itm].value) === 'array'
-                          ? datum[itm].value.map(item => Number(item))
-                          : typeOf(datum[itm].value) === 'object'
-                            ? Object.keys(datum[itm].value).reduce((obj, key) => ({
-                              ...obj,
-                              [key]: Number(datum[itm].value[key]),
-                            }), {})
-                            : typeOf(datum[itm].value) === 'string'
-                              ? Number(datum[itm].value)
-                              : datum[itm].value
-                        : datum[itm].value,
-                    }), {})
+                    ? Object.keys(datum).reduce((obj, itm) => {
+                      return {
+                        ...obj,
+                        [itm]: datum[itm].type === 'number'
+                          ? typeOf(datum[itm].value) === 'array'
+                            ? datum[itm].value.map(item => Number(item))
+                            : typeOf(datum[itm].value) === 'object'
+                              ? Object.keys(datum[itm].value).reduce((obj, key) => ({
+                                ...obj,
+                                [key]: Number(datum[itm].value[key]),
+                              }), {})
+                              : typeOf(datum[itm].value) === 'string'
+                                ? Number(datum[itm].value)
+                                : datum[itm].value
+                          : datum[itm].value,
+                      };
+                    }, {})
                     : toSnakeCases(numberKeys).includes(item)
                       ? Number(datum)
                       : (toSnakeCases(completeMatchingKeys).includes(item) && !!datum)
@@ -214,6 +216,7 @@ export class PrismaService extends PrismaClient {
               ].slice(0, (toSnakeCases(notNullKeys).includes(item) || datum !== '') ? 1 : 2),
             },
           ];
+          return ret;
         }, []),
         ...Object.keys(range).map(item => (
           {

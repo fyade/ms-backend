@@ -40,6 +40,7 @@ import { CacheModule } from './module/cache/cache.module';
 import { OnlineUserModule } from './module/sys-monitor/online-user/online-user.module';
 import { LogOperationModule } from './module/sys-log/log-operation/log-operation.module';
 import { AlgorithmModule } from './module/algorithm/algorithm.module';
+import { SysModule } from './module/sys-manage/sys/sys.module';
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { AlgorithmModule } from './module/algorithm/algorithm.module';
     OnlineUserModule,
     LogOperationModule,
     AlgorithmModule,
+    SysModule,
   ],
   providers: [
     {
