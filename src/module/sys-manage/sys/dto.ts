@@ -13,6 +13,8 @@ export class sysDto extends baseInterface {
 
   orderNum: number;
 
+  path: string;
+
   remark: string;
 }
 
@@ -29,6 +31,9 @@ export class sysSelListDto extends pageDto {
   @ApiProperty({ description: '顺序', required: false })
   orderNum: number;
 
+  @ApiProperty({ description: 'url路径', required: false })
+  path: string;
+
   @ApiProperty({ description: '备注', required: false })
   remark: string;
 }
@@ -42,6 +47,9 @@ export class sysSelAllDto {
 
   @ApiProperty({ description: '顺序', required: false })
   orderNum: number;
+
+  @ApiProperty({ description: 'url路径', required: false })
+  path: string;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;
@@ -60,6 +68,10 @@ export class sysInsOneDto {
   @Type(() => Number)
   @IsNotEmpty({ message: '顺序不能为空' })
   orderNum: number;
+
+  @ApiProperty({ description: 'url路径', required: true })
+  @IsNotEmpty({ message: 'url路径不能为空' })
+  path: string;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;

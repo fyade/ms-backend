@@ -12,7 +12,7 @@ export class SysService {
     const res = await this.prisma.findPage<sysDto, sysSelListDto>('sys_sys', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['name', 'perms', 'orderNum'],
+      notNullKeys: ['name', 'perms', 'orderNum', 'path'],
       numberKeys: ['orderNum'],
       completeMatchingKeys: [],
     });
@@ -23,7 +23,7 @@ export class SysService {
     const res = await this.prisma.findAll<sysDto>('sys_sys', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['name', 'perms', 'orderNum'],
+      notNullKeys: ['name', 'perms', 'orderNum', 'path'],
       numberKeys: ['orderNum'],
       completeMatchingKeys: [],
     });

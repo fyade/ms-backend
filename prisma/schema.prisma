@@ -301,6 +301,7 @@ model sys_sys {
   name          String         @db.VarChar(300)
   perms         String         @db.VarChar(100)
   order_num     Int            @db.Int
+  path          String         @db.VarChar(100)
   remark        String?        @db.VarChar(300)
   create_by     String         @db.VarChar(10)
   update_by     String         @db.VarChar(10)
