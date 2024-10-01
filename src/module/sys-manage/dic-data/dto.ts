@@ -1,5 +1,5 @@
-import { baseInterface } from '../../../common/commonType';
 import { pageDto } from '../../../common/dto/PageDto';
+import { baseInterface } from '../../../common/commonType';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -11,7 +11,7 @@ export class dicDataDto extends baseInterface {
 
   value: string;
 
-  dicType: string;
+  dicTypeId: number;
 
   ifDefault: string;
 
@@ -33,7 +33,7 @@ export class dicDataSelListDto extends pageDto {
   value: string;
 
   @ApiProperty({ description: '字典类型', required: false })
-  dicType: string;
+  dicTypeId: number;
 
   @ApiProperty({ description: '是否默认', required: false })
   ifDefault: string;
@@ -56,7 +56,7 @@ export class dicDataSelAllDto {
   value: string;
 
   @ApiProperty({ description: '字典类型', required: false })
-  dicType: string;
+  dicTypeId: number;
 
   @ApiProperty({ description: '是否默认', required: false })
   ifDefault: string;
@@ -81,8 +81,9 @@ export class dicDataInsOneDto {
   value: string;
 
   @ApiProperty({ description: '字典类型', required: true })
+  @Type(() => Number)
   @IsNotEmpty({ message: '字典类型不能为空' })
-  dicType: string;
+  dicTypeId: number;
 
   @ApiProperty({ description: '是否默认', required: true })
   @IsNotEmpty({ message: '是否默认不能为空' })

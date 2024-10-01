@@ -16,8 +16,8 @@ export class MenuService {
     const res = await this.prisma.findPage<menuDto, menuSelListDto>('sys_menu', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysPerms'],
-      numberKeys: ['parentId', 'orderNum'],
+      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysId'],
+      numberKeys: ['parentId', 'orderNum', 'sysId'],
       completeMatchingKeys: ['type'],
     });
     return R.ok(res);
@@ -27,8 +27,8 @@ export class MenuService {
     const res = await this.prisma.findAll<menuDto>('sys_menu', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysPerms'],
-      numberKeys: ['parentId', 'orderNum'],
+      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysId'],
+      numberKeys: ['parentId', 'orderNum', 'sysId'],
       completeMatchingKeys: ['type'],
     });
     return R.ok(res);

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { R } from '../../../common/R';
-import { dicDataDto, dicDataInsOneDto, dicDataSelAllDto, dicDataSelListDto, dicDataUpdOneDto } from './dto';
+import { dicDataDto, dicDataSelListDto, dicDataSelAllDto, dicDataInsOneDto, dicDataUpdOneDto } from './dto';
 
 @Injectable()
 export class DicDataService {
@@ -12,8 +12,9 @@ export class DicDataService {
     const res = await this.prisma.findPage<dicDataDto, dicDataSelListDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'value', 'dicType', 'ifDefault', 'ifDisabled', 'orderNum'],
-      numberKeys: ['orderNum'],
+      notNullKeys: ['label', 'value', 'dicTypeId', 'ifDefault', 'ifDisabled', 'orderNum'],
+      numberKeys: ['dicTypeId', 'orderNum'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -22,8 +23,9 @@ export class DicDataService {
     const res = await this.prisma.findAll<dicDataDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'value', 'dicType', 'ifDefault', 'ifDisabled', 'orderNum'],
-      numberKeys: ['orderNum'],
+      notNullKeys: ['label', 'value', 'dicTypeId', 'ifDefault', 'ifDisabled', 'orderNum'],
+      numberKeys: ['dicTypeId', 'orderNum'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

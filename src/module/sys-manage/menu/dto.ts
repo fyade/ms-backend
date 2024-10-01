@@ -31,7 +31,7 @@ export class menuDto extends baseInterface {
 
   perms: string;
 
-  sysPerms: string;
+  sysId: number;
 
   remark: string;
 }
@@ -77,7 +77,7 @@ export class menuSelListDto extends pageDto {
   perms: string;
 
   @ApiProperty({ description: '所属系统', required: false })
-  sysPerms: string;
+  sysId: number;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;
@@ -121,7 +121,7 @@ export class menuSelAllDto {
   perms: string;
 
   @ApiProperty({ description: '所属系统', required: false })
-  sysPerms: string;
+  sysId: number;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;
@@ -178,8 +178,9 @@ export class menuInsOneDto {
   perms: string;
 
   @ApiProperty({ description: '所属系统', required: true })
+  @Type(() => Number)
   @IsNotEmpty({ message: '所属系统不能为空' })
-  sysPerms: string;
+  sysId: number;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;

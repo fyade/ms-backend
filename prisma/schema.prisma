@@ -42,34 +42,36 @@ model sys_user {
 
 // 1.2 字典类型表
 model sys_dic_type {
-  id          Int      @id @default(autoincrement()) @db.Int
-  name        String   @db.VarChar(50)
-  type        String   @db.VarChar(50)
-  if_disabled String   @db.Char(1)
-  order_num   Int      @db.Int
-  remark      String?  @db.VarChar(300)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
+  id            Int            @id @default(autoincrement()) @db.Int
+  name          String         @db.VarChar(50)
+  type          String         @db.VarChar(50)
+  if_disabled   String         @db.Char(1)
+  order_num     Int            @db.Int
+  remark        String?        @db.VarChar(300)
+  create_by     String         @db.VarChar(10)
+  update_by     String         @db.VarChar(10)
+  create_time   DateTime       @default(now())
+  update_time   DateTime       @updatedAt
+  deleted       String         @default("N") @db.Char(1)
+  sys_dic_datas sys_dic_data[]
 }
 
 // 1.3 字典数据表
 model sys_dic_data {
-  id          Int      @id @default(autoincrement()) @db.Int
-  label       String   @db.VarChar(50)
-  value       String   @db.VarChar(50)
-  dic_type    String   @db.VarChar(50)
-  if_default  String   @db.Char(1)
-  if_disabled String   @db.Char(1)
-  order_num   Int      @db.Int
-  remark      String?  @db.VarChar(300)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
+  id          Int          @id @default(autoincrement()) @db.Int
+  label       String       @db.VarChar(50)
+  value       String       @db.VarChar(50)
+  dic_type_id Int          @db.Int
+  if_default  String       @db.Char(1)
+  if_disabled String       @db.Char(1)
+  order_num   Int          @db.Int
+  remark      String?      @db.VarChar(300)
+  create_by   String       @db.VarChar(10)
+  update_by   String       @db.VarChar(10)
+  create_time DateTime     @default(now())
+  update_time DateTime     @updatedAt
+  deleted     String       @default("N") @db.Char(1)
+  dic_type_   sys_dic_type @relation(fields: [dic_type_id], references: [id])
 }
 
 // 1.4 代码生成-表信息表
@@ -201,13 +203,14 @@ model sys_menu {
   if_disabled          String                @db.Char(1)
   if_public            String                @db.Char(1)
   perms                String                @db.VarChar(100)
-  sys_perms            String                @db.VarChar(100)
+  sys_id               Int                   @db.Int
   remark               String?               @db.VarChar(300)
   create_by            String                @db.VarChar(10)
   update_by            String                @db.VarChar(10)
   create_time          DateTime              @default(now())
   update_time          DateTime              @updatedAt
   deleted              String                @default("N") @db.Char(1)
+  sys_                 sys_sys               @relation(fields: [sys_id], references: [id])
   sys_role_permissions sys_role_permission[]
   sys_dept_permissions sys_dept_permission[]
 }
@@ -306,6 +309,7 @@ model sys_sys {
   deleted       String         @default("N") @db.Char(1)
   sys_role_syss sys_role_sys[]
   sys_dept_syss sys_dept_sys[]
+  sys_menus     sys_menu[]
 }
 
 // 2.9 角色系统表
