@@ -1,4 +1,4 @@
-import { Controller, Get, UsePipes } from '@nestjs/common';
+import { Controller, Get, Param, Query, UsePipes } from '@nestjs/common';
 import { AppService } from './app.service';
 import { R } from './common/R';
 import { Authorize } from './decorator/authorizeDecorator';
@@ -53,5 +53,29 @@ export class AppController {
   })
   async getSystemUsingInfo(): Promise<R> {
     return this.appService.getSystemUsingInfo();
+  }
+
+  @Get('/permission/:sysId')
+  @ApiOperation({
+    summary: '获取有权限的接口',
+  })
+  @Authorize({
+    permission: 'system:home:permission',
+    label: '获取有权限的接口',
+  })
+  async getPermissions(@Param('sysId') sysId: number): Promise<R> {
+    return this.appService.getPermissions(sysId);
+  }
+
+  @Get('/system')
+  @ApiOperation({
+    summary: '获取有权限的系统',
+  })
+  @Authorize({
+    permission: 'system:home:system',
+    label: '获取有权限的系统',
+  })
+  async getSystems(): Promise<R> {
+    return this.appService.getSystems();
   }
 }

@@ -286,6 +286,12 @@ export class UserService {
     if (userinfo.code !== HTTP.SUCCESS().code) {
       return R.err(userinfo.msg);
     }
-    return R.ok({ ...userinfo.data });
+    // const permissions = await this.authService.permissionsOfUser(userinfo.data.user);
+    // const systems = await this.authService.systemsOfUser(userinfo.data.user);
+    return R.ok({
+      ...userinfo.data,
+      // permissions,
+      // systems,
+    });
   }
 }

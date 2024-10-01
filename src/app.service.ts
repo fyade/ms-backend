@@ -6,6 +6,8 @@ import * as process from 'process';
 import * as diskinfo from 'diskinfo';
 import { NonSupportedException } from './exception/NonSupportedException';
 import { currentVersion } from '../config/config';
+import { AuthService } from './module/main/auth/auth.service';
+import { getCurrentUser } from './util/baseContext';
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -14,7 +16,9 @@ const path = require('path');
 export class AppService {
   private cpuUsageMSDefault: number;
 
-  constructor() {
+  constructor(
+    private readonly authService: AuthService,
+  ) {
     this.cpuUsageMSDefault = 100; // CPU 利用率默认时间段
   }
 
@@ -96,6 +100,16 @@ export class AppService {
       memory: memoryInfo,
       disk: diskInfo,
     });
+  }
+
+  async getPermissions(sysId: number): Promise<R> {
+    const permissionsOfUser = await this.authService.permissionsOfUser({ userId: getCurrentUser().user.userid, sysId });
+    return R.ok(permissionsOfUser);
+  }
+
+  async getSystems(): Promise<R> {
+    const systemsOfUser = await this.authService.systemsOfUser(getCurrentUser().user.userid);
+    return R.ok(systemsOfUser);
   }
 
   /**

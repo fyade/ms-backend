@@ -36,7 +36,7 @@ export class AuthService {
       return true;
     }
     const ps1 = await this.prisma.$queryRaw`
-      SELECT sur.id AS surId
+      SELECT sur.id as surId
       FROM sys_user_role sur
       WHERE sur.deleted = ${base.N}
         AND sur.user_id = ${user.id}
@@ -106,7 +106,7 @@ export class AuthService {
     if (await this.hasTopAdminPermission(user.id)) {
       return true;
     }
-    const permissionsOfUser = await this.permissionsOfUser(user, permission);
+    const permissionsOfUser = await this.permissionsOfUser({ userId: user.id, permission });
     const index = permissionsOfUser.findIndex(item => item.perms === permission);
     return index > -1;
   }
@@ -126,77 +126,162 @@ export class AuthService {
   }
 
   /**
-   * 用户的权限
-   * @param user
-   * @param permission
+   * 用户的系统
+   * @param userId
    */
-  async permissionsOfUser(user: userDto, permission: string | null = null) {
+  async systemsOfUser(userId: string) {
     const retarr = [];
-    if (user) {
-      /**
-       * 第三版
-       */
-      const userPermissions = await this.prisma.$queryRaw`
-        select sm.id          AS id,
-               sm.label       AS label,
-               sm.path        AS path,
-               sm.parent_id   AS parentId,
-               sm.component   AS component,
-               sm.icon        AS icon,
-               sm.order_num   AS orderNum,
-               sm.if_link     AS ifLink,
-               sm.if_visible  AS ifVisible,
-               sm.if_disabled AS ifDisabled,
-               sm.if_public   AS ifPublic,
-               sm.perms       AS perms,
-               sm.remark      AS remark,
-               sm.create_by   AS createBy,
-               sm.update_by   AS updateBy,
-               sm.create_time AS createTime,
-               sm.update_time AS updateTime,
-               sm.deleted     AS deleted,
-               sm.type        AS type
-        from sys_menu sm
-        where deleted = ${base.N}
+    if (userId) {
+      const userSystems = await this.prisma.$queryRaw`
+        select ss.id          as id,
+               ss.name        as name,
+               ss.perms       as perms,
+               ss.order_num   as orderNum,
+               ss.path        as path,
+               ss.remark      as remark,
+               ss.create_by   as createBy,
+               ss.update_by   as updateBy,
+               ss.create_time as createTime,
+               ss.update_time as updateTime,
+               ss.deleted     as deleted
+        from sys_sys ss
+        where ss.deleted = ${base.N}
           and (
             if(exists
                    (select 1
                     from sys_admin_top sat
                     where sat.deleted = ${base.N}
-                      and sat.user_id = ${user.id}),
+                      and sat.user_id = ${userId}),
                1 = 1,
-               id in (select permission_id
-                      from sys_role_permission
-                      where deleted = ${base.N}
-                        and type = 'm'
-                        and role_id in
-                            (select role_id
-                             from sys_user_role
-                             where deleted = ${base.N}
-                               and user_id = ${user.id}
-                               and role_id in
-                                   (select id
-                                    from sys_role
-                                    where deleted = ${base.N}
-                                      and if_admin = ${base.Y}
-                                      and if_disabled = ${base.N})))
+               (
+                   ss.id in (select srs.sys_id
+                             from sys_role_sys srs
+                             where srs.deleted = ${base.N}
+                               and srs.role_id in
+                                   (select sur.role_id
+                                    from sys_user_role sur
+                                    where sur.deleted = ${base.N}
+                                      and sur.user_id = ${userId}
+                                      and sur.role_id in
+                                          (select sr.id
+                                           from sys_role sr
+                                           where sr.deleted = ${base.N}
+                                             and sr.if_admin = ${base.Y}
+                                             and sr.if_disabled = ${base.N})))
+                       or ss.id in (select sds.sys_id
+                                    from sys_dept_sys sds
+                                    where sds.deleted = ${base.N}
+                                      and sds.dept_id in
+                                          (select sud.dept_id
+                                           from sys_user_dept sud
+                                           where sud.deleted = ${base.N}
+                                             and sud.user_id = ${userId}
+                                             and sud.dept_id in
+                                                 (select sd.id
+                                                  from sys_dept sd
+                                                  where sd.deleted = ${base.N}
+                                                    and sd.if_admin = ${base.Y})))
+                   )
             )
-                or id in
-                   (select permission_id
-                    from sys_dept_permission
-                    where deleted = ${base.N}
-                      and type = 'm'
-                      and dept_id in
-                          (select dept_id
-                           from sys_user_dept
-                           where deleted = ${base.N}
-                             and user_id = ${user.id}))
-            )
+            );
+      `;
+      retarr.push(...userSystems);
+    }
+    return retarr;
+  }
+
+  /**
+   * 用户的权限
+   * @param userId
+   * @param permission
+   * @param sysId
+   */
+  async permissionsOfUser({
+                            userId,
+                            permission,
+                            sysId,
+                          }: {
+                            userId: string
+                            permission?: string
+                            sysId?: number
+                          },
+  ) {
+    const retarr = [];
+    if (userId) {
+      /**
+       * 第三版
+       */
+      const userPermissions = await this.prisma.$queryRaw`
+        select sm.id          as id,
+               sm.label       as label,
+               sm.type        as type,
+               sm.path        as path,
+               sm.parent_id   as parentId,
+               sm.component   as component,
+               sm.icon        as icon,
+               sm.order_num   as orderNum,
+               sm.if_link     as ifLink,
+               sm.if_visible  as ifVisible,
+               sm.if_disabled as ifDisabled,
+               sm.if_public   as ifPublic,
+               sm.perms       as perms,
+               sm.remark      as remark,
+               sm.create_by   as createBy,
+               sm.update_by   as updateBy,
+               sm.create_time as createTime,
+               sm.update_time as updateTime,
+               sm.deleted     as deleted
+        from sys_menu sm
+        where sm.deleted = ${base.N}
+          and (
+            if(exists
+                   (select 1
+                    from sys_admin_top sat
+                    where sat.deleted = ${base.N}
+                      and sat.user_id = ${userId}),
+               1 = 1,
+               (sm.id in
+                (select permission_id
+                 from sys_role_permission srp
+                 where srp.deleted = ${base.N}
+                   and srp.type = 'm'
+                   and srp.role_id in
+                       (select role_id
+                        from sys_user_role sur
+                        where sur.deleted = ${base.N}
+                          and sur.user_id = ${userId}
+                          and sur.role_id in
+                              (select id
+                               from sys_role sr
+                               where sr.deleted = ${base.N}
+                                 and sr.if_admin = ${base.Y}
+                                 and sr.if_disabled = ${base.N})))
+                   or sm.id in
+                      (select permission_id
+                       from sys_dept_permission sdp
+                       where sdp.deleted = ${base.N}
+                         and sdp.type = 'm'
+                         and sdp.dept_id in
+                             (select dept_id
+                              from sys_user_dept sud
+                              where sud.deleted = ${base.N}
+                                and sud.user_id = ${userId}))
+                   )))
           and 1 = case
                       when coalesce(${permission}, '') <> ''
                           then
                           case
-                              when perms = ${permission}
+                              when sm.perms = ${permission}
+                                  then 1
+                              else 0
+                              end
+                      else 1
+            end
+          and 1 = case
+                      when coalesce(${sysId}, '') <> ''
+                          then
+                          case
+                              when sm.sys_id = ${sysId}
                                   then 1
                               else 0
                               end
@@ -260,8 +345,8 @@ export class AuthService {
              si.update_time as updateTime,
              si.deleted     as deleted
       from sys_interface si
-      where deleted = ${base.N}
-        and perms = ${permission};
+      where si.deleted = ${base.N}
+        and si.perms = ${permission};
     `;
     if (interf.length === 0) {
       throw new Exception('当前算法不存在。');
