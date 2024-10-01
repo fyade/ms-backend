@@ -1,4 +1,4 @@
-import { userDto2 } from '../module/sys-manage/user/dto';
+import { userDto2 } from '../module/main/sys-manage/user/dto';
 
 const currentUser: {
   user: userDto2
