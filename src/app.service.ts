@@ -8,6 +8,7 @@ import { NonSupportedException } from './exception/NonSupportedException';
 import { currentVersion } from '../config/config';
 import { AuthService } from './module/main/auth/auth.service';
 import { getCurrentUser } from './util/baseContext';
+import { getAllFiles } from './util/FileUtils';
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -34,55 +35,39 @@ export class AppService {
     const allAuthApis = {};
     try {
       const directoryPath = path.join(__dirname, '../../src/module');
-      const files = await fs.readdir(directoryPath);
-      for (const path1 of files.filter(item => !['admin-top', 'algorithm', 'auth', 'cache'].includes(item))) {
-        const files = await fs.readdir(`${directoryPath}/${path1}`);
-        for (const path2 of files) {
-          const files = await fs.readdir(`${directoryPath}/${path1}/${path2}`);
-          for (let index = 0; index < files.length; index++) {
-            if (files[index].endsWith('.controller.ts')) {
-              const filePath = path.join(`${directoryPath}/${path1}/${path2}`, files[index]);
-              const data = await fs.readFile(filePath, 'utf-8');
-              const text = data;
-              // 正则表达式来匹配单引号或双引号内的字符串
-              const simpleAuthorizeRegex = /@Authorize\('([^']*)'\)/g;
-              const complexAuthorizeRegex = /@Authorize\(\s*{[^}]*}\s*\)/g;
-              // 提取简单授权字符串
-              const simpleAuthorizeMatches = text.match(simpleAuthorizeRegex);
-              const simpleAuthorizePermissions = simpleAuthorizeMatches?.map(match => {
-                const regex = /'([^']*)'/;
-                const permissionMatch = match.match(regex);
-                return permissionMatch ? permissionMatch[1] : null;
-              }) || [];
-              // 提取复杂授权对象字符串
-              const complexAuthorizeMatches = text.match(complexAuthorizeRegex);
-              const complexAuthorizeObjects = complexAuthorizeMatches;
+      const files = await getAllFiles(directoryPath);
+      for (const filePath of files.filter(fileName => fileName.endsWith('.controller.ts'))) {
+        const text = await fs.readFile(filePath, 'utf-8');
+        // 正则表达式来匹配单引号或双引号内的字符串
+        const simpleAuthorizeRegex = /@Authorize\('([^']*)'\)/g;
+        const complexAuthorizeRegex = /@Authorize\(\s*{[^}]*}\s*\)/g;
+        // 提取简单授权字符串
+        const simpleAuthorizeMatches = text.match(simpleAuthorizeRegex);
+        const simpleAuthorizePermissions = simpleAuthorizeMatches?.map(match => {
+          const regex = /'([^']*)'/;
+          const permissionMatch = match.match(regex);
+          return permissionMatch ? permissionMatch[1] : null;
+        }) || [];
+        // 提取复杂授权对象字符串
+        const complexAuthorizeMatches = text.match(complexAuthorizeRegex);
+        const complexAuthorizeObjects = complexAuthorizeMatches;
 
-              function parseAuthorizeObject(str) {
-                // 移除@Authorize和括号
-                const content = str.replace('@Authorize(', '').replace(/\s*\)\s*$/, '');
-                // 将字符串转换为对象
-                try {
-                  return Function('"use strict";return (' + content + ');')();
-                } catch (e) {
-                  return null;
-                }
-              }
-
-              const authorizeObject = complexAuthorizeObjects ? complexAuthorizeObjects.map(complexAuthorizeObject => parseAuthorizeObject(complexAuthorizeObject)).filter(item => item) : [];
-              if (!!!allAuthApis[path1]) allAuthApis[path1] = {};
-              if (!!!allAuthApis[path1][path2]) allAuthApis[path1][path2] = {
-                authApiStrs: [],
-                authApiObjs: [],
-              };
-              const obj = {
-                authApiStrs: [...allAuthApis[path1][path2].authApiStrs, ...simpleAuthorizePermissions],
-                authApiObjs: [...allAuthApis[path1][path2].authApiObjs, ...authorizeObject],
-              };
-              allAuthApis[path1][path2] = obj;
-            }
+        function parseAuthorizeObject(str) {
+          // 移除@Authorize和括号
+          const content = str.replace('@Authorize(', '').replace(/\s*\)\s*$/, '');
+          // 将字符串转换为对象
+          try {
+            return Function('"use strict";return (' + content + ');')();
+          } catch (e) {
+            return null;
           }
         }
+
+        const authorizeObject = complexAuthorizeObjects ? complexAuthorizeObjects.map(complexAuthorizeObject => parseAuthorizeObject(complexAuthorizeObject)).filter(item => item) : [];
+        allAuthApis[filePath] = {
+          authApiStrs: simpleAuthorizePermissions,
+          authApiObjs: authorizeObject,
+        };
       }
     } catch (e) {
       console.error(e);

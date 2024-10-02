@@ -41,6 +41,8 @@ import { OnlineUserModule } from './module/main/sys-monitor/online-user/online-u
 import { LogOperationModule } from './module/main/sys-log/log-operation/log-operation.module';
 import { AlgorithmModule } from './module/main/algorithm/algorithm.module';
 import { SysModule } from './module/main/sys-manage/sys/sys.module';
+import { RoleSysModule } from './module/main/sys-manage/role-sys/role-sys.module';
+import { DeptSysModule } from './module/main/sys-manage/dept-sys/dept-sys.module';
 
 @Module({
   imports: [
@@ -82,6 +84,8 @@ import { SysModule } from './module/main/sys-manage/sys/sys.module';
     LogOperationModule,
     AlgorithmModule,
     SysModule,
+    RoleSysModule,
+    DeptSysModule,
   ],
   providers: [
     {
