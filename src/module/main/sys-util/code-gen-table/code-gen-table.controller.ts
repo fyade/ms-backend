@@ -19,7 +19,7 @@ export class CodeGenTableController {
     summary: '分页查询代码生成-表信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenTable:selList',
+    permission: 'main:sysUtil:codeGenTable:selList',
     label: '分页查询代码生成-表信息',
   })
   async selCodeGenTable(@Query() dto: codeGenTableSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class CodeGenTableController {
     summary: '查询所有代码生成-表信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenTable:selAll',
+    permission: 'main:sysUtil:codeGenTable:selAll',
     label: '查询所有代码生成-表信息',
   })
   async selAllCodeGenTable(@Query() dto: codeGenTableSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class CodeGenTableController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysUtil:codeGenTable:selOnes',
+    permission: 'main:sysUtil:codeGenTable:selOnes',
     label: '查询多个代码生成-表信息（根据id）',
   })
   async selOnesCodeGenTable(@Query() ids: number[]): Promise<R> {
@@ -61,7 +61,7 @@ export class CodeGenTableController {
     summary: '查询单个代码生成-表信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenTable:selOne',
+    permission: 'main:sysUtil:codeGenTable:selOne',
     label: '查询单个代码生成-表信息',
   })
   async selOneCodeGenTable(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class CodeGenTableController {
     summary: '新增代码生成-表信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenTable:ins',
+    permission: 'main:sysUtil:codeGenTable:ins',
     label: '新增代码生成-表信息',
   })
   async insCodeGenTable(@Body() dto: codeGenTableInsOneDto): Promise<R> {
@@ -89,7 +89,7 @@ export class CodeGenTableController {
     type: codeGenTableInsOneDto,
   })
   @Authorize({
-    permission: 'sysUtil:codeGenTable:inss',
+    permission: 'main:sysUtil:codeGenTable:inss',
     label: '批量新增代码生成-表信息',
   })
   async insCodeGenTables(@Body(
@@ -105,7 +105,7 @@ export class CodeGenTableController {
     summary: '修改代码生成-表信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenTable:upd',
+    permission: 'main:sysUtil:codeGenTable:upd',
     label: '修改代码生成-表信息',
   })
   async updCodeGenTable(@Body() dto: codeGenTableUpdOneDto): Promise<R> {
@@ -121,7 +121,7 @@ export class CodeGenTableController {
     type: codeGenTableUpdOneDto,
   })
   @Authorize({
-    permission: 'sysUtil:codeGenTable:upds',
+    permission: 'main:sysUtil:codeGenTable:upds',
     label: '批量修改代码生成-表信息',
   })
   async updCodeGenTables(@Body(
@@ -141,7 +141,7 @@ export class CodeGenTableController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysUtil:codeGenTable:del',
+    permission: 'main:sysUtil:codeGenTable:del',
     label: '删除代码生成-表信息',
   })
   async delCodeGenTable(@Body() ids: number[]): Promise<R> {

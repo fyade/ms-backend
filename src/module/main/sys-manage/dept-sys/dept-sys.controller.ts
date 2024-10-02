@@ -19,7 +19,7 @@ export class DeptSysController {
     summary: '分页查询部门系统',
   })
   @Authorize({
-    permission: 'sysManage:deptSys:selList',
+    permission: 'main:sysManage:deptSys:selList',
     label: '分页查询部门系统',
   })
   async selDeptSys(@Query() dto: deptSysSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class DeptSysController {
     summary: '查询所有部门系统',
   })
   @Authorize({
-    permission: 'sysManage:deptSys:selAll',
+    permission: 'main:sysManage:deptSys:selAll',
     label: '查询所有部门系统',
   })
   async selAllDeptSys(@Query() dto: deptSysSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class DeptSysController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:deptSys:selOnes',
+    permission: 'main:sysManage:deptSys:selOnes',
     label: '查询多个部门系统（根据id）',
   })
   async selOnesDeptSys(@Query() ids: number[]): Promise<R> {
@@ -61,7 +61,7 @@ export class DeptSysController {
     summary: '查询单个部门系统',
   })
   @Authorize({
-    permission: 'sysManage:deptSys:selOne',
+    permission: 'main:sysManage:deptSys:selOne',
     label: '查询单个部门系统',
   })
   async selOneDeptSys(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class DeptSysController {
     summary: '新增部门系统',
   })
   @Authorize({
-    permission: 'sysManage:deptSys:ins',
+    permission: 'main:sysManage:deptSys:ins',
     label: '新增部门系统',
   })
   async insDeptSys(@Body() dto: deptSysInsOneDto): Promise<R> {
@@ -89,7 +89,7 @@ export class DeptSysController {
     type: deptSysInsOneDto,
   })
   @Authorize({
-    permission: 'sysManage:deptSys:inss',
+    permission: 'main:sysManage:deptSys:inss',
     label: '批量新增部门系统',
   })
   async insDeptSyss(@Body(
@@ -105,7 +105,7 @@ export class DeptSysController {
     summary: '修改部门系统',
   })
   @Authorize({
-    permission: 'sysManage:deptSys:upd',
+    permission: 'main:sysManage:deptSys:upd',
     label: '修改部门系统',
   })
   async updDeptSys(@Body() dto: deptSysUpdOneDto): Promise<R> {
@@ -121,7 +121,7 @@ export class DeptSysController {
     type: deptSysUpdOneDto,
   })
   @Authorize({
-    permission: 'sysManage:deptSys:upds',
+    permission: 'main:sysManage:deptSys:upds',
     label: '批量修改部门系统',
   })
   async updDeptSyss(@Body(
@@ -141,7 +141,7 @@ export class DeptSysController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:deptSys:del',
+    permission: 'main:sysManage:deptSys:del',
     label: '删除部门系统',
   })
   async delDeptSys(@Body() ids: number[]): Promise<R> {

@@ -20,7 +20,7 @@ export class UserController {
     summary: '查询个人信息',
   })
   @Authorize({
-    permission: 'sysManage:user:getSelfInfo',
+    permission: 'main:sysManage:user:getSelfInfo',
     label: '查询个人信息',
   })
   async getSelfInfo() {
@@ -38,7 +38,7 @@ export class UserController {
     type: String,
   })
   @Authorize({
-    permission: 'sysManage:user:selOnes',
+    permission: 'main:sysManage:user:selOnes',
     label: '查询多个用户（根据id）',
   })
   async selOnesUser(@Query() ids: string[]): Promise<R> {
@@ -50,7 +50,7 @@ export class UserController {
     summary: '分页查询用户',
   })
   @Authorize({
-    permission: 'sysManage:user:selList',
+    permission: 'main:sysManage:user:selList',
     label: '分页查询用户',
   })
   async userSelList(@Query() dto: userListSelDto): Promise<R> {
@@ -62,7 +62,7 @@ export class UserController {
     summary: '管理员新增用户',
   })
   @Authorize({
-    permission: 'sysManage:user:adminNewUser',
+    permission: 'main:sysManage:user:adminNewUser',
     label: '管理员新增用户',
   })
   async insUser(@Body() dto: adminNewUserDto) {
@@ -78,7 +78,7 @@ export class UserController {
     summary: '修改个人信息',
   })
   @Authorize({
-    permission: 'sysManage:user:updUser',
+    permission: 'main:sysManage:user:updUser',
     label: '修改个人信息',
   })
   async updUser(@Body() dto: userDto) {
@@ -91,7 +91,7 @@ export class UserController {
     summary: '修改密码',
   })
   @Authorize({
-    permission: 'sysManage:user:updPsd',
+    permission: 'main:sysManage:user:updPsd',
     label: '修改密码',
   })
   async updPsd(@Body() dto: updPsdDto) {
@@ -116,7 +116,7 @@ export class UserController {
     summary: '管理员重置用户密码',
   })
   @Authorize({
-    permission: 'sysManage:user:adminResetUserPsd',
+    permission: 'main:sysManage:user:adminResetUserPsd',
     label: '管理员重置用户密码',
   })
   async adminResetUserPsd(@Body() dto: resetPsdDto): Promise<R> {

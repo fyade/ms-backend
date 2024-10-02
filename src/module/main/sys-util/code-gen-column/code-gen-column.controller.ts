@@ -19,7 +19,7 @@ export class CodeGenColumnController {
     summary: '分页查询代码生成-列信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenColumn:selList',
+    permission: 'main:sysUtil:codeGenColumn:selList',
     label: '分页查询代码生成-列信息',
   })
   async selCodeGenColumn(@Query() dto: codeGenColumnSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class CodeGenColumnController {
     summary: '查询所有代码生成-列信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenColumn:selAll',
+    permission: 'main:sysUtil:codeGenColumn:selAll',
     label: '查询所有代码生成-列信息',
   })
   async selAllCodeGenColumn(@Query() dto: codeGenColumnSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class CodeGenColumnController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysUtil:codeGenColumn:selOnes',
+    permission: 'main:sysUtil:codeGenColumn:selOnes',
     label: '查询多个代码生成-列信息（根据id）',
   })
   async selOnesCodeGenColumn(@Query() ids: number[]): Promise<R> {
@@ -61,7 +61,7 @@ export class CodeGenColumnController {
     summary: '查询单个代码生成-列信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenColumn:selOne',
+    permission: 'main:sysUtil:codeGenColumn:selOne',
     label: '查询单个代码生成-列信息',
   })
   async selOneCodeGenColumn(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class CodeGenColumnController {
     summary: '新增代码生成-列信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenColumn:ins',
+    permission: 'main:sysUtil:codeGenColumn:ins',
     label: '新增代码生成-列信息',
   })
   async insCodeGenColumn(@Body() dto: codeGenColumnInsOneDto): Promise<R> {
@@ -89,7 +89,7 @@ export class CodeGenColumnController {
     type: codeGenColumnInsOneDto,
   })
   @Authorize({
-    permission: 'sysUtil:codeGenColumn:inss',
+    permission: 'main:sysUtil:codeGenColumn:inss',
     label: '批量新增代码生成-列信息',
   })
   async insCodeGenColumns(@Body(
@@ -105,7 +105,7 @@ export class CodeGenColumnController {
     summary: '修改代码生成-列信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGenColumn:upd',
+    permission: 'main:sysUtil:codeGenColumn:upd',
     label: '修改代码生成-列信息',
   })
   async updCodeGenColumn(@Body() dto: codeGenColumnUpdOneDto): Promise<R> {
@@ -121,7 +121,7 @@ export class CodeGenColumnController {
     type: codeGenColumnUpdOneDto,
   })
   @Authorize({
-    permission: 'sysUtil:codeGenColumn:upds',
+    permission: 'main:sysUtil:codeGenColumn:upds',
     label: '批量修改代码生成-列信息',
   })
   async updCodeGenColumns(@Body(
@@ -141,7 +141,7 @@ export class CodeGenColumnController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysUtil:codeGenColumn:del',
+    permission: 'main:sysUtil:codeGenColumn:del',
     label: '删除代码生成-列信息',
   })
   async delCodeGenColumn(@Body() ids: number[]): Promise<R> {

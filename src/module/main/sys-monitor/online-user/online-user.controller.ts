@@ -19,7 +19,7 @@ export class OnlineUserController {
   //   summary: '分页查询在线用户',
   // })
   // @Authorize({
-  //   permission: 'sysMonitor:onlineUser:selList',
+  //   permission: 'main:sysMonitor:onlineUser:selList',
   //   label: '分页查询在线用户',
   // })
   // async selOnlineUser(@Query() dto: onlineUserSelListDto): Promise<R> {
@@ -35,7 +35,7 @@ export class OnlineUserController {
   //   type: Number,
   // })
   // @Authorize({
-  //   permission: 'sysMonitor:onlineUser:del',
+  //   permission: 'main:sysMonitor:onlineUser:del',
   //   label: '强退用户',
   // })
   // async delOnlineUser(@Body() ids: number[]): Promise<R> {

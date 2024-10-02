@@ -19,7 +19,7 @@ export class DicDataController {
     summary: '分页查询字典数据',
   })
   @Authorize({
-    permission: 'sysManage:dicData:selList',
+    permission: 'main:sysManage:dicData:selList',
     label: '分页查询字典数据',
   })
   async selDicData(@Query() dto: dicDataSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class DicDataController {
     summary: '查询所有字典数据',
   })
   @Authorize({
-    permission: 'sysManage:dicData:selAll',
+    permission: 'main:sysManage:dicData:selAll',
     label: '查询所有字典数据',
   })
   async selAllDicData(@Query() dto: dicDataSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class DicDataController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:dicData:selOnes',
+    permission: 'main:sysManage:dicData:selOnes',
     label: '查询多个字典数据（根据id）',
   })
   async selOnesDicData(@Query() ids: number[]): Promise<R> {
@@ -61,7 +61,7 @@ export class DicDataController {
     summary: '查询单个字典数据',
   })
   @Authorize({
-    permission: 'sysManage:dicData:selOne',
+    permission: 'main:sysManage:dicData:selOne',
     label: '查询单个字典数据',
   })
   async selOneDicData(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class DicDataController {
     summary: '新增字典数据',
   })
   @Authorize({
-    permission: 'sysManage:dicData:ins',
+    permission: 'main:sysManage:dicData:ins',
     label: '新增字典数据',
   })
   async insDicData(@Body() dto: dicDataInsOneDto): Promise<R> {
@@ -89,7 +89,7 @@ export class DicDataController {
     type: dicDataInsOneDto,
   })
   @Authorize({
-    permission: 'sysManage:dicData:inss',
+    permission: 'main:sysManage:dicData:inss',
     label: '批量新增字典数据',
   })
   async insDicDatas(@Body(
@@ -105,7 +105,7 @@ export class DicDataController {
     summary: '修改字典数据',
   })
   @Authorize({
-    permission: 'sysManage:dicData:upd',
+    permission: 'main:sysManage:dicData:upd',
     label: '修改字典数据',
   })
   async updDicData(@Body() dto: dicDataUpdOneDto): Promise<R> {
@@ -121,7 +121,7 @@ export class DicDataController {
     type: dicDataUpdOneDto,
   })
   @Authorize({
-    permission: 'sysManage:dicData:upds',
+    permission: 'main:sysManage:dicData:upds',
     label: '批量修改字典数据',
   })
   async updDicDatas(@Body(
@@ -141,7 +141,7 @@ export class DicDataController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:dicData:del',
+    permission: 'main:sysManage:dicData:del',
     label: '删除字典数据',
   })
   async delDicData(@Body() ids: number[]): Promise<R> {

@@ -19,7 +19,7 @@ export class LogOperationController {
     summary: '分页查询系统操作日志',
   })
   @Authorize({
-    permission: 'sysLog:logOperation:selList',
+    permission: 'main:sysLog:logOperation:selList',
     label: '分页查询系统操作日志',
   })
   async selLogOperation(@Query() dto: logOperationSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class LogOperationController {
     summary: '查询所有系统操作日志',
   })
   @Authorize({
-    permission: 'sysLog:logOperation:selAll',
+    permission: 'main:sysLog:logOperation:selAll',
     label: '查询所有系统操作日志',
   })
   async selAllLogOperation(@Query() dto: logOperationSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class LogOperationController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysLog:logOperation:selOnes',
+    permission: 'main:sysLog:logOperation:selOnes',
     label: '查询多个系统操作日志（根据id）',
   })
   async selOnesLogOperation(@Query() ids: number[]): Promise<R> {
@@ -61,7 +61,7 @@ export class LogOperationController {
     summary: '查询单个系统操作日志',
   })
   @Authorize({
-    permission: 'sysLog:logOperation:selOne',
+    permission: 'main:sysLog:logOperation:selOne',
     label: '查询单个系统操作日志',
   })
   async selOneLogOperation(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class LogOperationController {
     summary: '新增系统操作日志',
   })
   @Authorize({
-    permission: 'sysLog:logOperation:ins',
+    permission: 'main:sysLog:logOperation:ins',
     label: '新增系统操作日志',
   })
   async insLogOperation(@Body() dto: logOperationInsOneDto): Promise<R> {
@@ -89,7 +89,7 @@ export class LogOperationController {
     type: logOperationInsOneDto,
   })
   @Authorize({
-    permission: 'sysLog:logOperation:inss',
+    permission: 'main:sysLog:logOperation:inss',
     label: '批量新增系统操作日志',
   })
   async insLogOperations(@Body(
@@ -105,7 +105,7 @@ export class LogOperationController {
     summary: '修改系统操作日志',
   })
   @Authorize({
-    permission: 'sysLog:logOperation:upd',
+    permission: 'main:sysLog:logOperation:upd',
     label: '修改系统操作日志',
   })
   async updLogOperation(@Body() dto: logOperationUpdOneDto): Promise<R> {
@@ -121,7 +121,7 @@ export class LogOperationController {
     type: logOperationUpdOneDto,
   })
   @Authorize({
-    permission: 'sysLog:logOperation:upds',
+    permission: 'main:sysLog:logOperation:upds',
     label: '批量修改系统操作日志',
   })
   async updLogOperations(@Body(
@@ -141,7 +141,7 @@ export class LogOperationController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysLog:logOperation:del',
+    permission: 'main:sysLog:logOperation:del',
     label: '删除系统操作日志',
   })
   async delLogOperation(@Body() ids: number[]): Promise<R> {

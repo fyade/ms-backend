@@ -26,7 +26,7 @@ export class UserDeptController {
     summary: '分页查询用户部门',
   })
   @Authorize({
-    permission: 'sysManage:userDept:selList',
+    permission: 'main:sysManage:userDept:selList',
     label: '分页查询用户部门',
   })
   async selUserDept(@Query() dto: userDeptSelListDto): Promise<R> {
@@ -38,7 +38,7 @@ export class UserDeptController {
     summary: '查询所有用户部门',
   })
   @Authorize({
-    permission: 'sysManage:userDept:selAll',
+    permission: 'main:sysManage:userDept:selAll',
     label: '查询所有用户部门',
   })
   async selAllUserDept(@Query() dto: userDeptSelAllDto): Promise<R> {
@@ -56,7 +56,7 @@ export class UserDeptController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:userDept:selOnes',
+    permission: 'main:sysManage:userDept:selOnes',
     label: '查询多个用户部门（根据id）',
   })
   async selOnesUserDept(@Query() ids: number[]): Promise<R> {
@@ -68,7 +68,7 @@ export class UserDeptController {
     summary: '查询单个用户部门',
   })
   @Authorize({
-    permission: 'sysManage:userDept:selOne',
+    permission: 'main:sysManage:userDept:selOne',
     label: '查询单个用户部门',
   })
   async selOneUserDept(@Param('id') id: number): Promise<R> {
@@ -80,7 +80,7 @@ export class UserDeptController {
     summary: '更新用户部门（ud）',
   })
   @Authorize({
-    permission: 'sysManage:userDept:updud',
+    permission: 'main:sysManage:userDept:updud',
     label: '更新用户部门（ud）',
   })
   async updUserDeptUD(@Body() dto: userDeptUpdUDDto): Promise<R> {
@@ -92,7 +92,7 @@ export class UserDeptController {
     summary: '更新用户部门（du）',
   })
   @Authorize({
-    permission: 'sysManage:userDept:upddu',
+    permission: 'main:sysManage:userDept:upddu',
     label: '更新用户部门（du）',
   })
   async updUserDeptDU(@Body() dto: userDeptUpdDUDto): Promise<R> {
@@ -108,7 +108,7 @@ export class UserDeptController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:userDept:del',
+    permission: 'main:sysManage:userDept:del',
     label: '删除用户部门',
   })
   async delUserDept(@Body() ids: number[]): Promise<R> {

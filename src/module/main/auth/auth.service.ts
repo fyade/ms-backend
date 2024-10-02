@@ -3,12 +3,12 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { base } from '../../../util/base';
 import { Injectable } from '@nestjs/common';
 import { adminTopDto } from '../admin-top/dto';
-import { logAlgorithmCallDto } from '../sys-log/log-algorithm-call/dto';
+import { logAlgorithmCallDto } from '../../algorithm/log-algorithm-call/dto';
 import { getIpInfoFromRequest } from '../../../util/RequestUtils';
-import { userGroupPermissionDto } from '../sys-manage/user-group-permission/dto';
+import { userGroupPermissionDto } from '../../algorithm/user-group-permission/dto';
 import { Exception } from '../../../exception/Exception';
 import { Request } from 'express';
-import { interfaceDto } from '../sys-manage/interface/dto';
+import { interfaceDto } from '../../algorithm/interface/dto';
 
 @Injectable()
 export class AuthService {

@@ -13,7 +13,7 @@ import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 
-@Controller('/sys-common/file-upload')
+@Controller('/main/sys-common/file-upload')
 @ApiTags('通用/文件上传')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
@@ -29,7 +29,7 @@ export class FileUploadController {
     summary: '分页查询文件上传列表',
   })
   @Authorize({
-    permission: 'system:fileupload:selList',
+    permission: 'main:system:fileupload:selList',
     label: '分页查询文件上传列表',
   })
   async selList(@Query() dto: fileUploadSelListDto): Promise<R> {
@@ -42,7 +42,7 @@ export class FileUploadController {
   })
   @UseInterceptors(FileInterceptor('file'))
   @Authorize({
-    permission: 'system:fileupload:onefull0',
+    permission: 'main:system:fileupload:onefull0',
     label: '文件上传-单文件完整上传',
   })
   async fileUploadOneFull0(@UploadedFile() file): Promise<R> {
@@ -58,7 +58,7 @@ export class FileUploadController {
   })
   @UseInterceptors(FileInterceptor('file'))
   @Authorize({
-    permission: 'system:fileupload:onefull',
+    permission: 'main:system:fileupload:onefull',
     label: '文件上传-单文件完整上传',
   })
   async fileUploadOneFull(@Param() param, @UploadedFile() file): Promise<R> {
@@ -74,7 +74,7 @@ export class FileUploadController {
   })
   @UseInterceptors(FileInterceptor('file'))
   @Authorize({
-    permission: 'system:fileupload:avatar',
+    permission: 'main:system:fileupload:avatar',
     label: '文件上传-头像',
   })
   async fileUploadAvatar(@Param() param, @UploadedFile() file): Promise<R> {
@@ -89,7 +89,7 @@ export class FileUploadController {
     summary: '文件上传-单文件分片上传前检查',
   })
   @Authorize({
-    permission: 'system:fileupload:onechunkcheck',
+    permission: 'main:system:fileupload:onechunkcheck',
     label: '文件上传-单文件分片上传前检查',
   })
   async fileUploadOneChunkCheck(@Body() dto: fileUploadOneChunk_check): Promise<R> {
@@ -102,7 +102,7 @@ export class FileUploadController {
   })
   @UseInterceptors(FileInterceptor('file'))
   @Authorize({
-    permission: 'system:fileupload:onechunkupload',
+    permission: 'main:system:fileupload:onechunkupload',
     label: '文件上传-单文件分片上传',
   })
   async fileUploadOneChunkUpload(@Param() param: fileUploadOneChunk_upload, @UploadedFile() file): Promise<R> {
@@ -119,7 +119,7 @@ export class FileUploadController {
     summary: '文件上传-单文件分片上传分片合并',
   })
   @Authorize({
-    permission: 'system:fileupload:onechunkmerge',
+    permission: 'main:system:fileupload:onechunkmerge',
     label: '文件上传-单文件分片上传分片合并',
   })
   async fileUploadOneChunkMerge(@Body() dto: fileUploadOneChunk_merge): Promise<R> {
@@ -127,7 +127,7 @@ export class FileUploadController {
   }
 
   // @Get('/image-waterfall-flow')
-  // @Authorize('system:fileupload:waterfall')
+  // @Authorize('main:system:fileupload:waterfall')
   // async getImageWaterfallFlow(@Query() dto: pageDto) {
   //   return this.fileUploadService.getImageWaterfallFlow(dto);
   // }

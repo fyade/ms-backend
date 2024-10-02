@@ -19,7 +19,7 @@ export class DeptPermissionController {
     summary: '分页查询部门权限',
   })
   @Authorize({
-    permission: 'sysManage:deptPermission:selList',
+    permission: 'main:sysManage:deptPermission:selList',
     label: '分页查询部门权限',
   })
   async selDeptPermission(@Query() dto: deptPermissionSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class DeptPermissionController {
     summary: '查询所有部门权限',
   })
   @Authorize({
-    permission: 'sysManage:deptPermission:selAll',
+    permission: 'main:sysManage:deptPermission:selAll',
     label: '查询所有部门权限',
   })
   async selAllDeptPermission(@Query() dto: deptPermissionSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class DeptPermissionController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:deptPermission:selOnes',
+    permission: 'main:sysManage:deptPermission:selOnes',
     label: '查询多个部门权限（根据id）',
   })
   async selOnesDeptPermission(@Query() ids: number[]): Promise<R> {
@@ -61,7 +61,7 @@ export class DeptPermissionController {
     summary: '查询单个部门权限',
   })
   @Authorize({
-    permission: 'sysManage:deptPermission:selOne',
+    permission: 'main:sysManage:deptPermission:selOne',
     label: '查询单个部门权限',
   })
   async selOneDeptPermission(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class DeptPermissionController {
     summary: '更新部门权限（dp）',
   })
   @Authorize({
-    permission: 'sysManage:deptPermission:upddp',
+    permission: 'main:sysManage:deptPermission:upddp',
     label: '更新部门权限（dp）',
   })
   async updDeptPermissionDp(@Body() dto: deptPermissionUpdManyDPDto): Promise<R> {
@@ -89,7 +89,7 @@ export class DeptPermissionController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:deptPermission:del',
+    permission: 'main:sysManage:deptPermission:del',
     label: '删除部门权限',
   })
   async delDeptPermission(@Body() ids: number[]): Promise<R> {

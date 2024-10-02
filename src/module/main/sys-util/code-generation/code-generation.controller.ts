@@ -18,7 +18,7 @@ export class CodeGenerationController {
     summary: '查询数据库信息',
   })
   @Authorize({
-    permission: 'sysUtil:codeGeneration:get',
+    permission: 'main:sysUtil:codeGeneration:get',
     label: '查询数据库信息',
   })
   async getDatabaseInfo(): Promise<R> {
@@ -30,7 +30,7 @@ export class CodeGenerationController {
     summary: '获取代码生成代码',
   })
   @Authorize({
-    permission: 'sysUtil:codeGeneration:getCode',
+    permission: 'main:sysUtil:codeGeneration:getCode',
     label: '获取代码生成代码',
   })
   async genCode(@Param('id') id: number): Promise<R> {
@@ -42,7 +42,7 @@ export class CodeGenerationController {
     summary: '获取代码生成代码压缩包',
   })
   @Authorize({
-    permission: 'sysUtil:codeGeneration:getCodeZip',
+    permission: 'main:sysUtil:codeGeneration:getCodeZip',
     label: '获取代码生成代码压缩包',
   })
   async genCodeZip(@Param('id') id: number): Promise<R> {

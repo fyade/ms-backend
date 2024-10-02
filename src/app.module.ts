@@ -23,23 +23,23 @@ import { CodeGenTableModule } from './module/main/sys-util/code-gen-table/code-g
 import { CodeGenColumnModule } from './module/main/sys-util/code-gen-column/code-gen-column.module';
 import { LogUserLoginModule } from './module/main/sys-log/log-user-login/log-user-login.module';
 import { DeptModule } from './module/main/sys-manage/dept/dept.module';
-import { UserGroupModule } from './module/main/sys-manage/user-group/user-group.module';
+import { UserGroupModule } from './module/algorithm/user-group/user-group.module';
 import { UserDeptModule } from './module/main/sys-manage/user-dept/user-dept.module';
-import { InterfaceGroupModule } from './module/main/sys-manage/interface-group/interface-group.module';
+import { InterfaceGroupModule } from './module/algorithm/interface-group/interface-group.module';
 import { DeptPermissionModule } from './module/main/sys-manage/dept-permission/dept-permission.module';
 import { RedisModule } from './redis/redis.module';
-import { UserUserGroupModule } from './module/main/sys-manage/user-user-group/user-user-group.module';
-import { InterfaceModule } from './module/main/sys-manage/interface/interface.module';
+import { UserUserGroupModule } from './module/algorithm/user-user-group/user-user-group.module';
+import { InterfaceModule } from './module/algorithm/interface/interface.module';
 import {
   InterfaceInterfaceGroupModule,
-} from './module/main/sys-manage/interface-interface-group/interface-interface-group.module';
-import { UserGroupPermissionModule } from './module/main/sys-manage/user-group-permission/user-group-permission.module';
-import { LogAlgorithmCallModule } from './module/main/sys-log/log-algorithm-call/log-algorithm-call.module';
+} from './module/algorithm/interface-interface-group/interface-interface-group.module';
+import { UserGroupPermissionModule } from './module/algorithm/user-group-permission/user-group-permission.module';
+import { LogAlgorithmCallModule } from './module/algorithm/log-algorithm-call/log-algorithm-call.module';
 import { AuthModule } from './module/main/auth/auth.module';
 import { CacheModule } from './module/main/cache/cache.module';
 import { OnlineUserModule } from './module/main/sys-monitor/online-user/online-user.module';
 import { LogOperationModule } from './module/main/sys-log/log-operation/log-operation.module';
-import { AlgorithmModule } from './module/main/algorithm/algorithm.module';
+import { AlgorithmModule } from './module/algorithm/algorithm/algorithm.module';
 import { SysModule } from './module/main/sys-manage/sys/sys.module';
 import { RoleSysModule } from './module/main/sys-manage/role-sys/role-sys.module';
 import { DeptSysModule } from './module/main/sys-manage/dept-sys/dept-sys.module';

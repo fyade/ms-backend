@@ -19,7 +19,7 @@ export class RoleController {
     summary: '分页查询角色',
   })
   @Authorize({
-    permission: 'sysManage:role:selList',
+    permission: 'main:sysManage:role:selList',
     label: '分页查询角色',
   })
   async selRole(@Query() dto: roleSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class RoleController {
     summary: '查询所有角色',
   })
   @Authorize({
-    permission: 'sysManage:role:selAll',
+    permission: 'main:sysManage:role:selAll',
     label: '查询所有角色',
   })
   async selAllRole(@Query() dto: roleSelAllDto): Promise<R> {
@@ -43,7 +43,7 @@ export class RoleController {
     summary: '查询单个角色',
   })
   @Authorize({
-    permission: 'sysManage:role:selOne',
+    permission: 'main:sysManage:role:selOne',
     label: '查询单个角色',
   })
   async selOneRole(@Param('id') id: number): Promise<R> {
@@ -55,7 +55,7 @@ export class RoleController {
     summary: '新增角色',
   })
   @Authorize({
-    permission: 'sysManage:role:ins',
+    permission: 'main:sysManage:role:ins',
     label: '新增角色',
   })
   async insRole(@Body() dto: roleInsOneDto): Promise<R> {
@@ -67,7 +67,7 @@ export class RoleController {
     summary: '修改角色',
   })
   @Authorize({
-    permission: 'sysManage:role:upd',
+    permission: 'main:sysManage:role:upd',
     label: '修改角色',
   })
   async updRole(@Body() dto: roleUpdOneDto): Promise<R> {
@@ -83,7 +83,7 @@ export class RoleController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:role:del',
+    permission: 'main:sysManage:role:del',
     label: '删除角色',
   })
   async delRole(@Body() ids: number[]): Promise<R> {

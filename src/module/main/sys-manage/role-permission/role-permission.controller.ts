@@ -19,7 +19,7 @@ export class RolePermissionController {
     summary: '分页查询角色权限',
   })
   @Authorize({
-    permission: 'sysManage:rolePermission:selList',
+    permission: 'main:sysManage:rolePermission:selList',
     label: '分页查询角色权限',
   })
   async selRolePermission(@Query() dto: rolePermissionSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class RolePermissionController {
     summary: '查询所有角色权限',
   })
   @Authorize({
-    permission: 'sysManage:rolePermission:selAll',
+    permission: 'main:sysManage:rolePermission:selAll',
     label: '查询所有角色权限',
   })
   async selAllRolePermission(@Query() dto: rolePermissionSelAllDto): Promise<R> {
@@ -40,7 +40,7 @@ export class RolePermissionController {
 
   // @Get('/all')
   // @Authorize({
-  //   permission: 'sysManage:rolePermission:selAll',
+  //   permission: 'main:sysManage:rolePermission:selAll',
   //   label: '查询所有角色权限',
   // })
   // async selAllRolePermission(@Query() dto: selByRoleIdDto): Promise<R> {
@@ -54,7 +54,7 @@ export class RolePermissionController {
     summary: '查询单个角色权限',
   })
   @Authorize({
-    permission: 'sysManage:rolePermission:selOne',
+    permission: 'main:sysManage:rolePermission:selOne',
     label: '查询单个角色权限',
   })
   async selOneRolePermission(@Param('id') id: number): Promise<R> {
@@ -63,7 +63,7 @@ export class RolePermissionController {
 
   // @Post()
   // @Authorize({
-  //   permission: 'sysManage:rolePermission:ins',
+  //   permission: 'main:sysManage:rolePermission:ins',
   //   label: '新增角色权限',
   // })
   // async insRolePermission(@Body() dto: insManyDto): Promise<R> {
@@ -75,7 +75,7 @@ export class RolePermissionController {
     summary: '修改角色权限',
   })
   @Authorize({
-    permission: 'sysManage:rolePermission:upd',
+    permission: 'main:sysManage:rolePermission:upd',
     label: '修改角色权限',
   })
   async updRolePermissionRp(@Body() dto: rolePermissionUpdManyDto): Promise<R> {
@@ -91,7 +91,7 @@ export class RolePermissionController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:rolePermission:del',
+    permission: 'main:sysManage:rolePermission:del',
     label: '删除角色权限',
   })
   async delRolePermission(@Body() ids: number[]): Promise<R> {

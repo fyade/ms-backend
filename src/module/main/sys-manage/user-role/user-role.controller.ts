@@ -19,7 +19,7 @@ export class UserRoleController {
     summary: '分页查询用户角色',
   })
   @Authorize({
-    permission: 'sysManage:userRole:selList',
+    permission: 'main:sysManage:userRole:selList',
     label: '分页查询用户角色',
   })
   async selUserRole(@Query() dto: userRoleSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class UserRoleController {
     summary: '查询所有用户角色',
   })
   @Authorize({
-    permission: 'sysManage:userRole:selAll',
+    permission: 'main:sysManage:userRole:selAll',
     label: '查询所有用户角色',
   })
   async selAllUserRole(@Query() dto: userRoleSelAllDto): Promise<R> {
@@ -43,7 +43,7 @@ export class UserRoleController {
     summary: '查询单个用户角色',
   })
   @Authorize({
-    permission: 'sysManage:userRole:selOne',
+    permission: 'main:sysManage:userRole:selOne',
     label: '查询单个用户角色',
   })
   async selOneUserRole(@Param('id') id: number): Promise<R> {
@@ -55,7 +55,7 @@ export class UserRoleController {
     summary: '更新用户角色（ur）',
   })
   @Authorize({
-    permission: 'sysManage:userRole:updur',
+    permission: 'main:sysManage:userRole:updur',
     label: '更新用户角色（ur）',
   })
   async updUserRoleUR(@Body() dto: userRoleUpdManyURDto): Promise<R> {
@@ -67,7 +67,7 @@ export class UserRoleController {
     summary: '更新用户角色（ru）',
   })
   @Authorize({
-    permission: 'sysManage:userRole:updru',
+    permission: 'main:sysManage:userRole:updru',
     label: '更新用户角色（ru）',
   })
   async updUserRoleRU(@Body() dto: userRoleUpdManyRUDto): Promise<R> {
@@ -83,7 +83,7 @@ export class UserRoleController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:userRole:del',
+    permission: 'main:sysManage:userRole:del',
     label: '删除用户角色',
   })
   async delUserRole(@Body() ids: number[]): Promise<R> {

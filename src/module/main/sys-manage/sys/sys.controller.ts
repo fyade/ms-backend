@@ -19,7 +19,7 @@ export class SysController {
     summary: '分页查询系统',
   })
   @Authorize({
-    permission: 'sysManage:sys:selList',
+    permission: 'main:sysManage:sys:selList',
     label: '分页查询系统',
   })
   async selSys(@Query() dto: sysSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class SysController {
     summary: '查询所有系统',
   })
   @Authorize({
-    permission: 'sysManage:sys:selAll',
+    permission: 'main:sysManage:sys:selAll',
     label: '查询所有系统',
   })
   async selAllSys(@Query() dto: sysSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class SysController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:sys:selOnes',
+    permission: 'main:sysManage:sys:selOnes',
     label: '查询多个系统（根据id）',
   })
   async selOnesSys(@Query() ids: number[]): Promise<R> {
@@ -61,7 +61,7 @@ export class SysController {
     summary: '查询单个系统',
   })
   @Authorize({
-    permission: 'sysManage:sys:selOne',
+    permission: 'main:sysManage:sys:selOne',
     label: '查询单个系统',
   })
   async selOneSys(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class SysController {
     summary: '新增系统',
   })
   @Authorize({
-    permission: 'sysManage:sys:ins',
+    permission: 'main:sysManage:sys:ins',
     label: '新增系统',
   })
   async insSys(@Body() dto: sysInsOneDto): Promise<R> {
@@ -89,7 +89,7 @@ export class SysController {
     type: sysInsOneDto,
   })
   @Authorize({
-    permission: 'sysManage:sys:inss',
+    permission: 'main:sysManage:sys:inss',
     label: '批量新增系统',
   })
   async insSyss(@Body(
@@ -105,7 +105,7 @@ export class SysController {
     summary: '修改系统',
   })
   @Authorize({
-    permission: 'sysManage:sys:upd',
+    permission: 'main:sysManage:sys:upd',
     label: '修改系统',
   })
   async updSys(@Body() dto: sysUpdOneDto): Promise<R> {
@@ -121,7 +121,7 @@ export class SysController {
     type: sysUpdOneDto,
   })
   @Authorize({
-    permission: 'sysManage:sys:upds',
+    permission: 'main:sysManage:sys:upds',
     label: '批量修改系统',
   })
   async updSyss(@Body(
@@ -141,7 +141,7 @@ export class SysController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:sys:del',
+    permission: 'main:sysManage:sys:del',
     label: '删除系统',
   })
   async delSys(@Body() ids: number[]): Promise<R> {

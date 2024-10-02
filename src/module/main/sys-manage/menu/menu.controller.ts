@@ -19,7 +19,7 @@ export class MenuController {
     summary: '分页查询菜单',
   })
   @Authorize({
-    permission: 'sysManage:menu:selList',
+    permission: 'main:sysManage:menu:selList',
     label: '分页查询菜单',
   })
   async selMenu(@Query() dto: menuSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class MenuController {
     summary: '查询所有菜单',
   })
   @Authorize({
-    permission: 'sysManage:menu:selAll',
+    permission: 'main:sysManage:menu:selAll',
     label: '查询所有菜单',
   })
   async selAllMenu(@Query() dto: menuSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class MenuController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:menu:selOnes',
+    permission: 'main:sysManage:menu:selOnes',
     label: '查询多个菜单（根据id）',
   })
   async selOnesMenu(@Query() ids: number[]): Promise<R> {
@@ -61,7 +61,7 @@ export class MenuController {
     summary: '查询单个菜单',
   })
   @Authorize({
-    permission: 'sysManage:menu:selOne',
+    permission: 'main:sysManage:menu:selOne',
     label: '查询单个菜单',
   })
   async selOneMenu(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class MenuController {
     summary: '新增菜单',
   })
   @Authorize({
-    permission: 'sysManage:menu:ins',
+    permission: 'main:sysManage:menu:ins',
     label: '新增菜单',
   })
   async insMenu(@Body() dto: menuInsOneDto): Promise<R> {
@@ -89,7 +89,7 @@ export class MenuController {
     type: menuInsOneDto,
   })
   @Authorize({
-    permission: 'sysManage:menu:inss',
+    permission: 'main:sysManage:menu:inss',
     label: '批量新增菜单',
   })
   async insMenus(@Body(
@@ -105,7 +105,7 @@ export class MenuController {
     summary: '修改菜单',
   })
   @Authorize({
-    permission: 'sysManage:menu:upd',
+    permission: 'main:sysManage:menu:upd',
     label: '修改菜单',
   })
   async updMenu(@Body() dto: menuUpdOneDto): Promise<R> {
@@ -121,7 +121,7 @@ export class MenuController {
     type: menuUpdOneDto,
   })
   @Authorize({
-    permission: 'sysManage:menu:upds',
+    permission: 'main:sysManage:menu:upds',
     label: '批量修改菜单',
   })
   async updMenus(@Body(
@@ -141,7 +141,7 @@ export class MenuController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:menu:del',
+    permission: 'main:sysManage:menu:del',
     label: '删除菜单',
   })
   async delMenu(@Body() ids: number[]): Promise<R> {

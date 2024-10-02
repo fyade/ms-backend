@@ -19,7 +19,7 @@ export class RoleSysController {
     summary: '分页查询角色系统',
   })
   @Authorize({
-    permission: 'sysManage:roleSys:selList',
+    permission: 'main:sysManage:roleSys:selList',
     label: '分页查询角色系统',
   })
   async selRoleSys(@Query() dto: roleSysSelListDto): Promise<R> {
@@ -31,7 +31,7 @@ export class RoleSysController {
     summary: '查询所有角色系统',
   })
   @Authorize({
-    permission: 'sysManage:roleSys:selAll',
+    permission: 'main:sysManage:roleSys:selAll',
     label: '查询所有角色系统',
   })
   async selAllRoleSys(@Query() dto: roleSysSelAllDto): Promise<R> {
@@ -49,7 +49,7 @@ export class RoleSysController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:roleSys:selOnes',
+    permission: 'main:sysManage:roleSys:selOnes',
     label: '查询多个角色系统（根据id）',
   })
   async selOnesRoleSys(@Query() ids: number[]): Promise<R> {
@@ -61,7 +61,7 @@ export class RoleSysController {
     summary: '查询单个角色系统',
   })
   @Authorize({
-    permission: 'sysManage:roleSys:selOne',
+    permission: 'main:sysManage:roleSys:selOne',
     label: '查询单个角色系统',
   })
   async selOneRoleSys(@Param('id') id: number): Promise<R> {
@@ -73,7 +73,7 @@ export class RoleSysController {
     summary: '新增角色系统',
   })
   @Authorize({
-    permission: 'sysManage:roleSys:ins',
+    permission: 'main:sysManage:roleSys:ins',
     label: '新增角色系统',
   })
   async insRoleSys(@Body() dto: roleSysInsOneDto): Promise<R> {
@@ -89,7 +89,7 @@ export class RoleSysController {
     type: roleSysInsOneDto,
   })
   @Authorize({
-    permission: 'sysManage:roleSys:inss',
+    permission: 'main:sysManage:roleSys:inss',
     label: '批量新增角色系统',
   })
   async insRoleSyss(@Body(
@@ -105,7 +105,7 @@ export class RoleSysController {
     summary: '修改角色系统',
   })
   @Authorize({
-    permission: 'sysManage:roleSys:upd',
+    permission: 'main:sysManage:roleSys:upd',
     label: '修改角色系统',
   })
   async updRoleSys(@Body() dto: roleSysUpdOneDto): Promise<R> {
@@ -121,7 +121,7 @@ export class RoleSysController {
     type: roleSysUpdOneDto,
   })
   @Authorize({
-    permission: 'sysManage:roleSys:upds',
+    permission: 'main:sysManage:roleSys:upds',
     label: '批量修改角色系统',
   })
   async updRoleSyss(@Body(
@@ -141,7 +141,7 @@ export class RoleSysController {
     type: Number,
   })
   @Authorize({
-    permission: 'sysManage:roleSys:del',
+    permission: 'main:sysManage:roleSys:del',
     label: '删除角色系统',
   })
   async delRoleSys(@Body() ids: number[]): Promise<R> {

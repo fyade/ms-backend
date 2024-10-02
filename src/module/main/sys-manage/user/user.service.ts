@@ -14,8 +14,8 @@ import { UserPermissionDeniedException } from '../../../../exception/UserPermiss
 import { LogUserLoginService } from '../../sys-log/log-user-login/log-user-login.service';
 import { comparePassword, hashPassword } from '../../../../util/EncryptUtils';
 import { userDeptDto } from '../user-dept/dto';
-import { userGroupDto } from '../user-group/dto';
-import { userUserGroupDto } from '../user-user-group/dto';
+import { userGroupDto } from '../../../algorithm/user-group/dto';
+import { userUserGroupDto } from '../../../algorithm/user-user-group/dto';
 import { roleDto } from '../role/dto';
 import { deptDto } from '../dept/dto';
 import { CacheTokenService } from '../../cache/cache.token.service';
