@@ -6,7 +6,7 @@ import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { codeGenTableSelListDto, codeGenTableSelAllDto, codeGenTableInsOneDto, codeGenTableUpdOneDto } from './dto';
 
-@Controller('/sys-util/code-gen-table')
+@Controller('/main/sys-util/code-gen-table')
 @ApiTags('系统工具/代码生成-表信息')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

@@ -13,7 +13,7 @@ import {
   userUserGroupUpdUGUDtp,
 } from './dto';
 
-@Controller('/sys-manage/user-user-group')
+@Controller('/main/sys-manage/user-user-group')
 @ApiTags('系统管理/用户用户组')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

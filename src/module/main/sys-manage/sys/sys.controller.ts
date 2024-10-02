@@ -6,7 +6,7 @@ import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { sysSelListDto, sysSelAllDto, sysInsOneDto, sysUpdOneDto } from './dto';
 
-@Controller('/sys-manage/sys')
+@Controller('/main/sys-manage/sys')
 @ApiTags('系统管理/系统')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

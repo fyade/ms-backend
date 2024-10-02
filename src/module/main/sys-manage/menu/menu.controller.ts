@@ -6,7 +6,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { menuInsOneDto, menuSelAllDto, menuSelListDto, menuUpdOneDto } from './dto';
 
-@Controller('/sys-manage/menu')
+@Controller('/main/sys-manage/menu')
 @ApiTags('系统管理/菜单')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

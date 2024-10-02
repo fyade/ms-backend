@@ -6,7 +6,7 @@ import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { userGroupSelListDto, userGroupSelAllDto, userGroupInsOneDto, userGroupUpdOneDto } from './dto';
 
-@Controller('/sys-manage/user-group')
+@Controller('/main/sys-manage/user-group')
 @ApiTags('系统管理/用户组')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

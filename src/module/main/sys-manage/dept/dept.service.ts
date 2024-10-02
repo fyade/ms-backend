@@ -16,8 +16,9 @@ export class DeptService {
     const res = await this.prisma.findPage<deptDto, deptSelListDto>('sys_dept', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'ifAdmin', 'parentId', 'orderNum'],
+      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'parentId', 'orderNum'],
       numberKeys: ['parentId', 'orderNum'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -26,8 +27,9 @@ export class DeptService {
     const res = await this.prisma.findAll<deptDto>('sys_dept', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'ifAdmin', 'parentId', 'orderNum'],
+      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'parentId', 'orderNum'],
       numberKeys: ['parentId', 'orderNum'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

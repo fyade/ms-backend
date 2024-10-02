@@ -7,7 +7,7 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { decrypt } from '../../../../util/EncryptUtils';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 
-@Controller('/sys-manage/user')
+@Controller('/main/sys-manage/user')
 @ApiTags('系统管理/用户')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

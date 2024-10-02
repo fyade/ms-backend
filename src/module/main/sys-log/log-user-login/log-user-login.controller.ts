@@ -6,7 +6,7 @@ import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { logUserLoginSelListDto, logUserLoginSelAllDto, logUserLoginInsOneDto, logUserLoginUpdOneDto } from './dto';
 
-@Controller('/sys-log/log-user-login')
+@Controller('/main/sys-log/log-user-login')
 @ApiTags('系统日志/登录日志')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

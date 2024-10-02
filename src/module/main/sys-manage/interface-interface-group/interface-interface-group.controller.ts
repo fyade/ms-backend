@@ -12,7 +12,7 @@ import {
   interfaceInterfaceGroupUpdIIGDto, interfaceInterfaceGroupUpdIGIDto,
 } from './dto';
 
-@Controller('/sys-manage/interface-interface-group')
+@Controller('/main/sys-manage/interface-interface-group')
 @ApiTags('系统管理/接口接口组')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

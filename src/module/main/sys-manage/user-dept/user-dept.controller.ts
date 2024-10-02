@@ -13,7 +13,7 @@ import {
   userDeptUpdDUDto,
 } from './dto';
 
-@Controller('/sys-manage/user-dept')
+@Controller('/main/sys-manage/user-dept')
 @ApiTags('系统管理/用户部门')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

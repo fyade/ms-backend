@@ -11,7 +11,7 @@ import {
   logAlgorithmCallUpdOneDto,
 } from './dto';
 
-@Controller('/sys-log/log-algorithm-call')
+@Controller('/main/sys-log/log-algorithm-call')
 @ApiTags('系统日志/算法调用日志')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

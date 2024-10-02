@@ -251,6 +251,7 @@ model sys_dept {
   id                   Int                   @id @default(autoincrement()) @db.Int
   label                String                @db.VarChar(50)
   if_admin             String                @db.Char(1)
+  if_disabled          String                @db.Char(1)
   parent_id            Int                   @db.Int
   order_num            Int                   @db.Int
   remark               String?               @db.VarChar(300)

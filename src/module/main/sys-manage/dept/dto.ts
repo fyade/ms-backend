@@ -11,6 +11,8 @@ export class deptDto extends baseInterface {
 
   ifAdmin: string;
 
+  ifDisabled: string;
+
   parentId: number;
 
   orderNum: number;
@@ -28,6 +30,9 @@ export class deptSelListDto extends pageDto {
   @ApiProperty({ description: '是否管理员权限', required: false })
   ifAdmin: string;
 
+  @ApiProperty({ description: '是否禁用', required: false })
+  ifDisabled: string;
+
   @ApiProperty({ description: '父级部门', required: false })
   parentId: number;
 
@@ -44,6 +49,9 @@ export class deptSelAllDto {
 
   @ApiProperty({ description: '是否管理员权限', required: false })
   ifAdmin: string;
+
+  @ApiProperty({ description: '是否禁用', required: false })
+  ifDisabled: string;
 
   @ApiProperty({ description: '父级部门', required: false })
   parentId: number;
@@ -63,6 +71,10 @@ export class deptInsOneDto {
   @ApiProperty({ description: '是否管理员权限', required: true })
   @IsNotEmpty({ message: '是否管理员权限不能为空' })
   ifAdmin: string;
+
+  @ApiProperty({ description: '是否禁用', required: true })
+  @IsNotEmpty({ message: '是否禁用不能为空' })
+  ifDisabled: string;
 
   @ApiProperty({ description: '父级部门', required: true })
   @Type(() => Number)

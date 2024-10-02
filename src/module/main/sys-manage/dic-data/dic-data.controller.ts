@@ -6,7 +6,7 @@ import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { dicDataSelListDto, dicDataSelAllDto, dicDataInsOneDto, dicDataUpdOneDto } from './dto';
 
-@Controller('/sys-manage/dic-data')
+@Controller('/main/sys-manage/dic-data')
 @ApiTags('系统管理/字典数据')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

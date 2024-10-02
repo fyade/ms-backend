@@ -6,7 +6,7 @@ import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { codeGenColumnSelListDto, codeGenColumnSelAllDto, codeGenColumnInsOneDto, codeGenColumnUpdOneDto } from './dto';
 
-@Controller('/sys-util/code-gen-column')
+@Controller('/main/sys-util/code-gen-column')
 @ApiTags('系统工具/代码生成-列信息')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

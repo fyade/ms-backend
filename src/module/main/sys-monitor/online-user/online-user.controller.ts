@@ -6,7 +6,7 @@ import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { R } from '../../../../common/R';
 import { onlineUserSelListDto } from './dto';
 
-@Controller('/sys-monitor/online-user')
+@Controller('/main/sys-monitor/online-user')
 @ApiTags('系统监控/在线用户')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

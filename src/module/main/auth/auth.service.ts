@@ -36,16 +36,16 @@ export class AuthService {
       return true;
     }
     const ps1 = await this.prisma.$queryRaw`
-      SELECT sur.id as surId
-      FROM sys_user_role sur
-      WHERE sur.deleted = ${base.N}
-        AND sur.user_id = ${user.id}
+      select sur.id as surId
+      from sys_user_role sur
+      where sur.deleted = ${base.N}
+        and sur.user_id = ${user.id}
         and sur.role_id in
             (select sr.id
              from sys_role sr
              where sr.deleted = ${base.N}
-               AND sr.if_disabled = ${base.N}
-               AND sr.if_admin = ${base.Y});
+               and sr.if_disabled = ${base.N}
+               and sr.if_admin = ${base.Y});
     `;
     const ps2 = await this.prisma.$queryRaw`
       select sud.id as sudId
@@ -56,6 +56,7 @@ export class AuthService {
             (select sd.id
              from sys_dept sd
              where sd.deleted = ${base.N}
+               and sd.if_disabled = ${base.N}
                and sd.if_admin = ${base.Y});
     `;
     const ps = [...ps1, ...ps2];
@@ -180,6 +181,7 @@ export class AuthService {
                                                  (select sd.id
                                                   from sys_dept sd
                                                   where sd.deleted = ${base.N}
+                                                    and sd.if_disabled = ${base.N}
                                                     and sd.if_admin = ${base.Y})))
                    )
             )

@@ -6,7 +6,7 @@ import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { roleSelListDto, roleSelAllDto, roleInsOneDto, roleUpdOneDto } from './dto';
 
-@Controller('/sys-manage/role')
+@Controller('/main/sys-manage/role')
 @ApiTags('系统管理/角色')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())

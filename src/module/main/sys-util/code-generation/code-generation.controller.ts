@@ -5,7 +5,7 @@ import { R } from '../../../../common/R';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 
-@Controller('/sys-util/code-generation')
+@Controller('/main/sys-util/code-generation')
 @ApiTags('系统工具/代码生成')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
