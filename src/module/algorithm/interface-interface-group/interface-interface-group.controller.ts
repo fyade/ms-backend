@@ -13,7 +13,7 @@ import {
 } from './dto';
 
 @Controller('/algorithm/interface-interface-group')
-@ApiTags('系统管理/接口接口组')
+@ApiTags('算法系统/接口接口组')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class InterfaceInterfaceGroupController {

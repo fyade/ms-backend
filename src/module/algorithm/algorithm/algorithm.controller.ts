@@ -7,7 +7,7 @@ import { R } from '../../../common/R';
 import { algorithmDto } from './dto';
 
 @Controller('/algorithm/algorithm')
-@ApiTags('算法接口')
+@ApiTags('算法系统/算法接口')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class AlgorithmController {

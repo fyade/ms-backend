@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { userGroupPermissionInsOneDto, userGroupPermissionSelAllDto, userGroupPermissionSelListDto } from './dto';
 
 @Controller('/algorithm/user-group-permission')
-@ApiTags('系统管理/用户组接口组')
+@ApiTags('算法系统/用户组接口组')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class UserGroupPermissionController {

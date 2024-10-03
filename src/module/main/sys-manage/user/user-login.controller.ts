@@ -10,7 +10,7 @@ import { getIpInfoFromRequest } from '../../../../util/RequestUtils';
 import { Request } from 'express';
 
 @Controller('/sys/user')
-@ApiTags('系统管理/用户登录')
+@ApiTags('主系统/系统管理/用户登录')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class UserLoginController {

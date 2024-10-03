@@ -6,7 +6,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 
 @Controller('/main/sys-util/code-generation')
-@ApiTags('系统工具/代码生成')
+@ApiTags('主系统/系统工具/代码生成')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class CodeGenerationController {

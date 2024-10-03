@@ -7,7 +7,7 @@ import { R } from '../../../../common/R';
 import { onlineUserSelListDto } from './dto';
 
 @Controller('/main/sys-monitor/online-user')
-@ApiTags('系统监控/在线用户')
+@ApiTags('主系统/系统监控/在线用户')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class OnlineUserController {

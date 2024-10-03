@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { codeGenTableSelListDto, codeGenTableSelAllDto, codeGenTableInsOneDto, codeGenTableUpdOneDto } from './dto';
 
 @Controller('/main/sys-util/code-gen-table')
-@ApiTags('系统工具/代码生成-表信息')
+@ApiTags('主系统/系统工具/代码生成-表信息')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class CodeGenTableController {

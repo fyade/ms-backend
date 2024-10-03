@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { deptPermissionSelAllDto, deptPermissionSelListDto, deptPermissionUpdManyDPDto } from './dto';
 
 @Controller('/main/sys-manage/dept-permission')
-@ApiTags('系统管理/部门权限')
+@ApiTags('主系统/系统管理/部门权限')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class DeptPermissionController {

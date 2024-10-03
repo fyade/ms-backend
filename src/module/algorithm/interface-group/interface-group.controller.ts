@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../pipe/validation/validation.pipe';
 import { interfaceGroupSelListDto, interfaceGroupSelAllDto, interfaceGroupInsOneDto, interfaceGroupUpdOneDto } from './dto';
 
 @Controller('/algorithm/interface-group')
-@ApiTags('系统管理/接口组')
+@ApiTags('算法系统/接口组')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class InterfaceGroupController {

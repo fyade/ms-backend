@@ -14,7 +14,7 @@ import {
 } from './dto';
 
 @Controller('/main/sys-manage/user-dept')
-@ApiTags('系统管理/用户部门')
+@ApiTags('主系统/系统管理/用户部门')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class UserDeptController {

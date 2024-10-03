@@ -8,7 +8,7 @@ import { decrypt } from '../../../../util/EncryptUtils';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 
 @Controller('/main/sys-manage/user')
-@ApiTags('系统管理/用户')
+@ApiTags('主系统/系统管理/用户')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class UserController {

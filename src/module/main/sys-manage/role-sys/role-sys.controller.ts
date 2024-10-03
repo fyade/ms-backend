@@ -7,7 +7,7 @@ import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { roleSysSelListDto, roleSysSelAllDto, roleSysInsOneDto, roleSysUpdOneDto } from './dto';
 
 @Controller('/main/sys-manage/role-sys')
-@ApiTags('角色系统')
+@ApiTags('主系统/系统管理/角色系统')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class RoleSysController {
