@@ -1,6 +1,6 @@
 INSERT INTO `sys_sys` (id, name, perms, order_num, path, remark, create_by, update_by, create_time, update_time, deleted)
-VALUES (1,'主系统','sys:main',0,'main','','fyaa','fyaaa','2024-10-02 20:57:36.000','2024-10-02 20:57:37.000','N'),
-       (2,'算法系统','sys:algorithm',1,'algorithm','','fyaa','fyaaa','2024-10-02 20:57:36.000','2024-10-02 20:57:37.000','N');
+VALUES (1,'主系统','sys:main',0,'main','','fyaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (2,'算法系统','sys:algorithm',1,'algorithm','','fyaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N');
 
 INSERT INTO `sys_menu` (id, label, type, path, parent_id, component, icon, order_num, if_link, if_visible, if_disabled, if_public, perms, sys_id, remark, create_by, update_by, create_time, update_time, deleted)
 VALUES (1,'系统管理','mm','sys-manage',0,'#','system',1,'N','Y','N','N','main:sysManage',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
@@ -261,4 +261,9 @@ VALUES (1,'系统管理','mm','sys-manage',0,'#','system',1,'N','Y','N','N','mai
        (256,'批量新增算法调用日志','mb','#',203,'#','',0,'N','Y','N','N','algorithm:logAlgorithmCall:inss',2,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (257,'修改算法调用日志','mb','#',203,'#','',0,'N','Y','N','N','algorithm:logAlgorithmCall:upd',2,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (258,'批量修改算法调用日志','mb','#',203,'#','',0,'N','Y','N','N','algorithm:logAlgorithmCall:upds',2,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (259,'删除算法调用日志','mb','#',203,'#','',0,'N','Y','N','N','algorithm:logAlgorithmCall:del',2,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N');
+       (259,'删除算法调用日志','mb','#',203,'#','',0,'N','Y','N','N','algorithm:logAlgorithmCall:del',2,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (260,'系统','ma','#',0,'#','',-1,'N','Y','N','N','i:sys',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (261,'获取全部鉴权接口','mb','#',260,'#','',0,'N','Y','N','N','system:home:apis',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (262,'获取系统基本信息','mb','#',260,'#','',0,'N','Y','N','N','system:home:base',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (263,'获取有权限的接口','mb','#',260,'#','',0,'N','Y','N','N','system:home:permission',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (264,'获取有权限的系统','mb','#',260,'#','',0,'N','Y','N','N','system:home:system',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N');
