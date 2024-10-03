@@ -1,4 +1,4 @@
-import { userDto, userDto3 } from '../module/main/sys-manage/user/dto';
+import { userDto, userDto3 } from '../module/module/main/sys-manage/user/dto';
 import * as jwt from 'jsonwebtoken';
 import { jwtConstants } from '../../config/authConfig';
 

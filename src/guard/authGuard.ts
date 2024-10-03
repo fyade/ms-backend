@@ -2,8 +2,8 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { adminLoginUrl, reqWhiteList } from '../../config/authConfig';
 import { UnauthorizedException } from '../exception/UnauthorizedException';
 import { clearCurrentUser, setCurrentUser } from '../util/baseContext';
-import { userDto2 } from '../module/main/sys-manage/user/dto';
-import { CacheTokenService } from '../module/main/cache/cache.token.service';
+import { userDto2 } from '../module/module/main/sys-manage/user/dto';
+import { CacheTokenService } from '../module/cache/cache.token.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

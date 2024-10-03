@@ -6,7 +6,7 @@ import * as process from 'process';
 import * as diskinfo from 'diskinfo';
 import { NonSupportedException } from './exception/NonSupportedException';
 import { currentVersion } from '../config/config';
-import { AuthService } from './module/main/auth/auth.service';
+import { AuthService } from './module/auth/auth.service';
 import { getCurrentUser } from './util/baseContext';
 import { getAllFiles } from './util/FileUtils';
 

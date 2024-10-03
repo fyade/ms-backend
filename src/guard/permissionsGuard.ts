@@ -1,11 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PRE_AUTHORIZE_KEY, PreAuthorizeParams } from '../decorator/customDecorator';
-import { AuthService } from '../module/main/auth/auth.service';
+import { AuthService } from '../module/auth/auth.service';
 import { adminLoginUrl, reqWhiteList } from '../../config/authConfig';
 import { ForbiddenException } from '../exception/ForbiddenException';
 import { UserUnknownException } from '../exception/UserUnknownException';
-import { CachePermissionService } from '../module/main/cache/cache.permission.service';
+import { CachePermissionService } from '../module/cache/cache.permission.service';
 import { base } from '../util/base';
 import { getCurrentUser } from '../util/baseContext';
 import { Exception } from '../exception/Exception';
