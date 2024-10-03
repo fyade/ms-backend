@@ -12,6 +12,8 @@
 
 ## 运行教程 How to run
 
+若非初次运行，可直接 `npm run start:dev` 运行，然后下面步骤可忽略。
+
 环境要求：node、mysql、redis
 
 1. 从仓库中拉取项目
@@ -43,13 +45,11 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 4. 接下来
 
-若非初次运行，可直接 `npm run start:dev` 运行，然后下面步骤可忽略。
-
 首先需要全局安装 nest ，命令为 `npm i -g @nestjs/cli`；
 
 其次下载项目依赖，命令为 `npm i`；
 
-然后还需要向 sys_menu 表中插入初始数据，初始数据位于 /bin/sql.sql；
+然后还需要向部分表中插入初始数据，初始数据位于 /bin/sql.sql；
 
 随后需要插入一个初始用户，步骤如下：
 
