@@ -303,6 +303,7 @@ model sys_sys {
   perms         String         @db.VarChar(100)
   order_num     Int            @db.Int
   path          String         @db.VarChar(100)
+  if_disabled   String         @db.Char(1)
   remark        String?        @db.VarChar(300)
   create_by     String         @db.VarChar(10)
   update_by     String         @db.VarChar(10)

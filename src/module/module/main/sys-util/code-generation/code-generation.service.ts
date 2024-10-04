@@ -17,7 +17,7 @@ export class CodeGenerationService {
   async getDatabaseInfo(): Promise<R> {
     let text = '';
     try {
-      const pathJoin = path.join(__dirname, '../../../../../');
+      const pathJoin = path.join(__dirname, '../../../../../../');
       const prismaPath = path.join(pathJoin.endsWith('dist\\') ? pathJoin.substring(0, pathJoin.length - 5) : pathJoin, 'prisma/schema.prisma');
       text = fs.readFileSync(prismaPath, 'utf-8');
     } catch (e) {

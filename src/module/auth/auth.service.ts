@@ -139,6 +139,7 @@ export class AuthService {
                ss.perms       as perms,
                ss.order_num   as orderNum,
                ss.path        as path,
+               ss.if_disabled as ifDisabled,
                ss.remark      as remark,
                ss.create_by   as createBy,
                ss.update_by   as updateBy,
@@ -147,6 +148,7 @@ export class AuthService {
                ss.deleted     as deleted
         from sys_sys ss
         where ss.deleted = ${base.N}
+          and ss.if_disabled = ${base.N}
           and (
             if(exists
                    (select 1

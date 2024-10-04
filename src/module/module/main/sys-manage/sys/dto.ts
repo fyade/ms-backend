@@ -15,6 +15,8 @@ export class sysDto extends baseInterface {
 
   path: string;
 
+  ifDisabled: string;
+
   remark: string;
 }
 
@@ -34,6 +36,9 @@ export class sysSelListDto extends pageDto {
   @ApiProperty({ description: 'url路径', required: false })
   path: string;
 
+  @ApiProperty({ description: '是否禁用', required: false })
+  ifDisabled: string;
+
   @ApiProperty({ description: '备注', required: false })
   remark: string;
 }
@@ -50,6 +55,9 @@ export class sysSelAllDto {
 
   @ApiProperty({ description: 'url路径', required: false })
   path: string;
+
+  @ApiProperty({ description: '是否禁用', required: false })
+  ifDisabled: string;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;
@@ -72,6 +80,10 @@ export class sysInsOneDto {
   @ApiProperty({ description: 'url路径', required: true })
   @IsNotEmpty({ message: 'url路径不能为空' })
   path: string;
+
+  @ApiProperty({ description: '是否禁用', required: true })
+  @IsNotEmpty({ message: '是否禁用不能为空' })
+  ifDisabled: string;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;

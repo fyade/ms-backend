@@ -38,6 +38,24 @@ export class RoleController {
     return this.roleService.selAllRole(dto);
   }
 
+  @Get('/ids')
+  @ApiOperation({
+    summary: '查询多个角色（根据id）',
+  })
+  @ApiQuery({
+    name: 'ids',
+    description: 'id列表',
+    isArray: true,
+    type: Number,
+  })
+  @Authorize({
+    permission: 'main:sysManage:role:selOnes',
+    label: '查询多个角色（根据id）',
+  })
+  async selOnesRole(@Query() ids: number[]): Promise<R> {
+    return this.roleService.selOnesRole(ids);
+  }
+
   @Get('/:id')
   @ApiOperation({
     summary: '查询单个角色',
@@ -62,6 +80,26 @@ export class RoleController {
     return this.roleService.insRole(dto);
   }
 
+  @Post('/s')
+  @ApiOperation({
+    summary: '批量新增角色',
+  })
+  @ApiBody({
+    isArray: true,
+    type: roleInsOneDto,
+  })
+  @Authorize({
+    permission: 'main:sysManage:role:inss',
+    label: '批量新增角色',
+  })
+  async insRoles(@Body(
+    new ParseArrayPipe({
+      items: roleInsOneDto,
+    }),
+  ) dtos: roleInsOneDto[]): Promise<R> {
+    return this.roleService.insRoles(dtos);
+  }
+
   @Put()
   @ApiOperation({
     summary: '修改角色',
@@ -72,6 +110,26 @@ export class RoleController {
   })
   async updRole(@Body() dto: roleUpdOneDto): Promise<R> {
     return this.roleService.updRole(dto);
+  }
+
+  @Put('/s')
+  @ApiOperation({
+    summary: '批量修改角色',
+  })
+  @ApiBody({
+    isArray: true,
+    type: roleUpdOneDto,
+  })
+  @Authorize({
+    permission: 'main:sysManage:role:upds',
+    label: '批量修改角色',
+  })
+  async updRoles(@Body(
+    new ParseArrayPipe({
+      items: roleUpdOneDto,
+    }),
+  ) dtos: roleUpdOneDto[]): Promise<R> {
+    return this.roleService.updRoles(dtos);
   }
 
   @Delete()
