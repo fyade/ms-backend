@@ -68,13 +68,10 @@ export class PermissionsGuard implements CanActivate {
     }
     // 页面接口权限控制
     else {
-      if (!user) {
-        throw new UnauthorizedException();
-      }
       // 操作日志
       await this.prisma.$queryRaw`
         insert into log_operation (perms, user_id, req_param, old_value, operate_type, if_success, remark)
-        values (${permission}, ${user.userid}, '', '', '', '', '');
+        values (${permission}, ${user ? user.userid : '???'}, '', '', '', '', '');
       `;
       // 是否公共接口
       const ifPublicInterfaceInCache = await this.cachePermissionService.getIfPublicPermissionInCache(permission);

@@ -36,7 +36,6 @@ model sys_user {
   sys_user_depts       sys_user_dept[]
   sys_user_user_groups sys_user_user_group[]
   log_user_logins      log_user_login[]
-  log_operations       log_operation[]
   log_algorithm_calls  log_algorithm_call[]
 }
 
@@ -555,7 +554,6 @@ model log_operation {
   if_success   String   @db.Char(1)
   remark       String?  @db.VarChar(100)
   create_time  DateTime @default(now())
-  user_id_     sys_user @relation(fields: [user_id], references: [id])
 }
 
 // 0.3 算法调用日志表
