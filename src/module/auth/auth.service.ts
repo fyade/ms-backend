@@ -186,8 +186,8 @@ export class AuthService {
                                                     and sd.if_disabled = ${base.N}
                                                     and sd.if_admin = ${base.Y})))
                    )
-            )
-            );
+            ))
+        order by ss.order_num;
       `;
       retarr.push(...userSystems);
     }
@@ -290,7 +290,8 @@ export class AuthService {
                               else 0
                               end
                       else 1
-            end;
+            end
+        order by sm.order_num;
       `;
       retarr.push(...userPermissions);
     }
