@@ -2,6 +2,11 @@
 
 这是一个后台管理系统模板，前端语言为Vue.js（Vue3），后端语言为Nest.js，建议Node版本：20.12.0。
 
+版本建议：
+- Node 20.12.0
+- MySQL 8
+- Redis 较新版本皆可
+
 前端开源地址：
 - https://github.com/fyade/ms-frontend-admin
 - https://gitee.com/fyade/ms-frontend-admin
@@ -13,8 +18,6 @@
 ## 运行教程 How to run
 
 若非初次运行，可直接 `npm run start:dev` 运行，然后下面步骤可忽略。
-
-环境要求：node、mysql、redis
 
 1. 从仓库中拉取项目
 ```bash

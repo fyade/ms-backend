@@ -8,6 +8,7 @@ import { codeGeneration } from './codeGeneration';
 import { codeGenTableDto } from '../code-gen-table/dto';
 import { codeGenColumnDto } from '../code-gen-column/dto';
 import { cgTablesInterface } from './dto';
+import { sysDto } from '../../sys-manage/sys/dto';
 
 @Injectable()
 export class CodeGenerationService {
@@ -65,13 +66,14 @@ export class CodeGenerationService {
   }
 
   async genCode(id: number): Promise<R> {
-    const table: codeGenTableDto = await this.prisma.findById('sys_code_gen_table', Number(id));
-    const columns: codeGenColumnDto[] = await this.prisma.findAll('sys_code_gen_column', {
+    const table = await this.prisma.findById<codeGenTableDto>('sys_code_gen_table', Number(id));
+    const columns = await this.prisma.findAll<codeGenColumnDto>('sys_code_gen_column', {
       data: { tableId: Number(id) },
       numberKeys: ['tableId'],
       orderBy: true,
     });
-    const cgRes = codeGeneration({ table, columns });
+    const sys = await this.prisma.findById<sysDto>('sys_sys', table.sysId);
+    const cgRes = codeGeneration({ table, columns, sys });
     return R.ok({
       table,
       columns,

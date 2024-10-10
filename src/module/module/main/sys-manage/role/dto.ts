@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class roleDto extends baseInterface {
+export class RoleDto extends BaseDto {
   id: number;
 
   label: string;
@@ -18,7 +18,7 @@ export class roleDto extends baseInterface {
   remark: string;
 }
 
-export class roleSelListDto extends pageDto {
+export class RoleSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -38,7 +38,7 @@ export class roleSelListDto extends pageDto {
   remark: string;
 }
 
-export class roleSelAllDto {
+export class RoleSelAllDto {
   @ApiProperty({ description: '角色名', required: false })
   label: string;
 
@@ -55,7 +55,7 @@ export class roleSelAllDto {
   remark: string;
 }
 
-export class roleInsOneDto {
+export class RoleInsOneDto {
   @ApiProperty({ description: '角色名', required: true })
   @IsNotEmpty({ message: '角色名不能为空' })
   label: string;
@@ -77,7 +77,7 @@ export class roleInsOneDto {
   remark: string;
 }
 
-export class roleUpdOneDto extends roleInsOneDto {
+export class RoleUpdOneDto extends RoleInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

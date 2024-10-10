@@ -19,6 +19,12 @@ export class codeGenTableDto extends baseInterface {
 
   moduleName: string;
 
+  businessNameCn: string;
+
+  moduleNameCn: string;
+
+  sysId: number;
+
   orderNum: number;
 
   remark: string;
@@ -46,6 +52,15 @@ export class codeGenTableSelListDto extends pageDto {
   @ApiProperty({ description: '模块名', required: false })
   moduleName: string;
 
+  @ApiProperty({ description: '业务名中文', required: false })
+  businessNameCn: string;
+
+  @ApiProperty({ description: '模块名中文', required: false })
+  moduleNameCn: string;
+
+  @ApiProperty({ description: '所属系统', required: false })
+  sysId: number;
+
   @ApiProperty({ description: '顺序', required: false })
   orderNum: number;
 
@@ -71,6 +86,15 @@ export class codeGenTableSelAllDto {
 
   @ApiProperty({ description: '模块名', required: false })
   moduleName: string;
+
+  @ApiProperty({ description: '业务名中文', required: false })
+  businessNameCn: string;
+
+  @ApiProperty({ description: '模块名中文', required: false })
+  moduleNameCn: string;
+
+  @ApiProperty({ description: '所属系统', required: false })
+  sysId: number;
 
   @ApiProperty({ description: '顺序', required: false })
   orderNum: number;
@@ -102,6 +126,19 @@ export class codeGenTableInsOneDto {
   @ApiProperty({ description: '模块名', required: true })
   @IsNotEmpty({ message: '模块名不能为空' })
   moduleName: string;
+
+  @ApiProperty({ description: '业务名中文', required: true })
+  @IsNotEmpty({ message: '业务名中文不能为空' })
+  businessNameCn: string;
+
+  @ApiProperty({ description: '模块名中文', required: true })
+  @IsNotEmpty({ message: '模块名中文不能为空' })
+  moduleNameCn: string;
+
+  @ApiProperty({ description: '所属系统', required: true })
+  @Type(() => Number)
+  @IsNotEmpty({ message: '所属系统不能为空' })
+  sysId: number;
 
   @ApiProperty({ description: '顺序', required: true })
   @Type(() => Number)

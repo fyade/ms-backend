@@ -4,7 +4,7 @@ import { RoleService } from './role.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { roleSelListDto, roleSelAllDto, roleInsOneDto, roleUpdOneDto } from './dto';
+import { RoleSelListDto, RoleSelAllDto, RoleInsOneDto, RoleUpdOneDto } from './dto';
 
 @Controller('/main/sys-manage/role')
 @ApiTags('主系统/系统管理/角色')
@@ -22,7 +22,7 @@ export class RoleController {
     permission: 'main:sysManage:role:selList',
     label: '分页查询角色',
   })
-  async selRole(@Query() dto: roleSelListDto): Promise<R> {
+  async selRole(@Query() dto: RoleSelListDto): Promise<R> {
     return this.roleService.selRole(dto);
   }
 
@@ -34,7 +34,7 @@ export class RoleController {
     permission: 'main:sysManage:role:selAll',
     label: '查询所有角色',
   })
-  async selAllRole(@Query() dto: roleSelAllDto): Promise<R> {
+  async selAllRole(@Query() dto: RoleSelAllDto): Promise<R> {
     return this.roleService.selAllRole(dto);
   }
 
@@ -76,7 +76,7 @@ export class RoleController {
     permission: 'main:sysManage:role:ins',
     label: '新增角色',
   })
-  async insRole(@Body() dto: roleInsOneDto): Promise<R> {
+  async insRole(@Body() dto: RoleInsOneDto): Promise<R> {
     return this.roleService.insRole(dto);
   }
 
@@ -86,7 +86,7 @@ export class RoleController {
   })
   @ApiBody({
     isArray: true,
-    type: roleInsOneDto,
+    type: RoleInsOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:role:inss',
@@ -94,9 +94,9 @@ export class RoleController {
   })
   async insRoles(@Body(
     new ParseArrayPipe({
-      items: roleInsOneDto,
+      items: RoleInsOneDto,
     }),
-  ) dtos: roleInsOneDto[]): Promise<R> {
+  ) dtos: RoleInsOneDto[]): Promise<R> {
     return this.roleService.insRoles(dtos);
   }
 
@@ -108,7 +108,7 @@ export class RoleController {
     permission: 'main:sysManage:role:upd',
     label: '修改角色',
   })
-  async updRole(@Body() dto: roleUpdOneDto): Promise<R> {
+  async updRole(@Body() dto: RoleUpdOneDto): Promise<R> {
     return this.roleService.updRole(dto);
   }
 
@@ -118,7 +118,7 @@ export class RoleController {
   })
   @ApiBody({
     isArray: true,
-    type: roleUpdOneDto,
+    type: RoleUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:role:upds',
@@ -126,9 +126,9 @@ export class RoleController {
   })
   async updRoles(@Body(
     new ParseArrayPipe({
-      items: roleUpdOneDto,
+      items: RoleUpdOneDto,
     }),
-  ) dtos: roleUpdOneDto[]): Promise<R> {
+  ) dtos: RoleUpdOneDto[]): Promise<R> {
     return this.roleService.updRoles(dtos);
   }
 

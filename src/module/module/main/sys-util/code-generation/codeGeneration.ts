@@ -19,6 +19,8 @@ import { capitalizeFirstLetter, lowercaseFirstLetter, toCamelCase, toKebabCase }
 import { base, publicDict } from '../../../../../util/base';
 import { getDBTableName } from '../../../../../util/RegularUtils';
 import { Exception } from '../../../../../exception/Exception';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { sysDto } from '../../sys-manage/sys/dto';
 
 const baseInterfaceColumns = [
   'createBy',
@@ -33,13 +35,26 @@ const baseInterfaceColumns = [
  * @param table
  * @param columns
  */
-export function codeGeneration({ table, columns }: { table: codeGenTableDto, columns: codeGenColumnDto[] }) {
+export function codeGeneration({ table, columns, sys }: { table: codeGenTableDto, columns: codeGenColumnDto[], sys: sysDto }) {
   const find = columns.find(item => item.colName === 'id');
   if (!find) {
     throw new Exception('无id字段。');
   }
-  const businessName = lowercaseFirstLetter(table.businessName);
-  const moduleName = lowercaseFirstLetter(table.moduleName);
+  // 驼峰 首字母小写
+  const businessName1 = lowercaseFirstLetter(table.businessName);
+  const moduleName1 = lowercaseFirstLetter(table.moduleName);
+  const entityName1 = lowercaseFirstLetter(table.entityName);
+  // 驼峰 首字母大写
+  const businessName2 = capitalizeFirstLetter(businessName1);
+  const moduleName2 = capitalizeFirstLetter(moduleName1);
+  const entityName2 = capitalizeFirstLetter(entityName1);
+  // 短横线
+  const businessName3 = toKebabCase(businessName1);
+  const moduleName3 = toKebabCase(moduleName1);
+  const entityName3 = toKebabCase(entityName1);
+  // 系统
+  const sysPath = sys.path;
+
   const getDefaultValue = (tsName: string, tsType: string) => {
   };
   const qd3_dialogFormDefaultData = [
@@ -68,25 +83,25 @@ export function codeGeneration({ table, columns }: { table: codeGenTableDto, col
     [
       (formType: any, index: number, length: number) => formType === 'inputNumber',
       (tsName: any, index: number, length: number) => {
-        const string = `            <el-form-item :label="state.dict['${tsName}']" prop="${tsName}">
-              <el-input-number v-model="state.dialogForm['${tsName}']" controls-position="right"/>
+        const string = `            <el-form-item :label="${moduleName1}Dict.${tsName}" prop="${tsName}">
+              <el-input-number v-model="state.dialogForm.${tsName}" controls-position="right"/>
             </el-form-item>`;
         const ifLastAndSingular = index === length - 1 && length % 2 === 1
         return `${index % 2 === 0 ? `        <el-row>
-          <el-col :span="${ifLastAndSingular ? 24 : 12}">` : `          <el-col :span="12">`}
+          <el-col :span="${ifLastAndSingular ? 12 : 12}">` : `          <el-col :span="12">`}
 ${string}
 ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
         </el-row>` : `          </el-col>`}`;
       },
       (tsName: any, index: number, length: number) => {
         return `
-          <el-table-column prop="${tsName}" :label="state.dict['${tsName}']" width="300">
+          <el-table-column prop="${tsName}" :label="${moduleName1}Dict.${tsName}" width="300">
             <template #header>
-              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ state.dict['${tsName}'] }}</span>
+              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ ${moduleName1}Dict.${tsName} }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[\`\${$index}-${tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input-number v-model="state.dialogForms[$index]['${tsName}']" controls-position="right"/>
+                <el-input-number v-model="state.dialogForms[$index].${tsName}" controls-position="right"/>
               </div>
             </template>
           </el-table-column>`;
@@ -95,25 +110,25 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
     [
       (formType: any, index: number, length: number) => formType === 'textarea',
       (tsName: any, index: number, length: number) => {
-        const string = `            <el-form-item :label="state.dict['${tsName}']" prop="${tsName}">
-              <el-input type="textarea" v-model="state.dialogForm['${tsName}']" :placeholder="state.dict['${tsName}']"/>
+        const string = `            <el-form-item :label="${moduleName1}Dict.${tsName}" prop="${tsName}">
+              <el-input type="textarea" v-model="state.dialogForm.${tsName}" :placeholder="${moduleName1}Dict.${tsName}"/>
             </el-form-item>`;
         const ifLastAndSingular = index === length - 1 && length % 2 === 1
         return `${index % 2 === 0 ? `        <el-row>
-          <el-col :span="${ifLastAndSingular ? 24 : 12}">` : `          <el-col :span="12">`}
+          <el-col :span="${ifLastAndSingular ? 12 : 12}">` : `          <el-col :span="12">`}
 ${string}
 ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
         </el-row>` : `          </el-col>`}`;
       },
       (tsName: any, index: number, length: number) => {
         return `
-          <el-table-column prop="${tsName}" :label="state.dict['${tsName}']" width="300">
+          <el-table-column prop="${tsName}" :label="${moduleName1}Dict.${tsName}" width="300">
             <template #header>
-              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ state.dict['${tsName}'] }}</span>
+              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ ${moduleName1}Dict.${tsName} }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[\`\${$index}-${tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input type="textarea" v-model="state.dialogForms[$index]['${tsName}']" :placeholder="state.dict['${tsName}']"/>
+                <el-input type="textarea" v-model="state.dialogForms[$index].${tsName}" :placeholder="${moduleName1}Dict.${tsName}"/>
               </div>
             </template>
           </el-table-column>`;
@@ -122,28 +137,28 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
     [
       (formType: any, index: number, length: number) => formType === 'radio',
       (tsName: any, index: number, length: number) => {
-        const string = `            <el-form-item :label="state.dict['${tsName}']" prop="${tsName}">
-              <el-radio-group v-model="state.dialogForm['${tsName}']">
+        const string = `            <el-form-item :label="${moduleName1}Dict.${tsName}" prop="${tsName}">
+              <el-radio-group v-model="state.dialogForm.${tsName}">
                 <el-radio :value="final.Y">是</el-radio>
                 <el-radio :value="final.N">否</el-radio>
               </el-radio-group>
             </el-form-item>`;
         const ifLastAndSingular = index === length - 1 && length % 2 === 1
         return `${index % 2 === 0 ? `        <el-row>
-          <el-col :span="${ifLastAndSingular ? 24 : 12}">` : `          <el-col :span="12">`}
+          <el-col :span="${ifLastAndSingular ? 12 : 12}">` : `          <el-col :span="12">`}
 ${string}
 ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
         </el-row>` : `          </el-col>`}`;
       },
       (tsName: any, index: number, length: number) => {
         return `
-          <el-table-column prop="${tsName}" :label="state.dict['${tsName}']" width="70">
+          <el-table-column prop="${tsName}" :label="${moduleName1}Dict.${tsName}" width="70">
             <template #header>
-              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ state.dict['${tsName}'] }}</span>
+              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ ${moduleName1}Dict.${tsName} }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[\`\${$index}-${tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-checkbox v-model="state.dialogForms[$index]['${tsName}']" :true-value="final.Y" :false-value="final.N"/>
+                <el-checkbox v-model="state.dialogForms[$index].${tsName}" :true-value="final.Y" :false-value="final.N"/>
               </div>
             </template>
           </el-table-column>`;
@@ -152,76 +167,207 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
     [
       (formType: any, index: number, length: number) => formType === 'input' || true,
       (tsName: any, index: number, length: number) => {
-        const string = `            <el-form-item :label="state.dict['${tsName}']" prop="${tsName}">
-              <el-input v-model="state.dialogForm['${tsName}']" :placeholder="state.dict['${tsName}']"/>
+        const string = `            <el-form-item :label="${moduleName1}Dict.${tsName}" prop="${tsName}">
+              <el-input v-model="state.dialogForm.${tsName}" :placeholder="${moduleName1}Dict.${tsName}"/>
             </el-form-item>`;
         const ifLastAndSingular = index === length - 1 && length % 2 === 1
         return `${index % 2 === 0 ? `        <el-row>
-          <el-col :span="${ifLastAndSingular ? 24 : 12}">` : `          <el-col :span="12">`}
+          <el-col :span="${ifLastAndSingular ? 12 : 12}">` : `          <el-col :span="12">`}
 ${string}
 ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
         </el-row>` : `          </el-col>`}`;
       },
       (tsName: any, index: number, length: number) => {
         return `
-          <el-table-column prop="${tsName}" :label="state.dict['${tsName}']" width="300">
+          <el-table-column prop="${tsName}" :label="${moduleName1}Dict.${tsName}" width="300">
             <template #header>
-              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ state.dict['${tsName}'] }}</span>
+              <span :class="ifRequired('${tsName}')?'tp-table-header-required':''">{{ ${moduleName1}Dict.${tsName} }}</span>
             </template>
             <template #default="{$index}">
               <div :class="state.dialogForms_error?.[\`\${$index}-${tsName}\`] ? 'tp-table-cell-bg-red' : 'tp-table-cell'">
-                <el-input v-model="state.dialogForms[$index]['${tsName}']" :placeholder="state.dict['${tsName}']"/>
+                <el-input v-model="state.dialogForms[$index].${tsName}" :placeholder="${moduleName1}Dict.${tsName}"/>
               </div>
             </template>
           </el-table-column>`;
       }
     ]
   ]
-  const dBTableName = getDBTableName(table.tableDescr);
   const hd1 =
+`${`import { BaseDto } from '../../../../../common/dto/BaseDto';`}
+${`import { PageDto } from '../../../../../common/dto/PageDto';`}
+${`import { IsNotEmpty } from 'class-validator';`}
+${`import { Type } from 'class-transformer';`}
+${`import { ApiProperty } from '@nestjs/swagger';`}
+${``}
+${`export class ${moduleName2}Dto extends BaseDto {`}
+${
+      columns
+        .filter(item => baseInterfaceColumns.indexOf(item.tsName) === -1)
+        .map(column => `  ${column.tsName}: ${column.tsType};`)
+        .join('\n\n')
+    }
+${`}`}
+${``}
+${`export class ${moduleName2}SelListDto extends PageDto {`}
+${`  @ApiProperty({ description: '主键id', required: false })`}
+${`  id: ${columns.find(item => item.colName === 'id').tsType};`}
+${``}
+${
+      columns
+        .filter(item => item.ifSelMore === base.Y)
+        .map(column => `  @ApiProperty({ description: '${column.colDescr}', required: false })\n  ${column.tsName}: ${column.tsType};`)
+        .join('\n\n')
+    }
+${`}`}
+${``}
+${`export class ${moduleName2}SelAllDto {`}
+${
+      columns
+        .filter(item => item.ifSelMore === base.Y)
+        .map(column => `  @ApiProperty({ description: '${column.colDescr}', required: false })\n  ${column.tsName}: ${column.tsType};`)
+        .join('\n\n')
+    }
+${`}`}
+${``}
+${`export class ${moduleName2}InsOneDto {`}
+${
+      columns
+        .filter(item => item.ifIns === base.Y)
+        .map(column => {
+          let str: string = ''
+          str += `  @ApiProperty({ description: '${column.colDescr}', required: ${column.ifRequired === base.Y} })\n`
+          if (column.tsType === 'number') {
+            str += `  @Type(() => Number)\n`
+          }
+          if (column.ifRequired === base.Y) {
+            str += `  @IsNotEmpty({ message: '${column.colDescr}不能为空' })\n`
+          }
+          str += `  ${column.tsName}: ${column.tsType};`
+          return str
+        })
+        .join('\n\n')
+    }
+${`}`}
+${``}
+${`export class ${moduleName2}UpdOneDto extends ${moduleName2}InsOneDto {`}
+${`  @ApiProperty({ description: '主键id', required: true })`}
+${`  @IsNotEmpty({ message: '主键id不能为空' })`}
+${`  id: ${columns.find(item => item.colName === 'id').tsType};`}
+${`}`}
+`;
+  const hd2 =
+`${`import { Injectable } from '@nestjs/common';`}
+${`import { PrismaService } from '../../../../../prisma/prisma.service';`}
+${`import { R } from '../../../../../common/R';`}
+${`import { ${moduleName2}Dto, ${moduleName2}SelListDto, ${moduleName2}SelAllDto, ${moduleName2}InsOneDto, ${moduleName2}UpdOneDto } from './dto';`}
+${``}
+${`@Injectable()`}
+${`export class ${moduleName2}Service {`}
+${`  constructor(private readonly prisma: PrismaService) {`}
+${`  }`}
+${``}
+${`  async sel${moduleName2}(dto: ${moduleName2}SelListDto): Promise<R> {`}
+${`    const res = await this.prisma.findPage<${moduleName2}Dto, ${moduleName2}SelListDto>('${table.tableName}', {`}
+${`      data: dto,`}
+${`      orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},`}
+${`      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
+${`      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
+${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
+${`    });`}
+${`    return R.ok(res);`}
+${`  }`}
+${``}
+${`  async selAll${moduleName2}(dto: ${moduleName2}SelAllDto): Promise<R> {`}
+${`    const res = await this.prisma.findAll<${moduleName2}Dto>('${table.tableName}', {`}
+${`      data: dto,`}
+${`      orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},`}
+${`      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
+${`      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
+${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
+${`    });`}
+${`    return R.ok(res);`}
+${`  }`}
+${``}
+${`  async selOnes${moduleName2}(ids: number[]): Promise<R> {`}
+${`    const res = await this.prisma.findByIds<${moduleName2}Dto>('${table.tableName}', Object.values(ids).map(n => Number(n)));`}
+${`    return R.ok(res);`}
+${`  }`}
+${``}
+${`  async selOne${moduleName2}(id: number): Promise<R> {`}
+${`    const res = await this.prisma.findById<${moduleName2}Dto>('${table.tableName}', Number(id));`}
+${`    return R.ok(res);`}
+${`  }`}
+${``}
+${`  async ins${moduleName2}(dto: ${moduleName2}InsOneDto): Promise<R> {`}
+${`    const res = await this.prisma.create<${moduleName2}Dto>('${table.tableName}', dto);`}
+${`    return R.ok(res);`}
+${`  }`}
+${``}
+${`  async ins${moduleName2}s(dtos: ${moduleName2}InsOneDto[]): Promise<R> {`}
+${`    const res = await this.prisma.createMany<${moduleName2}Dto>('${table.tableName}', dtos);`}
+${`    return R.ok(res);`}
+${`  }`}
+${``}
+${`  async upd${moduleName2}(dto: ${moduleName2}UpdOneDto): Promise<R> {`}
+${`    const res = await this.prisma.updateById<${moduleName2}Dto>('${table.tableName}', dto);`}
+${`    return R.ok(res);`}
+${`  }`}
+${``}
+${`  async upd${moduleName2}s(dtos: ${moduleName2}UpdOneDto[]): Promise<R> {`}
+${`    const res = await this.prisma.updateMany<${moduleName2}Dto>('${table.tableName}', dtos);`}
+${`    return R.ok(res);`}
+${`  }`}
+${``}
+${`  async del${moduleName2}(ids: number[]): Promise<R> {`}
+${`    const res = await this.prisma.deleteById<${moduleName2}Dto>('${table.tableName}', ids);`}
+${`    return R.ok(res);`}
+${`  }`}
+${`}`}
+`;
+  const hd3 =
 `${`import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';`}
 ${`import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';`}
-${`import { ${capitalizeFirstLetter(moduleName)}Service } from './${toKebabCase(moduleName)}.service';`}
-${`import { Authorize } from '../../../decorator/authorizeDecorator';`}
-${`import { R } from '../../../common/R';`}
-${`import { ValidationPipe } from '../../../pipe/validation/validation.pipe';`}
-${`import { ${moduleName}SelListDto, ${moduleName}SelAllDto, ${moduleName}InsOneDto, ${moduleName}UpdOneDto } from './dto';`}
+${`import { ${moduleName2}Service } from './${moduleName3}.service';`}
+${`import { Authorize } from '../../../../../decorator/authorizeDecorator';`}
+${`import { R } from '../../../../../common/R';`}
+${`import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';`}
+${`import { ${moduleName2}SelListDto, ${moduleName2}SelAllDto, ${moduleName2}InsOneDto, ${moduleName2}UpdOneDto } from './dto';`}
 ${``}
-${`@Controller('/${toKebabCase(businessName)}/${toKebabCase(moduleName)}')`}
-${`@ApiTags('${dBTableName}')`}
+${`@Controller('/${sysPath}/${businessName3}/${moduleName3}')`}
+${`@ApiTags('${sys.name}/${table.businessNameCn}/${table.moduleNameCn}')`}
 ${`@ApiBearerAuth()`}
 ${`@UsePipes(new ValidationPipe())`}
-${`export class ${capitalizeFirstLetter(moduleName)}Controller {`}
-${`  constructor(private readonly ${moduleName}Service: ${capitalizeFirstLetter(moduleName)}Service) {`}
+${`export class ${moduleName2}Controller {`}
+${`  constructor(private readonly ${moduleName1}Service: ${moduleName2}Service) {`}
 ${`  }`}
 ${``}
 ${`  @Get()`}
 ${`  @ApiOperation({`}
-${`    summary: '分页查询${dBTableName}',`}
+${`    summary: '分页查询${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${businessName}:${moduleName}:selList',`}
-${`    label: '分页查询${dBTableName}',`}
+${`    permission: '${sysPath}:${businessName1}:${moduleName1}:selList',`}
+${`    label: '分页查询${table.moduleNameCn}',`}
 ${`  })`}
-${`  async sel${capitalizeFirstLetter(moduleName)}(@Query() dto: ${moduleName}SelListDto): Promise<R> {`}
-${`    return this.${moduleName}Service.sel${capitalizeFirstLetter(moduleName)}(dto);`}
+${`  async sel${moduleName2}(@Query() dto: ${moduleName2}SelListDto): Promise<R> {`}
+${`    return this.${moduleName1}Service.sel${moduleName2}(dto);`}
 ${`  }`}
 ${``}
 ${`  @Get('/all')`}
 ${`  @ApiOperation({`}
-${`    summary: '查询所有${dBTableName}',`}
+${`    summary: '查询所有${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${businessName}:${moduleName}:selAll',`}
-${`    label: '查询所有${dBTableName}',`}
+${`    permission: '${sysPath}:${businessName1}:${moduleName1}:selAll',`}
+${`    label: '查询所有${table.moduleNameCn}',`}
 ${`  })`}
-${`  async selAll${capitalizeFirstLetter(moduleName)}(@Query() dto: ${moduleName}SelAllDto): Promise<R> {`}
-${`    return this.${moduleName}Service.selAll${capitalizeFirstLetter(moduleName)}(dto);`}
+${`  async selAll${moduleName2}(@Query() dto: ${moduleName2}SelAllDto): Promise<R> {`}
+${`    return this.${moduleName1}Service.selAll${moduleName2}(dto);`}
 ${`  }`}
 ${``}
 ${`  @Get('/ids')`}
 ${`  @ApiOperation({`}
-${`    summary: '查询多个${dBTableName}（根据id）',`}
+${`    summary: '查询多个${table.moduleNameCn}（根据id）',`}
 ${`  })`}
 ${`  @ApiQuery({`}
 ${`    name: 'ids',`}
@@ -230,414 +376,127 @@ ${`    isArray: true,`}
 ${`    type: Number,`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${businessName}:${moduleName}:selOnes',`}
-${`    label: '查询多个${dBTableName}（根据id）',`}
+${`    permission: '${sysPath}:${businessName1}:${moduleName1}:selOnes',`}
+${`    label: '查询多个${table.moduleNameCn}（根据id）',`}
 ${`  })`}
-${`  async selOnes${capitalizeFirstLetter(moduleName)}(@Query() ids: number[]): Promise<R> {`}
-${`    return this.${moduleName}Service.selOnes${capitalizeFirstLetter(moduleName)}(ids);`}
+${`  async selOnes${moduleName2}(@Query() ids: number[]): Promise<R> {`}
+${`    return this.${moduleName1}Service.selOnes${moduleName2}(ids);`}
 ${`  }`}
 ${``}
 ${`  @Get('/:id')`}
 ${`  @ApiOperation({`}
-${`    summary: '查询单个${dBTableName}',`}
+${`    summary: '查询单个${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${businessName}:${moduleName}:selOne',`}
-${`    label: '查询单个${dBTableName}',`}
+${`    permission: '${sysPath}:${businessName1}:${moduleName1}:selOne',`}
+${`    label: '查询单个${table.moduleNameCn}',`}
 ${`  })`}
-${`  async selOne${capitalizeFirstLetter(moduleName)}(@Param('id') id: number): Promise<R> {`}
-${`    return this.${moduleName}Service.selOne${capitalizeFirstLetter(moduleName)}(id);`}
+${`  async selOne${moduleName2}(@Param('id') id: number): Promise<R> {`}
+${`    return this.${moduleName1}Service.selOne${moduleName2}(id);`}
 ${`  }`}
 ${``}
 ${`  @Post()`}
 ${`  @ApiOperation({`}
-${`    summary: '新增${dBTableName}',`}
+${`    summary: '新增${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${businessName}:${moduleName}:ins',`}
-${`    label: '新增${dBTableName}',`}
+${`    permission: '${sysPath}:${businessName1}:${moduleName1}:ins',`}
+${`    label: '新增${table.moduleNameCn}',`}
 ${`  })`}
-${`  async ins${capitalizeFirstLetter(moduleName)}(@Body() dto: ${moduleName}InsOneDto): Promise<R> {`}
-${`    return this.${moduleName}Service.ins${capitalizeFirstLetter(moduleName)}(dto);`}
+${`  async ins${moduleName2}(@Body() dto: ${moduleName2}InsOneDto): Promise<R> {`}
+${`    return this.${moduleName1}Service.ins${moduleName2}(dto);`}
 ${`  }`}
 ${``}
 ${`  @Post('/s')`}
 ${`  @ApiOperation({`}
-${`    summary: '批量新增${dBTableName}',`}
+${`    summary: '批量新增${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @ApiBody({`}
 ${`    isArray: true,`}
-${`    type: ${moduleName}InsOneDto,`}
+${`    type: ${moduleName2}InsOneDto,`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${businessName}:${moduleName}:inss',`}
-${`    label: '批量新增${dBTableName}',`}
+${`    permission: '${sysPath}:${businessName1}:${moduleName1}:inss',`}
+${`    label: '批量新增${table.moduleNameCn}',`}
 ${`  })`}
-${`  async ins${capitalizeFirstLetter(moduleName)}s(@Body(`}
+${`  async ins${moduleName2}s(@Body(`}
 ${`    new ParseArrayPipe({`}
-${`      items: ${moduleName}InsOneDto,`}
+${`      items: ${moduleName2}InsOneDto,`}
 ${`    }),`}
-${`  ) dtos: ${moduleName}InsOneDto[]): Promise<R> {`}
-${`    return this.${moduleName}Service.ins${capitalizeFirstLetter(moduleName)}s(dtos);`}
+${`  ) dtos: ${moduleName2}InsOneDto[]): Promise<R> {`}
+${`    return this.${moduleName1}Service.ins${moduleName2}s(dtos);`}
 ${`  }`}
 ${``}
 ${`  @Put()`}
 ${`  @ApiOperation({`}
-${`    summary: '修改${dBTableName}',`}
+${`    summary: '修改${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${businessName}:${moduleName}:upd',`}
-${`    label: '修改${dBTableName}',`}
+${`    permission: '${sysPath}:${businessName1}:${moduleName1}:upd',`}
+${`    label: '修改${table.moduleNameCn}',`}
 ${`  })`}
-${`  async upd${capitalizeFirstLetter(moduleName)}(@Body() dto: ${moduleName}UpdOneDto): Promise<R> {`}
-${`    return this.${moduleName}Service.upd${capitalizeFirstLetter(moduleName)}(dto);`}
+${`  async upd${moduleName2}(@Body() dto: ${moduleName2}UpdOneDto): Promise<R> {`}
+${`    return this.${moduleName1}Service.upd${moduleName2}(dto);`}
 ${`  }`}
 ${``}
 ${`  @Put('/s')`}
 ${`  @ApiOperation({`}
-${`    summary: '批量修改${dBTableName}',`}
+${`    summary: '批量修改${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @ApiBody({`}
 ${`    isArray: true,`}
-${`    type: ${moduleName}UpdOneDto,`}
+${`    type: ${moduleName2}UpdOneDto,`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${businessName}:${moduleName}:upds',`}
-${`    label: '批量修改${dBTableName}',`}
+${`    permission: '${sysPath}:${businessName1}:${moduleName1}:upds',`}
+${`    label: '批量修改${table.moduleNameCn}',`}
 ${`  })`}
-${`  async upd${capitalizeFirstLetter(moduleName)}s(@Body(`}
+${`  async upd${moduleName2}s(@Body(`}
 ${`    new ParseArrayPipe({`}
-${`      items: ${moduleName}UpdOneDto,`}
+${`      items: ${moduleName2}UpdOneDto,`}
 ${`    }),`}
-${`  ) dtos: ${moduleName}UpdOneDto[]): Promise<R> {`}
-${`    return this.${moduleName}Service.upd${capitalizeFirstLetter(moduleName)}s(dtos);`}
+${`  ) dtos: ${moduleName2}UpdOneDto[]): Promise<R> {`}
+${`    return this.${moduleName1}Service.upd${moduleName2}s(dtos);`}
 ${`  }`}
 ${``}
 ${`  @Delete()`}
 ${`  @ApiOperation({`}
-${`    summary: '删除${dBTableName}',`}
+${`    summary: '删除${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @ApiBody({`}
 ${`    isArray: true,`}
 ${`    type: Number,`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${businessName}:${moduleName}:del',`}
-${`    label: '删除${dBTableName}',`}
+${`    permission: '${sysPath}:${businessName1}:${moduleName1}:del',`}
+${`    label: '删除${table.moduleNameCn}',`}
 ${`  })`}
-${`  async del${capitalizeFirstLetter(moduleName)}(@Body() ids: number[]): Promise<R> {`}
-${`    return this.${moduleName}Service.del${capitalizeFirstLetter(moduleName)}(ids);`}
+${`  async del${moduleName2}(@Body() ids: number[]): Promise<R> {`}
+${`    return this.${moduleName1}Service.del${moduleName2}(ids);`}
 ${`  }`}
-${`}`}
-`;
-  const hd2 =
-`${`import { Injectable } from '@nestjs/common';`}
-${`import { PrismaService } from '../../../prisma/prisma.service';`}
-${`import { R } from '../../../common/R';`}
-${`import { ${moduleName}Dto, ${moduleName}SelListDto, ${moduleName}SelAllDto, ${moduleName}InsOneDto, ${moduleName}UpdOneDto } from './dto';`}
-${``}
-${`@Injectable()`}
-${`export class ${capitalizeFirstLetter(moduleName)}Service {`}
-${`  constructor(private readonly prisma: PrismaService) {`}
-${`  }`}
-${``}
-${`  async sel${capitalizeFirstLetter(moduleName)}(dto: ${moduleName}SelListDto): Promise<R> {`}
-${`    const res = await this.prisma.findPage<${moduleName}Dto, ${moduleName}SelListDto>('${table.tableName}', {`}
-${`      data: dto,`}
-${`      orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},`}
-${`      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`    });`}
-${`    return R.ok(res);`}
-${`  }`}
-${``}
-${`  async selAll${capitalizeFirstLetter(moduleName)}(dto: ${moduleName}SelAllDto): Promise<R> {`}
-${`    const res = await this.prisma.findAll<${moduleName}Dto>('${table.tableName}', {`}
-${`      data: dto,`}
-${`      orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},`}
-${`      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`    });`}
-${`    return R.ok(res);`}
-${`  }`}
-${``}
-${`  async selOnes${capitalizeFirstLetter(moduleName)}(ids: number[]): Promise<R> {`}
-${`    const res = await this.prisma.findByIds<${moduleName}Dto>('${table.tableName}', Object.values(ids).map(n => Number(n)));`}
-${`    return R.ok(res);`}
-${`  }`}
-${``}
-${`  async selOne${capitalizeFirstLetter(moduleName)}(id: number): Promise<R> {`}
-${`    const res = await this.prisma.findById<${moduleName}Dto>('${table.tableName}', Number(id));`}
-${`    return R.ok(res);`}
-${`  }`}
-${``}
-${`  async ins${capitalizeFirstLetter(moduleName)}(dto: ${moduleName}InsOneDto): Promise<R> {`}
-${`    const res = await this.prisma.create<${moduleName}Dto>('${table.tableName}', dto);`}
-${`    return R.ok(res);`}
-${`  }`}
-${``}
-${`  async ins${capitalizeFirstLetter(moduleName)}s(dtos: ${moduleName}InsOneDto[]): Promise<R> {`}
-${`    const res = await this.prisma.createMany<${moduleName}Dto>('${table.tableName}', dtos);`}
-${`    return R.ok(res);`}
-${`  }`}
-${``}
-${`  async upd${capitalizeFirstLetter(moduleName)}(dto: ${moduleName}UpdOneDto): Promise<R> {`}
-${`    const res = await this.prisma.updateById<${moduleName}Dto>('${table.tableName}', dto);`}
-${`    return R.ok(res);`}
-${`  }`}
-${``}
-${`  async upd${capitalizeFirstLetter(moduleName)}s(dtos: ${moduleName}UpdOneDto[]): Promise<R> {`}
-${`    const res = await this.prisma.updateMany<${moduleName}Dto>('${table.tableName}', dtos);`}
-${`    return R.ok(res);`}
-${`  }`}
-${``}
-${`  async del${capitalizeFirstLetter(moduleName)}(ids: number[]): Promise<R> {`}
-${`    const res = await this.prisma.deleteById<${moduleName}Dto>('${table.tableName}', ids);`}
-${`    return R.ok(res);`}
-${`  }`}
-${`}`}
-`;
-  const hd3 =
-`${`import { pageDto } from '../../../common/dto/PageDto';`}
-${`import { baseInterface } from '../../../common/commonType';`}
-${`import { IsNotEmpty } from 'class-validator';`}
-${`import { Type } from 'class-transformer';`}
-${`import { ApiProperty } from '@nestjs/swagger';`}
-${``}
-${`export class ${moduleName}Dto extends baseInterface {`}
-${
-  columns
-    .filter(item => baseInterfaceColumns.indexOf(item.tsName) === -1)
-    .map(column => `  ${column.tsName}: ${column.tsType};`)
-    .join('\n\n')
-}
-${`}`}
-${``}
-${`export class ${moduleName}SelListDto extends pageDto {`}
-${`  @ApiProperty({ description: '主键id', required: false })`}
-${`  id: ${columns.find(item => item.colName === 'id').tsType};`}
-${``}
-${
-  columns
-    .filter(item => item.ifSelMore === base.Y)
-    .map(column => `  @ApiProperty({ description: '${column.colDescr}', required: false })\n  ${column.tsName}: ${column.tsType};`)
-    .join('\n\n')
-}
-${`}`}
-${``}
-${`export class ${moduleName}SelAllDto {`}
-${
-  columns
-    .filter(item => item.ifSelMore === base.Y)
-    .map(column => `  @ApiProperty({ description: '${column.colDescr}', required: false })\n  ${column.tsName}: ${column.tsType};`)
-    .join('\n\n')
-}
-${`}`}
-${``}
-${`export class ${moduleName}InsOneDto {`}
-${
-    columns
-      .filter(item => item.ifIns === base.Y)
-      .map(column => {
-        let str: string = ''
-        str += `  @ApiProperty({ description: '${column.colDescr}', required: ${column.ifRequired === base.Y} })\n`
-        if (column.tsType === 'number') {
-          str += `  @Type(() => Number)\n`
-        }
-        if (column.ifRequired === base.Y) {
-          str += `  @IsNotEmpty({ message: '${column.colDescr}不能为空' })\n`
-        }
-        str += `  ${column.tsName}: ${column.tsType};`
-        return str
-      })
-      .join('\n\n')
-  }
-${`}`}
-${``}
-${`export class ${moduleName}UpdOneDto extends ${moduleName}InsOneDto {`}
-${`  @ApiProperty({ description: '主键id', required: true })`}
-${`  @IsNotEmpty({ message: '主键id不能为空' })`}
-${`  id: ${columns.find(item => item.colName === 'id').tsType};`}
 ${`}`}
 `;
   const hd4 =
 `${`import { Module } from '@nestjs/common';`}
-${`import { ${capitalizeFirstLetter(moduleName)}Controller } from './${toKebabCase(moduleName)}.controller';`}
-${`import { ${capitalizeFirstLetter(moduleName)}Service } from './${toKebabCase(moduleName)}.service';`}
+${`import { ${moduleName2}Controller } from './${moduleName3}.controller';`}
+${`import { ${moduleName2}Service } from './${moduleName3}.service';`}
 ${``}
 ${`@Module({`}
-${`  controllers: [${capitalizeFirstLetter(moduleName)}Controller],`}
-${`  providers: [${capitalizeFirstLetter(moduleName)}Service],`}
+${`  controllers: [${moduleName2}Controller],`}
+${`  providers: [${moduleName2}Service],`}
 ${`})`}
-${`export class ${capitalizeFirstLetter(moduleName)}Module {`}
+${`export class ${moduleName2}Module {`}
 ${`}`}
 `;
   const hd5 =
 `在 app.module.ts 中，导入 module 文件，并在 @module().imports 中添加，具体语句如下：
-import { ${capitalizeFirstLetter(moduleName)}Module } from './module/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/${toKebabCase(moduleName)}.module';
-${capitalizeFirstLetter(moduleName)}Module
+import { ${moduleName2}Module } from './module/${businessName3}/${moduleName3}/${moduleName3}.module';
+${moduleName2}Module
 `;
   const qd1 =
-`${`import request from "@/api/request.ts";`}
-${`import {`}
-${`  ${moduleName}Dto,`}
-${`  ${moduleName}SelDto,`}
-${`  ${moduleName}SelAllDto,`}
-${`  ${moduleName}InsDto,`}
-${`  ${moduleName}UpdDto`}
-${`} from "@/type/api/${businessName}/${moduleName}.ts";`}
-${`import {`}
-${`  t_funcMap,`}
-${`  t_funcMap_selList_ret,`}
-${`  t_funcMap_selMore_ret,`}
-${`  t_funcMap_selOne_ret,`}
-${`  t_funcMap_iud_ret`}
-${`} from "@/type/tablePage.ts";`}
+`${`import { BaseClass, PageDto } from "@/type/tablePage.ts";`}
 ${``}
-${`export function ${moduleName}Sel(params: ${moduleName}SelDto): t_funcMap_selList_ret<${moduleName}Dto> {`}
-${`  return request({`}
-${`    url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}',`}
-${`    method: 'GET',`}
-${`    params: params`}
-${`  })`}
-${`}`}
-${``}
-${`export function ${moduleName}SelAll(params: ${moduleName}SelAllDto): t_funcMap_selMore_ret<${moduleName}Dto> {`}
-${`  return request({`}
-${`    url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/all',`}
-${`    method: 'GET',`}
-${`    params: params`}
-${`  })`}
-${`}`}
-${``}
-${`export function ${moduleName}SelById(id: number): t_funcMap_selOne_ret<${moduleName}Dto> {`}
-${`  return request({`}
-${`    url: \`/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/\${id}\`,`}
-${`    method: 'GET'`}
-${`  })`}
-${`}`}
-${``}
-${`export function ${moduleName}SelByIds(ids: number[]): t_funcMap_selMore_ret<${moduleName}Dto> {`}
-${`  return request({`}
-${`    url: \`/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/ids\`,`}
-${`    method: 'GET',`}
-${`    params: ids`}
-${`  })`}
-${`}`}
-${``}
-${`export function ${moduleName}Ins(params: ${moduleName}InsDto): t_funcMap_iud_ret {`}
-${`  return request({`}
-${`    url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}',`}
-${`    method: 'POST',`}
-${`    data: params`}
-${`  })`}
-${`}`}
-${``}
-${`export function ${moduleName}Upd(params: ${moduleName}UpdDto): t_funcMap_iud_ret {`}
-${`  return request({`}
-${`    url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}',`}
-${`    method: 'PUT',`}
-${`    data: params`}
-${`  })`}
-${`}`}
-${``}
-${`export function ${moduleName}Inss(params: ${moduleName}InsDto[]): t_funcMap_iud_ret {`}
-${`  return request({`}
-${`    url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/s',`}
-${`    method: 'POST',`}
-${`    data: params`}
-${`  })`}
-${`}`}
-${``}
-${`export function ${moduleName}Upds(params: ${moduleName}UpdDto[]): t_funcMap_iud_ret {`}
-${`  return request({`}
-${`    url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}/s',`}
-${`    method: 'PUT',`}
-${`    data: params`}
-${`  })`}
-${`}`}
-${``}
-${`export function ${moduleName}Del(ids: number[]): t_funcMap_iud_ret {`}
-${`  return request({`}
-${`    url: '/${toKebabCase(businessName)}/${toKebabCase(moduleName)}',`}
-${`    method: 'DELETE',`}
-${`    data: ids`}
-${`  })`}
-${`}`}
-${``}
-${`export const ${moduleName}Func: t_funcMap<${moduleName}Dto, ${moduleName}SelDto, ${moduleName}SelAllDto, ${moduleName}InsDto, ${moduleName}UpdDto> = {`}
-${`  /**`}
-${`   * 分页查询`}
-${`   * @param params`}
-${`   */`}
-${`  selectList: (params: ${moduleName}SelDto) => {`}
-${`    return ${moduleName}Sel(params)`}
-${`  },`}
-${`  /**`}
-${`   * 查询所有`}
-${`   * @param params`}
-${`   */`}
-${`  selectAll: (params: ${moduleName}SelAllDto) => {`}
-${`    return ${moduleName}SelAll(params)`}
-${`  },`}
-${`  /**`}
-${`   * 查询单个`}
-${`   * @param id`}
-${`   */`}
-${`  selectById: (id: number) => {`}
-${`    return ${moduleName}SelById(id)`}
-${`  },`}
-${`  /**`}
-${`   * 查询多个`}
-${`   * @param ids`}
-${`   */`}
-${`  selectByIds: (ids: number[]) => {`}
-${`    return ${moduleName}SelByIds(ids)`}
-${`  },`}
-${`  /**`}
-${`   * 新增`}
-${`   * @param obj`}
-${`   */`}
-${`  insertOne: (obj: ${moduleName}InsDto) => {`}
-${`    return ${moduleName}Ins(obj)`}
-${`  },`}
-${`  /**`}
-${`   * 修改`}
-${`   * @param obj`}
-${`   */`}
-${`  updateOne: (obj: ${moduleName}UpdDto) => {`}
-${`    return ${moduleName}Upd(obj)`}
-${`  },`}
-${`  /**`}
-${`   * 新增多个`}
-${`   * @param objs`}
-${`   */`}
-${`  insertMore: (objs: ${moduleName}InsDto[]) => {`}
-${`    return ${moduleName}Inss(objs)`}
-${`  },`}
-${`  /**`}
-${`   * 修改多个`}
-${`   * @param objs`}
-${`   */`}
-${`  updateMore: (objs: ${moduleName}UpdDto[]) => {`}
-${`    return ${moduleName}Upds(objs)`}
-${`  },`}
-${`  /**`}
-${`   * 删除`}
-${`   * @param ids`}
-${`   */`}
-${`  deleteList: (...ids: number[]) => {`}
-${`    return ${moduleName}Del(ids)`}
-${`  }`}
-${`}`}
-`;
-  const qd2 =
-`${`import { pageDto } from "@/type/tablePage.ts";`}
-${`import { baseClass } from "@/utils/base.ts";`}
-${``}
-${`export class ${moduleName}Dto extends baseClass {`}
+${`export class ${moduleName2}Dto extends BaseClass {`}
 ${
   columns
     .filter(column => baseInterfaceColumns.indexOf(column.tsName) === -1)
@@ -646,13 +505,13 @@ ${
 }
 ${`}`}
 ${``}
-${`export class ${moduleName}SelDto extends pageDto {`}
+${`export class ${moduleName2}SelDto extends PageDto {`}
 ${`}`}
 ${``}
-${`export class ${moduleName}SelAllDto {`}
+${`export class ${moduleName2}SelAllDto {`}
 ${`}`}
 ${``}
-${`export class ${moduleName}InsDto {`}
+${`export class ${moduleName2}InsDto {`}
 ${
     columns
       .filter(item => item.ifIns === base.Y)
@@ -661,41 +520,132 @@ ${
   }
 ${`}`}
 ${``}
-${`export class ${moduleName}UpdDto extends ${moduleName}InsDto {`}
+${`export class ${moduleName2}UpdDto extends ${moduleName2}InsDto {`}
 ${`  id!: ${columns.find(item => item.colName === 'id').tsType};`}
 ${`}`}
 `;
+  const qd2 =
+`${`import { publicDict } from "@/utils/base.ts";`}
+${`import { ${moduleName2}Dto } from "@/type/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
+${``}
+${`export const ${moduleName1}Dict: { [P in keyof ${moduleName2}Dto]: string } = {`}
+${`  ...publicDict,`}
+${
+    columns
+      .filter(item=>Object.keys(publicDict).indexOf(item.tsName)===-1)
+      .map(item=>`  ${item.tsName}: '${item.colDescr}',`)
+      .join('\n')
+  }
+${`}`}
+`;
   const qd3 =
+`${`import request from "@/api/request.ts";`}
+${`import { ApiConfig } from "@/type/tablePage.ts";`}
+${`import { ${moduleName2}Dto, ${moduleName2}UpdDto } from "@/type/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
+${``}
+${`export const ${moduleName1}Api: ApiConfig<${moduleName2}Dto, ${moduleName2}UpdDto> = {`}
+${`  /**`}
+${`   * 分页查询`}
+${`   * @param params`}
+${`   */`}
+${`  selectList: (params) => request({`}
+${`    url: '/${sysPath}/${businessName3}/${moduleName3}',`}
+${`    method: 'GET',`}
+${`    params: params`}
+${`  }),`}
+${`  /**`}
+${`   * 查询所有`}
+${`   * @param params`}
+${`   */`}
+${`  selectAll: (params) => request({`}
+${`    url: '/${sysPath}/${businessName3}/${moduleName3}/all',`}
+${`    method: 'GET',`}
+${`    params: params`}
+${`  }),`}
+${`  /**`}
+${`   * 查询单个`}
+${`   * @param id`}
+${`   */`}
+${`  selectById: (id) => request({`}
+${`    url: \`/${sysPath}/${businessName3}/${moduleName3}/\${id}\`,`}
+${`    method: 'GET'`}
+${`  }),`}
+${`  /**`}
+${`   * 查询多个`}
+${`   * @param ids`}
+${`   */`}
+${`  selectByIds: (ids) => request({`}
+${`    url: \`/${sysPath}/${businessName3}/${moduleName3}/ids\`,`}
+${`    method: 'GET',`}
+${`    params: ids`}
+${`  }),`}
+${`  /**`}
+${`   * 新增`}
+${`   * @param obj`}
+${`   */`}
+${`  insertOne: (obj) => request({`}
+${`    url: '/${sysPath}/${businessName3}/${moduleName3}',`}
+${`    method: 'POST',`}
+${`    data: obj`}
+${`  }),`}
+${`  /**`}
+${`   * 修改`}
+${`   * @param obj`}
+${`   */`}
+${`  updateOne: (obj) => request({`}
+${`    url: '/${sysPath}/${businessName3}/${moduleName3}',`}
+${`    method: 'PUT',`}
+${`    data: obj`}
+${`  }),`}
+${`  /**`}
+${`   * 新增多个`}
+${`   * @param objs`}
+${`   */`}
+${`  insertMore: (objs) => request({`}
+${`    url: '/${sysPath}/${businessName3}/${moduleName3}/s',`}
+${`    method: 'POST',`}
+${`    data: objs`}
+${`  }),`}
+${`  /**`}
+${`   * 修改多个`}
+${`   * @param objs`}
+${`   */`}
+${`  updateMore: (objs) => request({`}
+${`    url: '/${sysPath}/${businessName3}/${moduleName3}/s',`}
+${`    method: 'PUT',`}
+${`    data: objs`}
+${`  }),`}
+${`  /**`}
+${`   * 删除`}
+${`   * @param ids`}
+${`   */`}
+${`  deleteList: (...ids) => request({`}
+${`    url: '/${sysPath}/${businessName3}/${moduleName3}',`}
+${`    method: 'DELETE',`}
+${`    data: ids`}
+${`  })`}
+${`}`}
+`;
+  const qd4 =
 `${`<script lang="ts">`}
 ${`export default {`}
-${`  name: '${businessName}:${moduleName}'`}
+${`  name: '${sysPath}:${businessName1}:${moduleName1}'`}
 ${`}`}
 ${`</script>`}
 ` + `
 ${`<script setup lang="ts">`}
-${`import { reactive, ref } from "vue";`}
-${`import { CONFIG, final, PAGINATION, publicDict } from "@/utils/base.ts";`}
+${`import { reactive } from "vue";`}
+${`import { CONFIG, final } from "@/utils/base.ts";`}
 ${`import Pagination from "@/components/pagination/pagination.vue";`}
-${`import { funcTablePage } from "@/composition/tablePage/tablePage.ts";`}
-${`import { State, t_config } from "@/type/tablePage.ts";`}
-${`import type { FormRules } from "element-plus";`}
+${`import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";`}
+${`import { State2, TablePageConfig } from "@/type/tablePage.ts";`}
+${`import { FormRules } from "element-plus";`}
 ${`import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";`}
-${`import { typeOM } from "@/type/utils/base.ts";`}
-${`import { ${moduleName}Dto, ${moduleName}UpdDto } from "@/type/api/${businessName}/${moduleName}.ts";`}
-${`import { ${moduleName}Func } from "@/api/module/${businessName}/${moduleName}.ts";`}
+${`import { ${moduleName2}Dto, ${moduleName2}UpdDto } from "@/type/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
+${`import { ${moduleName1}Api } from "@/api/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
+${`import { ${moduleName1}Dict } from "@/dict/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
 ${``}
-${`const state = reactive<State<${moduleName}Dto, ${moduleName}UpdDto>>({`}
-${`  dialogType: {`}
-${`    value: '',`}
-${`    label: ''`}
-${`  },`}
-${`  // 这个是弹出框表单`}
-${`  // 格式: {`}
-${`  //   id: '',`}
-${`  //   parentId: final.DEFAULT_PARENT_ID,`}
-${`  //   orderNum: final.DEFAULT_ORDER_NUM,`}
-${`  //   ...`}
-${`  // }`}
+${`const state = reactive<State2<${moduleName2}Dto, ${moduleName2}UpdDto>>({`}
 ${`  dialogForm: {`}
 ${`    id: ${columns.find(item => item.colName === 'id').tsType === 'number' ? -1 : ''},`}
 ${
@@ -707,64 +657,34 @@ ${
 ${`  },`}
 ${`  dialogForms: [],`}
 ${`  dialogForms_error: {},`}
-${`  // 这个是弹出框表单校验`}
-${`  // 格式: {`}
-${`  //   name: [{ required: true, trigger: 'change' }],`}
-${`  //   ...`}
-${`  // }`}
-${`  dFormRules: {`}
-${
-    columns
-      .filter(item => item.ifRequired === base.Y)
-      .map(item => `    ${item.tsName}: [{required: true, trigger: 'change'}],`)
-      .join('\n')
-  }
-${`  } as FormRules,`}
-${`  // 字典`}
-${`  // 格式: {`}
-${`  //   ...publicDict,`}
-${`  //   name: '名字',`}
-${`  //   ...`}
-${`  // }`}
-${`  dict: {`}
-${`    ...publicDict,`}
-${
-    columns
-      .filter(item => Object.keys(publicDict).indexOf(item.tsName) === -1)
-      .map(item => `    ${item.tsName}: '${item.colDescr}',`)
-      .join('\n')
-  }
-${`  },`}
-${`  // 筛选表单`}
-${`  // 格式: {`}
-${`  //   name: '',`}
-${`  //   ...`}
-${`  // }`}
 ${`  filterForm: {},`}
-${`  list: [],`}
-${`  multipleSelection: [],`}
-${`  total: -1,`}
-${`  pageParam: {`}
-${`    pageNum: PAGINATION.pageNum,`}
-${`    pageSize: PAGINATION.pageSize`}
-${`  }`}
 ${`})`}
-${`const state2 = reactive({`}
-${`  orderNum: final.DEFAULT_ORDER_NUM`}
-${`})`}
-${`const dialogFormRef = ref(null)`}
-${`const dialogFormsRef = ref(null)`}
-${`const filterFormRef = ref(null)`}
-${`const dialogVisible = ref(false)`}
-${`const dialogLoadingRef = ref(false)`}
-${`const tableLoadingRef = ref(false)`}
-${`const switchLoadingRef = ref(false)`}
-${`const activeTabName = ref<typeOM>(final.one)`}
-${`const config: t_config = reactive({`}
-${`  bulkOperation: true, // 弹出表单是否支持批量操作，默认false`}
+${`const dFormRules: FormRules = {`}
+${
+    columns
+      .filter(item=>item.ifRequired===base.Y)
+      .map(item=>`  ${item.tsName}: [{required: true, trigger: 'change'}],`)
+      .join('\n')
+  }
+${`}`}
+${`const config = new TablePageConfig({`}
+${`  bulkOperation: true,`}
 ${`})`}
 ${``}
 ${`const {`}
+${`  dialogFormRef,`}
+${`  dialogFormsRef,`}
+${`  filterFormRef,`}
+${`  dialogVisible,`}
+${`  dialogLoadingRef,`}
+${`  tableLoadingRef,`}
+${`  switchLoadingRef,`}
+${`  activeTabName,`}
+${`  tableData,`}
+${`  pageParam,`}
+${`  total,`}
+${`  multipleSelection,`}
+${`  dialogType,`}
 ${`  refresh,`}
 ${`  dCan,`}
 ${`  dCon,`}
@@ -783,20 +703,13 @@ ${`  handleSelectionChange,`}
 ${`  pageChange,`}
 ${`  dfIns,`}
 ${`  dfDel,`}
-${`  ifRequired`}
-${`} = funcTablePage({`}
-${`  config,`}
+${`  ifRequired,`}
+${`} = funcTablePage<${moduleName2}Dto, ${moduleName2}UpdDto>({`}
 ${`  state,`}
-${`  state2,`}
-${`  dialogFormRef,`}
-${`  dialogFormsRef,`}
-${`  filterFormRef,`}
-${`  dialogVisible,`}
-${`  dialogLoadingRef,`}
-${`  tableLoadingRef,`}
-${`  switchLoadingRef,`}
-${`  activeTabName,`}
-${`  func: ${moduleName}Func`}
+${`  dFormRules,`}
+${`  config,`}
+${`  api: ${moduleName1}Api,`}
+${`  dict: ${moduleName1}Dict,`}
 ${`})`}
 ${`</script>`}
 ` + `
@@ -805,13 +718,13 @@ ${`  <!--弹窗-->`}
 ${`  <el-dialog`}
 ${`      :width="activeTabName===final.more ? CONFIG.dialog_width_wider : CONFIG.dialog_width"`}
 ${`      v-model="dialogVisible"`}
-${`      :title="state.dialogType.label"`}
+${`      :title="dialogType.label"`}
 ${`      draggable`}
 ${`      append-to-body`}
 ${`  >`}
 ${`    <el-tabs v-if="config.bulkOperation" v-model="activeTabName">`}
-${`      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>`}
-${`      <el-tab-pane :disabled="state.dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>`}
+${`      <el-tab-pane :disabled="dialogType.value===final.upd" label="操作单个" :name="final.one"></el-tab-pane>`}
+${`      <el-tab-pane :disabled="dialogType.value===final.upd" label="操作多个" :name="final.more"></el-tab-pane>`}
 ${`    </el-tabs>`}
 ${`    <template v-if="activeTabName===final.one">`}
 ${`      <el-form`}
@@ -819,14 +732,14 @@ ${`          ref="dialogFormRef"`}
 ${`          v-loading="dialogLoadingRef"`}
 ${`          :model="state.dialogForm"`}
 ${`          :label-width="CONFIG.dialog_form_label_width"`}
-${`          :rules="state.dFormRules"`}
+${`          :rules="dFormRules"`}
 ${`      >`}
 ${`        <!--<el-row>-->`}
 ${`        <!--  <el-col :span="12"></el-col>-->`}
 ${`        <!--  <el-col :span="12"></el-col>-->`}
 ${`        <!--</el-row>-->`}
-${`        <el-form-item v-if="state.dialogType.value!==final.ins" :label="state.dict['id']" prop="id">`}
-${`          <span>{{ state.dialogForm['id'] }}</span>`}
+${`        <el-form-item v-if="dialogType.value!==final.ins" :label="${moduleName1}Dict.id" prop="id">`}
+${`          <span>{{ state.dialogForm.id }}</span>`}
 ${`        </el-form-item>`}
 ${`        <!--`}
 ${`        第一个input添加如下属性`}
@@ -834,26 +747,43 @@ ${`        v-focus`}
 ${`        -->`}
 ${`        <!--在此下方添加表单项-->`}
 ${
-    columns
-      .filter(item => item.ifIns === base.Y)
-      .map((item, index) => `${qd3_dialogFormForm.find(funcs => funcs[0](item.formType, 0, 0))[1](item.tsName, index, columns.filter(item => item.ifIns === base.Y).length)}`)
+    [
+      ...columns
+        .filter(item => item.ifIns === base.Y)
+        .filter(item => item.tsName !== 'remark')
+        .map((item, index) => `${qd3_dialogFormForm.find(funcs => funcs[0](item.formType, 0, 0))[1](
+          item.tsName,
+          index,
+          columns.filter(item => item.ifIns === base.Y).filter(item => item.tsName !== 'remark').length)}`
+        ),
+      ...columns
+        .filter(item => item.ifIns === base.Y)
+        .filter(item => item.tsName === 'remark')
+        .map(() => `        <el-row>
+          <el-col :span="24">
+            <el-form-item :label="${moduleName1}Dict.remark" prop="remark">
+              <el-input type="textarea" v-model="state.dialogForm.remark" :placeholder="${moduleName1}Dict.remark"/>
+            </el-form-item>
+          </el-col>
+        </el-row>`)
+    ]
       .join('\n')
   }
 ${`        <!--在此上方添加表单项-->`}
-${`        <!--<el-form-item :label="state.dict['orderNum']" prop='orderNum'>-->`}
-${`        <!--  <el-input-number v-model="state.dialogForm['orderNum']" controls-position="right"/>-->`}
+${`        <!--<el-form-item :label="${moduleName1}Dict.orderNum" prop='orderNum'>-->`}
+${`        <!--  <el-input-number v-model="state.dialogForm.orderNum" controls-position="right"/>-->`}
 ${`        <!--</el-form-item>-->`}
-${`        <!--<el-form-item :label="state.dict['ifDefault']" prop='ifDefault'>-->`}
-${`        <!--  <el-switch v-model="state.dialogForm['ifDefault']" :active-value='final.Y' :inactive-value='final.N'/>-->`}
+${`        <!--<el-form-item :label="${moduleName1}Dict.ifDefault" prop='ifDefault'>-->`}
+${`        <!--  <el-switch v-model="state.dialogForm.ifDefault" :active-value='final.Y' :inactive-value='final.N'/>-->`}
 ${`        <!--</el-form-item>-->`}
-${`        <!--<el-form-item :label="state.dict['ifDisabled']" prop='ifDisabled'>-->`}
-${`        <!--  <el-radio-group v-model="state.dialogForm['ifDisabled']">-->`}
+${`        <!--<el-form-item :label="${moduleName1}Dict.ifDisabled" prop='ifDisabled'>-->`}
+${`        <!--  <el-radio-group v-model="state.dialogForm.ifDisabled">-->`}
 ${`        <!--    <el-radio :value="final.Y">是</el-radio>-->`}
 ${`        <!--    <el-radio :value="final.N">否</el-radio>-->`}
 ${`        <!--  </el-radio-group>-->`}
 ${`        <!--</el-form-item>-->`}
-${`        <!--<el-form-item :label="state.dict['ifDisabled']" prop="ifDisabled">-->`}
-${`        <!--  <el-switch v-model="state.dialogForm['ifDisabled']" :active-value="final.N" :inactive-value="final.Y"/>-->`}
+${`        <!--<el-form-item :label="${moduleName1}Dict.ifDisabled" prop="ifDisabled">-->`}
+${`        <!--  <el-switch v-model="state.dialogForm.ifDisabled" :active-value="final.N" :inactive-value="final.Y"/>-->`}
 ${`        <!--</el-form-item>-->`}
 ${`        <!--上方几个酌情使用-->`}
 ${`      </el-form>`}
@@ -880,11 +810,11 @@ ${`          <!--在此下方添加表格列-->`}${
   }
 ${`          <!--在此上方添加表格列-->`}
 ${`          <el-table-column fixed="right" label="操作" min-width="120">`}
-${`            <template v-if="state.dialogType.value===final.ins" #default="{$index}">`}
+${`            <template v-if="dialogType.value===final.ins" #default="{$index}">`}
 ${`              <el-button link type="danger" size="small" @click="dfDel($index)">删除</el-button>`}
 ${`            </template>`}
 ${`          </el-table-column>`}
-${`          <template v-if="state.dialogType.value===final.ins" #append>`}
+${`          <template v-if="dialogType.value===final.ins" #append>`}
 ${`            <el-button text type="primary" plain :icon="Plus" @click="dfIns">新增</el-button>`}
 ${`          </template>`}
 ${`        </el-table>`}
@@ -899,120 +829,145 @@ ${`    </template>`}
 ${`  </el-dialog>`}
 ${``}
 ${`  <!--顶部筛选表单-->`}
-${`  <el-form`}
-${`      class="demo-form-inline"`}
-${`      v-if="Object.keys(state.filterForm).length>0"`}
-${`      ref="filterFormRef"`}
-${`      :model="state.filterForm"`}
-${`      :inline="true"`}
-${`      @keyup.enter="fEnter"`}
-${`      @submit.prevent`}
-${`  >`}
-${`    <!--在此下方添加表单项-->`}
-${`    <!--<el-form-item :label="state.dict['']" prop="">-->`}
-${`    <!--  <el-input v-model="state.filterForm['']" :placeholder="state.dict['']"/>-->`}
-${`    <!--</el-form-item>-->`}
-${`    <!--在此上方添加表单项-->`}
-${`    <el-form-item>`}
-${`      <el-button type="primary" @click="fCon">筛选</el-button>`}
-${`      <el-button @click="fCan">重置</el-button>`}
-${`    </el-form-item>`}
-${`  </el-form>`}
+${`  <div class="zs-filter-form" v-if="Object.keys(state.filterForm).length>0">`}
+${`    <el-form`}
+${`        class="demo-form-inline"`}
+${`        ref="filterFormRef"`}
+${`        :model="state.filterForm"`}
+${`        :inline="true"`}
+${`        @keyup.enter="fEnter"`}
+${`        @submit.prevent`}
+${`    >`}
+${`      <!--在此下方添加表单项-->`}
+${`      <!--<el-form-item :label="${moduleName1}Dict." prop="">-->`}
+${`      <!--  <el-input v-model="state.filterForm." :placeholder="${moduleName1}Dict."/>-->`}
+${`      <!--</el-form-item>-->`}
+${`      <!--在此上方添加表单项-->`}
+${`      <el-form-item>`}
+${`        <el-button type="primary" @click="fCon">筛选</el-button>`}
+${`        <el-button @click="fCan">重置</el-button>`}
+${`      </el-form-item>`}
+${`    </el-form>`}
+${`  </div>`}
 ${``}
 ${`  <!--操作按钮-->`}
-${`  <div>`}
+${`  <div class="zs-button-row">`}
 ${`    <!--<el-button-group>-->`}
 ${`    <el-button type="primary" plain :icon="Refresh" @click="gRefresh">刷新</el-button>`}
 ${`    <el-button type="primary" plain :icon="Plus" @click="gIns">新增</el-button>`}
-${`    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?state.multipleSelection.length===0:state.multipleSelection.length!==1" @click="gUpd">修改</el-button>`}
-${`    <el-button type="danger" plain :icon="Delete" :disabled="state.multipleSelection.length===0" @click="gDel()">删除</el-button>`}
-${`    <el-button type="warning" plain :icon="Download" :disabled="state.multipleSelection.length===0" @click="gExport()">导出</el-button>`}
+${`    <el-button type="success" plain :icon="Edit" :disabled="config.bulkOperation?multipleSelection.length===0:multipleSelection.length!==1" @click="gUpd">修改</el-button>`}
+${`    <el-button type="danger" plain :icon="Delete" :disabled="multipleSelection.length===0" @click="gDel()">删除</el-button>`}
+${`    <el-button type="warning" plain :icon="Download" :disabled="multipleSelection.length===0" @click="gExport()">导出</el-button>`}
 ${`    <el-button type="warning" plain :icon="Upload" @click="gImport">上传</el-button>`}
 ${`    <!--</el-button-group>-->`}
 ${`  </div>`}
 ${``}
-${`  <!--数据表格-->`}
-${`  <el-table`}
-${`      v-loading="tableLoadingRef"`}
-${`      :data="state.list"`}
-${`      @selection-change="handleSelectionChange"`}
-${`  >`}
-${`    <el-table-column fixed type="selection" width="55"/>`}
-${`    <!--<el-table-column fixed prop="id" :label="state.dict[\'id\']" width="180"/>-->`}
-${`    <!--上面id列的宽度改一下-->`}
-${`    <!--在此下方添加表格列-->`}
+${`  <div class="zs-table-data">`}
+${`    <!--数据表格-->`}
+${`    <el-table`}
+${`        v-loading="tableLoadingRef"`}
+${`        :data="tableData"`}
+${`        @selection-change="handleSelectionChange"`}
+${`    >`}
+${`      <el-table-column fixed type="selection" width="55"/>`}
+${`      <!--<el-table-column fixed prop="id" :label="${moduleName1}Dict.id" width="180"/>-->`}
+${`      <!--上面id列的宽度改一下-->`}
+${`      <!--在此下方添加表格列-->`}
 ${
     columns
       .filter(item => item.ifSelOne === base.Y)
-      .map(item => `    <el-table-column prop="${item.tsName}" :label="state.dict['${item.tsName}']" width="120"/>`,
+      .map(item => `      <el-table-column prop="${item.tsName}" :label="${moduleName1}Dict.${item.tsName}" width="120"/>`,
       )
       .join('\n')
   }
-${`    <!--在此上方添加表格列-->`}
-${`    <!--<el-table-column prop="createBy" :label="state.dict[\'createBy\']" width="120"/>-->`}
-${`    <!--<el-table-column prop="updateBy" :label="state.dict[\'updateBy\']" width="120"/>-->`}
-${`    <!--<el-table-column prop="createTime" :label="state.dict[\'createTime\']" width="220"/>-->`}
-${`    <!--<el-table-column prop="updateTime" :label="state.dict[\'updateTime\']" width="220"/>-->`}
-${`    <!--<el-table-column prop="deleted" :label="state.dict[\'deleted\']" width="60"/>-->`}
-${`    <!--上方几个酌情使用-->`}
-${`    <el-table-column fixed="right" label="操作" min-width="120">`}
-${`      <template #default="{row}">`}
-${`        <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>`}
-${`        <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>`}
+${`      <!--在此上方添加表格列-->`}
+${`      <!--<el-table-column prop="createBy" :label="${moduleName1}Dict.createBy" width="120"/>-->`}
+${`      <!--<el-table-column prop="updateBy" :label="${moduleName1}Dict.updateBy" width="120"/>-->`}
+${`      <!--<el-table-column prop="createTime" :label="${moduleName1}Dict.createTime" width="220"/>-->`}
+${`      <!--<el-table-column prop="updateTime" :label="${moduleName1}Dict.updateTime" width="220"/>-->`}
+${`      <!--<el-table-column prop="deleted" :label="${moduleName1}Dict.deleted" width="60"/>-->`}
+${`      <!--上方几个酌情使用-->`}
+${`      <el-table-column fixed="right" label="操作" min-width="120">`}
+${`        <template #default="{row}">`}
+${`          <el-button link type="primary" size="small" @click="tUpd(row.id)">修改</el-button>`}
+${`          <el-button link type="danger" size="small" @click="tDel(row.id)">删除</el-button>`}
+${`        </template>`}
+${`      </el-table-column>`}
+${`      <template #append>`}
+${`        <div class="el-table-append-box">`}
+${`          <span>此表格的多选<span class="underline">不支持</span>{{ \`跨分页保存，当前已选 \${multipleSelection.length} 条数据。\` }}</span>`}
+${`        </div>`}
 ${`      </template>`}
-${`    </el-table-column>`}
-${`    <template #append>`}
-${`      <div class="el-table-append-box">`}
-${`        <span>此表格的多选<span class="underline">不支持</span>{{ \`跨分页保存，当前已选 \${state.multipleSelection.length} 条数据。\` }}</span>`}
-${`      </div>`}
-${`    </template>`}
-${`  </el-table>`}
+${`    </el-table>`}
 ${``}
-${`  <!--分页-->`}
-${`  <Pagination`}
-${`      v-if="state.total!==-1"`}
-${`      :total="Number(state.total)"`}
-${`      :page-num="state.pageParam.pageNum"`}
-${`      :page-size="state.pageParam.pageSize"`}
-${`      @page-change="pageChange"`}
-${`  />`}
+${`    <!--分页-->`}
+${`    <Pagination`}
+${`        v-if="config.pageQuery"`}
+${`        :total="total"`}
+${`        :page-num="pageParam.pageNum"`}
+${`        :page-size="pageParam.pageSize"`}
+${`        @page-change="pageChange"`}
+${`    />`}
+${`  </div>`}
 ${`</template>`}
 ` + `
 ${`<style scoped>`}
 ${`</style>`}
 `;
-  const fileNames = {
-    hd1: `${toKebabCase(moduleName)}.controller.ts`,
-    hd2: `${toKebabCase(moduleName)}.service.ts`,
-    hd3: `dto.ts`,
-    hd4: `${toKebabCase(moduleName)}.module.ts`,
-    hd5: `app.module.ts`,
-    qd1: `${moduleName}.ts`,
-    qd2: `${moduleName}.ts`,
-    qd3: `index.vue`,
-  };
-  const filePaths = {
-    hd1: `/src/module/${toKebabCase(businessName)}/${toKebabCase(moduleName)}`,
-    hd2: `/src/module/${toKebabCase(businessName)}/${toKebabCase(moduleName)}`,
-    hd3: `/src/module/${toKebabCase(businessName)}/${toKebabCase(moduleName)}`,
-    hd4: `/src/module/${toKebabCase(businessName)}/${toKebabCase(moduleName)}`,
-    hd5: '',
-    qd1: `/src/api/module/${businessName}`,
-    qd2: `/src/type/api/${businessName}`,
-    qd3: `/src/views/${businessName}/${moduleName}`,
-  };
-  return {
-    fileNames: fileNames,
-    filePaths: filePaths,
-    codes: {
-      hd1,
-      hd2,
-      hd3,
-      hd4,
-      hd5,
-      qd1,
-      qd2,
-      qd3,
+  return [
+    {
+      fileName: `dto.ts`,
+      filePath: `/src/module/module/${sysPath}/${businessName3}/${moduleName3}`,
+      canCopy: true,
+      code: hd1,
     },
-  };
+    {
+      fileName: `${moduleName3}.service.ts`,
+      filePath: `/src/module/module/${sysPath}/${businessName3}/${moduleName3}`,
+      canCopy: true,
+      code: hd2,
+    },
+    {
+      fileName: `${moduleName3}.controller.ts`,
+      filePath: `/src/module/module/${sysPath}/${businessName3}/${moduleName3}`,
+      canCopy: true,
+      code: hd3,
+    },
+    {
+      fileName: `${moduleName3}.module.ts`,
+      filePath: `/src/module/module/${sysPath}/${businessName3}/${moduleName3}`,
+      canCopy: true,
+      code: hd4,
+    },
+    {
+      fileName: `app.module.ts`,
+      filePath: ``,
+      canCopy: false,
+      code: hd5,
+    },
+    {
+      fileName: `${moduleName1}.ts`,
+      filePath: `/src/type/module/${sysPath}/${businessName1}`,
+      canCopy: true,
+      code: qd1,
+    },
+    {
+      fileName: `${moduleName1}.ts`,
+      filePath: `/src/dict/module/${sysPath}/${businessName1}`,
+      canCopy: true,
+      code: qd2,
+    },
+    {
+      fileName: `${moduleName1}.ts`,
+      filePath: `/src/api/module/${sysPath}/${businessName1}`,
+      canCopy: true,
+      code: qd3,
+    },
+    {
+      fileName: `index.vue`,
+      filePath: `/src/views/${businessName1}/${moduleName1}`,
+      canCopy: true,
+      code: qd4,
+    },
+  ];
 }

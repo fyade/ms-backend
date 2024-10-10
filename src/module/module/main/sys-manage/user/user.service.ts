@@ -16,7 +16,7 @@ import { comparePassword, hashPassword } from '../../../../../util/EncryptUtils'
 import { userDeptDto } from '../user-dept/dto';
 import { userGroupDto } from '../../../algorithm/user-group/dto';
 import { userUserGroupDto } from '../../../algorithm/user-user-group/dto';
-import { roleDto } from '../role/dto';
+import { RoleDto } from '../role/dto';
 import { deptDto } from '../dept/dto';
 import { CacheTokenService } from '../../../../cache/cache.token.service';
 
@@ -78,7 +78,7 @@ export class UserService {
       },
     }, false);
     const allRoleIdsOfThoseUsers = allUserRolesOfThoseUsers.map(item => item.roleId);
-    const allRolesOfThoseUsers = await this.prisma.findAll<roleDto>('sys_role', {
+    const allRolesOfThoseUsers = await this.prisma.findAll<RoleDto>('sys_role', {
       data: {
         id: {
           in: allRoleIdsOfThoseUsers,

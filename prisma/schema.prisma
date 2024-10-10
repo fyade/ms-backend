@@ -82,6 +82,9 @@ model sys_code_gen_table {
   table_remark         String?               @db.VarChar(300)
   business_name        String                @db.VarChar(60)
   module_name          String                @db.VarChar(60)
+  business_name_cn     String                @db.VarChar(60)
+  module_name_cn       String                @db.VarChar(60)
+  sys_id               Int                   @db.Int
   order_num            Int                   @db.Int
   remark               String?               @db.VarChar(300)
   create_by            String                @db.VarChar(10)
@@ -89,6 +92,7 @@ model sys_code_gen_table {
   create_time          DateTime              @default(now())
   update_time          DateTime              @updatedAt
   deleted              String                @default("N") @db.Char(1)
+  sys_                 sys_sys               @relation(fields: [sys_id], references: [id])
   sys_code_gen_columns sys_code_gen_column[]
 }
 
@@ -297,21 +301,22 @@ model sys_dept_permission {
 
 // 2.8 系统表
 model sys_sys {
-  id            Int            @id @default(autoincrement()) @db.Int
-  name          String         @db.VarChar(300)
-  perms         String         @db.VarChar(100)
-  order_num     Int            @db.Int
-  path          String         @db.VarChar(100)
-  if_disabled   String         @db.Char(1)
-  remark        String?        @db.VarChar(300)
-  create_by     String         @db.VarChar(10)
-  update_by     String         @db.VarChar(10)
-  create_time   DateTime       @default(now())
-  update_time   DateTime       @updatedAt
-  deleted       String         @default("N") @db.Char(1)
-  sys_role_syss sys_role_sys[]
-  sys_dept_syss sys_dept_sys[]
-  sys_menus     sys_menu[]
+  id                  Int                  @id @default(autoincrement()) @db.Int
+  name                String               @db.VarChar(300)
+  perms               String               @db.VarChar(100)
+  order_num           Int                  @db.Int
+  path                String               @db.VarChar(100)
+  if_disabled         String               @db.Char(1)
+  remark              String?              @db.VarChar(300)
+  create_by           String               @db.VarChar(10)
+  update_by           String               @db.VarChar(10)
+  create_time         DateTime             @default(now())
+  update_time         DateTime             @updatedAt
+  deleted             String               @default("N") @db.Char(1)
+  sys_role_syss       sys_role_sys[]
+  sys_dept_syss       sys_dept_sys[]
+  sys_menus           sys_menu[]
+  sys_code_gen_tables sys_code_gen_table[]
 }
 
 // 2.9 角色系统表
