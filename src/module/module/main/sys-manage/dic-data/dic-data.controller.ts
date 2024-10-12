@@ -14,6 +14,18 @@ export class DicDataController {
   constructor(private readonly dicDataService: DicDataService) {
   }
 
+  @Get('/perm/:perm')
+  @ApiOperation({
+    summary: '获取某类型下的字典数据',
+  })
+  @Authorize({
+    permission: 'main:sysManage:dicData:selDataOfPerm',
+    label: '获取某类型下的字典数据',
+  })
+  async selDicDataOfType(@Param('perm') perm: string) {
+    return this.dicDataService.selDicDataOfType(perm);
+  }
+
   @Get()
   @ApiOperation({
     summary: '分页查询字典数据',

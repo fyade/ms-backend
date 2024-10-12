@@ -2,10 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { DicDataDto, DicDataSelListDto, DicDataSelAllDto, DicDataInsOneDto, DicDataUpdOneDto } from './dto';
+import { DicTypeDto } from '../dic-type/dto';
 
 @Injectable()
 export class DicDataService {
   constructor(private readonly prisma: PrismaService) {
+  }
+
+  async selDicDataOfType(perm: string): Promise<R> {
+    const dicTypeDto = await this.prisma.findFirst<DicTypeDto>('sys_dic_type', { type: perm });
+    const ret = [];
+    if (dicTypeDto) {
+      const dicDataDtos = await this.prisma.findAll<DicDataDto>('sys_dic_data', {
+        data: { dicTypeId: dicTypeDto.id },
+        notNullKeys: ['dicTypeId'],
+        numberKeys: ['dicTypeId'],
+      });
+      ret.push(...dicDataDtos);
+    }
+    return R.ok(ret);
   }
 
   async selDicData(dto: DicDataSelListDto): Promise<R> {
