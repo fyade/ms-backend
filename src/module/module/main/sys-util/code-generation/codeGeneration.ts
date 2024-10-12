@@ -551,7 +551,7 @@ ${`   * 分页查询`}
 ${`   * @param params`}
 ${`   */`}
 ${`  selectList: (params) => request({`}
-${`    url: '/${sysPath}/${businessName3}/${moduleName3}',`}
+${`    url: '/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}',`}
 ${`    method: 'GET',`}
 ${`    params: params`}
 ${`  }),`}
@@ -560,7 +560,7 @@ ${`   * 查询所有`}
 ${`   * @param params`}
 ${`   */`}
 ${`  selectAll: (params) => request({`}
-${`    url: '/${sysPath}/${businessName3}/${moduleName3}/all',`}
+${`    url: '/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}/all',`}
 ${`    method: 'GET',`}
 ${`    params: params`}
 ${`  }),`}
@@ -569,7 +569,7 @@ ${`   * 查询单个`}
 ${`   * @param id`}
 ${`   */`}
 ${`  selectById: (id) => request({`}
-${`    url: \`/${sysPath}/${businessName3}/${moduleName3}/\${id}\`,`}
+${`    url: \`/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}/\${id}\`,`}
 ${`    method: 'GET'`}
 ${`  }),`}
 ${`  /**`}
@@ -577,7 +577,7 @@ ${`   * 查询多个`}
 ${`   * @param ids`}
 ${`   */`}
 ${`  selectByIds: (ids) => request({`}
-${`    url: \`/${sysPath}/${businessName3}/${moduleName3}/ids\`,`}
+${`    url: \`/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}/ids\`,`}
 ${`    method: 'GET',`}
 ${`    params: ids`}
 ${`  }),`}
@@ -586,7 +586,7 @@ ${`   * 新增`}
 ${`   * @param obj`}
 ${`   */`}
 ${`  insertOne: (obj) => request({`}
-${`    url: '/${sysPath}/${businessName3}/${moduleName3}',`}
+${`    url: '/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}',`}
 ${`    method: 'POST',`}
 ${`    data: obj`}
 ${`  }),`}
@@ -595,7 +595,7 @@ ${`   * 修改`}
 ${`   * @param obj`}
 ${`   */`}
 ${`  updateOne: (obj) => request({`}
-${`    url: '/${sysPath}/${businessName3}/${moduleName3}',`}
+${`    url: '/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}',`}
 ${`    method: 'PUT',`}
 ${`    data: obj`}
 ${`  }),`}
@@ -604,7 +604,7 @@ ${`   * 新增多个`}
 ${`   * @param objs`}
 ${`   */`}
 ${`  insertMore: (objs) => request({`}
-${`    url: '/${sysPath}/${businessName3}/${moduleName3}/s',`}
+${`    url: '/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}/s',`}
 ${`    method: 'POST',`}
 ${`    data: objs`}
 ${`  }),`}
@@ -613,7 +613,7 @@ ${`   * 修改多个`}
 ${`   * @param objs`}
 ${`   */`}
 ${`  updateMore: (objs) => request({`}
-${`    url: '/${sysPath}/${businessName3}/${moduleName3}/s',`}
+${`    url: '/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}/s',`}
 ${`    method: 'PUT',`}
 ${`    data: objs`}
 ${`  }),`}
@@ -622,7 +622,7 @@ ${`   * 删除`}
 ${`   * @param ids`}
 ${`   */`}
 ${`  deleteList: (...ids) => request({`}
-${`    url: '/${sysPath}/${businessName3}/${moduleName3}',`}
+${`    url: '/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}',`}
 ${`    method: 'DELETE',`}
 ${`    data: ids`}
 ${`  })`}
@@ -943,7 +943,7 @@ ${`</style>`}
     },
     {
       fileName: `app.module.ts`,
-      filePath: ``,
+      filePath: `/src`,
       canCopy: false,
       code: hd5,
     },
@@ -967,7 +967,7 @@ ${`</style>`}
     },
     {
       fileName: `index.vue`,
-      filePath: `/src/views${isBusiness?`/${businessName1}`:''}/${moduleName1}`,
+      filePath: `/src/views/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}`,
       canCopy: true,
       code: qd4,
     },
