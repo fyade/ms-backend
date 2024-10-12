@@ -1,13 +1,13 @@
-export interface cgTablesInterface {
+export interface CgTablesInterface {
   rowIndex: number;
   tableNameCnInitial: string;
   tableNameEnInitial: string;
   tableNameCn: string;
   tableNameEn: string;
-  cols: cgColsInterface[];
+  cols: CgColsInterface[];
 }
 
-export interface cgColsInterface {
+export interface CgColsInterface {
   colInfo: string;
   colName: string;
   colType: string;

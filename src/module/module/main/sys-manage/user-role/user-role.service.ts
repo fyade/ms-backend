@@ -4,14 +4,7 @@ import { R } from '../../../../../common/R';
 import { getCurrentUser } from '../../../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../../../exception/UserPermissionDeniedException';
 import { AuthService } from '../../../../auth/auth.service';
-import {
-  userRoleDto,
-  userRoleSelAllDto,
-  userRoleSelListDto,
-  userRoleUpdManyRUDto,
-  userRoleUpdManyURDto,
-  userRoleUpdOneDto,
-} from './dto';
+import { UserRoleDto, UserRoleSelListDto, UserRoleSelAllDto, UserRoleInsOneDto, UserRoleUpdOneDto, UserRoleUpdManyURDto, UserRoleUpdManyRUDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
 
 @Injectable()
@@ -23,8 +16,8 @@ export class UserRoleService {
   ) {
   }
 
-  async selUserRole(dto: userRoleSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<userRoleDto, userRoleSelListDto>('sys_user_role', {
+  async selUserRole(dto: UserRoleSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<UserRoleDto, UserRoleSelListDto>('sys_user_role', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'roleId'],
@@ -33,8 +26,8 @@ export class UserRoleService {
     return R.ok(res);
   }
 
-  async selAllUserRole(dto: userRoleSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll<userRoleDto>('sys_user_role', {
+  async selAllUserRole(dto: UserRoleSelAllDto): Promise<R> {
+    const res = await this.prisma.findAll<UserRoleDto>('sys_user_role', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'roleId'],
@@ -44,16 +37,16 @@ export class UserRoleService {
   }
 
   async selOneUserRole(id: number): Promise<R> {
-    const one = await this.prisma.findById<userRoleDto>('sys_user_role', Number(id));
+    const one = await this.prisma.findById<UserRoleDto>('sys_user_role', Number(id));
     return R.ok(one);
   }
 
-  async updUserRoleUR(dto: userRoleUpdManyURDto): Promise<R> {
+  async updUserRoleUR(dto: UserRoleUpdManyURDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
-    const allRoles = await this.prisma.findAll<userRoleUpdOneDto>('sys_user_role', { data: { userId: dto.userId } });
+    const allRoles = await this.prisma.findAll<UserRoleUpdOneDto>('sys_user_role', { data: { userId: dto.userId } });
     const allRoleIds = allRoles.map(item => item.roleId);
     const addRoles = dto.roleId.filter(id => allRoleIds.indexOf(id) === -1);
     const delRoleIds = allRoleIds.filter(id => dto.roleId.indexOf(id) === -1);
@@ -63,10 +56,10 @@ export class UserRoleService {
     return R.ok();
   }
 
-  async updUserRoleRU(dto: userRoleUpdManyRUDto): Promise<R> {
+  async updUserRoleRU(dto: UserRoleUpdManyRUDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     const data = [];
-    const allUsersOfThisRole = await this.prisma.findAll<userRoleDto>('sys_user_role', {
+    const allUsersOfThisRole = await this.prisma.findAll<UserRoleDto>('sys_user_role', {
       data: { roleId: dto.roleId },
       numberKeys: ['roleId'],
     });
@@ -88,7 +81,7 @@ export class UserRoleService {
 
   async delUserRole(ids: number[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    await this.prisma.deleteById<userRoleDto>('sys_user_role', ids);
+    await this.prisma.deleteById<UserRoleDto>('sys_user_role', ids);
     return R.ok();
   }
 }

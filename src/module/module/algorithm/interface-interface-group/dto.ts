@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../common/commonType';
+import { BaseDto } from '../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../common/dto/PageDto';
 import { IsArray, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class interfaceInterfaceGroupDto extends baseInterface {
+export class InterfaceInterfaceGroupDto extends BaseDto {
   id: number;
 
   interfaceId: number;
@@ -14,7 +14,7 @@ export class interfaceInterfaceGroupDto extends baseInterface {
   remark: string;
 }
 
-export class interfaceInterfaceGroupSelListDto extends pageDto {
+export class InterfaceInterfaceGroupSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -28,7 +28,7 @@ export class interfaceInterfaceGroupSelListDto extends pageDto {
   remark: string;
 }
 
-export class interfaceInterfaceGroupSelAllDto {
+export class InterfaceInterfaceGroupSelAllDto {
   @ApiProperty({ description: '接口', required: false })
   interfaceId: number;
 
@@ -39,7 +39,7 @@ export class interfaceInterfaceGroupSelAllDto {
   remark: string;
 }
 
-export class interfaceInterfaceGroupInsOneDto {
+export class InterfaceInterfaceGroupInsOneDto {
   @ApiProperty({ description: '接口', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '接口不能为空' })
@@ -54,13 +54,13 @@ export class interfaceInterfaceGroupInsOneDto {
   remark: string;
 }
 
-export class interfaceInterfaceGroupUpdOneDto extends interfaceInterfaceGroupInsOneDto {
+export class InterfaceInterfaceGroupUpdOneDto extends InterfaceInterfaceGroupInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;
 }
 
-export class interfaceInterfaceGroupUpdIIGDto {
+export class InterfaceInterfaceGroupUpdIIGDto {
   @ApiProperty({ description: '接口', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '接口不能为空' })
@@ -72,7 +72,7 @@ export class interfaceInterfaceGroupUpdIIGDto {
   interfaceGroupId: number[];
 }
 
-export class interfaceInterfaceGroupUpdIGIDto {
+export class InterfaceInterfaceGroupUpdIGIDto {
   @ApiProperty({ description: '接口', required: true })
   @Type(() => Number)
   @IsArray({ message: '接口应为数组' })

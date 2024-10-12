@@ -4,7 +4,7 @@ import { SysService } from './sys.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { sysSelListDto, sysSelAllDto, sysInsOneDto, sysUpdOneDto } from './dto';
+import { SysSelListDto, SysSelAllDto, SysInsOneDto, SysUpdOneDto } from './dto';
 
 @Controller('/main/sys-manage/sys')
 @ApiTags('主系统/系统管理/系统')
@@ -22,7 +22,7 @@ export class SysController {
     permission: 'main:sysManage:sys:selList',
     label: '分页查询系统',
   })
-  async selSys(@Query() dto: sysSelListDto): Promise<R> {
+  async selSys(@Query() dto: SysSelListDto): Promise<R> {
     return this.sysService.selSys(dto);
   }
 
@@ -34,7 +34,7 @@ export class SysController {
     permission: 'main:sysManage:sys:selAll',
     label: '查询所有系统',
   })
-  async selAllSys(@Query() dto: sysSelAllDto): Promise<R> {
+  async selAllSys(@Query() dto: SysSelAllDto): Promise<R> {
     return this.sysService.selAllSys(dto);
   }
 
@@ -76,7 +76,7 @@ export class SysController {
     permission: 'main:sysManage:sys:ins',
     label: '新增系统',
   })
-  async insSys(@Body() dto: sysInsOneDto): Promise<R> {
+  async insSys(@Body() dto: SysInsOneDto): Promise<R> {
     return this.sysService.insSys(dto);
   }
 
@@ -86,7 +86,7 @@ export class SysController {
   })
   @ApiBody({
     isArray: true,
-    type: sysInsOneDto,
+    type: SysInsOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:sys:inss',
@@ -94,9 +94,9 @@ export class SysController {
   })
   async insSyss(@Body(
     new ParseArrayPipe({
-      items: sysInsOneDto,
+      items: SysInsOneDto,
     }),
-  ) dtos: sysInsOneDto[]): Promise<R> {
+  ) dtos: SysInsOneDto[]): Promise<R> {
     return this.sysService.insSyss(dtos);
   }
 
@@ -108,7 +108,7 @@ export class SysController {
     permission: 'main:sysManage:sys:upd',
     label: '修改系统',
   })
-  async updSys(@Body() dto: sysUpdOneDto): Promise<R> {
+  async updSys(@Body() dto: SysUpdOneDto): Promise<R> {
     return this.sysService.updSys(dto);
   }
 
@@ -118,7 +118,7 @@ export class SysController {
   })
   @ApiBody({
     isArray: true,
-    type: sysUpdOneDto,
+    type: SysUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:sys:upds',
@@ -126,9 +126,9 @@ export class SysController {
   })
   async updSyss(@Body(
     new ParseArrayPipe({
-      items: sysUpdOneDto,
+      items: SysUpdOneDto,
     }),
-  ) dtos: sysUpdOneDto[]): Promise<R> {
+  ) dtos: SysUpdOneDto[]): Promise<R> {
     return this.sysService.updSyss(dtos);
   }
 

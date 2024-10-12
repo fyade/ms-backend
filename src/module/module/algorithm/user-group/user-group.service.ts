@@ -1,65 +1,67 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
-import { userGroupDto, userGroupSelListDto, userGroupSelAllDto, userGroupInsOneDto, userGroupUpdOneDto } from './dto';
+import { UserGroupDto, UserGroupSelListDto, UserGroupSelAllDto, UserGroupInsOneDto, UserGroupUpdOneDto } from './dto';
 
 @Injectable()
 export class UserGroupService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selUserGroup(dto: userGroupSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<userGroupDto, userGroupSelListDto>('sys_user_group', {
+  async selUserGroup(dto: UserGroupSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<UserGroupDto, UserGroupSelListDto>('sys_user_group', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'parentId', 'orderNum'],
       numberKeys: ['parentId', 'orderNum'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
-  async selAllUserGroup(dto: userGroupSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll<userGroupDto>('sys_user_group', {
+  async selAllUserGroup(dto: UserGroupSelAllDto): Promise<R> {
+    const res = await this.prisma.findAll<UserGroupDto>('sys_user_group', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'parentId', 'orderNum'],
       numberKeys: ['parentId', 'orderNum'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
   async selOnesUserGroup(ids: number[]): Promise<R> {
-    const res = await this.prisma.findByIds<userGroupDto>('sys_user_group', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<UserGroupDto>('sys_user_group', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOneUserGroup(id: number): Promise<R> {
-    const res = await this.prisma.findById<userGroupDto>('sys_user_group', Number(id));
+    const res = await this.prisma.findById<UserGroupDto>('sys_user_group', Number(id));
     return R.ok(res);
   }
 
-  async insUserGroup(dto: userGroupInsOneDto): Promise<R> {
-    const res = await this.prisma.create<userGroupDto>('sys_user_group', dto);
+  async insUserGroup(dto: UserGroupInsOneDto): Promise<R> {
+    const res = await this.prisma.create<UserGroupDto>('sys_user_group', dto);
     return R.ok(res);
   }
 
-  async insUserGroups(dtos: userGroupInsOneDto[]): Promise<R> {
-    const res = await this.prisma.createMany<userGroupDto>('sys_user_group', dtos);
+  async insUserGroups(dtos: UserGroupInsOneDto[]): Promise<R> {
+    const res = await this.prisma.createMany<UserGroupDto>('sys_user_group', dtos);
     return R.ok(res);
   }
 
-  async updUserGroup(dto: userGroupUpdOneDto): Promise<R> {
-    const res = await this.prisma.updateById<userGroupDto>('sys_user_group', dto);
+  async updUserGroup(dto: UserGroupUpdOneDto): Promise<R> {
+    const res = await this.prisma.updateById<UserGroupDto>('sys_user_group', dto);
     return R.ok(res);
   }
 
-  async updUserGroups(dtos: userGroupUpdOneDto[]): Promise<R> {
-    const res = await this.prisma.updateMany<userGroupDto>('sys_user_group', dtos);
+  async updUserGroups(dtos: UserGroupUpdOneDto[]): Promise<R> {
+    const res = await this.prisma.updateMany<UserGroupDto>('sys_user_group', dtos);
     return R.ok(res);
   }
 
   async delUserGroup(ids: number[]): Promise<R> {
-    const res = await this.prisma.deleteById<userGroupDto>('sys_user_group', ids);
+    const res = await this.prisma.deleteById<UserGroupDto>('sys_user_group', ids);
     return R.ok(res);
   }
 }

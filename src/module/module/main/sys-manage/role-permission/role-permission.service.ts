@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
-import { rolePermissionDto, rolePermissionSelAllDto, rolePermissionSelListDto, rolePermissionUpdManyDto } from './dto';
+import { RolePermissionDto, RolePermissionSelListDto, RolePermissionSelAllDto, RolePermissionInsOneDto, RolePermissionUpdOneDto, RolePermissionUpdManyDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
 
 @Injectable()
@@ -12,13 +12,13 @@ export class RolePermissionService {
   ) {
   }
 
-  async selRolePermission(dto: rolePermissionSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<rolePermissionDto, rolePermissionSelListDto>('sys_role_permission', { data: dto });
+  async selRolePermission(dto: RolePermissionSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<RolePermissionDto, RolePermissionSelListDto>('sys_role_permission', { data: dto });
     return R.ok(res);
   }
 
-  async selAllRolePermission(dto: rolePermissionSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
+  async selAllRolePermission(dto: RolePermissionSelAllDto): Promise<R> {
+    const res = await this.prisma.findAll<RolePermissionDto>('sys_role_permission', {
       data: dto,
       orderBy: false,
       notNullKeys: ['roleId', 'type', 'permissionId'],
@@ -54,7 +54,7 @@ export class RolePermissionService {
   // }
 
   async selOneRolePermission(id: number): Promise<R> {
-    const one = await this.prisma.findById<rolePermissionDto>('sys_role_permission', Number(id));
+    const one = await this.prisma.findById<RolePermissionDto>('sys_role_permission', Number(id));
     return R.ok(one);
   }
 
@@ -78,9 +78,9 @@ export class RolePermissionService {
   //   return R.ok();
   // }
 
-  async updRolePermissionRp(dto: rolePermissionUpdManyDto): Promise<R> {
+  async updRolePermissionRp(dto: RolePermissionUpdManyDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    const allRolePermissions = await this.prisma.findAll<rolePermissionDto>('sys_role_permission', {
+    const allRolePermissions = await this.prisma.findAll<RolePermissionDto>('sys_role_permission', {
       data: { roleId: dto.roleId },
       numberKeys: ['roleId'],
     });
@@ -100,7 +100,7 @@ export class RolePermissionService {
 
   async delRolePermission(ids: number[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    await this.prisma.delete<rolePermissionDto>('sys_role_permission', 'permission_id', ids);
+    await this.prisma.delete<RolePermissionDto>('sys_role_permission', 'permission_id', ids);
     return R.ok();
   }
 }

@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../common/commonType';
+import { BaseDto } from '../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class interfaceDto extends baseInterface {
+export class InterfaceDto extends BaseDto {
   id: number;
 
   label: string;
@@ -24,7 +24,7 @@ export class interfaceDto extends baseInterface {
   remark: string;
 }
 
-export class interfaceSelListDto extends pageDto {
+export class InterfaceSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -50,7 +50,7 @@ export class interfaceSelListDto extends pageDto {
   remark: string;
 }
 
-export class interfaceSelAllDto {
+export class InterfaceSelAllDto {
   @ApiProperty({ description: '接口名', required: false })
   label?: string;
 
@@ -73,7 +73,7 @@ export class interfaceSelAllDto {
   remark?: string;
 }
 
-export class interfaceInsOneDto {
+export class InterfaceInsOneDto {
   @ApiProperty({ description: '接口名', required: true })
   @IsNotEmpty({ message: '接口名不能为空' })
   label: string;
@@ -106,7 +106,7 @@ export class interfaceInsOneDto {
   remark: string;
 }
 
-export class interfaceUpdOneDto extends interfaceInsOneDto {
+export class InterfaceUpdOneDto extends InterfaceInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

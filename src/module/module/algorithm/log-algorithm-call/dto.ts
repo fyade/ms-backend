@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../common/commonType';
+import { BaseDto } from '../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class logAlgorithmCallDto extends baseInterface {
+export class LogAlgorithmCallDto extends BaseDto {
   id: number;
 
   userGroupPermissionId: number;
@@ -18,7 +18,7 @@ export class logAlgorithmCallDto extends baseInterface {
   remark: string;
 }
 
-export class logAlgorithmCallSelListDto extends pageDto {
+export class LogAlgorithmCallSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -38,7 +38,7 @@ export class logAlgorithmCallSelListDto extends pageDto {
   remark: string;
 }
 
-export class logAlgorithmCallSelAllDto {
+export class LogAlgorithmCallSelAllDto {
   @ApiProperty({ description: '用户组权限id', required: false })
   userGroupPermissionId: number;
 
@@ -55,7 +55,7 @@ export class logAlgorithmCallSelAllDto {
   remark: string;
 }
 
-export class logAlgorithmCallInsOneDto {
+export class LogAlgorithmCallInsOneDto {
   @ApiProperty({ description: '用户组权限id', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '用户组权限id不能为空' })
@@ -75,7 +75,7 @@ export class logAlgorithmCallInsOneDto {
   remark: string;
 }
 
-export class logAlgorithmCallUpdOneDto extends logAlgorithmCallInsOneDto {
+export class LogAlgorithmCallUpdOneDto extends LogAlgorithmCallInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

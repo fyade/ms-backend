@@ -6,13 +6,13 @@ import { join } from 'path';
 import * as fs from 'fs';
 import { base } from '../../../../../util/base';
 import {
-  fileUploadSelListDto,
-  fileUploadOneChunk_check,
-  fileUploadOneChunk_merge,
-  fileUploadOneChunk_upload,
+  FileUploadSelListDto,
+  FileUploadOneChunk_check,
+  FileUploadOneChunk_merge,
+  FileUploadOneChunk_upload,
 } from './dto';
-import { pageVo } from '../../../../../common/vo/PageVo';
-import { pageDto } from '../../../../../common/dto/PageDto';
+import { PageVo } from '../../../../../common/vo/PageVo';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { randomUUID } from '../../../../../util/IdUtils';
 import { getCurrentUser } from '../../../../../util/baseContext';
 
@@ -26,7 +26,7 @@ export class FileUploadService {
     this.env = currentEnv();
   }
 
-  async selList(dto: fileUploadSelListDto): Promise<R> {
+  async selList(dto: FileUploadSelListDto): Promise<R> {
     dto.pageNum = Number(dto.pageNum);
     dto.pageSize = Number(dto.pageSize);
     const filter = {
@@ -68,7 +68,7 @@ export class FileUploadService {
         deleted: base.N,
       },
     }) : await this.prisma.tbl_file.count();
-    const retObj: pageVo = {
+    const retObj: PageVo = {
       pageNum: dto.pageNum,
       pageSize: dto.pageSize,
       total: total,
@@ -150,7 +150,7 @@ export class FileUploadService {
     }
   }
 
-  async fileUploadOneChunkCheck(dto: fileUploadOneChunk_check): Promise<R> {
+  async fileUploadOneChunkCheck(dto: FileUploadOneChunk_check): Promise<R> {
     const fileName = dto.fileName;
     const fileSuffix = fileName.substring(fileName.lastIndexOf('.'));
     const fileUUID = randomUUID();
@@ -254,7 +254,7 @@ export class FileUploadService {
     }
   }
 
-  async fileUploadOneChunkUpload(dto: fileUploadOneChunk_upload): Promise<R> {
+  async fileUploadOneChunkUpload(dto: FileUploadOneChunk_upload): Promise<R> {
     dto.chunkIndex = Number(dto.chunkIndex);
     try {
       const chunkName = randomUUID();
@@ -289,7 +289,7 @@ export class FileUploadService {
     }
   }
 
-  async fileUploadOneChunkMerge(dto: fileUploadOneChunk_merge): Promise<R> {
+  async fileUploadOneChunkMerge(dto: FileUploadOneChunk_merge): Promise<R> {
     const fileInfos = await this.prisma.tbl_file.findMany({
       where: {
         file_new_name: dto.fileNewName,
@@ -363,7 +363,7 @@ export class FileUploadService {
     return R.ok();
   }
 
-  async getImageWaterfallFlow(dto: pageDto) {
+  async getImageWaterfallFlow(dto: PageDto) {
     return this.prisma.tbl_file.findMany({
       skip: (Number(dto.pageNum) - 1) * Number(dto.pageSize),
       take: Number(dto.pageSize),

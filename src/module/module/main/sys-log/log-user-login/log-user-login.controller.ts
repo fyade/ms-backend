@@ -4,7 +4,7 @@ import { LogUserLoginService } from './log-user-login.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { logUserLoginSelListDto, logUserLoginSelAllDto, logUserLoginInsOneDto, logUserLoginUpdOneDto } from './dto';
+import { LogUserLoginSelListDto, LogUserLoginSelAllDto, LogUserLoginInsOneDto, LogUserLoginUpdOneDto } from './dto';
 
 @Controller('/main/sys-log/log-user-login')
 @ApiTags('主系统/系统日志/登录日志')
@@ -22,7 +22,7 @@ export class LogUserLoginController {
     permission: 'main:sysLog:logUserLogin:selList',
     label: '分页查询登录日志',
   })
-  async selLogUserLogin(@Query() dto: logUserLoginSelListDto): Promise<R> {
+  async selLogUserLogin(@Query() dto: LogUserLoginSelListDto): Promise<R> {
     return this.logUserLoginService.selLogUserLogin(dto);
   }
 
@@ -34,7 +34,7 @@ export class LogUserLoginController {
     permission: 'main:sysLog:logUserLogin:selAll',
     label: '查询所有登录日志',
   })
-  async selAllLogUserLogin(@Query() dto: logUserLoginSelAllDto): Promise<R> {
+  async selAllLogUserLogin(@Query() dto: LogUserLoginSelAllDto): Promise<R> {
     return this.logUserLoginService.selAllLogUserLogin(dto);
   }
 
@@ -76,7 +76,7 @@ export class LogUserLoginController {
     permission: 'main:sysLog:logUserLogin:ins',
     label: '新增登录日志',
   })
-  async insLogUserLogin(@Body() dto: logUserLoginInsOneDto): Promise<R> {
+  async insLogUserLogin(@Body() dto: LogUserLoginInsOneDto): Promise<R> {
     return this.logUserLoginService.insLogUserLogin(dto);
   }
 
@@ -86,7 +86,7 @@ export class LogUserLoginController {
   })
   @ApiBody({
     isArray: true,
-    type: logUserLoginInsOneDto,
+    type: LogUserLoginInsOneDto,
   })
   @Authorize({
     permission: 'main:sysLog:logUserLogin:inss',
@@ -94,9 +94,9 @@ export class LogUserLoginController {
   })
   async insLogUserLogins(@Body(
     new ParseArrayPipe({
-      items: logUserLoginInsOneDto,
+      items: LogUserLoginInsOneDto,
     }),
-  ) dtos: logUserLoginInsOneDto[]): Promise<R> {
+  ) dtos: LogUserLoginInsOneDto[]): Promise<R> {
     return this.logUserLoginService.insLogUserLogins(dtos);
   }
 
@@ -108,7 +108,7 @@ export class LogUserLoginController {
     permission: 'main:sysLog:logUserLogin:upd',
     label: '修改登录日志',
   })
-  async updLogUserLogin(@Body() dto: logUserLoginUpdOneDto): Promise<R> {
+  async updLogUserLogin(@Body() dto: LogUserLoginUpdOneDto): Promise<R> {
     return this.logUserLoginService.updLogUserLogin(dto);
   }
 
@@ -118,7 +118,7 @@ export class LogUserLoginController {
   })
   @ApiBody({
     isArray: true,
-    type: logUserLoginUpdOneDto,
+    type: LogUserLoginUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysLog:logUserLogin:upds',
@@ -126,9 +126,9 @@ export class LogUserLoginController {
   })
   async updLogUserLogins(@Body(
     new ParseArrayPipe({
-      items: logUserLoginUpdOneDto,
+      items: LogUserLoginUpdOneDto,
     }),
-  ) dtos: logUserLoginUpdOneDto[]): Promise<R> {
+  ) dtos: LogUserLoginUpdOneDto[]): Promise<R> {
     return this.logUserLoginService.updLogUserLogins(dtos);
   }
 

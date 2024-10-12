@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsArray, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class userRoleDto extends baseInterface {
+export class UserRoleDto extends BaseDto {
   id: number;
 
   userId: string;
@@ -14,7 +14,7 @@ export class userRoleDto extends baseInterface {
   remark: string;
 }
 
-export class userRoleSelListDto extends pageDto {
+export class UserRoleSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -28,7 +28,7 @@ export class userRoleSelListDto extends pageDto {
   remark: string;
 }
 
-export class userRoleSelAllDto {
+export class UserRoleSelAllDto {
   @ApiProperty({ description: '用户', required: false })
   userId: string;
 
@@ -39,7 +39,7 @@ export class userRoleSelAllDto {
   remark: string;
 }
 
-export class userRoleInsOneDto {
+export class UserRoleInsOneDto {
   @ApiProperty({ description: '用户', required: true })
   @IsNotEmpty({ message: '用户不能为空' })
   userId: string;
@@ -53,13 +53,13 @@ export class userRoleInsOneDto {
   remark: string;
 }
 
-export class userRoleUpdOneDto extends userRoleInsOneDto {
+export class UserRoleUpdOneDto extends UserRoleInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;
 }
 
-export class userRoleUpdManyURDto {
+export class UserRoleUpdManyURDto {
   @ApiProperty({ description: '用户', required: true })
   @IsNotEmpty({ message: '用户不能为空' })
   userId: string;
@@ -72,7 +72,7 @@ export class userRoleUpdManyURDto {
   remark: string;
 }
 
-export class userRoleUpdManyRUDto {
+export class UserRoleUpdManyRUDto {
   @ApiProperty({ description: '用户', required: true })
   @IsArray({ message: '用户应为数组' })
   userId: string[];

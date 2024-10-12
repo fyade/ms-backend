@@ -4,7 +4,7 @@ import { DeptService } from './dept.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { deptSelListDto, deptSelAllDto, deptInsOneDto, deptUpdOneDto } from './dto';
+import { DeptSelListDto, DeptSelAllDto, DeptInsOneDto, DeptUpdOneDto } from './dto';
 
 @Controller('/main/sys-manage/dept')
 @ApiTags('主系统/系统管理/部门')
@@ -22,7 +22,7 @@ export class DeptController {
     permission: 'main:sysManage:dept:selList',
     label: '分页查询部门',
   })
-  async selDept(@Query() dto: deptSelListDto): Promise<R> {
+  async selDept(@Query() dto: DeptSelListDto): Promise<R> {
     return this.deptService.selDept(dto);
   }
 
@@ -34,7 +34,7 @@ export class DeptController {
     permission: 'main:sysManage:dept:selAll',
     label: '查询所有部门',
   })
-  async selAllDept(@Query() dto: deptSelAllDto): Promise<R> {
+  async selAllDept(@Query() dto: DeptSelAllDto): Promise<R> {
     return this.deptService.selAllDept(dto);
   }
 
@@ -76,7 +76,7 @@ export class DeptController {
     permission: 'main:sysManage:dept:ins',
     label: '新增部门',
   })
-  async insDept(@Body() dto: deptInsOneDto): Promise<R> {
+  async insDept(@Body() dto: DeptInsOneDto): Promise<R> {
     return this.deptService.insDept(dto);
   }
 
@@ -86,7 +86,7 @@ export class DeptController {
   })
   @ApiBody({
     isArray: true,
-    type: deptInsOneDto,
+    type: DeptInsOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:dept:inss',
@@ -94,9 +94,9 @@ export class DeptController {
   })
   async insDepts(@Body(
     new ParseArrayPipe({
-      items: deptInsOneDto,
+      items: DeptInsOneDto,
     }),
-  ) dtos: deptInsOneDto[]): Promise<R> {
+  ) dtos: DeptInsOneDto[]): Promise<R> {
     return this.deptService.insDepts(dtos);
   }
 
@@ -108,7 +108,7 @@ export class DeptController {
     permission: 'main:sysManage:dept:upd',
     label: '修改部门',
   })
-  async updDept(@Body() dto: deptUpdOneDto): Promise<R> {
+  async updDept(@Body() dto: DeptUpdOneDto): Promise<R> {
     return this.deptService.updDept(dto);
   }
 
@@ -118,7 +118,7 @@ export class DeptController {
   })
   @ApiBody({
     isArray: true,
-    type: deptUpdOneDto,
+    type: DeptUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:dept:upds',
@@ -126,9 +126,9 @@ export class DeptController {
   })
   async updDepts(@Body(
     new ParseArrayPipe({
-      items: deptUpdOneDto,
+      items: DeptUpdOneDto,
     }),
-  ) dtos: deptUpdOneDto[]): Promise<R> {
+  ) dtos: DeptUpdOneDto[]): Promise<R> {
     return this.deptService.updDepts(dtos);
   }
 

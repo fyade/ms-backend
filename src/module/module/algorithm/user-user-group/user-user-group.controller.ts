@@ -4,14 +4,7 @@ import { UserUserGroupService } from './user-user-group.service';
 import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import {
-  userUserGroupSelListDto,
-  userUserGroupSelAllDto,
-  userUserGroupInsOneDto,
-  userUserGroupUpdOneDto,
-  userUserGroupUpdUUGDtp,
-  userUserGroupUpdUGUDtp,
-} from './dto';
+import { UserUserGroupDto, UserUserGroupSelListDto, UserUserGroupSelAllDto, UserUserGroupInsOneDto, UserUserGroupUpdOneDto, UserUserGroupUpdUUGDtp, UserUserGroupUpdUGUDtp } from './dto';
 
 @Controller('/algorithm/user-user-group')
 @ApiTags('算法系统/用户用户组')
@@ -29,7 +22,7 @@ export class UserUserGroupController {
     permission: 'algorithm:userUserGroup:selList',
     label: '分页查询用户用户组',
   })
-  async selUserUserGroup(@Query() dto: userUserGroupSelListDto): Promise<R> {
+  async selUserUserGroup(@Query() dto: UserUserGroupSelListDto): Promise<R> {
     return this.userUserGroupService.selUserUserGroup(dto);
   }
 
@@ -41,7 +34,7 @@ export class UserUserGroupController {
     permission: 'algorithm:userUserGroup:selAll',
     label: '查询所有用户用户组',
   })
-  async selAllUserUserGroup(@Query() dto: userUserGroupSelAllDto): Promise<R> {
+  async selAllUserUserGroup(@Query() dto: UserUserGroupSelAllDto): Promise<R> {
     return this.userUserGroupService.selAllUserUserGroup(dto);
   }
 
@@ -83,7 +76,7 @@ export class UserUserGroupController {
     permission: 'algorithm:userUserGroup:updUug',
     label: '更新用户用户组（uug）',
   })
-  async updUserUserGroupUUG(@Body() dto: userUserGroupUpdUUGDtp): Promise<R> {
+  async updUserUserGroupUUG(@Body() dto: UserUserGroupUpdUUGDtp): Promise<R> {
     return this.userUserGroupService.updUserUserGroupUUG(dto);
   }
 
@@ -95,7 +88,7 @@ export class UserUserGroupController {
     permission: 'algorithm:userUserGroup:updUgu',
     label: '更新用户用户组（ugu）',
   })
-  async updUserUserGroupUGU(@Body() dto: userUserGroupUpdUGUDtp): Promise<R> {
+  async updUserUserGroupUGU(@Body() dto: UserUserGroupUpdUGUDtp): Promise<R> {
     return this.userUserGroupService.updUserUserGroupUGU(dto);
   }
 

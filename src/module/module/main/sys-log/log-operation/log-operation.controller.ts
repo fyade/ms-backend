@@ -4,7 +4,7 @@ import { LogOperationService } from './log-operation.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { logOperationSelListDto, logOperationSelAllDto, logOperationInsOneDto, logOperationUpdOneDto } from './dto';
+import { LogOperationSelListDto, LogOperationSelAllDto, LogOperationInsOneDto, LogOperationUpdOneDto } from './dto';
 
 @Controller('/main/sys-log/log-operation')
 @ApiTags('主系统/系统日志/系统操作日志')
@@ -22,7 +22,7 @@ export class LogOperationController {
     permission: 'main:sysLog:logOperation:selList',
     label: '分页查询系统操作日志',
   })
-  async selLogOperation(@Query() dto: logOperationSelListDto): Promise<R> {
+  async selLogOperation(@Query() dto: LogOperationSelListDto): Promise<R> {
     return this.logOperationService.selLogOperation(dto);
   }
 
@@ -34,7 +34,7 @@ export class LogOperationController {
     permission: 'main:sysLog:logOperation:selAll',
     label: '查询所有系统操作日志',
   })
-  async selAllLogOperation(@Query() dto: logOperationSelAllDto): Promise<R> {
+  async selAllLogOperation(@Query() dto: LogOperationSelAllDto): Promise<R> {
     return this.logOperationService.selAllLogOperation(dto);
   }
 
@@ -76,7 +76,7 @@ export class LogOperationController {
     permission: 'main:sysLog:logOperation:ins',
     label: '新增系统操作日志',
   })
-  async insLogOperation(@Body() dto: logOperationInsOneDto): Promise<R> {
+  async insLogOperation(@Body() dto: LogOperationInsOneDto): Promise<R> {
     return this.logOperationService.insLogOperation(dto);
   }
 
@@ -86,7 +86,7 @@ export class LogOperationController {
   })
   @ApiBody({
     isArray: true,
-    type: logOperationInsOneDto,
+    type: LogOperationInsOneDto,
   })
   @Authorize({
     permission: 'main:sysLog:logOperation:inss',
@@ -94,9 +94,9 @@ export class LogOperationController {
   })
   async insLogOperations(@Body(
     new ParseArrayPipe({
-      items: logOperationInsOneDto,
+      items: LogOperationInsOneDto,
     }),
-  ) dtos: logOperationInsOneDto[]): Promise<R> {
+  ) dtos: LogOperationInsOneDto[]): Promise<R> {
     return this.logOperationService.insLogOperations(dtos);
   }
 
@@ -108,7 +108,7 @@ export class LogOperationController {
     permission: 'main:sysLog:logOperation:upd',
     label: '修改系统操作日志',
   })
-  async updLogOperation(@Body() dto: logOperationUpdOneDto): Promise<R> {
+  async updLogOperation(@Body() dto: LogOperationUpdOneDto): Promise<R> {
     return this.logOperationService.updLogOperation(dto);
   }
 
@@ -118,7 +118,7 @@ export class LogOperationController {
   })
   @ApiBody({
     isArray: true,
-    type: logOperationUpdOneDto,
+    type: LogOperationUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysLog:logOperation:upds',
@@ -126,9 +126,9 @@ export class LogOperationController {
   })
   async updLogOperations(@Body(
     new ParseArrayPipe({
-      items: logOperationUpdOneDto,
+      items: LogOperationUpdOneDto,
     }),
-  ) dtos: logOperationUpdOneDto[]): Promise<R> {
+  ) dtos: LogOperationUpdOneDto[]): Promise<R> {
     return this.logOperationService.updLogOperations(dtos);
   }
 

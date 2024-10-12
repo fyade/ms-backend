@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
-import { adminNewUserDto, resetPsdDto, updPsdDto, userDto, userListSelDto } from './dto';
+import { AdminNewUserDto, ResetPsdDto, UpdPsdDto, UserDto, UserListSelDto } from './dto';
 import { R } from '../../../../../common/R';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -53,7 +53,7 @@ export class UserController {
     permission: 'main:sysManage:user:selList',
     label: '分页查询用户',
   })
-  async userSelList(@Query() dto: userListSelDto): Promise<R> {
+  async userSelList(@Query() dto: UserListSelDto): Promise<R> {
     return this.userService.userSelList(dto);
   }
 
@@ -65,7 +65,7 @@ export class UserController {
     permission: 'main:sysManage:user:adminNewUser',
     label: '管理员新增用户',
   })
-  async insUser(@Body() dto: adminNewUserDto) {
+  async insUser(@Body() dto: AdminNewUserDto) {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }
@@ -81,7 +81,7 @@ export class UserController {
     permission: 'main:sysManage:user:updUser',
     label: '修改个人信息',
   })
-  async updUser(@Body() dto: userDto) {
+  async updUser(@Body() dto: UserDto) {
     delete dto.password;
     return this.userService.updUser(dto);
   }
@@ -94,7 +94,7 @@ export class UserController {
     permission: 'main:sysManage:user:updPsd',
     label: '修改密码',
   })
-  async updPsd(@Body() dto: updPsdDto) {
+  async updPsd(@Body() dto: UpdPsdDto) {
     if (dto.oldpType === 'b') {
       dto.oldp = decrypt(dto.oldp);
     }
@@ -119,7 +119,7 @@ export class UserController {
     permission: 'main:sysManage:user:adminResetUserPsd',
     label: '管理员重置用户密码',
   })
-  async adminResetUserPsd(@Body() dto: resetPsdDto): Promise<R> {
+  async adminResetUserPsd(@Body() dto: ResetPsdDto): Promise<R> {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }

@@ -1,23 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
-import {
-  userGroupPermissionDto,
-  userGroupPermissionSelListDto,
-  userGroupPermissionSelAllDto,
-  userGroupPermissionInsOneDto,
-  userGroupPermissionUpdOneDto,
-} from './dto';
+import { UserGroupPermissionDto, UserGroupPermissionSelListDto, UserGroupPermissionSelAllDto, UserGroupPermissionInsOneDto, UserGroupPermissionUpdOneDto } from './dto';
 import { base } from '../../../../util/base';
-import { logAlgorithmCallDto } from '../log-algorithm-call/dto';
+import { LogAlgorithmCallDto } from '../log-algorithm-call/dto';
 
 @Injectable()
 export class UserGroupPermissionService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selUserGroupPermission(dto: userGroupPermissionSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<userGroupPermissionDto, userGroupPermissionSelListDto>('sys_user_group_permission', {
+  async selUserGroupPermission(dto: UserGroupPermissionSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<UserGroupPermissionDto, UserGroupPermissionSelListDto>('sys_user_group_permission', {
       data: dto,
       orderBy: true,
       notNullKeys: ['userGroupId', 'permissionId'],
@@ -26,8 +20,8 @@ export class UserGroupPermissionService {
     return R.ok(res);
   }
 
-  async selAllUserGroupPermission(dto: userGroupPermissionSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll<userGroupPermissionDto>('sys_user_group_permission', {
+  async selAllUserGroupPermission(dto: UserGroupPermissionSelAllDto): Promise<R> {
+    const res = await this.prisma.findAll<UserGroupPermissionDto>('sys_user_group_permission', {
       data: dto,
       orderBy: true,
       notNullKeys: ['userGroupId', 'permissionId'],
@@ -37,13 +31,13 @@ export class UserGroupPermissionService {
   }
 
   async selOnesUserGroupPermission(ids: number[]): Promise<R> {
-    const res = await this.prisma.findByIds<userGroupPermissionDto>('sys_user_group_permission', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<UserGroupPermissionDto>('sys_user_group_permission', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOneUserGroupPermission(id: number): Promise<R> {
-    const res = await this.prisma.findById<userGroupPermissionDto>('sys_user_group_permission', Number(id));
-    const count = await this.prisma.count<logAlgorithmCallDto>('log_algorithm_call', {
+    const res = await this.prisma.findById<UserGroupPermissionDto>('sys_user_group_permission', Number(id));
+    const count = await this.prisma.count<LogAlgorithmCallDto>('log_algorithm_call', {
       data: { userGroupPermissionId: id },
       numberKeys: ['userGroupPermissionId'],
       ifDeleted: false,
@@ -52,7 +46,7 @@ export class UserGroupPermissionService {
     return R.ok(res);
   }
 
-  async insUserGroupPermission(dto: userGroupPermissionInsOneDto): Promise<R> {
+  async insUserGroupPermission(dto: UserGroupPermissionInsOneDto): Promise<R> {
     dto.ifUseUp = base.N;
     // const dto1 = await this.prisma.findFirst<userGroupPermissionDto>('sys_user_group_permission', {
     //   userGroupId: dto.userGroupId,
@@ -61,7 +55,7 @@ export class UserGroupPermissionService {
     // if (dto1) {
     //   return R.err('已存在用户组-权限对，不可重复添加。');
     // }
-    const res = await this.prisma.create<userGroupPermissionDto>('sys_user_group_permission', dto);
+    const res = await this.prisma.create<UserGroupPermissionDto>('sys_user_group_permission', dto);
     return R.ok(res);
   }
 
@@ -88,7 +82,7 @@ export class UserGroupPermissionService {
   // }
 
   async delUserGroupPermission(ids: number[]): Promise<R> {
-    const res = await this.prisma.deleteById<userGroupPermissionDto>('sys_user_group_permission', ids);
+    const res = await this.prisma.deleteById<UserGroupPermissionDto>('sys_user_group_permission', ids);
     return R.ok(res);
   }
 }

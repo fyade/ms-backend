@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Req, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
-import { loginDto, registDto } from './dto';
+import { LoginDto, RegistDto } from './dto';
 import { R } from '../../../../../common/R';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -21,7 +21,7 @@ export class UserLoginController {
   @ApiOperation({
     summary: '用户注册',
   })
-  async regist(@Body() dto: registDto): Promise<R> {
+  async regist(@Body() dto: RegistDto): Promise<R> {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }
@@ -33,7 +33,7 @@ export class UserLoginController {
   @ApiOperation({
     summary: '用户登录',
   })
-  async login(@Body() dto: loginDto, @Req() request: Request): Promise<R> {
+  async login(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }
@@ -50,7 +50,7 @@ export class UserLoginController {
     permission: 'system:user:adminlogin',
     label: '管理员登录',
   })
-  async adminLogin(@Body() dto: loginDto, @Req() request: Request): Promise<R> {
+  async adminLogin(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }

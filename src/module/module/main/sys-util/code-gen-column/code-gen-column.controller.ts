@@ -4,7 +4,7 @@ import { CodeGenColumnService } from './code-gen-column.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { codeGenColumnSelListDto, codeGenColumnSelAllDto, codeGenColumnInsOneDto, codeGenColumnUpdOneDto } from './dto';
+import { CodeGenColumnSelListDto, CodeGenColumnSelAllDto, CodeGenColumnInsOneDto, CodeGenColumnUpdOneDto } from './dto';
 
 @Controller('/main/sys-util/code-gen-column')
 @ApiTags('主系统/系统工具/代码生成-列信息')
@@ -22,7 +22,7 @@ export class CodeGenColumnController {
     permission: 'main:sysUtil:codeGenColumn:selList',
     label: '分页查询代码生成-列信息',
   })
-  async selCodeGenColumn(@Query() dto: codeGenColumnSelListDto): Promise<R> {
+  async selCodeGenColumn(@Query() dto: CodeGenColumnSelListDto): Promise<R> {
     return this.codeGenColumnService.selCodeGenColumn(dto);
   }
 
@@ -34,7 +34,7 @@ export class CodeGenColumnController {
     permission: 'main:sysUtil:codeGenColumn:selAll',
     label: '查询所有代码生成-列信息',
   })
-  async selAllCodeGenColumn(@Query() dto: codeGenColumnSelAllDto): Promise<R> {
+  async selAllCodeGenColumn(@Query() dto: CodeGenColumnSelAllDto): Promise<R> {
     return this.codeGenColumnService.selAllCodeGenColumn(dto);
   }
 
@@ -76,7 +76,7 @@ export class CodeGenColumnController {
     permission: 'main:sysUtil:codeGenColumn:ins',
     label: '新增代码生成-列信息',
   })
-  async insCodeGenColumn(@Body() dto: codeGenColumnInsOneDto): Promise<R> {
+  async insCodeGenColumn(@Body() dto: CodeGenColumnInsOneDto): Promise<R> {
     return this.codeGenColumnService.insCodeGenColumn(dto);
   }
 
@@ -86,7 +86,7 @@ export class CodeGenColumnController {
   })
   @ApiBody({
     isArray: true,
-    type: codeGenColumnInsOneDto,
+    type: CodeGenColumnInsOneDto,
   })
   @Authorize({
     permission: 'main:sysUtil:codeGenColumn:inss',
@@ -94,9 +94,9 @@ export class CodeGenColumnController {
   })
   async insCodeGenColumns(@Body(
     new ParseArrayPipe({
-      items: codeGenColumnInsOneDto,
+      items: CodeGenColumnInsOneDto,
     }),
-  ) dtos: codeGenColumnInsOneDto[]): Promise<R> {
+  ) dtos: CodeGenColumnInsOneDto[]): Promise<R> {
     return this.codeGenColumnService.insCodeGenColumns(dtos);
   }
 
@@ -108,7 +108,7 @@ export class CodeGenColumnController {
     permission: 'main:sysUtil:codeGenColumn:upd',
     label: '修改代码生成-列信息',
   })
-  async updCodeGenColumn(@Body() dto: codeGenColumnUpdOneDto): Promise<R> {
+  async updCodeGenColumn(@Body() dto: CodeGenColumnUpdOneDto): Promise<R> {
     return this.codeGenColumnService.updCodeGenColumn(dto);
   }
 
@@ -118,7 +118,7 @@ export class CodeGenColumnController {
   })
   @ApiBody({
     isArray: true,
-    type: codeGenColumnUpdOneDto,
+    type: CodeGenColumnUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysUtil:codeGenColumn:upds',
@@ -126,9 +126,9 @@ export class CodeGenColumnController {
   })
   async updCodeGenColumns(@Body(
     new ParseArrayPipe({
-      items: codeGenColumnUpdOneDto,
+      items: CodeGenColumnUpdOneDto,
     }),
-  ) dtos: codeGenColumnUpdOneDto[]): Promise<R> {
+  ) dtos: CodeGenColumnUpdOneDto[]): Promise<R> {
     return this.codeGenColumnService.updCodeGenColumns(dtos);
   }
 

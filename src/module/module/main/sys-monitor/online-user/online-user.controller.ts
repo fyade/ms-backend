@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
-import { onlineUserSelListDto } from './dto';
+import { OnlineUserSelListDto } from './dto';
 
 @Controller('/main/sys-monitor/online-user')
 @ApiTags('主系统/系统监控/在线用户')

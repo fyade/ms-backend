@@ -4,12 +4,7 @@ import { LogAlgorithmCallService } from './log-algorithm-call.service';
 import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import {
-  logAlgorithmCallSelListDto,
-  logAlgorithmCallSelAllDto,
-  logAlgorithmCallInsOneDto,
-  logAlgorithmCallUpdOneDto,
-} from './dto';
+import { LogAlgorithmCallSelListDto, LogAlgorithmCallSelAllDto, LogAlgorithmCallInsOneDto, LogAlgorithmCallUpdOneDto } from './dto';
 
 @Controller('/algorithm/log-algorithm-call')
 @ApiTags('算法系统/算法调用日志')
@@ -27,7 +22,7 @@ export class LogAlgorithmCallController {
     permission: 'algorithm:logAlgorithmCall:selList',
     label: '分页查询算法调用日志',
   })
-  async selLogAlgorithmCall(@Query() dto: logAlgorithmCallSelListDto): Promise<R> {
+  async selLogAlgorithmCall(@Query() dto: LogAlgorithmCallSelListDto): Promise<R> {
     return this.logAlgorithmCallService.selLogAlgorithmCall(dto);
   }
 
@@ -39,7 +34,7 @@ export class LogAlgorithmCallController {
     permission: 'algorithm:logAlgorithmCall:selAll',
     label: '查询所有算法调用日志',
   })
-  async selAllLogAlgorithmCall(@Query() dto: logAlgorithmCallSelAllDto): Promise<R> {
+  async selAllLogAlgorithmCall(@Query() dto: LogAlgorithmCallSelAllDto): Promise<R> {
     return this.logAlgorithmCallService.selAllLogAlgorithmCall(dto);
   }
 
@@ -81,7 +76,7 @@ export class LogAlgorithmCallController {
     permission: 'algorithm:logAlgorithmCall:ins',
     label: '新增算法调用日志',
   })
-  async insLogAlgorithmCall(@Body() dto: logAlgorithmCallInsOneDto): Promise<R> {
+  async insLogAlgorithmCall(@Body() dto: LogAlgorithmCallInsOneDto): Promise<R> {
     return this.logAlgorithmCallService.insLogAlgorithmCall(dto);
   }
 
@@ -91,7 +86,7 @@ export class LogAlgorithmCallController {
   })
   @ApiBody({
     isArray: true,
-    type: logAlgorithmCallInsOneDto,
+    type: LogAlgorithmCallInsOneDto,
   })
   @Authorize({
     permission: 'algorithm:logAlgorithmCall:inss',
@@ -99,9 +94,9 @@ export class LogAlgorithmCallController {
   })
   async insLogAlgorithmCalls(@Body(
     new ParseArrayPipe({
-      items: logAlgorithmCallInsOneDto,
+      items: LogAlgorithmCallInsOneDto,
     }),
-  ) dtos: logAlgorithmCallInsOneDto[]): Promise<R> {
+  ) dtos: LogAlgorithmCallInsOneDto[]): Promise<R> {
     return this.logAlgorithmCallService.insLogAlgorithmCalls(dtos);
   }
 
@@ -113,7 +108,7 @@ export class LogAlgorithmCallController {
     permission: 'algorithm:logAlgorithmCall:upd',
     label: '修改算法调用日志',
   })
-  async updLogAlgorithmCall(@Body() dto: logAlgorithmCallUpdOneDto): Promise<R> {
+  async updLogAlgorithmCall(@Body() dto: LogAlgorithmCallUpdOneDto): Promise<R> {
     return this.logAlgorithmCallService.updLogAlgorithmCall(dto);
   }
 
@@ -123,7 +118,7 @@ export class LogAlgorithmCallController {
   })
   @ApiBody({
     isArray: true,
-    type: logAlgorithmCallUpdOneDto,
+    type: LogAlgorithmCallUpdOneDto,
   })
   @Authorize({
     permission: 'algorithm:logAlgorithmCall:upds',
@@ -131,9 +126,9 @@ export class LogAlgorithmCallController {
   })
   async updLogAlgorithmCalls(@Body(
     new ParseArrayPipe({
-      items: logAlgorithmCallUpdOneDto,
+      items: LogAlgorithmCallUpdOneDto,
     }),
-  ) dtos: logAlgorithmCallUpdOneDto[]): Promise<R> {
+  ) dtos: LogAlgorithmCallUpdOneDto[]): Promise<R> {
     return this.logAlgorithmCallService.updLogAlgorithmCalls(dtos);
   }
 

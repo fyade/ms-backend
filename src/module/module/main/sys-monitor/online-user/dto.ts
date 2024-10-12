@@ -1,4 +1,4 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 
-export class onlineUserSelListDto extends pageDto {
+export class OnlineUserSelListDto extends PageDto {
 }

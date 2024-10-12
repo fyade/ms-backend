@@ -1,7 +1,7 @@
-import { userDto2 } from '../module/module/main/sys-manage/user/dto';
+import { UserDto2 } from '../module/module/main/sys-manage/user/dto';
 
 const currentUser: {
-  user: userDto2
+  user: UserDto2
   token: string
 } = {
   user: null,
@@ -13,7 +13,7 @@ export function clearCurrentUser() {
   currentUser.token = '';
 }
 
-export async function setCurrentUser(user: userDto2, token: string) {
+export async function setCurrentUser(user: UserDto2, token: string) {
   currentUser.user = user;
   currentUser.token = token;
 }

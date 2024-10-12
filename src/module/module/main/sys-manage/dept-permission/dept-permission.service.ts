@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
-import {
-  deptPermissionDto,
-  deptPermissionSelAllDto,
-  deptPermissionSelListDto,
-  deptPermissionUpdManyDPDto,
-} from './dto';
+import { DeptPermissionDto, DeptPermissionSelListDto, DeptPermissionSelAllDto, DeptPermissionInsOneDto, DeptPermissionUpdOneDto, DeptPermissionUpdManyDPDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
 
 @Injectable()
@@ -17,39 +12,41 @@ export class DeptPermissionService {
   ) {
   }
 
-  async selDeptPermission(dto: deptPermissionSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<deptPermissionDto, deptPermissionSelListDto>('sys_dept_permission', {
+  async selDeptPermission(dto: DeptPermissionSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<DeptPermissionDto, DeptPermissionSelListDto>('sys_dept_permission', {
       data: dto,
       orderBy: false,
       notNullKeys: ['deptId', 'type', 'permissionId'],
       numberKeys: ['deptId', 'permissionId'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
-  async selAllDeptPermission(dto: deptPermissionSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll<deptPermissionDto>('sys_dept_permission', {
+  async selAllDeptPermission(dto: DeptPermissionSelAllDto): Promise<R> {
+    const res = await this.prisma.findAll<DeptPermissionDto>('sys_dept_permission', {
       data: dto,
       orderBy: false,
       notNullKeys: ['deptId', 'type', 'permissionId'],
       numberKeys: ['deptId', 'permissionId'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
   async selOnesDeptPermission(ids: number[]): Promise<R> {
-    const res = await this.prisma.findByIds<deptPermissionDto>('sys_dept_permission', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<DeptPermissionDto>('sys_dept_permission', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOneDeptPermission(id: number): Promise<R> {
-    const res = await this.prisma.findById<deptPermissionDto>('sys_dept_permission', Number(id));
+    const res = await this.prisma.findById<DeptPermissionDto>('sys_dept_permission', Number(id));
     return R.ok(res);
   }
 
-  async updDeptPermissionDp(dto: deptPermissionUpdManyDPDto): Promise<R> {
+  async updDeptPermissionDp(dto: DeptPermissionUpdManyDPDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    const allDeptPermission = await this.prisma.findAll<deptPermissionDto>('sys_dept_permission', {
+    const allDeptPermission = await this.prisma.findAll<DeptPermissionDto>('sys_dept_permission', {
       data: { deptId: dto.deptId },
       numberKeys: ['deptId'],
     });
@@ -69,7 +66,7 @@ export class DeptPermissionService {
 
   async delDeptPermission(ids: number[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    const res = await this.prisma.deleteById<deptPermissionDto>('sys_dept_permission', ids);
+    const res = await this.prisma.deleteById<DeptPermissionDto>('sys_dept_permission', ids);
     return R.ok(res);
   }
 }

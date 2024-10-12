@@ -4,7 +4,7 @@ import { RoleSysService } from './role-sys.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { roleSysSelListDto, roleSysSelAllDto, roleSysInsOneDto, roleSysUpdOneDto } from './dto';
+import { RoleSysSelListDto, RoleSysSelAllDto, RoleSysInsOneDto, RoleSysUpdOneDto } from './dto';
 
 @Controller('/main/sys-manage/role-sys')
 @ApiTags('主系统/系统管理/角色系统')
@@ -22,7 +22,7 @@ export class RoleSysController {
     permission: 'main:sysManage:roleSys:selList',
     label: '分页查询角色系统',
   })
-  async selRoleSys(@Query() dto: roleSysSelListDto): Promise<R> {
+  async selRoleSys(@Query() dto: RoleSysSelListDto): Promise<R> {
     return this.roleSysService.selRoleSys(dto);
   }
 
@@ -34,7 +34,7 @@ export class RoleSysController {
     permission: 'main:sysManage:roleSys:selAll',
     label: '查询所有角色系统',
   })
-  async selAllRoleSys(@Query() dto: roleSysSelAllDto): Promise<R> {
+  async selAllRoleSys(@Query() dto: RoleSysSelAllDto): Promise<R> {
     return this.roleSysService.selAllRoleSys(dto);
   }
 
@@ -76,7 +76,7 @@ export class RoleSysController {
     permission: 'main:sysManage:roleSys:ins',
     label: '新增角色系统',
   })
-  async insRoleSys(@Body() dto: roleSysInsOneDto): Promise<R> {
+  async insRoleSys(@Body() dto: RoleSysInsOneDto): Promise<R> {
     return this.roleSysService.insRoleSys(dto);
   }
 
@@ -86,7 +86,7 @@ export class RoleSysController {
   })
   @ApiBody({
     isArray: true,
-    type: roleSysInsOneDto,
+    type: RoleSysInsOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:roleSys:inss',
@@ -94,9 +94,9 @@ export class RoleSysController {
   })
   async insRoleSyss(@Body(
     new ParseArrayPipe({
-      items: roleSysInsOneDto,
+      items: RoleSysInsOneDto,
     }),
-  ) dtos: roleSysInsOneDto[]): Promise<R> {
+  ) dtos: RoleSysInsOneDto[]): Promise<R> {
     return this.roleSysService.insRoleSyss(dtos);
   }
 
@@ -108,7 +108,7 @@ export class RoleSysController {
     permission: 'main:sysManage:roleSys:upd',
     label: '修改角色系统',
   })
-  async updRoleSys(@Body() dto: roleSysUpdOneDto): Promise<R> {
+  async updRoleSys(@Body() dto: RoleSysUpdOneDto): Promise<R> {
     return this.roleSysService.updRoleSys(dto);
   }
 
@@ -118,7 +118,7 @@ export class RoleSysController {
   })
   @ApiBody({
     isArray: true,
-    type: roleSysUpdOneDto,
+    type: RoleSysUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:roleSys:upds',
@@ -126,9 +126,9 @@ export class RoleSysController {
   })
   async updRoleSyss(@Body(
     new ParseArrayPipe({
-      items: roleSysUpdOneDto,
+      items: RoleSysUpdOneDto,
     }),
-  ) dtos: roleSysUpdOneDto[]): Promise<R> {
+  ) dtos: RoleSysUpdOneDto[]): Promise<R> {
     return this.roleSysService.updRoleSyss(dtos);
   }
 

@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class codeGenTableDto extends baseInterface {
+export class CodeGenTableDto extends BaseDto {
   id: number;
 
   tableName: string;
@@ -30,7 +30,7 @@ export class codeGenTableDto extends baseInterface {
   remark: string;
 }
 
-export class codeGenTableSelListDto extends pageDto {
+export class CodeGenTableSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -68,7 +68,7 @@ export class codeGenTableSelListDto extends pageDto {
   remark: string;
 }
 
-export class codeGenTableSelAllDto {
+export class CodeGenTableSelAllDto {
   @ApiProperty({ description: '表名', required: false })
   tableName: string;
 
@@ -103,7 +103,7 @@ export class codeGenTableSelAllDto {
   remark: string;
 }
 
-export class codeGenTableInsOneDto {
+export class CodeGenTableInsOneDto {
   @ApiProperty({ description: '表名', required: true })
   @IsNotEmpty({ message: '表名不能为空' })
   tableName: string;
@@ -119,16 +119,14 @@ export class codeGenTableInsOneDto {
   @ApiProperty({ description: '表备注', required: false })
   tableRemark: string;
 
-  @ApiProperty({ description: '业务名', required: true })
-  @IsNotEmpty({ message: '业务名不能为空' })
+  @ApiProperty({ description: '业务名', required: false })
   businessName: string;
 
   @ApiProperty({ description: '模块名', required: true })
   @IsNotEmpty({ message: '模块名不能为空' })
   moduleName: string;
 
-  @ApiProperty({ description: '业务名中文', required: true })
-  @IsNotEmpty({ message: '业务名中文不能为空' })
+  @ApiProperty({ description: '业务名中文', required: false })
   businessNameCn: string;
 
   @ApiProperty({ description: '模块名中文', required: true })
@@ -149,7 +147,7 @@ export class codeGenTableInsOneDto {
   remark: string;
 }
 
-export class codeGenTableUpdOneDto extends codeGenTableInsOneDto {
+export class CodeGenTableUpdOneDto extends CodeGenTableInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

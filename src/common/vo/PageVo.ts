@@ -1,4 +1,4 @@
-export class pageVo<T = any> {
+export class PageVo<T = any> {
   pageNum: number;
   pageSize: number;
   total: number;

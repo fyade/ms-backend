@@ -4,7 +4,7 @@ import { UserRoleService } from './user-role.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { userRoleSelAllDto, userRoleSelListDto, userRoleUpdManyRUDto, userRoleUpdManyURDto } from './dto';
+import { UserRoleDto, UserRoleSelListDto, UserRoleSelAllDto, UserRoleInsOneDto, UserRoleUpdOneDto, UserRoleUpdManyURDto, UserRoleUpdManyRUDto } from './dto';
 
 @Controller('/main/sys-manage/user-role')
 @ApiTags('主系统/系统管理/用户角色')
@@ -22,7 +22,7 @@ export class UserRoleController {
     permission: 'main:sysManage:userRole:selList',
     label: '分页查询用户角色',
   })
-  async selUserRole(@Query() dto: userRoleSelListDto): Promise<R> {
+  async selUserRole(@Query() dto: UserRoleSelListDto): Promise<R> {
     return this.userRoleService.selUserRole(dto);
   }
 
@@ -34,7 +34,7 @@ export class UserRoleController {
     permission: 'main:sysManage:userRole:selAll',
     label: '查询所有用户角色',
   })
-  async selAllUserRole(@Query() dto: userRoleSelAllDto): Promise<R> {
+  async selAllUserRole(@Query() dto: UserRoleSelAllDto): Promise<R> {
     return this.userRoleService.selAllUserRole(dto);
   }
 
@@ -58,7 +58,7 @@ export class UserRoleController {
     permission: 'main:sysManage:userRole:updur',
     label: '更新用户角色（ur）',
   })
-  async updUserRoleUR(@Body() dto: userRoleUpdManyURDto): Promise<R> {
+  async updUserRoleUR(@Body() dto: UserRoleUpdManyURDto): Promise<R> {
     return this.userRoleService.updUserRoleUR(dto);
   }
 
@@ -70,7 +70,7 @@ export class UserRoleController {
     permission: 'main:sysManage:userRole:updru',
     label: '更新用户角色（ru）',
   })
-  async updUserRoleRU(@Body() dto: userRoleUpdManyRUDto): Promise<R> {
+  async updUserRoleRU(@Body() dto: UserRoleUpdManyRUDto): Promise<R> {
     return this.userRoleService.updUserRoleRU(dto);
   }
 

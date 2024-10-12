@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class dicTypeDto extends baseInterface {
+export class DicTypeDto extends BaseDto {
   id: number;
 
   name: string;
@@ -18,7 +18,7 @@ export class dicTypeDto extends baseInterface {
   remark: string;
 }
 
-export class dicTypeSelListDto extends pageDto {
+export class DicTypeSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -38,7 +38,7 @@ export class dicTypeSelListDto extends pageDto {
   remark: string;
 }
 
-export class dicTypeSelAllDto {
+export class DicTypeSelAllDto {
   @ApiProperty({ description: '字典名', required: false })
   name: string;
 
@@ -55,7 +55,7 @@ export class dicTypeSelAllDto {
   remark: string;
 }
 
-export class dicTypeInsOneDto {
+export class DicTypeInsOneDto {
   @ApiProperty({ description: '字典名', required: true })
   @IsNotEmpty({ message: '字典名不能为空' })
   name: string;
@@ -77,7 +77,7 @@ export class dicTypeInsOneDto {
   remark: string;
 }
 
-export class dicTypeUpdOneDto extends dicTypeInsOneDto {
+export class DicTypeUpdOneDto extends DicTypeInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsArray, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class rolePermissionDto extends baseInterface {
+export class RolePermissionDto extends BaseDto {
   id: number;
 
   roleId: number;
@@ -16,7 +16,7 @@ export class rolePermissionDto extends baseInterface {
   remark: string;
 }
 
-export class rolePermissionSelListDto extends pageDto {
+export class RolePermissionSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -33,7 +33,7 @@ export class rolePermissionSelListDto extends pageDto {
   remark: string;
 }
 
-export class rolePermissionSelAllDto {
+export class RolePermissionSelAllDto {
   @ApiProperty({ description: '角色', required: false })
   roleId: number;
 
@@ -47,14 +47,14 @@ export class rolePermissionSelAllDto {
   remark: string;
 }
 
-export class rolePermissionSelByRoleIdDto {
+export class RolePermissionSelByRoleIdDto {
   @ApiProperty({ description: '角色', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '角色不能为空' })
   roleId: number;
 }
 
-export class rolePermissionInsManyDto {
+export class RolePermissionInsManyDto {
   @ApiProperty({ description: '角色', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '角色不能为空' })
@@ -72,10 +72,10 @@ export class rolePermissionInsManyDto {
   remark: string;
 }
 
-export class rolePermissionUpdManyDto extends rolePermissionInsManyDto {
+export class RolePermissionUpdManyDto extends RolePermissionInsManyDto {
 }
 
-export class rolePermissionInsOneDto {
+export class RolePermissionInsOneDto {
   @ApiProperty({ description: '角色', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '角色不能为空' })
@@ -94,7 +94,7 @@ export class rolePermissionInsOneDto {
   remark: string;
 }
 
-export class rolePermissionUpdOneDto extends rolePermissionInsOneDto {
+export class RolePermissionUpdOneDto extends RolePermissionInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

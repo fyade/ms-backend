@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
-import { interfaceDto, interfaceSelListDto, interfaceSelAllDto, interfaceInsOneDto, interfaceUpdOneDto } from './dto';
+import { InterfaceDto, InterfaceSelListDto, InterfaceSelAllDto, InterfaceInsOneDto, InterfaceUpdOneDto } from './dto';
 
 @Injectable()
 export class InterfaceService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selInterface(dto: interfaceSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<interfaceDto, interfaceSelListDto>('sys_interface', {
+  async selInterface(dto: InterfaceSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<InterfaceDto, InterfaceSelListDto>('sys_interface', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'orderNum', 'ifDisabled', 'ifPublic', 'perms', 'url'],
@@ -19,8 +19,8 @@ export class InterfaceService {
     return R.ok(res);
   }
 
-  async selAllInterface(dto: interfaceSelAllDto): Promise<R<interfaceDto[]>> {
-    const res = await this.prisma.findAll<interfaceDto>('sys_interface', {
+  async selAllInterface(dto: InterfaceSelAllDto): Promise<R<InterfaceDto[]>> {
+    const res = await this.prisma.findAll<InterfaceDto>('sys_interface', {
       data: dto,
       orderBy: true,
       notNullKeys: ['label', 'orderNum', 'ifDisabled', 'ifPublic', 'perms', 'url'],
@@ -31,37 +31,37 @@ export class InterfaceService {
   }
 
   async selOnesInterface(ids: number[]): Promise<R> {
-    const res = await this.prisma.findByIds<interfaceDto>('sys_interface', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<InterfaceDto>('sys_interface', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOneInterface(id: number): Promise<R> {
-    const res = await this.prisma.findById<interfaceDto>('sys_interface', Number(id));
+    const res = await this.prisma.findById<InterfaceDto>('sys_interface', Number(id));
     return R.ok(res);
   }
 
-  async insInterface(dto: interfaceInsOneDto): Promise<R> {
-    const res = await this.prisma.create<interfaceDto>('sys_interface', dto);
+  async insInterface(dto: InterfaceInsOneDto): Promise<R> {
+    const res = await this.prisma.create<InterfaceDto>('sys_interface', dto);
     return R.ok(res);
   }
 
-  async insInterfaces(dtos: interfaceInsOneDto[]): Promise<R> {
-    const res = await this.prisma.createMany<interfaceDto>('sys_interface', dtos);
+  async insInterfaces(dtos: InterfaceInsOneDto[]): Promise<R> {
+    const res = await this.prisma.createMany<InterfaceDto>('sys_interface', dtos);
     return R.ok(res);
   }
 
-  async updInterface(dto: interfaceUpdOneDto): Promise<R> {
-    const res = await this.prisma.updateById<interfaceDto>('sys_interface', dto);
+  async updInterface(dto: InterfaceUpdOneDto): Promise<R> {
+    const res = await this.prisma.updateById<InterfaceDto>('sys_interface', dto);
     return R.ok(res);
   }
 
-  async updInterfaces(dtos: interfaceUpdOneDto[]): Promise<R> {
-    const res = await this.prisma.updateMany<interfaceDto>('sys_interface', dtos);
+  async updInterfaces(dtos: InterfaceUpdOneDto[]): Promise<R> {
+    const res = await this.prisma.updateMany<InterfaceDto>('sys_interface', dtos);
     return R.ok(res);
   }
 
   async delInterface(ids: number[]): Promise<R> {
-    const res = await this.prisma.deleteById<interfaceDto>('sys_interface', ids);
+    const res = await this.prisma.deleteById<InterfaceDto>('sys_interface', ids);
     return R.ok(res);
   }
 }

@@ -1,14 +1,14 @@
-import { userDto } from '../module/main/sys-manage/user/dto';
+import { UserDto } from '../module/main/sys-manage/user/dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { base } from '../../util/base';
 import { Injectable } from '@nestjs/common';
-import { adminTopDto } from '../admin-top/dto';
-import { logAlgorithmCallDto } from '../module/algorithm/log-algorithm-call/dto';
+import { AdminTopDto } from '../admin-top/dto';
+import { LogAlgorithmCallDto } from '../module/algorithm/log-algorithm-call/dto';
 import { getIpInfoFromRequest } from '../../util/RequestUtils';
-import { userGroupPermissionDto } from '../module/algorithm/user-group-permission/dto';
+import { UserGroupPermissionDto } from '../module/algorithm/user-group-permission/dto';
 import { Exception } from '../../exception/Exception';
 import { Request } from 'express';
-import { interfaceDto } from '../module/algorithm/interface/dto';
+import { InterfaceDto } from '../module/algorithm/interface/dto';
 
 @Injectable()
 export class AuthService {
@@ -21,8 +21,8 @@ export class AuthService {
    * 根据用户名查询用户
    * @param username
    */
-  async findUserByUsername(username: string): Promise<userDto> {
-    const userDto = await this.prisma.findFirst<userDto>('sys_user', { username: username });
+  async findUserByUsername(username: string): Promise<UserDto> {
+    const userDto = await this.prisma.findFirst<UserDto>('sys_user', { username: username });
     return userDto;
   }
 
@@ -31,7 +31,7 @@ export class AuthService {
    * @param username
    */
   async ifAdminUser(username: string) {
-    const user = await this.prisma.findFirst<userDto>('sys_user', { username: username });
+    const user = await this.prisma.findFirst<UserDto>('sys_user', { username: username });
     if (await this.hasTopAdminPermission(user.id)) {
       return true;
     }
@@ -78,7 +78,7 @@ export class AuthService {
    * @param permission
    */
   async hasAdminPermissionByUsername(username: string, permission: string) {
-    const user = await this.prisma.findFirst<userDto>('sys_user', { username: username });
+    const user = await this.prisma.findFirst<UserDto>('sys_user', { username: username });
     if (user) {
       return this.hasAdminPermissionByUser(user, permission);
     }
@@ -91,7 +91,7 @@ export class AuthService {
    * @param permission
    */
   async hasAdminPermissionByUserid(userid: string, permission: string) {
-    const user = await this.prisma.findFirst<userDto>('sys_user', { id: userid });
+    const user = await this.prisma.findFirst<UserDto>('sys_user', { id: userid });
     if (user) {
       return this.hasAdminPermissionByUser(user, permission);
     }
@@ -103,7 +103,7 @@ export class AuthService {
    * @param user
    * @param permission
    */
-  async hasAdminPermissionByUser(user: userDto, permission: string) {
+  async hasAdminPermissionByUser(user: UserDto, permission: string) {
     if (await this.hasTopAdminPermission(user.id)) {
       return true;
     }
@@ -304,7 +304,7 @@ export class AuthService {
    * @param controledUserId
    */
   async ifAdminUserUpdNotAdminUser(controlUserId: string, controledUserId: string) {
-    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', {
+    const topAdminUser = await this.prisma.findAll<AdminTopDto>('sys_admin_top', {
       data: {
         userId: {
           in: [controlUserId, controledUserId],
@@ -322,7 +322,7 @@ export class AuthService {
    * @param request
    */
   async hasSFPermissionByUserid(userid: string, permission: string, request?: Request) {
-    const algorithmCallDto = new logAlgorithmCallDto();
+    const algorithmCallDto = new LogAlgorithmCallDto();
     algorithmCallDto.userId = userid;
     algorithmCallDto.callIp = '';
     algorithmCallDto.ifSuccess = '?';
@@ -334,7 +334,7 @@ export class AuthService {
         console.error(e);
       }
     }
-    const interf: interfaceDto[] = await this.prisma.$queryRaw`
+    const interf: InterfaceDto[] = await this.prisma.$queryRaw`
       select si.id          as id,
              si.label       as label,
              si.icon        as icon,
@@ -379,7 +379,7 @@ export class AuthService {
         return false;
       }
     }
-    const userGroupPermission = permissions[0] as userGroupPermissionDto;
+    const userGroupPermission = permissions[0] as UserGroupPermissionDto;
     algorithmCallDto.userGroupPermissionId = userGroupPermission.id;
     // 没长期权限，不在时间期限内，则阻止
     if (userGroupPermission.ifLongTerm === base.N) {
@@ -445,7 +445,7 @@ export class AuthService {
    * @param permission
    * @param ifIgnoreUseUp
    */
-  async getSFPermissionsOfUserid(userid: string, permission: string, ifIgnoreUseUp = base.N): Promise<userGroupPermissionDto[]> {
+  async getSFPermissionsOfUserid(userid: string, permission: string, ifIgnoreUseUp = base.N): Promise<UserGroupPermissionDto[]> {
     const userSFPermissions = await this.prisma.$queryRaw`
       select sugp.id                       as id,
              sugp.user_group_id            as userGroupId,

@@ -1,52 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
-import {
-  interfaceInterfaceGroupDto,
-  interfaceInterfaceGroupSelListDto,
-  interfaceInterfaceGroupSelAllDto,
-  interfaceInterfaceGroupInsOneDto,
-  interfaceInterfaceGroupUpdOneDto,
-  interfaceInterfaceGroupUpdIIGDto, interfaceInterfaceGroupUpdIGIDto,
-} from './dto';
+import { InterfaceInterfaceGroupDto, InterfaceInterfaceGroupSelListDto, InterfaceInterfaceGroupSelAllDto, InterfaceInterfaceGroupInsOneDto, InterfaceInterfaceGroupUpdOneDto, InterfaceInterfaceGroupUpdIIGDto, InterfaceInterfaceGroupUpdIGIDto } from './dto';
 
 @Injectable()
 export class InterfaceInterfaceGroupService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selInterfaceInterfaceGroup(dto: interfaceInterfaceGroupSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<interfaceInterfaceGroupDto, interfaceInterfaceGroupSelListDto>('sys_interface_interface_group', {
+  async selInterfaceInterfaceGroup(dto: InterfaceInterfaceGroupSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<InterfaceInterfaceGroupDto, InterfaceInterfaceGroupSelListDto>('sys_interface_interface_group', {
       data: dto,
       orderBy: false,
       notNullKeys: ['interfaceId', 'interfaceGroupId'],
       numberKeys: ['interfaceId', 'interfaceGroupId'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
-  async selAllInterfaceInterfaceGroup(dto: interfaceInterfaceGroupSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll<interfaceInterfaceGroupDto>('sys_interface_interface_group', {
+  async selAllInterfaceInterfaceGroup(dto: InterfaceInterfaceGroupSelAllDto): Promise<R> {
+    const res = await this.prisma.findAll<InterfaceInterfaceGroupDto>('sys_interface_interface_group', {
       data: dto,
       orderBy: false,
       notNullKeys: ['interfaceId', 'interfaceGroupId'],
       numberKeys: ['interfaceId', 'interfaceGroupId'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
   async selOnesInterfaceInterfaceGroup(ids: number[]): Promise<R> {
-    const res = await this.prisma.findByIds<interfaceInterfaceGroupDto>('sys_interface_interface_group', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<InterfaceInterfaceGroupDto>('sys_interface_interface_group', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOneInterfaceInterfaceGroup(id: number): Promise<R> {
-    const res = await this.prisma.findById<interfaceInterfaceGroupDto>('sys_interface_interface_group', Number(id));
+    const res = await this.prisma.findById<InterfaceInterfaceGroupDto>('sys_interface_interface_group', Number(id));
     return R.ok(res);
   }
 
-  async updInterfaceInterfaceGroupIIG(dto: interfaceInterfaceGroupUpdIIGDto) {
-    const allInterfaceGroupsOfThisInterface = await this.prisma.findAll<interfaceInterfaceGroupDto>('sys_interface_interface_group', {
+  async updInterfaceInterfaceGroupIIG(dto: InterfaceInterfaceGroupUpdIIGDto) {
+    const allInterfaceGroupsOfThisInterface = await this.prisma.findAll<InterfaceInterfaceGroupDto>('sys_interface_interface_group', {
       data: { interfaceId: dto.interfaceId },
       numberKeys: ['interfaceId'],
     });
@@ -62,8 +57,8 @@ export class InterfaceInterfaceGroupService {
     return R.ok();
   }
 
-  async updInterfaceInterfaceGroupIGI(dto: interfaceInterfaceGroupUpdIGIDto) {
-    const allInterfacesOfThisInterfaceGroup = await this.prisma.findAll<interfaceInterfaceGroupDto>('sys_interface_interface_group', {
+  async updInterfaceInterfaceGroupIGI(dto: InterfaceInterfaceGroupUpdIGIDto) {
+    const allInterfacesOfThisInterfaceGroup = await this.prisma.findAll<InterfaceInterfaceGroupDto>('sys_interface_interface_group', {
       data: { interfaceGroupId: dto.interfaceGroupId },
       numberKeys: ['interfaceGroupId'],
     });
@@ -78,7 +73,7 @@ export class InterfaceInterfaceGroupService {
   }
 
   async delInterfaceInterfaceGroup(ids: number[]): Promise<R> {
-    const res = await this.prisma.deleteById<interfaceInterfaceGroupDto>('sys_interface_interface_group', ids);
+    const res = await this.prisma.deleteById<InterfaceInterfaceGroupDto>('sys_interface_interface_group', ids);
     return R.ok(res);
   }
 }

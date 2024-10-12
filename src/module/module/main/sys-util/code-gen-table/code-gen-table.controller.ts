@@ -4,7 +4,7 @@ import { CodeGenTableService } from './code-gen-table.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { codeGenTableSelListDto, codeGenTableSelAllDto, codeGenTableInsOneDto, codeGenTableUpdOneDto } from './dto';
+import { CodeGenTableSelListDto, CodeGenTableSelAllDto, CodeGenTableInsOneDto, CodeGenTableUpdOneDto } from './dto';
 
 @Controller('/main/sys-util/code-gen-table')
 @ApiTags('主系统/系统工具/代码生成-表信息')
@@ -22,7 +22,7 @@ export class CodeGenTableController {
     permission: 'main:sysUtil:codeGenTable:selList',
     label: '分页查询代码生成-表信息',
   })
-  async selCodeGenTable(@Query() dto: codeGenTableSelListDto): Promise<R> {
+  async selCodeGenTable(@Query() dto: CodeGenTableSelListDto): Promise<R> {
     return this.codeGenTableService.selCodeGenTable(dto);
   }
 
@@ -34,7 +34,7 @@ export class CodeGenTableController {
     permission: 'main:sysUtil:codeGenTable:selAll',
     label: '查询所有代码生成-表信息',
   })
-  async selAllCodeGenTable(@Query() dto: codeGenTableSelAllDto): Promise<R> {
+  async selAllCodeGenTable(@Query() dto: CodeGenTableSelAllDto): Promise<R> {
     return this.codeGenTableService.selAllCodeGenTable(dto);
   }
 
@@ -76,7 +76,7 @@ export class CodeGenTableController {
     permission: 'main:sysUtil:codeGenTable:ins',
     label: '新增代码生成-表信息',
   })
-  async insCodeGenTable(@Body() dto: codeGenTableInsOneDto): Promise<R> {
+  async insCodeGenTable(@Body() dto: CodeGenTableInsOneDto): Promise<R> {
     return this.codeGenTableService.insCodeGenTable(dto);
   }
 
@@ -86,7 +86,7 @@ export class CodeGenTableController {
   })
   @ApiBody({
     isArray: true,
-    type: codeGenTableInsOneDto,
+    type: CodeGenTableInsOneDto,
   })
   @Authorize({
     permission: 'main:sysUtil:codeGenTable:inss',
@@ -94,9 +94,9 @@ export class CodeGenTableController {
   })
   async insCodeGenTables(@Body(
     new ParseArrayPipe({
-      items: codeGenTableInsOneDto,
+      items: CodeGenTableInsOneDto,
     }),
-  ) dtos: codeGenTableInsOneDto[]): Promise<R> {
+  ) dtos: CodeGenTableInsOneDto[]): Promise<R> {
     return this.codeGenTableService.insCodeGenTables(dtos);
   }
 
@@ -108,7 +108,7 @@ export class CodeGenTableController {
     permission: 'main:sysUtil:codeGenTable:upd',
     label: '修改代码生成-表信息',
   })
-  async updCodeGenTable(@Body() dto: codeGenTableUpdOneDto): Promise<R> {
+  async updCodeGenTable(@Body() dto: CodeGenTableUpdOneDto): Promise<R> {
     return this.codeGenTableService.updCodeGenTable(dto);
   }
 
@@ -118,7 +118,7 @@ export class CodeGenTableController {
   })
   @ApiBody({
     isArray: true,
-    type: codeGenTableUpdOneDto,
+    type: CodeGenTableUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysUtil:codeGenTable:upds',
@@ -126,9 +126,9 @@ export class CodeGenTableController {
   })
   async updCodeGenTables(@Body(
     new ParseArrayPipe({
-      items: codeGenTableUpdOneDto,
+      items: CodeGenTableUpdOneDto,
     }),
-  ) dtos: codeGenTableUpdOneDto[]): Promise<R> {
+  ) dtos: CodeGenTableUpdOneDto[]): Promise<R> {
     return this.codeGenTableService.updCodeGenTables(dtos);
   }
 

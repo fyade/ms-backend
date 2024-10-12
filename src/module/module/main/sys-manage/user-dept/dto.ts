@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsArray, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class userDeptDto extends baseInterface {
+export class UserDeptDto extends BaseDto {
   id: number;
 
   userId: string;
@@ -14,7 +14,7 @@ export class userDeptDto extends baseInterface {
   remark: string;
 }
 
-export class userDeptSelListDto extends pageDto {
+export class UserDeptSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -28,7 +28,7 @@ export class userDeptSelListDto extends pageDto {
   remark: string;
 }
 
-export class userDeptSelAllDto {
+export class UserDeptSelAllDto {
   @ApiProperty({ description: '用户', required: false })
   userId: string;
 
@@ -39,7 +39,7 @@ export class userDeptSelAllDto {
   remark: string;
 }
 
-export class userDeptInsOneDto {
+export class UserDeptInsOneDto {
   @ApiProperty({ description: '用户', required: true })
   @IsNotEmpty({ message: '用户不能为空' })
   userId: string;
@@ -53,13 +53,13 @@ export class userDeptInsOneDto {
   remark: string;
 }
 
-export class userDeptUpdOneDto extends userDeptInsOneDto {
+export class UserDeptUpdOneDto extends UserDeptInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;
 }
 
-export class userDeptUpdUDDto {
+export class UserDeptUpdUDDto {
   @ApiProperty({ description: '用户', required: true })
   @IsNotEmpty({ message: '用户不能为空' })
   userId: string;
@@ -72,7 +72,7 @@ export class userDeptUpdUDDto {
   remark: string;
 }
 
-export class userDeptUpdDUDto {
+export class UserDeptUpdDUDto {
   @ApiProperty({ description: '用户', required: true })
   @IsArray({ message: '用户应为数组' })
   userId: string[];

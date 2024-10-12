@@ -1,8 +1,8 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class userDto {
+export class UserDto {
   @ApiProperty({ description: '用户id', required: true })
   @IsNotEmpty({ message: '用户id不能为空' })
   id: string;
@@ -29,7 +29,7 @@ export class userDto {
   tel: string;
 }
 
-export class loginDto {
+export class LoginDto {
   @ApiProperty({ description: '用户名', required: true })
   @IsNotEmpty({ message: '用户名不能为空' })
   username: string;
@@ -43,10 +43,10 @@ export class loginDto {
   psdType: string;
 }
 
-export class registDto extends loginDto {
+export class RegistDto extends LoginDto {
 }
 
-export class updPsdDto {
+export class UpdPsdDto {
   @ApiProperty({ description: '旧密码', required: true })
   @IsNotEmpty({ message: '旧密码不能为空' })
   oldp: string;
@@ -72,24 +72,24 @@ export class updPsdDto {
   newp2Type: string;
 }
 
-export class reqUser {
+export class ReqUser {
   userid: string;
 
   username: string;
 }
 
-export class userDto2 extends loginDto {
+export class UserDto2 extends LoginDto {
   userid: string;
 }
 
-export class userDto3 extends userDto {
+export class UserDto3 extends UserDto {
   userid: string;
 }
 
-export class adminNewUserDto extends loginDto {
+export class AdminNewUserDto extends LoginDto {
 }
 
-export class userListSelDto extends pageDto {
+export class UserListSelDto extends PageDto {
   @ApiProperty({ description: '用户id', required: false })
   id: string;
 
@@ -106,7 +106,7 @@ export class userListSelDto extends pageDto {
   sex: string;
 }
 
-export class resetPsdDto {
+export class ResetPsdDto {
   @ApiProperty({ description: '用户id', required: true })
   @IsNotEmpty({ message: '用户id不能为空' })
   id: string;

@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class sysDto extends baseInterface {
+export class SysDto extends BaseDto {
   id: number;
 
   name: string;
@@ -20,14 +20,14 @@ export class sysDto extends baseInterface {
   remark: string;
 }
 
-export class sysSelListDto extends pageDto {
+export class SysSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
   @ApiProperty({ description: '系统名', required: false })
   name: string;
 
-  @ApiProperty({ description: '权限字符', required: false })
+  @ApiProperty({ description: '权限标识', required: false })
   perms: string;
 
   @ApiProperty({ description: '顺序', required: false })
@@ -43,11 +43,11 @@ export class sysSelListDto extends pageDto {
   remark: string;
 }
 
-export class sysSelAllDto {
+export class SysSelAllDto {
   @ApiProperty({ description: '系统名', required: false })
   name: string;
 
-  @ApiProperty({ description: '权限字符', required: false })
+  @ApiProperty({ description: '权限标识', required: false })
   perms: string;
 
   @ApiProperty({ description: '顺序', required: false })
@@ -63,13 +63,13 @@ export class sysSelAllDto {
   remark: string;
 }
 
-export class sysInsOneDto {
+export class SysInsOneDto {
   @ApiProperty({ description: '系统名', required: true })
   @IsNotEmpty({ message: '系统名不能为空' })
   name: string;
 
-  @ApiProperty({ description: '权限字符', required: true })
-  @IsNotEmpty({ message: '权限字符不能为空' })
+  @ApiProperty({ description: '权限标识', required: true })
+  @IsNotEmpty({ message: '权限标识不能为空' })
   perms: string;
 
   @ApiProperty({ description: '顺序', required: true })
@@ -89,7 +89,7 @@ export class sysInsOneDto {
   remark: string;
 }
 
-export class sysUpdOneDto extends sysInsOneDto {
+export class SysUpdOneDto extends SysInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

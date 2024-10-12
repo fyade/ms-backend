@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';
-import { MenuService } from './menu.service';
-import { R } from '../../../../../common/R';
-import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { MenuService } from './menu.service';
+import { Authorize } from '../../../../../decorator/authorizeDecorator';
+import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { menuInsOneDto, menuSelAllDto, menuSelListDto, menuUpdOneDto } from './dto';
+import { MenuSelListDto, MenuSelAllDto, MenuInsOneDto, MenuUpdOneDto } from './dto';
 
 @Controller('/main/sys-manage/menu')
 @ApiTags('主系统/系统管理/菜单')
@@ -22,7 +22,7 @@ export class MenuController {
     permission: 'main:sysManage:menu:selList',
     label: '分页查询菜单',
   })
-  async selMenu(@Query() dto: menuSelListDto): Promise<R> {
+  async selMenu(@Query() dto: MenuSelListDto): Promise<R> {
     return this.menuService.selMenu(dto);
   }
 
@@ -34,7 +34,7 @@ export class MenuController {
     permission: 'main:sysManage:menu:selAll',
     label: '查询所有菜单',
   })
-  async selAllMenu(@Query() dto: menuSelAllDto): Promise<R> {
+  async selAllMenu(@Query() dto: MenuSelAllDto): Promise<R> {
     return this.menuService.selAllMenu(dto);
   }
 
@@ -76,7 +76,7 @@ export class MenuController {
     permission: 'main:sysManage:menu:ins',
     label: '新增菜单',
   })
-  async insMenu(@Body() dto: menuInsOneDto): Promise<R> {
+  async insMenu(@Body() dto: MenuInsOneDto): Promise<R> {
     return this.menuService.insMenu(dto);
   }
 
@@ -86,7 +86,7 @@ export class MenuController {
   })
   @ApiBody({
     isArray: true,
-    type: menuInsOneDto,
+    type: MenuInsOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:menu:inss',
@@ -94,9 +94,9 @@ export class MenuController {
   })
   async insMenus(@Body(
     new ParseArrayPipe({
-      items: menuInsOneDto,
+      items: MenuInsOneDto,
     }),
-  ) dtos: menuInsOneDto[]): Promise<R> {
+  ) dtos: MenuInsOneDto[]): Promise<R> {
     return this.menuService.insMenus(dtos);
   }
 
@@ -108,7 +108,7 @@ export class MenuController {
     permission: 'main:sysManage:menu:upd',
     label: '修改菜单',
   })
-  async updMenu(@Body() dto: menuUpdOneDto): Promise<R> {
+  async updMenu(@Body() dto: MenuUpdOneDto): Promise<R> {
     return this.menuService.updMenu(dto);
   }
 
@@ -118,7 +118,7 @@ export class MenuController {
   })
   @ApiBody({
     isArray: true,
-    type: menuUpdOneDto,
+    type: MenuUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:menu:upds',
@@ -126,9 +126,9 @@ export class MenuController {
   })
   async updMenus(@Body(
     new ParseArrayPipe({
-      items: menuUpdOneDto,
+      items: MenuUpdOneDto,
     }),
-  ) dtos: menuUpdOneDto[]): Promise<R> {
+  ) dtos: MenuUpdOneDto[]): Promise<R> {
     return this.menuService.updMenus(dtos);
   }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RedisService } from '../../redis/redis.service';
 import { generateToken, verifyToken } from '../../util/AuthUtils';
 import { randomUUID } from '../../util/IdUtils';
-import { userDto } from '../module/main/sys-manage/user/dto';
+import { UserDto } from '../module/main/sys-manage/user/dto';
 import { jwtConstants } from '../../../config/authConfig';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class CacheTokenService {
    * 生成token
    * @param user
    */
-  async genToken(user: userDto) {
+  async genToken(user: UserDto) {
     const token = generateToken(user);
     const uuid = randomUUID();
     await this.redis.setex(`${this.UUID_TOKEN}:${uuid}`, jwtConstants.expireTime, token);

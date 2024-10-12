@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../common/commonType';
+import { BaseDto } from '../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class userGroupPermissionDto extends baseInterface {
+export class UserGroupPermissionDto extends BaseDto {
   id: number;
 
   userGroupId: number;
@@ -30,7 +30,7 @@ export class userGroupPermissionDto extends baseInterface {
   remark: string;
 }
 
-export class userGroupPermissionSelListDto extends pageDto {
+export class UserGroupPermissionSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -68,7 +68,7 @@ export class userGroupPermissionSelListDto extends pageDto {
   remark: string;
 }
 
-export class userGroupPermissionSelAllDto {
+export class UserGroupPermissionSelAllDto {
   @ApiProperty({ description: '用户组', required: false })
   userGroupId: number;
 
@@ -103,7 +103,7 @@ export class userGroupPermissionSelAllDto {
   remark: string;
 }
 
-export class userGroupPermissionInsOneDto {
+export class UserGroupPermissionInsOneDto {
   @ApiProperty({ description: '用户组', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '用户组不能为空' })
@@ -151,7 +151,7 @@ export class userGroupPermissionInsOneDto {
   remark: string;
 }
 
-export class userGroupPermissionUpdOneDto extends userGroupPermissionInsOneDto {
+export class UserGroupPermissionUpdOneDto extends UserGroupPermissionInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

@@ -5,10 +5,10 @@ import * as path from 'node:path';
 import { NonSupportedException } from '../../../../../exception/NonSupportedException';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { codeGeneration } from './codeGeneration';
-import { codeGenTableDto } from '../code-gen-table/dto';
-import { codeGenColumnDto } from '../code-gen-column/dto';
-import { cgTablesInterface } from './dto';
-import { sysDto } from '../../sys-manage/sys/dto';
+import { CodeGenTableDto } from '../code-gen-table/dto';
+import { CodeGenColumnDto } from '../code-gen-column/dto';
+import { CgTablesInterface } from './dto';
+import { SysDto } from '../../sys-manage/sys/dto';
 
 @Injectable()
 export class CodeGenerationService {
@@ -28,7 +28,7 @@ export class CodeGenerationService {
     const regex2 = /^model (\w+) {/;
     const regex3 = /^ *([\w-]+) +([\w-?]+) +([\w-@(). "']+) */;
     const lines = text.split('\n');
-    const tables: cgTablesInterface[] = [];
+    const tables: CgTablesInterface[] = [];
     for (let i = 0; i < lines.length - 1; i++) {
       if (regex1.test(lines[i]) && regex2.test(lines[i + 1])) {
         tables.push({
@@ -66,13 +66,13 @@ export class CodeGenerationService {
   }
 
   async genCode(id: number): Promise<R> {
-    const table = await this.prisma.findById<codeGenTableDto>('sys_code_gen_table', Number(id));
-    const columns = await this.prisma.findAll<codeGenColumnDto>('sys_code_gen_column', {
+    const table = await this.prisma.findById<CodeGenTableDto>('sys_code_gen_table', Number(id));
+    const columns = await this.prisma.findAll<CodeGenColumnDto>('sys_code_gen_column', {
       data: { tableId: Number(id) },
       numberKeys: ['tableId'],
       orderBy: true,
     });
-    const sys = await this.prisma.findById<sysDto>('sys_sys', table.sysId);
+    const sys = await this.prisma.findById<SysDto>('sys_sys', table.sysId);
     const cgRes = codeGeneration({ table, columns, sys });
     return R.ok({
       table,

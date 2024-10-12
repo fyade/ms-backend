@@ -1,12 +1,12 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class fileUploadSelListDto extends pageDto {
+export class FileUploadSelListDto extends PageDto {
   @ApiProperty({ description: '过滤相同文件', required: false })
   filterSame: string;
 }
 
-export class fileUploadOneChunk_check {
+export class FileUploadOneChunk_check {
   @ApiProperty({ description: '文件名', required: false })
   fileName: string;
 
@@ -20,7 +20,7 @@ export class fileUploadOneChunk_check {
   chunkNum: number;
 }
 
-export class fileUploadOneChunk_upload {
+export class FileUploadOneChunk_upload {
   @ApiProperty({ description: '文件md5', required: false })
   fileMd5: string;
 
@@ -34,7 +34,7 @@ export class fileUploadOneChunk_upload {
   file: any;
 }
 
-export class fileUploadOneChunk_merge {
+export class FileUploadOneChunk_merge {
   @ApiProperty({ description: '新文件名', required: false })
   fileNewName: string;
 

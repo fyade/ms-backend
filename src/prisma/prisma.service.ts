@@ -4,7 +4,7 @@ import { base } from '../util/base';
 import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
-import { pageDto } from '../common/dto/PageDto';
+import { PageDto } from '../common/dto/PageDto';
 import { objToCamelCase, objToSnakeCase, toCamelCase, toSnakeCase, toSnakeCases, typeOf } from '../util/BaseUtils';
 
 const env = currentEnv();
@@ -242,7 +242,7 @@ export class PrismaService extends PrismaClient {
    * @param ifDeleted
    * @param ifUseGenSelParams
    */
-  async findPage<T, P extends pageDto>(model: string, {
+  async findPage<T, P extends PageDto>(model: string, {
                                          data,
                                          orderBy,
                                          range = {},

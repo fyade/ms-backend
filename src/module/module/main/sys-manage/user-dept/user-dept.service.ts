@@ -4,7 +4,7 @@ import { R } from '../../../../../common/R';
 import { getCurrentUser } from '../../../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../../../exception/UserPermissionDeniedException';
 import { AuthService } from '../../../../auth/auth.service';
-import { userDeptDto, userDeptSelAllDto, userDeptSelListDto, userDeptUpdDUDto, userDeptUpdUDDto } from './dto';
+import { UserDeptDto, UserDeptSelListDto, UserDeptSelAllDto, UserDeptInsOneDto, UserDeptUpdOneDto, UserDeptUpdUDDto, UserDeptUpdDUDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
 
 @Injectable()
@@ -16,42 +16,44 @@ export class UserDeptService {
   ) {
   }
 
-  async selUserDept(dto: userDeptSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<userDeptDto, userDeptSelListDto>('sys_user_dept', {
+  async selUserDept(dto: UserDeptSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<UserDeptDto, UserDeptSelListDto>('sys_user_dept', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'deptId'],
       numberKeys: ['deptId'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
-  async selAllUserDept(dto: userDeptSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll<userDeptDto>('sys_user_dept', {
+  async selAllUserDept(dto: UserDeptSelAllDto): Promise<R> {
+    const res = await this.prisma.findAll<UserDeptDto>('sys_user_dept', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'deptId'],
       numberKeys: ['deptId'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
   async selOnesUserDept(ids: number[]): Promise<R> {
-    const res = await this.prisma.findByIds<userDeptDto>('sys_user_dept', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<UserDeptDto>('sys_user_dept', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOneUserDept(id: number): Promise<R> {
-    const res = await this.prisma.findById<userDeptDto>('sys_user_dept', Number(id));
+    const res = await this.prisma.findById<UserDeptDto>('sys_user_dept', Number(id));
     return R.ok(res);
   }
 
-  async updUserDeptUD(dto: userDeptUpdUDDto): Promise<R> {
+  async updUserDeptUD(dto: UserDeptUpdUDDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
-    const allDepts = await this.prisma.findAll<userDeptDto>('sys_user_dept', { data: { userId: dto.userId } });
+    const allDepts = await this.prisma.findAll<UserDeptDto>('sys_user_dept', { data: { userId: dto.userId } });
     const allDeptIds = allDepts.map(item => item.deptId);
     const addDepts = dto.deptId.filter(id => allDeptIds.indexOf(id) === -1);
     const delDeptIds = allDeptIds.filter(id => dto.deptId.indexOf(id) === -1);
@@ -61,10 +63,10 @@ export class UserDeptService {
     return R.ok();
   }
 
-  async updUserDeptDU(dto: userDeptUpdDUDto): Promise<R> {
+  async updUserDeptDU(dto: UserDeptUpdDUDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     const data = [];
-    const allUsersOfThisDept = await this.prisma.findAll<userDeptDto>('sys_user_dept', {
+    const allUsersOfThisDept = await this.prisma.findAll<UserDeptDto>('sys_user_dept', {
       data: { deptId: dto.deptId },
       numberKeys: ['deptId'],
     });
@@ -86,7 +88,7 @@ export class UserDeptService {
 
   async delUserDept(ids: number[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    const res = await this.prisma.deleteById<userDeptDto>('sys_user_dept', ids);
+    const res = await this.prisma.deleteById<UserDeptDto>('sys_user_dept', ids);
     return R.ok(res);
   }
 }

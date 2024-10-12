@@ -4,14 +4,7 @@ import { UserDeptService } from './user-dept.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import {
-  userDeptSelListDto,
-  userDeptSelAllDto,
-  userDeptInsOneDto,
-  userDeptUpdOneDto,
-  userDeptUpdUDDto,
-  userDeptUpdDUDto,
-} from './dto';
+import { UserDeptDto, UserDeptSelListDto, UserDeptSelAllDto, UserDeptInsOneDto, UserDeptUpdOneDto, UserDeptUpdUDDto, UserDeptUpdDUDto } from './dto';
 
 @Controller('/main/sys-manage/user-dept')
 @ApiTags('主系统/系统管理/用户部门')
@@ -29,7 +22,7 @@ export class UserDeptController {
     permission: 'main:sysManage:userDept:selList',
     label: '分页查询用户部门',
   })
-  async selUserDept(@Query() dto: userDeptSelListDto): Promise<R> {
+  async selUserDept(@Query() dto: UserDeptSelListDto): Promise<R> {
     return this.userDeptService.selUserDept(dto);
   }
 
@@ -41,7 +34,7 @@ export class UserDeptController {
     permission: 'main:sysManage:userDept:selAll',
     label: '查询所有用户部门',
   })
-  async selAllUserDept(@Query() dto: userDeptSelAllDto): Promise<R> {
+  async selAllUserDept(@Query() dto: UserDeptSelAllDto): Promise<R> {
     return this.userDeptService.selAllUserDept(dto);
   }
 
@@ -83,7 +76,7 @@ export class UserDeptController {
     permission: 'main:sysManage:userDept:updud',
     label: '更新用户部门（ud）',
   })
-  async updUserDeptUD(@Body() dto: userDeptUpdUDDto): Promise<R> {
+  async updUserDeptUD(@Body() dto: UserDeptUpdUDDto): Promise<R> {
     return this.userDeptService.updUserDeptUD(dto);
   }
 
@@ -95,7 +88,7 @@ export class UserDeptController {
     permission: 'main:sysManage:userDept:upddu',
     label: '更新用户部门（du）',
   })
-  async updUserDeptDU(@Body() dto: userDeptUpdDUDto): Promise<R> {
+  async updUserDeptDU(@Body() dto: UserDeptUpdDUDto): Promise<R> {
     return this.userDeptService.updUserDeptDU(dto);
   }
 

@@ -4,7 +4,7 @@ import { DicTypeService } from './dic-type.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { dicTypeSelListDto, dicTypeSelAllDto, dicTypeInsOneDto, dicTypeUpdOneDto } from './dto';
+import { DicTypeSelListDto, DicTypeSelAllDto, DicTypeInsOneDto, DicTypeUpdOneDto } from './dto';
 
 @Controller('/main/sys-manage/dic-type')
 @ApiTags('主系统/系统管理/字典类型')
@@ -22,7 +22,7 @@ export class DicTypeController {
     permission: 'main:sysManage:dicType:selList',
     label: '分页查询字典类型',
   })
-  async selDicType(@Query() dto: dicTypeSelListDto): Promise<R> {
+  async selDicType(@Query() dto: DicTypeSelListDto): Promise<R> {
     return this.dicTypeService.selDicType(dto);
   }
 
@@ -34,7 +34,7 @@ export class DicTypeController {
     permission: 'main:sysManage:dicType:selAll',
     label: '查询所有字典类型',
   })
-  async selAllDicType(@Query() dto: dicTypeSelAllDto): Promise<R> {
+  async selAllDicType(@Query() dto: DicTypeSelAllDto): Promise<R> {
     return this.dicTypeService.selAllDicType(dto);
   }
 
@@ -76,7 +76,7 @@ export class DicTypeController {
     permission: 'main:sysManage:dicType:ins',
     label: '新增字典类型',
   })
-  async insDicType(@Body() dto: dicTypeInsOneDto): Promise<R> {
+  async insDicType(@Body() dto: DicTypeInsOneDto): Promise<R> {
     return this.dicTypeService.insDicType(dto);
   }
 
@@ -86,7 +86,7 @@ export class DicTypeController {
   })
   @ApiBody({
     isArray: true,
-    type: dicTypeInsOneDto,
+    type: DicTypeInsOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:dicType:inss',
@@ -94,9 +94,9 @@ export class DicTypeController {
   })
   async insDicTypes(@Body(
     new ParseArrayPipe({
-      items: dicTypeInsOneDto,
+      items: DicTypeInsOneDto,
     }),
-  ) dtos: dicTypeInsOneDto[]): Promise<R> {
+  ) dtos: DicTypeInsOneDto[]): Promise<R> {
     return this.dicTypeService.insDicTypes(dtos);
   }
 
@@ -108,7 +108,7 @@ export class DicTypeController {
     permission: 'main:sysManage:dicType:upd',
     label: '修改字典类型',
   })
-  async updDicType(@Body() dto: dicTypeUpdOneDto): Promise<R> {
+  async updDicType(@Body() dto: DicTypeUpdOneDto): Promise<R> {
     return this.dicTypeService.updDicType(dto);
   }
 
@@ -118,7 +118,7 @@ export class DicTypeController {
   })
   @ApiBody({
     isArray: true,
-    type: dicTypeUpdOneDto,
+    type: DicTypeUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:dicType:upds',
@@ -126,9 +126,9 @@ export class DicTypeController {
   })
   async updDicTypes(@Body(
     new ParseArrayPipe({
-      items: dicTypeUpdOneDto,
+      items: DicTypeUpdOneDto,
     }),
-  ) dtos: dicTypeUpdOneDto[]): Promise<R> {
+  ) dtos: DicTypeUpdOneDto[]): Promise<R> {
     return this.dicTypeService.updDicTypes(dtos);
   }
 

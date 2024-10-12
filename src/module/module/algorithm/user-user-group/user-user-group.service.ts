@@ -1,15 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
-import {
-  userUserGroupDto,
-  userUserGroupSelListDto,
-  userUserGroupSelAllDto,
-  userUserGroupInsOneDto,
-  userUserGroupUpdOneDto,
-  userUserGroupUpdUUGDtp,
-  userUserGroupUpdUGUDtp,
-} from './dto';
+import { UserUserGroupDto, UserUserGroupSelListDto, UserUserGroupSelAllDto, UserUserGroupInsOneDto, UserUserGroupUpdOneDto, UserUserGroupUpdUUGDtp, UserUserGroupUpdUGUDtp } from './dto';
 import { AuthService } from '../../../auth/auth.service';
 import { getCurrentUser } from '../../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../../exception/UserPermissionDeniedException';
@@ -22,41 +14,43 @@ export class UserUserGroupService {
   ) {
   }
 
-  async selUserUserGroup(dto: userUserGroupSelListDto): Promise<R> {
-    const res = await this.prisma.findPage<userUserGroupDto, userUserGroupSelListDto>('sys_user_user_group', {
+  async selUserUserGroup(dto: UserUserGroupSelListDto): Promise<R> {
+    const res = await this.prisma.findPage<UserUserGroupDto, UserUserGroupSelListDto>('sys_user_user_group', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'userGroupId'],
       numberKeys: ['userGroupId'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
-  async selAllUserUserGroup(dto: userUserGroupSelAllDto): Promise<R> {
-    const res = await this.prisma.findAll<userUserGroupDto>('sys_user_user_group', {
+  async selAllUserUserGroup(dto: UserUserGroupSelAllDto): Promise<R> {
+    const res = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', {
       data: dto,
       orderBy: false,
       notNullKeys: ['userId', 'userGroupId'],
       numberKeys: ['userGroupId'],
+      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
 
   async selOnesUserUserGroup(ids: number[]): Promise<R> {
-    const res = await this.prisma.findByIds<userUserGroupDto>('sys_user_user_group', Object.values(ids).map(n => Number(n)));
+    const res = await this.prisma.findByIds<UserUserGroupDto>('sys_user_user_group', Object.values(ids).map(n => Number(n)));
     return R.ok(res);
   }
 
   async selOneUserUserGroup(id: number): Promise<R> {
-    const res = await this.prisma.findById<userUserGroupDto>('sys_user_user_group', Number(id));
+    const res = await this.prisma.findById<UserUserGroupDto>('sys_user_user_group', Number(id));
     return R.ok(res);
   }
 
-  async updUserUserGroupUUG(dto: userUserGroupUpdUUGDtp): Promise<R> {
+  async updUserUserGroupUUG(dto: UserUserGroupUpdUUGDtp): Promise<R> {
     if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
-    const allUserGroups = await this.prisma.findAll<userUserGroupDto>('sys_user_user_group', { data: { userId: dto.userId } });
+    const allUserGroups = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', { data: { userId: dto.userId } });
     const allUserGroupIds = allUserGroups.map(item => item.id);
     const addUserGroups = dto.userGroupId.filter(id => allUserGroupIds.indexOf(id) === -1);
     const delUserGroupIds = allUserGroupIds.filter(id => dto.userGroupId.indexOf(id) === -1);
@@ -69,9 +63,9 @@ export class UserUserGroupService {
     return R.ok();
   }
 
-  async updUserUserGroupUGU(dto: userUserGroupUpdUGUDtp): Promise<R> {
+  async updUserUserGroupUGU(dto: UserUserGroupUpdUGUDtp): Promise<R> {
     const data = [];
-    const allUsersOfThisUserGroup = await this.prisma.findAll<userUserGroupDto>('sys_user_user_group', {
+    const allUsersOfThisUserGroup = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', {
       data: { userGroupId: dto.userGroupId },
       numberKeys: ['userGroupId'],
     });
@@ -92,7 +86,7 @@ export class UserUserGroupService {
   }
 
   async delUserUserGroup(ids: number[]): Promise<R> {
-    const res = await this.prisma.deleteById<userUserGroupDto>('sys_user_user_group', ids);
+    const res = await this.prisma.deleteById<UserUserGroupDto>('sys_user_user_group', ids);
     return R.ok(res);
   }
 }

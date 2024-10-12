@@ -13,14 +13,14 @@
  * * 类型：在 src/type/api/模块/ 目录内新增 业务.ts 文件
  * * 页面：在 src/views/模块/业务/ 目录内新增 index.vue 文件
  */
-import { codeGenTableDto } from '../code-gen-table/dto';
-import { codeGenColumnDto } from '../code-gen-column/dto';
+import { CodeGenTableDto } from '../code-gen-table/dto';
+import { CodeGenColumnDto } from '../code-gen-column/dto';
 import { capitalizeFirstLetter, lowercaseFirstLetter, toCamelCase, toKebabCase } from '../../../../../util/BaseUtils';
 import { base, publicDict } from '../../../../../util/base';
 import { getDBTableName } from '../../../../../util/RegularUtils';
 import { Exception } from '../../../../../exception/Exception';
 import { BaseDto } from '../../../../../common/dto/BaseDto';
-import { sysDto } from '../../sys-manage/sys/dto';
+import { SysDto } from '../../sys-manage/sys/dto';
 
 const baseInterfaceColumns = [
   'createBy',
@@ -35,7 +35,7 @@ const baseInterfaceColumns = [
  * @param table
  * @param columns
  */
-export function codeGeneration({ table, columns, sys }: { table: codeGenTableDto, columns: codeGenColumnDto[], sys: sysDto }) {
+export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto, columns: CodeGenColumnDto[], sys: SysDto }) {
   const find = columns.find(item => item.colName === 'id');
   if (!find) {
     throw new Exception('无id字段。');
@@ -54,6 +54,8 @@ export function codeGeneration({ table, columns, sys }: { table: codeGenTableDto
   const entityName3 = toKebabCase(entityName1);
   // 系统
   const sysPath = sys.path;
+  // 是否有业务模块
+  const isBusiness = !!table.businessName
 
   const getDefaultValue = (tsName: string, tsType: string) => {
   };
@@ -193,8 +195,8 @@ ${index % 2 === 1 || ifLastAndSingular ? `          </el-col>
     ]
   ]
   const hd1 =
-`${`import { BaseDto } from '../../../../../common/dto/BaseDto';`}
-${`import { PageDto } from '../../../../../common/dto/PageDto';`}
+`${`import { BaseDto } from '../../../../${isBusiness?'../':''}common/dto/BaseDto';`}
+${`import { PageDto } from '../../../../${isBusiness?'../':''}common/dto/PageDto';`}
 ${`import { IsNotEmpty } from 'class-validator';`}
 ${`import { Type } from 'class-transformer';`}
 ${`import { ApiProperty } from '@nestjs/swagger';`}
@@ -257,8 +259,8 @@ ${`}`}
 `;
   const hd2 =
 `${`import { Injectable } from '@nestjs/common';`}
-${`import { PrismaService } from '../../../../../prisma/prisma.service';`}
-${`import { R } from '../../../../../common/R';`}
+${`import { PrismaService } from '../../../../${isBusiness?'../':''}prisma/prisma.service';`}
+${`import { R } from '../../../../${isBusiness?'../':''}common/R';`}
 ${`import { ${moduleName2}Dto, ${moduleName2}SelListDto, ${moduleName2}SelAllDto, ${moduleName2}InsOneDto, ${moduleName2}UpdOneDto } from './dto';`}
 ${``}
 ${`@Injectable()`}
@@ -328,13 +330,13 @@ ${`}`}
 `${`import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Post, Put, Query, UsePipes } from '@nestjs/common';`}
 ${`import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';`}
 ${`import { ${moduleName2}Service } from './${moduleName3}.service';`}
-${`import { Authorize } from '../../../../../decorator/authorizeDecorator';`}
-${`import { R } from '../../../../../common/R';`}
-${`import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';`}
+${`import { Authorize } from '../../../../${isBusiness?'../':''}decorator/authorizeDecorator';`}
+${`import { R } from '../../../../${isBusiness?'../':''}common/R';`}
+${`import { ValidationPipe } from '../../../../${isBusiness?'../':''}pipe/validation/validation.pipe';`}
 ${`import { ${moduleName2}SelListDto, ${moduleName2}SelAllDto, ${moduleName2}InsOneDto, ${moduleName2}UpdOneDto } from './dto';`}
 ${``}
-${`@Controller('/${sysPath}/${businessName3}/${moduleName3}')`}
-${`@ApiTags('${sys.name}/${table.businessNameCn}/${table.moduleNameCn}')`}
+${`@Controller('/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}')`}
+${`@ApiTags('${sys.name}${isBusiness?`/${table.businessNameCn}`:''}/${table.moduleNameCn}')`}
 ${`@ApiBearerAuth()`}
 ${`@UsePipes(new ValidationPipe())`}
 ${`export class ${moduleName2}Controller {`}
@@ -346,7 +348,7 @@ ${`  @ApiOperation({`}
 ${`    summary: '分页查询${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${sysPath}:${businessName1}:${moduleName1}:selList',`}
+${`    permission: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}:selList',`}
 ${`    label: '分页查询${table.moduleNameCn}',`}
 ${`  })`}
 ${`  async sel${moduleName2}(@Query() dto: ${moduleName2}SelListDto): Promise<R> {`}
@@ -358,7 +360,7 @@ ${`  @ApiOperation({`}
 ${`    summary: '查询所有${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${sysPath}:${businessName1}:${moduleName1}:selAll',`}
+${`    permission: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}:selAll',`}
 ${`    label: '查询所有${table.moduleNameCn}',`}
 ${`  })`}
 ${`  async selAll${moduleName2}(@Query() dto: ${moduleName2}SelAllDto): Promise<R> {`}
@@ -376,7 +378,7 @@ ${`    isArray: true,`}
 ${`    type: Number,`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${sysPath}:${businessName1}:${moduleName1}:selOnes',`}
+${`    permission: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}:selOnes',`}
 ${`    label: '查询多个${table.moduleNameCn}（根据id）',`}
 ${`  })`}
 ${`  async selOnes${moduleName2}(@Query() ids: number[]): Promise<R> {`}
@@ -388,7 +390,7 @@ ${`  @ApiOperation({`}
 ${`    summary: '查询单个${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${sysPath}:${businessName1}:${moduleName1}:selOne',`}
+${`    permission: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}:selOne',`}
 ${`    label: '查询单个${table.moduleNameCn}',`}
 ${`  })`}
 ${`  async selOne${moduleName2}(@Param('id') id: number): Promise<R> {`}
@@ -400,7 +402,7 @@ ${`  @ApiOperation({`}
 ${`    summary: '新增${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${sysPath}:${businessName1}:${moduleName1}:ins',`}
+${`    permission: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}:ins',`}
 ${`    label: '新增${table.moduleNameCn}',`}
 ${`  })`}
 ${`  async ins${moduleName2}(@Body() dto: ${moduleName2}InsOneDto): Promise<R> {`}
@@ -416,7 +418,7 @@ ${`    isArray: true,`}
 ${`    type: ${moduleName2}InsOneDto,`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${sysPath}:${businessName1}:${moduleName1}:inss',`}
+${`    permission: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}:inss',`}
 ${`    label: '批量新增${table.moduleNameCn}',`}
 ${`  })`}
 ${`  async ins${moduleName2}s(@Body(`}
@@ -432,7 +434,7 @@ ${`  @ApiOperation({`}
 ${`    summary: '修改${table.moduleNameCn}',`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${sysPath}:${businessName1}:${moduleName1}:upd',`}
+${`    permission: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}:upd',`}
 ${`    label: '修改${table.moduleNameCn}',`}
 ${`  })`}
 ${`  async upd${moduleName2}(@Body() dto: ${moduleName2}UpdOneDto): Promise<R> {`}
@@ -448,7 +450,7 @@ ${`    isArray: true,`}
 ${`    type: ${moduleName2}UpdOneDto,`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${sysPath}:${businessName1}:${moduleName1}:upds',`}
+${`    permission: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}:upds',`}
 ${`    label: '批量修改${table.moduleNameCn}',`}
 ${`  })`}
 ${`  async upd${moduleName2}s(@Body(`}
@@ -468,7 +470,7 @@ ${`    isArray: true,`}
 ${`    type: Number,`}
 ${`  })`}
 ${`  @Authorize({`}
-${`    permission: '${sysPath}:${businessName1}:${moduleName1}:del',`}
+${`    permission: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}:del',`}
 ${`    label: '删除${table.moduleNameCn}',`}
 ${`  })`}
 ${`  async del${moduleName2}(@Body() ids: number[]): Promise<R> {`}
@@ -526,7 +528,7 @@ ${`}`}
 `;
   const qd2 =
 `${`import { publicDict } from "@/utils/base.ts";`}
-${`import { ${moduleName2}Dto } from "@/type/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
+${`import { ${moduleName2}Dto } from "@/type/module/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}.ts";`}
 ${``}
 ${`export const ${moduleName1}Dict: { [P in keyof ${moduleName2}Dto]: string } = {`}
 ${`  ...publicDict,`}
@@ -541,7 +543,7 @@ ${`}`}
   const qd3 =
 `${`import request from "@/api/request.ts";`}
 ${`import { ApiConfig } from "@/type/tablePage.ts";`}
-${`import { ${moduleName2}Dto, ${moduleName2}UpdDto } from "@/type/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
+${`import { ${moduleName2}Dto, ${moduleName2}UpdDto } from "@/type/module/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}.ts";`}
 ${``}
 ${`export const ${moduleName1}Api: ApiConfig<${moduleName2}Dto, ${moduleName2}UpdDto> = {`}
 ${`  /**`}
@@ -629,7 +631,7 @@ ${`}`}
   const qd4 =
 `${`<script lang="ts">`}
 ${`export default {`}
-${`  name: '${sysPath}:${businessName1}:${moduleName1}'`}
+${`  name: '${sysPath}${isBusiness?`:${businessName1}`:''}:${moduleName1}'`}
 ${`}`}
 ${`</script>`}
 ` + `
@@ -641,9 +643,9 @@ ${`import { funcTablePage } from "@/composition/tablePage/tablePage2.ts";`}
 ${`import { State2, TablePageConfig } from "@/type/tablePage.ts";`}
 ${`import { FormRules } from "element-plus";`}
 ${`import { Delete, Download, Edit, Plus, Refresh, Upload } from "@element-plus/icons-vue";`}
-${`import { ${moduleName2}Dto, ${moduleName2}UpdDto } from "@/type/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
-${`import { ${moduleName1}Api } from "@/api/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
-${`import { ${moduleName1}Dict } from "@/dict/module/${sysPath}/${businessName1}/${moduleName1}.ts";`}
+${`import { ${moduleName2}Dto, ${moduleName2}UpdDto } from "@/type/module/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}.ts";`}
+${`import { ${moduleName1}Api } from "@/api/module/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}.ts";`}
+${`import { ${moduleName1}Dict } from "@/dict/module/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}.ts";`}
 ${``}
 ${`const state = reactive<State2<${moduleName2}Dto, ${moduleName2}UpdDto>>({`}
 ${`  dialogForm: {`}
@@ -917,25 +919,25 @@ ${`</style>`}
   return [
     {
       fileName: `dto.ts`,
-      filePath: `/src/module/module/${sysPath}/${businessName3}/${moduleName3}`,
+      filePath: `/src/module/module/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}`,
       canCopy: true,
       code: hd1,
     },
     {
       fileName: `${moduleName3}.service.ts`,
-      filePath: `/src/module/module/${sysPath}/${businessName3}/${moduleName3}`,
+      filePath: `/src/module/module/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}`,
       canCopy: true,
       code: hd2,
     },
     {
       fileName: `${moduleName3}.controller.ts`,
-      filePath: `/src/module/module/${sysPath}/${businessName3}/${moduleName3}`,
+      filePath: `/src/module/module/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}`,
       canCopy: true,
       code: hd3,
     },
     {
       fileName: `${moduleName3}.module.ts`,
-      filePath: `/src/module/module/${sysPath}/${businessName3}/${moduleName3}`,
+      filePath: `/src/module/module/${sysPath}${isBusiness?`/${businessName3}`:''}/${moduleName3}`,
       canCopy: true,
       code: hd4,
     },
@@ -947,25 +949,25 @@ ${`</style>`}
     },
     {
       fileName: `${moduleName1}.ts`,
-      filePath: `/src/type/module/${sysPath}/${businessName1}`,
+      filePath: `/src/type/module/${sysPath}${isBusiness?`/${businessName1}`:''}`,
       canCopy: true,
       code: qd1,
     },
     {
       fileName: `${moduleName1}.ts`,
-      filePath: `/src/dict/module/${sysPath}/${businessName1}`,
+      filePath: `/src/dict/module/${sysPath}${isBusiness?`/${businessName1}`:''}`,
       canCopy: true,
       code: qd2,
     },
     {
       fileName: `${moduleName1}.ts`,
-      filePath: `/src/api/module/${sysPath}/${businessName1}`,
+      filePath: `/src/api/module/${sysPath}${isBusiness?`/${businessName1}`:''}`,
       canCopy: true,
       code: qd3,
     },
     {
       fileName: `index.vue`,
-      filePath: `/src/views/${businessName1}/${moduleName1}`,
+      filePath: `/src/views${isBusiness?`/${businessName1}`:''}/${moduleName1}`,
       canCopy: true,
       code: qd4,
     },

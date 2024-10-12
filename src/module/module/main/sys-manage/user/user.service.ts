@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
-import { adminNewUserDto, loginDto, registDto, resetPsdDto, updPsdDto, userDto, userListSelDto } from './dto';
+import { AdminNewUserDto, LoginDto, RegistDto, ResetPsdDto, UpdPsdDto, UserDto, UserListSelDto } from './dto';
 import { genId } from '../../../../../util/IdUtils';
 import { AuthService } from '../../../../auth/auth.service';
 import { HTTP } from '../../../../../common/Enum';
 import { base } from '../../../../../util/base';
-import { userRoleDto } from '../user-role/dto';
+import { UserRoleDto } from '../user-role/dto';
 import { UserUnknownException } from '../../../../../exception/UserUnknownException';
-import { adminTopDto } from '../../../../admin-top/dto';
+import { AdminTopDto } from '../../../../admin-top/dto';
 import { getCurrentUser } from '../../../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../../../exception/UserPermissionDeniedException';
 import { LogUserLoginService } from '../../sys-log/log-user-login/log-user-login.service';
 import { comparePassword, hashPassword } from '../../../../../util/EncryptUtils';
-import { userDeptDto } from '../user-dept/dto';
-import { userGroupDto } from '../../../algorithm/user-group/dto';
-import { userUserGroupDto } from '../../../algorithm/user-user-group/dto';
+import { UserDeptDto } from '../user-dept/dto';
+import { UserGroupDto } from '../../../algorithm/user-group/dto';
+import { UserUserGroupDto } from '../../../algorithm/user-user-group/dto';
 import { RoleDto } from '../role/dto';
-import { deptDto } from '../dept/dto';
+import { DeptDto } from '../dept/dto';
 import { CacheTokenService } from '../../../../cache/cache.token.service';
 
 @Injectable()
@@ -35,23 +35,23 @@ export class UserService {
 
   async getSelfInfo(): Promise<R> {
     const currentUser = getCurrentUser().user;
-    const user = await this.prisma.findById<userDto>('sys_user', currentUser.userid);
+    const user = await this.prisma.findById<UserDto>('sys_user', currentUser.userid);
     delete user.password;
     return R.ok(user);
   }
 
   async selOnesUser(ids: string[]): Promise<R> {
-    const res = await this.prisma.findByIds<userDto>('sys_user', Object.values(ids));
+    const res = await this.prisma.findByIds<UserDto>('sys_user', Object.values(ids));
     res.forEach(item => {
       delete item.password;
     });
     return R.ok(res);
   }
 
-  async userSelList(dto: userListSelDto): Promise<R> {
+  async userSelList(dto: UserListSelDto): Promise<R> {
     const ifWithRole = dto.ifWithRole;
     delete dto.ifWithRole;
-    const res = await this.prisma.findPage<userDto, userListSelDto>('sys_user', {
+    const res = await this.prisma.findPage<UserDto, UserListSelDto>('sys_user', {
       data: dto,
       notNullKeys: ['id', 'username'],
     });
@@ -61,7 +61,7 @@ export class UserService {
     if (ifWithRole !== base.Y) {
       return R.ok(res);
     }
-    const topAdminUser = await this.prisma.findAll<adminTopDto>('sys_admin_top', {
+    const topAdminUser = await this.prisma.findAll<AdminTopDto>('sys_admin_top', {
       data: {
         userId: {
           in: res.list.map(item => item.id),
@@ -70,7 +70,7 @@ export class UserService {
     }, false);
     const res2 = [];
     const userIds = res.list.map(item => item.id);
-    const allUserRolesOfThoseUsers = await this.prisma.findAll<userRoleDto>('sys_user_role', {
+    const allUserRolesOfThoseUsers = await this.prisma.findAll<UserRoleDto>('sys_user_role', {
       data: {
         userId: {
           in: userIds,
@@ -85,7 +85,7 @@ export class UserService {
         },
       },
     }, false);
-    const allUserDeptsOfThoseUsers = await this.prisma.findAll<userDeptDto>('sys_user_dept', {
+    const allUserDeptsOfThoseUsers = await this.prisma.findAll<UserDeptDto>('sys_user_dept', {
       data: {
         userId: {
           in: userIds,
@@ -93,14 +93,14 @@ export class UserService {
       },
     }, false);
     const allUserDeptIdsOfThoseUsers = allUserDeptsOfThoseUsers.map(item => item.deptId);
-    const allDeptsOfThoseUsers = await this.prisma.findAll<deptDto>('sys_dept', {
+    const allDeptsOfThoseUsers = await this.prisma.findAll<DeptDto>('sys_dept', {
       data: {
         id: {
           in: allUserDeptIdsOfThoseUsers,
         },
       },
     }, false);
-    const allUserUserGroupsOfThoseUsers = await this.prisma.findAll<userUserGroupDto>('sys_user_user_group', {
+    const allUserUserGroupsOfThoseUsers = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', {
       data: {
         userId: {
           in: userIds,
@@ -108,7 +108,7 @@ export class UserService {
       },
     }, false);
     const allUserUserGroupIdsOfThoseUsers = allUserUserGroupsOfThoseUsers.map(item => item.userGroupId);
-    const allUserGroupsOfThoseUsers = await this.prisma.findAll<userGroupDto>('sys_user_group', {
+    const allUserGroupsOfThoseUsers = await this.prisma.findAll<UserGroupDto>('sys_user_group', {
       data: {
         id: {
           in: allUserUserGroupIdsOfThoseUsers,
@@ -136,7 +136,7 @@ export class UserService {
     });
   }
 
-  async insUser(dto: adminNewUserDto): Promise<R> {
+  async insUser(dto: AdminNewUserDto): Promise<R> {
     const user = await this.prisma.findFirst('sys_user', { username: dto.username });
     if (user) {
       return R.err('用户名已存在。');
@@ -149,13 +149,13 @@ export class UserService {
     return R.ok();
   }
 
-  async updUser(dto: userDto): Promise<R> {
+  async updUser(dto: UserDto): Promise<R> {
     await this.prisma.updateById('sys_user', dto);
     return R.ok();
   }
 
-  async updPsd(dto: updPsdDto): Promise<R> {
-    const user_ = await this.prisma.findById<userDto>('sys_user', getCurrentUser().user.userid);
+  async updPsd(dto: UpdPsdDto): Promise<R> {
+    const user_ = await this.prisma.findById<UserDto>('sys_user', getCurrentUser().user.userid);
     const ifUserYes = await comparePassword(dto.oldp, user_.password);
     if (!ifUserYes) {
       return R.err('旧密码错误。');
@@ -167,7 +167,7 @@ export class UserService {
     return R.ok();
   }
 
-  async adminResetUserPsd(dto: resetPsdDto): Promise<R> {
+  async adminResetUserPsd(dto: ResetPsdDto): Promise<R> {
     if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.id)) {
       throw new UserPermissionDeniedException();
     }
@@ -175,13 +175,13 @@ export class UserService {
     return R.ok();
   }
 
-  async regist(dto: registDto): Promise<R> {
+  async regist(dto: RegistDto): Promise<R> {
     const user = await this.authService.findUserByUsername(dto.username);
     if (user) {
       return R.err('用户名已被使用。');
     }
     const userid = genId(5, false);
-    await this.prisma.create<userDto>('sys_user', {
+    await this.prisma.create<UserDto>('sys_user', {
       id: userid,
       username: dto.username,
       password: await hashPassword(dto.password),
@@ -191,9 +191,9 @@ export class UserService {
     return R.ok('注册成功。');
   }
 
-  async login(dto: loginDto, { loginIp, loginBrowser, loginOs }): Promise<R> {
-    let user: userDto;
-    const user_ = await this.prisma.findFirst<userDto>('sys_user', {
+  async login(dto: LoginDto, { loginIp, loginBrowser, loginOs }): Promise<R> {
+    let user: UserDto;
+    const user_ = await this.prisma.findFirst<UserDto>('sys_user', {
       username: dto.username,
     });
     if (!user_) {
@@ -242,7 +242,7 @@ export class UserService {
         user: user,
       });
     }
-    const user2 = await this.prisma.findFirst<userDto>('sys_user', {
+    const user2 = await this.prisma.findFirst<UserDto>('sys_user', {
       username: dto.username,
     });
     if (user2) {
@@ -281,7 +281,7 @@ export class UserService {
     }
   }
 
-  async adminlogin(dto: loginDto, { loginIp, loginBrowser, loginOs }): Promise<R> {
+  async adminlogin(dto: LoginDto, { loginIp, loginBrowser, loginOs }): Promise<R> {
     const userinfo = await this.login(dto, { loginIp, loginBrowser, loginOs });
     if (userinfo.code !== HTTP.SUCCESS().code) {
       return R.err(userinfo.msg);

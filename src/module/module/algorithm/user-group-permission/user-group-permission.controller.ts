@@ -4,7 +4,7 @@ import { UserGroupPermissionService } from './user-group-permission.service';
 import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { userGroupPermissionInsOneDto, userGroupPermissionSelAllDto, userGroupPermissionSelListDto } from './dto';
+import { UserGroupPermissionDto, UserGroupPermissionSelListDto, UserGroupPermissionSelAllDto, UserGroupPermissionInsOneDto, UserGroupPermissionUpdOneDto } from './dto';
 
 @Controller('/algorithm/user-group-permission')
 @ApiTags('算法系统/用户组接口组')
@@ -22,7 +22,7 @@ export class UserGroupPermissionController {
     permission: 'algorithm:userGroupPermission:selList',
     label: '分页查询用户组接口组',
   })
-  async selUserGroupPermission(@Query() dto: userGroupPermissionSelListDto): Promise<R> {
+  async selUserGroupPermission(@Query() dto: UserGroupPermissionSelListDto): Promise<R> {
     return this.userGroupPermissionService.selUserGroupPermission(dto);
   }
 
@@ -34,7 +34,7 @@ export class UserGroupPermissionController {
     permission: 'algorithm:userGroupPermission:selAll',
     label: '查询所有用户组接口组',
   })
-  async selAllUserGroupPermission(@Query() dto: userGroupPermissionSelAllDto): Promise<R> {
+  async selAllUserGroupPermission(@Query() dto: UserGroupPermissionSelAllDto): Promise<R> {
     return this.userGroupPermissionService.selAllUserGroupPermission(dto);
   }
 
@@ -76,7 +76,7 @@ export class UserGroupPermissionController {
     permission: 'algorithm:userGroupPermission:ins',
     label: '新增用户组接口组',
   })
-  async insUserGroupPermission(@Body() dto: userGroupPermissionInsOneDto): Promise<R> {
+  async insUserGroupPermission(@Body() dto: UserGroupPermissionInsOneDto): Promise<R> {
     return this.userGroupPermissionService.insUserGroupPermission(dto);
   }
 

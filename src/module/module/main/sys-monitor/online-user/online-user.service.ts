@@ -3,7 +3,7 @@ import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { CacheTokenService } from '../../../../cache/cache.token.service';
 import { RedisService } from '../../../../../redis/redis.service';
-import { onlineUserSelListDto } from './dto';
+import { OnlineUserSelListDto } from './dto';
 
 @Injectable()
 export class OnlineUserService {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { R } from '../../../../common/R';
-import { algorithmDto } from './dto';
+import { AlgorithmDto } from './dto';
 import { InterfaceService } from '../interface/interface.service';
 import { InterfaceGroupService } from '../interface-group/interface-group.service';
 import { getCurrentUser } from '../../../../util/baseContext';
@@ -17,7 +17,7 @@ export class AlgorithmService {
   ) {
   }
 
-  async algorithm(dto: algorithmDto): Promise<R> {
+  async algorithm(dto: AlgorithmDto): Promise<R> {
     const userId = getCurrentUser().user.userid;
     const permission = dto.perms;
     const sfPermissionsOfUserid = await this.authService.getSFPermissionsOfUserid(userId, permission, base.Y);

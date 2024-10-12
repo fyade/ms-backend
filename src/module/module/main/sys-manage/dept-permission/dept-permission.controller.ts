@@ -4,7 +4,7 @@ import { DeptPermissionService } from './dept-permission.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { deptPermissionSelAllDto, deptPermissionSelListDto, deptPermissionUpdManyDPDto } from './dto';
+import { DeptPermissionDto, DeptPermissionSelListDto, DeptPermissionSelAllDto, DeptPermissionInsOneDto, DeptPermissionUpdOneDto, DeptPermissionUpdManyDPDto } from './dto';
 
 @Controller('/main/sys-manage/dept-permission')
 @ApiTags('主系统/系统管理/部门权限')
@@ -22,7 +22,7 @@ export class DeptPermissionController {
     permission: 'main:sysManage:deptPermission:selList',
     label: '分页查询部门权限',
   })
-  async selDeptPermission(@Query() dto: deptPermissionSelListDto): Promise<R> {
+  async selDeptPermission(@Query() dto: DeptPermissionSelListDto): Promise<R> {
     return this.deptPermissionService.selDeptPermission(dto);
   }
 
@@ -34,7 +34,7 @@ export class DeptPermissionController {
     permission: 'main:sysManage:deptPermission:selAll',
     label: '查询所有部门权限',
   })
-  async selAllDeptPermission(@Query() dto: deptPermissionSelAllDto): Promise<R> {
+  async selAllDeptPermission(@Query() dto: DeptPermissionSelAllDto): Promise<R> {
     return this.deptPermissionService.selAllDeptPermission(dto);
   }
 
@@ -76,7 +76,7 @@ export class DeptPermissionController {
     permission: 'main:sysManage:deptPermission:upddp',
     label: '更新部门权限（dp）',
   })
-  async updDeptPermissionDp(@Body() dto: deptPermissionUpdManyDPDto): Promise<R> {
+  async updDeptPermissionDp(@Body() dto: DeptPermissionUpdManyDPDto): Promise<R> {
     return this.deptPermissionService.updDeptPermissionDp(dto);
   }
 

@@ -4,7 +4,7 @@ import { DicDataService } from './dic-data.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { dicDataSelListDto, dicDataSelAllDto, dicDataInsOneDto, dicDataUpdOneDto } from './dto';
+import { DicDataSelListDto, DicDataSelAllDto, DicDataInsOneDto, DicDataUpdOneDto } from './dto';
 
 @Controller('/main/sys-manage/dic-data')
 @ApiTags('主系统/系统管理/字典数据')
@@ -22,7 +22,7 @@ export class DicDataController {
     permission: 'main:sysManage:dicData:selList',
     label: '分页查询字典数据',
   })
-  async selDicData(@Query() dto: dicDataSelListDto): Promise<R> {
+  async selDicData(@Query() dto: DicDataSelListDto): Promise<R> {
     return this.dicDataService.selDicData(dto);
   }
 
@@ -34,7 +34,7 @@ export class DicDataController {
     permission: 'main:sysManage:dicData:selAll',
     label: '查询所有字典数据',
   })
-  async selAllDicData(@Query() dto: dicDataSelAllDto): Promise<R> {
+  async selAllDicData(@Query() dto: DicDataSelAllDto): Promise<R> {
     return this.dicDataService.selAllDicData(dto);
   }
 
@@ -76,7 +76,7 @@ export class DicDataController {
     permission: 'main:sysManage:dicData:ins',
     label: '新增字典数据',
   })
-  async insDicData(@Body() dto: dicDataInsOneDto): Promise<R> {
+  async insDicData(@Body() dto: DicDataInsOneDto): Promise<R> {
     return this.dicDataService.insDicData(dto);
   }
 
@@ -86,7 +86,7 @@ export class DicDataController {
   })
   @ApiBody({
     isArray: true,
-    type: dicDataInsOneDto,
+    type: DicDataInsOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:dicData:inss',
@@ -94,9 +94,9 @@ export class DicDataController {
   })
   async insDicDatas(@Body(
     new ParseArrayPipe({
-      items: dicDataInsOneDto,
+      items: DicDataInsOneDto,
     }),
-  ) dtos: dicDataInsOneDto[]): Promise<R> {
+  ) dtos: DicDataInsOneDto[]): Promise<R> {
     return this.dicDataService.insDicDatas(dtos);
   }
 
@@ -108,7 +108,7 @@ export class DicDataController {
     permission: 'main:sysManage:dicData:upd',
     label: '修改字典数据',
   })
-  async updDicData(@Body() dto: dicDataUpdOneDto): Promise<R> {
+  async updDicData(@Body() dto: DicDataUpdOneDto): Promise<R> {
     return this.dicDataService.updDicData(dto);
   }
 
@@ -118,7 +118,7 @@ export class DicDataController {
   })
   @ApiBody({
     isArray: true,
-    type: dicDataUpdOneDto,
+    type: DicDataUpdOneDto,
   })
   @Authorize({
     permission: 'main:sysManage:dicData:upds',
@@ -126,9 +126,9 @@ export class DicDataController {
   })
   async updDicDatas(@Body(
     new ParseArrayPipe({
-      items: dicDataUpdOneDto,
+      items: DicDataUpdOneDto,
     }),
-  ) dtos: dicDataUpdOneDto[]): Promise<R> {
+  ) dtos: DicDataUpdOneDto[]): Promise<R> {
     return this.dicDataService.updDicDatas(dtos);
   }
 

@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { adminLoginUrl, reqWhiteList } from '../../config/authConfig';
 import { UnauthorizedException } from '../exception/UnauthorizedException';
 import { clearCurrentUser, setCurrentUser } from '../util/baseContext';
-import { userDto2 } from '../module/module/main/sys-manage/user/dto';
+import { UserDto2 } from '../module/module/main/sys-manage/user/dto';
 import { CacheTokenService } from '../module/cache/cache.token.service';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
         if (decoded) {
           // Token is valid and not expired
           // request.body.user = decoded;
-          await setCurrentUser(decoded as userDto2, token);
+          await setCurrentUser(decoded as UserDto2, token);
         } else {
           // Token is invalid or expired
           throw new UnauthorizedException();

@@ -4,7 +4,7 @@ import { InterfaceGroupService } from './interface-group.service';
 import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { interfaceGroupSelListDto, interfaceGroupSelAllDto, interfaceGroupInsOneDto, interfaceGroupUpdOneDto } from './dto';
+import { InterfaceGroupSelListDto, InterfaceGroupSelAllDto, InterfaceGroupInsOneDto, InterfaceGroupUpdOneDto } from './dto';
 
 @Controller('/algorithm/interface-group')
 @ApiTags('算法系统/接口组')
@@ -22,7 +22,7 @@ export class InterfaceGroupController {
     permission: 'algorithm:interfaceGroup:selList',
     label: '分页查询接口组',
   })
-  async selInterfaceGroup(@Query() dto: interfaceGroupSelListDto): Promise<R> {
+  async selInterfaceGroup(@Query() dto: InterfaceGroupSelListDto): Promise<R> {
     return this.interfaceGroupService.selInterfaceGroup(dto);
   }
 
@@ -34,7 +34,7 @@ export class InterfaceGroupController {
     permission: 'algorithm:interfaceGroup:selAll',
     label: '查询所有接口组',
   })
-  async selAllInterfaceGroup(@Query() dto: interfaceGroupSelAllDto): Promise<R> {
+  async selAllInterfaceGroup(@Query() dto: InterfaceGroupSelAllDto): Promise<R> {
     return this.interfaceGroupService.selAllInterfaceGroup(dto);
   }
 
@@ -76,7 +76,7 @@ export class InterfaceGroupController {
     permission: 'algorithm:interfaceGroup:ins',
     label: '新增接口组',
   })
-  async insInterfaceGroup(@Body() dto: interfaceGroupInsOneDto): Promise<R> {
+  async insInterfaceGroup(@Body() dto: InterfaceGroupInsOneDto): Promise<R> {
     return this.interfaceGroupService.insInterfaceGroup(dto);
   }
 
@@ -86,7 +86,7 @@ export class InterfaceGroupController {
   })
   @ApiBody({
     isArray: true,
-    type: interfaceGroupInsOneDto,
+    type: InterfaceGroupInsOneDto,
   })
   @Authorize({
     permission: 'algorithm:interfaceGroup:inss',
@@ -94,9 +94,9 @@ export class InterfaceGroupController {
   })
   async insInterfaceGroups(@Body(
     new ParseArrayPipe({
-      items: interfaceGroupInsOneDto,
+      items: InterfaceGroupInsOneDto,
     }),
-  ) dtos: interfaceGroupInsOneDto[]): Promise<R> {
+  ) dtos: InterfaceGroupInsOneDto[]): Promise<R> {
     return this.interfaceGroupService.insInterfaceGroups(dtos);
   }
 
@@ -108,7 +108,7 @@ export class InterfaceGroupController {
     permission: 'algorithm:interfaceGroup:upd',
     label: '修改接口组',
   })
-  async updInterfaceGroup(@Body() dto: interfaceGroupUpdOneDto): Promise<R> {
+  async updInterfaceGroup(@Body() dto: InterfaceGroupUpdOneDto): Promise<R> {
     return this.interfaceGroupService.updInterfaceGroup(dto);
   }
 
@@ -118,7 +118,7 @@ export class InterfaceGroupController {
   })
   @ApiBody({
     isArray: true,
-    type: interfaceGroupUpdOneDto,
+    type: InterfaceGroupUpdOneDto,
   })
   @Authorize({
     permission: 'algorithm:interfaceGroup:upds',
@@ -126,9 +126,9 @@ export class InterfaceGroupController {
   })
   async updInterfaceGroups(@Body(
     new ParseArrayPipe({
-      items: interfaceGroupUpdOneDto,
+      items: InterfaceGroupUpdOneDto,
     }),
-  ) dtos: interfaceGroupUpdOneDto[]): Promise<R> {
+  ) dtos: InterfaceGroupUpdOneDto[]): Promise<R> {
     return this.interfaceGroupService.updInterfaceGroups(dtos);
   }
 

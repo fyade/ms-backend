@@ -4,7 +4,7 @@ import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
 import { AlgorithmService } from './algorithm.service';
 import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { R } from '../../../../common/R';
-import { algorithmDto } from './dto';
+import { AlgorithmDto } from './dto';
 
 @Controller('/algorithm/algorithm')
 @ApiTags('算法系统/算法接口')
@@ -23,7 +23,7 @@ export class AlgorithmController {
     label: '算法',
     ifSF: true,
   })
-  async algorithm(@Body() dto: algorithmDto): Promise<R> {
+  async algorithm(@Body() dto: AlgorithmDto): Promise<R> {
     return this.algorithmService.algorithm(dto);
   }
 }

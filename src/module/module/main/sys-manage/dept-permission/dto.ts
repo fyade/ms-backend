@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsArray, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class deptPermissionDto extends baseInterface {
+export class DeptPermissionDto extends BaseDto {
   id: number;
 
   deptId: number;
@@ -16,7 +16,7 @@ export class deptPermissionDto extends baseInterface {
   remark: string;
 }
 
-export class deptPermissionSelListDto extends pageDto {
+export class DeptPermissionSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -33,7 +33,7 @@ export class deptPermissionSelListDto extends pageDto {
   remark: string;
 }
 
-export class deptPermissionSelAllDto {
+export class DeptPermissionSelAllDto {
   @ApiProperty({ description: '部门', required: false })
   deptId: number;
 
@@ -47,7 +47,7 @@ export class deptPermissionSelAllDto {
   remark: string;
 }
 
-export class deptPermissionInsOneDto {
+export class DeptPermissionInsOneDto {
   @ApiProperty({ description: '部门', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '部门不能为空' })
@@ -66,13 +66,13 @@ export class deptPermissionInsOneDto {
   remark: string;
 }
 
-export class deptPermissionUpdOneDto extends deptPermissionInsOneDto {
+export class DeptPermissionUpdOneDto extends DeptPermissionInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;
 }
 
-export class deptPermissionUpdManyDPDto {
+export class DeptPermissionUpdManyDPDto {
   @ApiProperty({ description: '部门', required: true })
   @IsNotEmpty({ message: '部门不能为空' })
   deptId: number;

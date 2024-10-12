@@ -11,7 +11,6 @@ import { getCurrentUser } from '../util/baseContext';
 import { Exception } from '../exception/Exception';
 import { PrismaService } from '../prisma/prisma.service';
 import { ParameterException } from '../exception/ParameterException';
-import { UnauthorizedException } from '../exception/UnauthorizedException';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {

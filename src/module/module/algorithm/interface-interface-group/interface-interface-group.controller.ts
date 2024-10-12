@@ -4,13 +4,7 @@ import { InterfaceInterfaceGroupService } from './interface-interface-group.serv
 import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import {
-  interfaceInterfaceGroupSelListDto,
-  interfaceInterfaceGroupSelAllDto,
-  interfaceInterfaceGroupInsOneDto,
-  interfaceInterfaceGroupUpdOneDto,
-  interfaceInterfaceGroupUpdIIGDto, interfaceInterfaceGroupUpdIGIDto,
-} from './dto';
+import { InterfaceInterfaceGroupDto, InterfaceInterfaceGroupSelListDto, InterfaceInterfaceGroupSelAllDto, InterfaceInterfaceGroupInsOneDto, InterfaceInterfaceGroupUpdOneDto, InterfaceInterfaceGroupUpdIIGDto, InterfaceInterfaceGroupUpdIGIDto } from './dto';
 
 @Controller('/algorithm/interface-interface-group')
 @ApiTags('算法系统/接口接口组')
@@ -28,7 +22,7 @@ export class InterfaceInterfaceGroupController {
     permission: 'algorithm:interfaceInterfaceGroup:selList',
     label: '分页查询接口接口组',
   })
-  async selInterfaceInterfaceGroup(@Query() dto: interfaceInterfaceGroupSelListDto): Promise<R> {
+  async selInterfaceInterfaceGroup(@Query() dto: InterfaceInterfaceGroupSelListDto): Promise<R> {
     return this.interfaceInterfaceGroupService.selInterfaceInterfaceGroup(dto);
   }
 
@@ -40,7 +34,7 @@ export class InterfaceInterfaceGroupController {
     permission: 'algorithm:interfaceInterfaceGroup:selAll',
     label: '查询所有接口接口组',
   })
-  async selAllInterfaceInterfaceGroup(@Query() dto: interfaceInterfaceGroupSelAllDto): Promise<R> {
+  async selAllInterfaceInterfaceGroup(@Query() dto: InterfaceInterfaceGroupSelAllDto): Promise<R> {
     return this.interfaceInterfaceGroupService.selAllInterfaceInterfaceGroup(dto);
   }
 
@@ -82,7 +76,7 @@ export class InterfaceInterfaceGroupController {
     permission: 'algorithm:interfaceInterfaceGroup:updIig',
     label: '更新接口接口组（iig）',
   })
-  async updInterfaceInterfaceGroupIIG(@Body() dto: interfaceInterfaceGroupUpdIIGDto): Promise<R> {
+  async updInterfaceInterfaceGroupIIG(@Body() dto: InterfaceInterfaceGroupUpdIIGDto): Promise<R> {
     return this.interfaceInterfaceGroupService.updInterfaceInterfaceGroupIIG(dto);
   }
 
@@ -94,7 +88,7 @@ export class InterfaceInterfaceGroupController {
     permission: 'algorithm:interfaceInterfaceGroup:updIgi',
     label: '更新接口接口组（igi）',
   })
-  async updInterfaceInterfaceGroupIGI(@Body() dto: interfaceInterfaceGroupUpdIGIDto): Promise<R> {
+  async updInterfaceInterfaceGroupIGI(@Body() dto: InterfaceInterfaceGroupUpdIGIDto): Promise<R> {
     return this.interfaceInterfaceGroupService.updInterfaceInterfaceGroupIGI(dto);
   }
 

@@ -4,7 +4,7 @@ import { UserGroupService } from './user-group.service';
 import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { userGroupSelListDto, userGroupSelAllDto, userGroupInsOneDto, userGroupUpdOneDto } from './dto';
+import { UserGroupSelListDto, UserGroupSelAllDto, UserGroupInsOneDto, UserGroupUpdOneDto } from './dto';
 
 @Controller('/algorithm/user-group')
 @ApiTags('算法系统/用户组')
@@ -22,7 +22,7 @@ export class UserGroupController {
     permission: 'algorithm:userGroup:selList',
     label: '分页查询用户组',
   })
-  async selUserGroup(@Query() dto: userGroupSelListDto): Promise<R> {
+  async selUserGroup(@Query() dto: UserGroupSelListDto): Promise<R> {
     return this.userGroupService.selUserGroup(dto);
   }
 
@@ -34,7 +34,7 @@ export class UserGroupController {
     permission: 'algorithm:userGroup:selAll',
     label: '查询所有用户组',
   })
-  async selAllUserGroup(@Query() dto: userGroupSelAllDto): Promise<R> {
+  async selAllUserGroup(@Query() dto: UserGroupSelAllDto): Promise<R> {
     return this.userGroupService.selAllUserGroup(dto);
   }
 
@@ -76,7 +76,7 @@ export class UserGroupController {
     permission: 'algorithm:userGroup:ins',
     label: '新增用户组',
   })
-  async insUserGroup(@Body() dto: userGroupInsOneDto): Promise<R> {
+  async insUserGroup(@Body() dto: UserGroupInsOneDto): Promise<R> {
     return this.userGroupService.insUserGroup(dto);
   }
 
@@ -86,7 +86,7 @@ export class UserGroupController {
   })
   @ApiBody({
     isArray: true,
-    type: userGroupInsOneDto,
+    type: UserGroupInsOneDto,
   })
   @Authorize({
     permission: 'algorithm:userGroup:inss',
@@ -94,9 +94,9 @@ export class UserGroupController {
   })
   async insUserGroups(@Body(
     new ParseArrayPipe({
-      items: userGroupInsOneDto,
+      items: UserGroupInsOneDto,
     }),
-  ) dtos: userGroupInsOneDto[]): Promise<R> {
+  ) dtos: UserGroupInsOneDto[]): Promise<R> {
     return this.userGroupService.insUserGroups(dtos);
   }
 
@@ -108,7 +108,7 @@ export class UserGroupController {
     permission: 'algorithm:userGroup:upd',
     label: '修改用户组',
   })
-  async updUserGroup(@Body() dto: userGroupUpdOneDto): Promise<R> {
+  async updUserGroup(@Body() dto: UserGroupUpdOneDto): Promise<R> {
     return this.userGroupService.updUserGroup(dto);
   }
 
@@ -118,7 +118,7 @@ export class UserGroupController {
   })
   @ApiBody({
     isArray: true,
-    type: userGroupUpdOneDto,
+    type: UserGroupUpdOneDto,
   })
   @Authorize({
     permission: 'algorithm:userGroup:upds',
@@ -126,9 +126,9 @@ export class UserGroupController {
   })
   async updUserGroups(@Body(
     new ParseArrayPipe({
-      items: userGroupUpdOneDto,
+      items: UserGroupUpdOneDto,
     }),
-  ) dtos: userGroupUpdOneDto[]): Promise<R> {
+  ) dtos: UserGroupUpdOneDto[]): Promise<R> {
     return this.userGroupService.updUserGroups(dtos);
   }
 

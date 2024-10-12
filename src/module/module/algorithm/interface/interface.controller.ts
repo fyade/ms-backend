@@ -4,7 +4,7 @@ import { InterfaceService } from './interface.service';
 import { Authorize } from '../../../../decorator/authorizeDecorator';
 import { R } from '../../../../common/R';
 import { ValidationPipe } from '../../../../pipe/validation/validation.pipe';
-import { interfaceSelListDto, interfaceSelAllDto, interfaceInsOneDto, interfaceUpdOneDto } from './dto';
+import { InterfaceSelListDto, InterfaceSelAllDto, InterfaceInsOneDto, InterfaceUpdOneDto } from './dto';
 
 @Controller('/algorithm/interface')
 @ApiTags('算法系统/接口')
@@ -22,7 +22,7 @@ export class InterfaceController {
     permission: 'algorithm:interface:selList',
     label: '分页查询接口',
   })
-  async selInterface(@Query() dto: interfaceSelListDto): Promise<R> {
+  async selInterface(@Query() dto: InterfaceSelListDto): Promise<R> {
     return this.interfaceService.selInterface(dto);
   }
 
@@ -34,7 +34,7 @@ export class InterfaceController {
     permission: 'algorithm:interface:selAll',
     label: '查询所有接口',
   })
-  async selAllInterface(@Query() dto: interfaceSelAllDto): Promise<R> {
+  async selAllInterface(@Query() dto: InterfaceSelAllDto): Promise<R> {
     return this.interfaceService.selAllInterface(dto);
   }
 
@@ -76,7 +76,7 @@ export class InterfaceController {
     permission: 'algorithm:interface:ins',
     label: '新增接口',
   })
-  async insInterface(@Body() dto: interfaceInsOneDto): Promise<R> {
+  async insInterface(@Body() dto: InterfaceInsOneDto): Promise<R> {
     return this.interfaceService.insInterface(dto);
   }
 
@@ -86,7 +86,7 @@ export class InterfaceController {
   })
   @ApiBody({
     isArray: true,
-    type: interfaceInsOneDto,
+    type: InterfaceInsOneDto,
   })
   @Authorize({
     permission: 'algorithm:interface:inss',
@@ -94,9 +94,9 @@ export class InterfaceController {
   })
   async insInterfaces(@Body(
     new ParseArrayPipe({
-      items: interfaceInsOneDto,
+      items: InterfaceInsOneDto,
     }),
-  ) dtos: interfaceInsOneDto[]): Promise<R> {
+  ) dtos: InterfaceInsOneDto[]): Promise<R> {
     return this.interfaceService.insInterfaces(dtos);
   }
 
@@ -108,7 +108,7 @@ export class InterfaceController {
     permission: 'algorithm:interface:upd',
     label: '修改接口',
   })
-  async updInterface(@Body() dto: interfaceUpdOneDto): Promise<R> {
+  async updInterface(@Body() dto: InterfaceUpdOneDto): Promise<R> {
     return this.interfaceService.updInterface(dto);
   }
 
@@ -118,7 +118,7 @@ export class InterfaceController {
   })
   @ApiBody({
     isArray: true,
-    type: interfaceUpdOneDto,
+    type: InterfaceUpdOneDto,
   })
   @Authorize({
     permission: 'algorithm:interface:upds',
@@ -126,9 +126,9 @@ export class InterfaceController {
   })
   async updInterfaces(@Body(
     new ParseArrayPipe({
-      items: interfaceUpdOneDto,
+      items: InterfaceUpdOneDto,
     }),
-  ) dtos: interfaceUpdOneDto[]): Promise<R> {
+  ) dtos: InterfaceUpdOneDto[]): Promise<R> {
     return this.interfaceService.updInterfaces(dtos);
   }
 

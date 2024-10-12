@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class logUserLoginDto extends baseInterface {
+export class LogUserLoginDto extends BaseDto {
   id: number;
 
   userId: string;
@@ -22,7 +22,7 @@ export class logUserLoginDto extends baseInterface {
   remark: string;
 }
 
-export class logUserLoginSelListDto extends pageDto {
+export class LogUserLoginSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -48,7 +48,7 @@ export class logUserLoginSelListDto extends pageDto {
   remark: string;
 }
 
-export class logUserLoginSelAllDto {
+export class LogUserLoginSelAllDto {
   @ApiProperty({ description: '用户id', required: false })
   userId?: string;
 
@@ -71,7 +71,7 @@ export class logUserLoginSelAllDto {
   remark?: string;
 }
 
-export class logUserLoginInsOneDto {
+export class LogUserLoginInsOneDto {
   @ApiProperty({ description: '用户id', required: true })
   @IsNotEmpty({ message: '用户id不能为空' })
   userId: string;
@@ -96,7 +96,7 @@ export class logUserLoginInsOneDto {
   remark: string;
 }
 
-export class logUserLoginUpdOneDto extends logUserLoginInsOneDto {
+export class LogUserLoginUpdOneDto extends LogUserLoginInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

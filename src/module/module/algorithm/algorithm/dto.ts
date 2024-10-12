@@ -1,4 +1,4 @@
-export interface algorithmDto {
+export interface AlgorithmDto {
   perms: string;
   data: any;
 }

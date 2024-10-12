@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class logOperationDto extends baseInterface {
+export class LogOperationDto extends BaseDto {
   id: number;
 
   perms: string;
@@ -22,7 +22,7 @@ export class logOperationDto extends baseInterface {
   remark: string;
 }
 
-export class logOperationSelListDto extends pageDto {
+export class LogOperationSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -48,7 +48,7 @@ export class logOperationSelListDto extends pageDto {
   remark: string;
 }
 
-export class logOperationSelAllDto {
+export class LogOperationSelAllDto {
   @ApiProperty({ description: '权限标识', required: false })
   perms: string;
 
@@ -71,7 +71,7 @@ export class logOperationSelAllDto {
   remark: string;
 }
 
-export class logOperationInsOneDto {
+export class LogOperationInsOneDto {
   @ApiProperty({ description: '权限标识', required: true })
   @IsNotEmpty({ message: '权限标识不能为空' })
   perms: string;
@@ -100,7 +100,7 @@ export class logOperationInsOneDto {
   remark: string;
 }
 
-export class logOperationUpdOneDto extends logOperationInsOneDto {
+export class LogOperationUpdOneDto extends LogOperationInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

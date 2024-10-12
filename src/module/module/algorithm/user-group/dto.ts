@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../common/commonType';
+import { BaseDto } from '../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class userGroupDto extends baseInterface {
+export class UserGroupDto extends BaseDto {
   id: number;
 
   label: string;
@@ -16,7 +16,7 @@ export class userGroupDto extends baseInterface {
   remark: string;
 }
 
-export class userGroupSelListDto extends pageDto {
+export class UserGroupSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -33,7 +33,7 @@ export class userGroupSelListDto extends pageDto {
   remark: string;
 }
 
-export class userGroupSelAllDto {
+export class UserGroupSelAllDto {
   @ApiProperty({ description: '用户组名', required: false })
   label: string;
 
@@ -47,7 +47,7 @@ export class userGroupSelAllDto {
   remark: string;
 }
 
-export class userGroupInsOneDto {
+export class UserGroupInsOneDto {
   @ApiProperty({ description: '用户组名', required: true })
   @IsNotEmpty({ message: '用户组名不能为空' })
   label: string;
@@ -66,7 +66,7 @@ export class userGroupInsOneDto {
   remark: string;
 }
 
-export class userGroupUpdOneDto extends userGroupInsOneDto {
+export class UserGroupUpdOneDto extends UserGroupInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

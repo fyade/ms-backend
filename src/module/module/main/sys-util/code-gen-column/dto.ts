@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class codeGenColumnDto extends baseInterface {
+export class CodeGenColumnDto extends BaseDto {
   id: number;
 
   tableId: number;
@@ -38,7 +38,7 @@ export class codeGenColumnDto extends baseInterface {
   remark: string;
 }
 
-export class codeGenColumnSelListDto extends pageDto {
+export class CodeGenColumnSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -88,7 +88,7 @@ export class codeGenColumnSelListDto extends pageDto {
   remark: string;
 }
 
-export class codeGenColumnSelAllDto {
+export class CodeGenColumnSelAllDto {
   @ApiProperty({ description: '所属表', required: false })
   tableId: number;
 
@@ -135,7 +135,7 @@ export class codeGenColumnSelAllDto {
   remark: string;
 }
 
-export class codeGenColumnInsOneDto {
+export class CodeGenColumnInsOneDto {
   @ApiProperty({ description: '所属表', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '所属表不能为空' })
@@ -198,7 +198,7 @@ export class codeGenColumnInsOneDto {
   remark: string;
 }
 
-export class codeGenColumnUpdOneDto extends codeGenColumnInsOneDto {
+export class CodeGenColumnUpdOneDto extends CodeGenColumnInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

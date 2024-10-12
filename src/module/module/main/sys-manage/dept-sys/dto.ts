@@ -1,10 +1,10 @@
-import { pageDto } from '../../../../../common/dto/PageDto';
-import { baseInterface } from '../../../../../common/commonType';
+import { BaseDto } from '../../../../../common/dto/BaseDto';
+import { PageDto } from '../../../../../common/dto/PageDto';
 import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class deptSysDto extends baseInterface {
+export class DeptSysDto extends BaseDto {
   id: number;
 
   deptId: number;
@@ -14,7 +14,7 @@ export class deptSysDto extends baseInterface {
   remark: string;
 }
 
-export class deptSysSelListDto extends pageDto {
+export class DeptSysSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
 
@@ -28,7 +28,7 @@ export class deptSysSelListDto extends pageDto {
   remark: string;
 }
 
-export class deptSysSelAllDto {
+export class DeptSysSelAllDto {
   @ApiProperty({ description: '部门', required: false })
   deptId: number;
 
@@ -39,7 +39,7 @@ export class deptSysSelAllDto {
   remark: string;
 }
 
-export class deptSysInsOneDto {
+export class DeptSysInsOneDto {
   @ApiProperty({ description: '部门', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '部门不能为空' })
@@ -54,7 +54,7 @@ export class deptSysInsOneDto {
   remark: string;
 }
 
-export class deptSysUpdOneDto extends deptSysInsOneDto {
+export class DeptSysUpdOneDto extends DeptSysInsOneDto {
   @ApiProperty({ description: '主键id', required: true })
   @IsNotEmpty({ message: '主键id不能为空' })
   id: number;

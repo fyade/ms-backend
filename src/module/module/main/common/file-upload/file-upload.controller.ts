@@ -4,10 +4,10 @@ import { R } from '../../../../../common/R';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { currentEnv } from '../../../../../../config/config';
 import {
-  fileUploadSelListDto,
-  fileUploadOneChunk_check,
-  fileUploadOneChunk_merge,
-  fileUploadOneChunk_upload,
+  FileUploadSelListDto,
+  FileUploadOneChunk_check,
+  FileUploadOneChunk_merge,
+  FileUploadOneChunk_upload,
 } from './dto';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -32,7 +32,7 @@ export class FileUploadController {
     permission: 'main:system:fileupload:selList',
     label: '分页查询文件上传列表',
   })
-  async selList(@Query() dto: fileUploadSelListDto): Promise<R> {
+  async selList(@Query() dto: FileUploadSelListDto): Promise<R> {
     return this.fileUploadService.selList(dto);
   }
 
@@ -92,7 +92,7 @@ export class FileUploadController {
     permission: 'main:system:fileupload:onechunkcheck',
     label: '文件上传-单文件分片上传前检查',
   })
-  async fileUploadOneChunkCheck(@Body() dto: fileUploadOneChunk_check): Promise<R> {
+  async fileUploadOneChunkCheck(@Body() dto: FileUploadOneChunk_check): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkCheck(dto);
   }
 
@@ -105,7 +105,7 @@ export class FileUploadController {
     permission: 'main:system:fileupload:onechunkupload',
     label: '文件上传-单文件分片上传',
   })
-  async fileUploadOneChunkUpload(@Param() param: fileUploadOneChunk_upload, @UploadedFile() file): Promise<R> {
+  async fileUploadOneChunkUpload(@Param() param: FileUploadOneChunk_upload, @UploadedFile() file): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkUpload({
       fileMd5: param.fileMd5,
       chunkIndex: param.chunkIndex,
@@ -122,7 +122,7 @@ export class FileUploadController {
     permission: 'main:system:fileupload:onechunkmerge',
     label: '文件上传-单文件分片上传分片合并',
   })
-  async fileUploadOneChunkMerge(@Body() dto: fileUploadOneChunk_merge): Promise<R> {
+  async fileUploadOneChunkMerge(@Body() dto: FileUploadOneChunk_merge): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkMerge(dto);
   }
 

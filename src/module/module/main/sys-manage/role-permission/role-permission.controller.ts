@@ -4,7 +4,7 @@ import { R } from '../../../../../common/R';
 import { RolePermissionService } from './role-permission.service';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import { rolePermissionSelAllDto, rolePermissionSelListDto, rolePermissionUpdManyDto } from './dto';
+import { RolePermissionDto, RolePermissionSelListDto, RolePermissionSelAllDto, RolePermissionInsOneDto, RolePermissionUpdOneDto, RolePermissionUpdManyDto } from './dto';
 
 @Controller('/main/sys-manage/role-permission')
 @ApiTags('主系统/系统管理/角色权限')
@@ -22,7 +22,7 @@ export class RolePermissionController {
     permission: 'main:sysManage:rolePermission:selList',
     label: '分页查询角色权限',
   })
-  async selRolePermission(@Query() dto: rolePermissionSelListDto): Promise<R> {
+  async selRolePermission(@Query() dto: RolePermissionSelListDto): Promise<R> {
     return this.rolePermissionService.selRolePermission(dto);
   }
 
@@ -34,7 +34,7 @@ export class RolePermissionController {
     permission: 'main:sysManage:rolePermission:selAll',
     label: '查询所有角色权限',
   })
-  async selAllRolePermission(@Query() dto: rolePermissionSelAllDto): Promise<R> {
+  async selAllRolePermission(@Query() dto: RolePermissionSelAllDto): Promise<R> {
     return this.rolePermissionService.selAllRolePermission(dto);
   }
 
@@ -78,7 +78,7 @@ export class RolePermissionController {
     permission: 'main:sysManage:rolePermission:upd',
     label: '修改角色权限',
   })
-  async updRolePermissionRp(@Body() dto: rolePermissionUpdManyDto): Promise<R> {
+  async updRolePermissionRp(@Body() dto: RolePermissionUpdManyDto): Promise<R> {
     return this.rolePermissionService.updRolePermissionRp(dto);
   }
 
