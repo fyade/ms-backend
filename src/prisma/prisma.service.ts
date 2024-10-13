@@ -152,6 +152,7 @@ export class PrismaService extends PrismaClient {
                                numberKeys = [],
                                completeMatchingKeys = [],
                                ifDeleted = true,
+                               ifDataSegregation = false,
                              }: {
                                data?: P,
                                orderBy?: boolean | object,
@@ -160,6 +161,7 @@ export class PrismaService extends PrismaClient {
                                numberKeys?: string[]
                                completeMatchingKeys?: string[]
                                ifDeleted?: boolean
+                               ifDataSegregation?: boolean
                              } = {},
   ) {
     const data_ = objToSnakeCase(data);
@@ -226,6 +228,9 @@ export class PrismaService extends PrismaClient {
             },
           }
         )),
+        ...[
+          ifDataSegregation ? { create_by: getCurrentUser().user?.userid } : null,
+        ].filter(_ => _),
       ],
     };
   }
@@ -240,6 +245,7 @@ export class PrismaService extends PrismaClient {
    * @param numberKeys
    * @param completeMatchingKeys
    * @param ifDeleted
+   * @param ifDataSegregation
    * @param ifUseGenSelParams
    */
   async findPage<T, P extends PageDto>(model: string, {
@@ -250,6 +256,7 @@ export class PrismaService extends PrismaClient {
                                          numberKeys = [],
                                          completeMatchingKeys = [],
                                          ifDeleted = true,
+                                         ifDataSegregation = false,
                                        }: {
                                          data?: P,
                                          orderBy?: boolean | object,
@@ -258,6 +265,7 @@ export class PrismaService extends PrismaClient {
                                          numberKeys?: string[],
                                          completeMatchingKeys?: string[],
                                          ifDeleted?: boolean,
+                                         ifDataSegregation?: boolean,
                                        } = {}, ifUseGenSelParams = true,
   ): Promise<{
     list: T[]
@@ -277,6 +285,7 @@ export class PrismaService extends PrismaClient {
         numberKeys,
         completeMatchingKeys,
         ifDeleted,
+        ifDataSegregation,
       }) : {
         ...publicData,
         ...(objToSnakeCase(data) || {}),
@@ -322,6 +331,7 @@ export class PrismaService extends PrismaClient {
    * @param numberKeys
    * @param completeMatchingKeys
    * @param ifDeleted
+   * @param ifDataSegregation
    * @param ifUseGenSelParams
    */
   async findAll<T>(model: string, {
@@ -332,6 +342,7 @@ export class PrismaService extends PrismaClient {
                      numberKeys = [],
                      completeMatchingKeys = [],
                      ifDeleted = true,
+                     ifDataSegregation = false,
                    }: {
                      data?: object,
                      orderBy?: boolean | object,
@@ -340,6 +351,7 @@ export class PrismaService extends PrismaClient {
                      numberKeys?: string[]
                      completeMatchingKeys?: string[]
                      ifDeleted?: boolean,
+                     ifDataSegregation?: boolean,
                    } = {}, ifUseGenSelParams = true,
   ): Promise<T[]> {
     const arg: any = {
@@ -351,6 +363,7 @@ export class PrismaService extends PrismaClient {
         numberKeys,
         completeMatchingKeys,
         ifDeleted,
+        ifDataSegregation,
       }) : {
         ...this.defaultSelArg({ ifDeleted }).where,
         ...(objToSnakeCase(data) || {}),
@@ -446,6 +459,7 @@ export class PrismaService extends PrismaClient {
    * @param numberKeys
    * @param completeMatchingKeys
    * @param ifDeleted
+   * @param ifDataSegregation
    * @param ifUseGenSelParams
    */
   async count<T>(model: string, {
@@ -455,6 +469,7 @@ export class PrismaService extends PrismaClient {
                    numberKeys = [],
                    completeMatchingKeys = [],
                    ifDeleted = true,
+                   ifDataSegregation = false,
                  }: {
                    data?: object,
                    range?: object,
@@ -462,6 +477,7 @@ export class PrismaService extends PrismaClient {
                    numberKeys?: string[]
                    completeMatchingKeys?: string[]
                    ifDeleted?: boolean,
+                   ifDataSegregation?: boolean,
                  } = {}, ifUseGenSelParams = true,
   ): Promise<number> {
     const arg: any = {
@@ -472,6 +488,7 @@ export class PrismaService extends PrismaClient {
         numberKeys,
         completeMatchingKeys,
         ifDeleted,
+        ifDataSegregation,
       }) : {
         ...this.defaultSelArg({ ifDeleted }).where,
         ...(objToSnakeCase(data) || {}),
