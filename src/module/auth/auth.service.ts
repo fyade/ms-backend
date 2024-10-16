@@ -9,6 +9,7 @@ import { UserGroupPermissionDto } from '../module/algorithm/user-group-permissio
 import { Exception } from '../../exception/Exception';
 import { Request } from 'express';
 import { InterfaceDto } from '../module/algorithm/interface/dto';
+import { timestamp } from '../../util/TimeUtils';
 
 @Injectable()
 export class AuthService {
@@ -360,8 +361,8 @@ export class AuthService {
       // 是否公共算法
       if (interf[0].ifPublic === base.Y) {
         await this.prisma.$queryRaw`
-        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
-        values (-1, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
+        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark, create_time)
+        values (-1, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark}, ${new Date(timestamp())});
       `;
         return true;
       }
@@ -383,15 +384,15 @@ export class AuthService {
     algorithmCallDto.userGroupPermissionId = userGroupPermission.id;
     // 没长期权限，不在时间期限内，则阻止
     if (userGroupPermission.ifLongTerm === base.N) {
-      if (new Date().getTime() < new Date(userGroupPermission.permissionStartTime).getTime() || new Date().getTime() > new Date(userGroupPermission.permissionEndTime).getTime()) {
+      if (timestamp() < timestamp(userGroupPermission.permissionStartTime) || timestamp() > timestamp(userGroupPermission.permissionEndTime)) {
         throw new Exception('您不在权限期限内。');
       }
     }
     // 在期限内，且不限制次数，则放行
     if (userGroupPermission.ifLimitRequestTimes === base.N) {
       await this.prisma.$queryRaw`
-        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
-        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
+        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark, create_time)
+        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark}, ${new Date(timestamp())});
       `;
       return true;
     }
@@ -405,8 +406,8 @@ export class AuthService {
     const count = count1[0].count;
     if (limitRequestTimes > count) {
       await this.prisma.$queryRaw`
-        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
-        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
+        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark, create_time)
+        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark}, ${new Date(timestamp())});
       `;
       if (Number(count) === limitRequestTimes - 1) {
         if (userGroupPermission.ifRejectRequestUseUp === base.N) {
@@ -424,8 +425,8 @@ export class AuthService {
     // 次数用光后是否停止服务
     if (userGroupPermission.ifRejectRequestUseUp === base.N) {
       await this.prisma.$queryRaw`
-        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark)
-        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark});
+        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark, create_time)
+        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark}, ${new Date(timestamp())});
       `;
       return true;
     } else {

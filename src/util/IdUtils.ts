@@ -1,3 +1,5 @@
+import { timestamp } from './TimeUtils';
+
 const { v4: uuidv4 } = require('uuid');
 
 /**
@@ -42,5 +44,5 @@ export function genId(length = 16, suffix = true): string {
     return str
   }
 
-  return suffix ? `${generateLengthStr()}_${new Date().getTime()}` : generateLengthStr()
+  return suffix ? `${generateLengthStr()}_${timestamp()}` : generateLengthStr()
 }

@@ -11,6 +11,7 @@ import { getCurrentUser } from '../util/baseContext';
 import { Exception } from '../exception/Exception';
 import { PrismaService } from '../prisma/prisma.service';
 import { ParameterException } from '../exception/ParameterException';
+import { timestamp } from '../util/TimeUtils';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -69,8 +70,8 @@ export class PermissionsGuard implements CanActivate {
     else {
       // 操作日志
       await this.prisma.$queryRaw`
-        insert into log_operation (perms, user_id, req_param, old_value, operate_type, if_success, remark)
-        values (${permission}, ${user ? user.userid : '???'}, '', '', '', '', '');
+        insert into log_operation (perms, user_id, req_param, old_value, operate_type, if_success, remark, create_time)
+        values (${permission}, ${user ? user.userid : '???'}, '', '', '', '', '', ${new Date(timestamp())});
       `;
       // 是否公共接口
       const ifPublicInterfaceInCache = await this.cachePermissionService.getIfPublicPermissionInCache(permission);

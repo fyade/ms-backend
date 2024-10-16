@@ -19,6 +19,7 @@ import { UserUserGroupDto } from '../../../algorithm/user-user-group/dto';
 import { RoleDto } from '../role/dto';
 import { DeptDto } from '../dept/dto';
 import { CacheTokenService } from '../../../../cache/cache.token.service';
+import { time, timestamp } from '../../../../../util/TimeUtils';
 
 @Injectable()
 export class UserService {
@@ -212,14 +213,14 @@ export class UserService {
         orderBy: { createTime: 'desc' },
         range: {
           createTime: {
-            gte: new Date(new Date().getTime() - 1000 * 60 * 60 * 24),
-            lte: new Date(),
+            gte: new Date(timestamp() - 1000 * 60 * 60 * 24),
+            lte: new Date(timestamp()),
           },
         },
       });
       if (loginLog.data.length >= this.maxLoginFailCount) {
-        const sort = loginLog.data.sort((a, b) => a.createTime - b.createTime);
-        const number = Math.ceil(24 - (new Date().getTime() - new Date(sort[0].createTime).getTime()) / (1000 * 60 * 60));
+        const sort = loginLog.data.sort((a, b) => timestamp(a.createTime) - timestamp(b.createTime));
+        const number = Math.ceil(24 - (timestamp() - timestamp(sort[0].createTime)) / (1000 * 60 * 60));
         return R.err(`密码错误次数过多，请${number}小时后重试。`);
       }
       await this.logUserLoginService.insLogUserLogin({
@@ -267,14 +268,14 @@ export class UserService {
         orderBy: { createTime: 'desc' },
         range: {
           createTime: {
-            gte: new Date(new Date().getTime() - 1000 * 60 * 60 * 24),
-            lte: new Date(),
+            gte: new Date(timestamp() - 1000 * 60 * 60 * 24),
+            lte: new Date(timestamp()),
           },
         },
       });
       if (loginLog.data.length >= this.maxLoginFailCount) {
-        const sort = loginLog.data.sort((a, b) => a.createTime - b.createTime);
-        const number = Math.ceil(24 - (new Date().getTime() - new Date(sort[0].createTime).getTime()) / (1000 * 60 * 60));
+        const sort = loginLog.data.sort((a, b) => timestamp(a.createTime) - timestamp(b.createTime));
+        const number = Math.ceil(24 - (timestamp() - timestamp(sort[0].createTime)) / (1000 * 60 * 60));
         return R.err(`密码错误次数过多，请${number}小时后重试。`);
       }
       return R.err(`密码错误，还剩${this.maxLoginFailCount - loginLog.data.length}次机会。`);

@@ -1,4 +1,5 @@
 import { HTTP } from './Enum';
+import { time, timestamp as timeStamp } from '../util/TimeUtils';
 
 export class R<T = any> {
   public code: number;
@@ -11,8 +12,8 @@ export class R<T = any> {
     this.code = code;
     this.data = data;
     this.msg = msg;
-    this.time = new Date();
-    this.timestamp = this.time.getTime();
+    this.time = time();
+    this.timestamp = timeStamp(time());
   }
 
   static ok(data: any = true) {
