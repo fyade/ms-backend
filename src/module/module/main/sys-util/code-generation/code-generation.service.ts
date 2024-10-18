@@ -9,6 +9,7 @@ import { CodeGenTableDto } from '../code-gen-table/dto';
 import { CodeGenColumnDto } from '../code-gen-column/dto';
 import { CgTablesInterface } from './dto';
 import { SysDto } from '../../sys-manage/sys/dto';
+import { getAllFiles } from '../../../../../util/FileUtils';
 
 @Injectable()
 export class CodeGenerationService {
@@ -19,8 +20,11 @@ export class CodeGenerationService {
     let text = '';
     try {
       const pathJoin = path.join(__dirname, '../../../../../../');
-      const prismaPath = path.join(pathJoin.endsWith('dist\\') ? pathJoin.substring(0, pathJoin.length - 5) : pathJoin, 'prisma/schema/schema.prisma');
-      text = fs.readFileSync(prismaPath, 'utf-8');
+      const prismaPath = path.join(pathJoin.endsWith('dist\\') ? pathJoin.substring(0, pathJoin.length - 5) : pathJoin, 'prisma/schema');
+      const files = await getAllFiles(prismaPath);
+      for (const file of files.filter((item) => item.endsWith('.prisma'))) {
+        text = text + '\n' + fs.readFileSync(file, 'utf-8');
+      }
     } catch (e) {
       throw new NonSupportedException('读取数据库信息');
     }
