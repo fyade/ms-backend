@@ -76,17 +76,17 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 注意：以生产环境为例子：在 config.ts 中有一个变量，叫 config ，其第一个键为 dev ，表示开发环境的配置，接下来你需要加一个键 prod ，表示生产环境的配置，然后你需要把 dev 的值复制进去并修改为生产环境的配置。
 
-1. 将 /prisma/schema.prisma 中的 generator client.output （第9行）配置为 '../src/generated/client'；
+1. 将 /prisma/schema/schema.prisma 中的 generator client.output （第9行）配置为 '../../generated/client'；
 
-2. 运行 `npx prisma generate` 命令，然后将 /src/generated 目录复制至 生产环境根目录/src/generated；
+2. 运行 `npx prisma generate` 命令，然后将 /generated 目录复制至 生产环境根目录/generated；
 
 3. 运行 `npm run build` 命令，然后将 /dist/main.js 复制至 生产环境根目录；
 
-4. 运行 `$env:NODE_ENV="prod"; node .\main.js` 命令，其中 NODE_ENV 是命令行变量，在不同系统、不同命令行工具中写法不一样，请根据自身情况修改。
+4. 运行 `$env:NODE_ENV="prod"; node .\main.js` 命令，其中 NODE_ENV 是命令行变量，在不同系统、不同命令行工具中写法可能不一样，请根据自身情况修改。
 
 ## 修改数据库结构 How to edit database
 
-1. 在 /prisma/schema.prisma 中定义数据库；
+1. 在 /prisma/schema/schema.prisma 中定义数据库；
 
 2. 在 .env 中定义数据库地址，随后运行 `npx prisma migrate dev --name gx` 命令。
 

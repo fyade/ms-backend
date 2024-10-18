@@ -8,7 +8,7 @@ import { PageDto } from '../common/dto/PageDto';
 import { objToCamelCase, objToSnakeCase, toCamelCase, toSnakeCase, toSnakeCases, typeOf } from '../util/BaseUtils';
 
 const env = currentEnv();
-const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../generated/client');
+const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
 
 @Injectable()
 export class PrismaService extends PrismaClient {
