@@ -57,11 +57,11 @@ export class AppController {
 
   @Get('/permission/:sysId')
   @ApiOperation({
-    summary: '获取有权限的接口',
+    summary: '获取有权限的页面',
   })
   @Authorize({
     permission: 'system:home:permission',
-    label: '获取有权限的接口',
+    label: '获取有权限的页面',
   })
   async getPermissions(@Param('sysId') sysId: number): Promise<R> {
     return this.appService.getPermissions(sysId);

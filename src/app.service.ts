@@ -88,7 +88,7 @@ export class AppService {
   }
 
   async getPermissions(sysId: number): Promise<R> {
-    const permissionsOfUser = await this.authService.permissionsOfUser({ userId: getCurrentUser().user.userid, sysId });
+    const permissionsOfUser = await this.authService.permissionsOfUser({ userId: getCurrentUser().user.userid, sysId, menuType: ['mm', 'mc'] });
     return R.ok(permissionsOfUser);
   }
 

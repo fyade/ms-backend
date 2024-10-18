@@ -200,15 +200,18 @@ export class AuthService {
    * @param userId
    * @param permission
    * @param sysId
+   * @param menuType mm菜单 mc组件 ma接口组 mb接口
    */
   async permissionsOfUser({
                             userId,
                             permission,
                             sysId,
+                            menuType = ['mm', 'mc', 'ma', 'mb'],
                           }: {
                             userId: string
                             permission?: string
                             sysId?: number
+                            menuType?: string[]
                           },
   ) {
     const retarr = [];
@@ -238,6 +241,7 @@ export class AuthService {
                sm.deleted     as deleted
         from sys_menu sm
         where sm.deleted = ${base.N}
+          and locate(sm.type, ${`-${menuType.join('-')}-`}) > 0
           and (
             if(exists
                    (select 1
