@@ -3,6 +3,7 @@ import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { DicDataDto, DicDataSelListDto, DicDataSelAllDto, DicDataInsOneDto, DicDataUpdOneDto } from './dto';
 import { DicTypeDto } from '../dic-type/dto';
+import { base } from '../../../../../util/base';
 
 @Injectable()
 export class DicDataService {
@@ -15,6 +16,7 @@ export class DicDataService {
     if (dicTypeDto) {
       const dicDataDtos = await this.prisma.findAll<DicDataDto>('sys_dic_data', {
         data: { dicTypeId: dicTypeDto.id },
+        orderBy: true,
         notNullKeys: ['dicTypeId'],
         numberKeys: ['dicTypeId'],
       });
@@ -34,7 +36,7 @@ export class DicDataService {
     return R.ok(res);
   }
 
-  async selAllDicData(dto: DicDataSelAllDto): Promise<R> {
+  async selAllDicData(dto: DicDataSelAllDto): Promise<R<DicDataDto[]>> {
     const res = await this.prisma.findAll<DicDataDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
@@ -56,21 +58,69 @@ export class DicDataService {
   }
 
   async insDicData(dto: DicDataInsOneDto): Promise<R> {
+    if (dto.ifDefault === base.Y) {
+      const r = await this.selAllDicData({ dicTypeId: dto.dicTypeId });
+      const upds = r.data.filter(item => item.ifDefault === base.Y).map(item => {
+        item.ifDefault = base.N;
+        return item;
+      });
+      if (upds.length > 0) {
+        await this.updDicDatas(upds);
+      }
+    }
     const res = await this.prisma.create<DicDataDto>('sys_dic_data', dto);
     return R.ok(res);
   }
 
   async insDicDatas(dtos: DicDataInsOneDto[]): Promise<R> {
+    const dicDataInsOneDtos = dtos.filter(item => item.ifDefault === base.Y);
+    if (dicDataInsOneDtos.length > 1) {
+      return R.err('只允许有一个默认值。');
+    }
+    if (dicDataInsOneDtos.length === 1) {
+      const r = await this.selAllDicData({ dicTypeId: dicDataInsOneDtos[0].dicTypeId });
+      const upds = r.data.filter(item => item.ifDefault === base.Y).map(item => {
+        item.ifDefault = base.N;
+        return item;
+      });
+      if (upds.length > 0) {
+        await this.updDicDatas(upds);
+      }
+    }
     const res = await this.prisma.createMany<DicDataDto>('sys_dic_data', dtos);
     return R.ok(res);
   }
 
   async updDicData(dto: DicDataUpdOneDto): Promise<R> {
+    if (dto.ifDefault === base.Y) {
+      const r = await this.selAllDicData({ dicTypeId: dto.dicTypeId });
+      const upds = r.data.filter(item => item.ifDefault === base.Y && item.id !== dto.id).map(item => {
+        item.ifDefault = base.N;
+        return item;
+      });
+      if (upds.length > 0) {
+        await this.updDicDatas(upds);
+      }
+    }
     const res = await this.prisma.updateById<DicDataDto>('sys_dic_data', dto);
     return R.ok(res);
   }
 
   async updDicDatas(dtos: DicDataUpdOneDto[]): Promise<R> {
+    const dicDataUpdOneDtos = dtos.filter(item => item.ifDefault === base.Y);
+    if (dicDataUpdOneDtos.length > 1) {
+      return R.err('只允许有一个默认值。');
+    }
+    if (dicDataUpdOneDtos.length === 1) {
+      const r = await this.selAllDicData({ dicTypeId: dicDataUpdOneDtos[0].dicTypeId });
+      const upds = r.data.filter(item => item.ifDefault === base.Y && item.id !== dicDataUpdOneDtos[0].id).map(item => {
+        item.ifDefault = base.N;
+        return item;
+      });
+      if (upds.length > 0) {
+        await this.updDicDatas(upds);
+      }
+    }
     const res = await this.prisma.updateMany<DicDataDto>('sys_dic_data', dtos);
     return R.ok(res);
   }

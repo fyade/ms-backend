@@ -50,25 +50,25 @@ export class DicDataSelListDto extends PageDto {
 
 export class DicDataSelAllDto {
   @ApiProperty({ description: '标签', required: false })
-  label: string;
+  label?: string;
 
   @ApiProperty({ description: '值', required: false })
-  value: string;
+  value?: string;
 
   @ApiProperty({ description: '字典类型', required: false })
-  dicTypeId: number;
+  dicTypeId?: number;
 
   @ApiProperty({ description: '是否默认', required: false })
-  ifDefault: string;
+  ifDefault?: string;
 
   @ApiProperty({ description: '是否禁用', required: false })
-  ifDisabled: string;
+  ifDisabled?: string;
 
   @ApiProperty({ description: '顺序', required: false })
-  orderNum: number;
+  orderNum?: number;
 
   @ApiProperty({ description: '备注', required: false })
-  remark: string;
+  remark?: string;
 }
 
 export class DicDataInsOneDto {
