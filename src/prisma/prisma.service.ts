@@ -14,16 +14,20 @@ const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../
 export class PrismaService extends PrismaClient {
   private defaultSelArg = ({
                              ifDeleted = true,
+                             ifDataSegregation = false,
                            }: {
                              ifDeleted?: boolean
+                             ifDataSegregation?: boolean
                            } = {},
   ) => {
     const retObj = {
       where: {
+        create_by: getCurrentUser().user?.userid,
         deleted: base.N,
       },
     };
     if (!ifDeleted) delete retObj.where.deleted;
+    if (!ifDataSegregation) delete retObj.where.create_by;
     return retObj;
   };
   private defaultInsArg = ({
@@ -165,7 +169,7 @@ export class PrismaService extends PrismaClient {
                              } = {},
   ) {
     const data_ = objToSnakeCase(data);
-    const publicData = this.defaultSelArg({ ifDeleted }).where;
+    const publicData = this.defaultSelArg({ ifDeleted, ifDataSegregation }).where;
     return {
       AND: [
         ...Object.keys(publicData).reduce((obj, item) => [
@@ -228,9 +232,6 @@ export class PrismaService extends PrismaClient {
             },
           }
         )),
-        ...[
-          ifDataSegregation ? { create_by: getCurrentUser().user?.userid } : null,
-        ].filter(_ => _),
       ],
     };
   }
@@ -275,7 +276,7 @@ export class PrismaService extends PrismaClient {
     const pageSize = Number(data.pageSize);
     delete data.pageNum;
     delete data.pageSize;
-    const publicData = this.defaultSelArg({ ifDeleted }).where;
+    const publicData = this.defaultSelArg({ ifDeleted, ifDataSegregation }).where;
     const arg: any = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
         data,
@@ -365,7 +366,7 @@ export class PrismaService extends PrismaClient {
         ifDeleted,
         ifDataSegregation,
       }) : {
-        ...this.defaultSelArg({ ifDeleted }).where,
+        ...this.defaultSelArg({ ifDeleted, ifDataSegregation }).where,
         ...(objToSnakeCase(data) || {}),
       },
     };
@@ -392,16 +393,19 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param args
    * @param ifDeleted
+   * @param ifDataSegregation
    */
   async findFirst<T>(model: string, args?: any, {
                        ifDeleted = true,
+                       ifDataSegregation = false,
                      }: {
                        ifDeleted?: boolean
+                       ifDataSegregation?: boolean
                      } = {},
   ): Promise<T> {
     const arg = {
       where: {
-        ...this.defaultSelArg({ ifDeleted }).where,
+        ...this.defaultSelArg({ ifDeleted, ifDataSegregation }).where,
         ...(objToSnakeCase(args) || {}),
       },
     };
@@ -415,14 +419,17 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param id
    * @param ifDeleted
+   * @param ifDataSegregation
    */
   async findById<T>(model: string, id: number | string, {
                       ifDeleted = true,
+                      ifDataSegregation = false,
                     }: {
                       ifDeleted?: boolean
+                      ifDataSegregation?: boolean
                     } = {},
   ): Promise<T> {
-    return this.findFirst<T>(model, { id: id }, { ifDeleted });
+    return this.findFirst<T>(model, { id: id }, { ifDeleted, ifDataSegregation });
   }
 
   /**
@@ -430,16 +437,19 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param ids
    * @param ifDeleted
+   * @param ifDataSegregation
    */
   async findByIds<T>(model: string, ids: number[] | string[], {
                        ifDeleted = true,
+                       ifDataSegregation = false,
                      }: {
                        ifDeleted?: boolean
+                       ifDataSegregation?: boolean
                      } = {},
   ): Promise<T[]> {
     const arg = {
       where: {
-        ...this.defaultSelArg({ ifDeleted }).where,
+        ...this.defaultSelArg({ ifDeleted, ifDataSegregation }).where,
         id: {
           in: ids,
         },
@@ -490,7 +500,7 @@ export class PrismaService extends PrismaClient {
         ifDeleted,
         ifDataSegregation,
       }) : {
-        ...this.defaultSelArg({ ifDeleted }).where,
+        ...this.defaultSelArg({ ifDeleted, ifDataSegregation }).where,
         ...(objToSnakeCase(data) || {}),
       },
     };
