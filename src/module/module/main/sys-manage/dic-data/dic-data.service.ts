@@ -11,13 +11,16 @@ export class DicDataService {
   }
 
   async selDicDataOfType(perm: string, label: string = ''): Promise<R<DicDataDto[]>> {
-    const dicTypeDto = await this.prisma.findFirst<DicTypeDto>('sys_dic_type', { type: perm });
+    const dicTypeDto = await this.prisma.findFirst<DicTypeDto, DicTypeDto>('sys_dic_type', {
+      type: perm,
+      ifDisabled: base.N,
+    });
     const ret: DicDataDto[] = [];
     if (dicTypeDto) {
-      const dicDataDtos = await this.prisma.findAll<DicDataDto>('sys_dic_data', {
-        data: { dicTypeId: dicTypeDto.id, label: label },
+      const dicDataDtos = await this.prisma.findAll<DicDataDto, DicDataSelAllDto>('sys_dic_data', {
+        data: { label: label, dicTypeId: dicTypeDto.id, ifDisabled: base.N },
         orderBy: true,
-        notNullKeys: ['label', 'dicTypeId'],
+        notNullKeys: ['label', 'dicTypeId', 'ifDisabled'],
         numberKeys: ['dicTypeId'],
       });
       ret.push(...dicDataDtos);

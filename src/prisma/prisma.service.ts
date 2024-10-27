@@ -335,28 +335,28 @@ export class PrismaService extends PrismaClient {
    * @param ifDataSegregation
    * @param ifUseGenSelParams
    */
-  async findAll<T>(model: string, {
-                     data,
-                     orderBy,
-                     range = {},
-                     notNullKeys = [],
-                     numberKeys = [],
-                     completeMatchingKeys = [],
-                     ifDeleted = true,
-                     ifDataSegregation = false,
-                   }: {
-                     data?: object,
-                     orderBy?: boolean | object,
-                     range?: object,
-                     notNullKeys?: string[]
-                     numberKeys?: string[]
-                     completeMatchingKeys?: string[]
-                     ifDeleted?: boolean,
-                     ifDataSegregation?: boolean,
-                   } = {}, ifUseGenSelParams = true,
+  async findAll<T, P = object>(model: string, {
+                                 data,
+                                 orderBy,
+                                 range = {},
+                                 notNullKeys = [],
+                                 numberKeys = [],
+                                 completeMatchingKeys = [],
+                                 ifDeleted = true,
+                                 ifDataSegregation = false,
+                               }: {
+                                 data?: P,
+                                 orderBy?: boolean | object,
+                                 range?: object,
+                                 notNullKeys?: string[]
+                                 numberKeys?: string[]
+                                 completeMatchingKeys?: string[]
+                                 ifDeleted?: boolean,
+                                 ifDataSegregation?: boolean,
+                               } = {}, ifUseGenSelParams = true,
   ): Promise<T[]> {
     const arg: any = {
-      where: ifUseGenSelParams ? this.genSelParams<T, object>({
+      where: ifUseGenSelParams ? this.genSelParams<T, P>({
         data,
         orderBy,
         range,
@@ -395,13 +395,13 @@ export class PrismaService extends PrismaClient {
    * @param ifDeleted
    * @param ifDataSegregation
    */
-  async findFirst<T>(model: string, args?: any, {
-                       ifDeleted = true,
-                       ifDataSegregation = false,
-                     }: {
-                       ifDeleted?: boolean
-                       ifDataSegregation?: boolean
-                     } = {},
+  async findFirst<T, P = any>(model: string, args?: Partial<P>, {
+                                ifDeleted = true,
+                                ifDataSegregation = false,
+                              }: {
+                                ifDeleted?: boolean
+                                ifDataSegregation?: boolean
+                              } = {},
   ): Promise<T> {
     const arg = {
       where: {
@@ -472,26 +472,26 @@ export class PrismaService extends PrismaClient {
    * @param ifDataSegregation
    * @param ifUseGenSelParams
    */
-  async count<T>(model: string, {
-                   data,
-                   range = {},
-                   notNullKeys = [],
-                   numberKeys = [],
-                   completeMatchingKeys = [],
-                   ifDeleted = true,
-                   ifDataSegregation = false,
-                 }: {
-                   data?: object,
-                   range?: object,
-                   notNullKeys?: string[]
-                   numberKeys?: string[]
-                   completeMatchingKeys?: string[]
-                   ifDeleted?: boolean,
-                   ifDataSegregation?: boolean,
-                 } = {}, ifUseGenSelParams = true,
+  async count<T, P = object>(model: string, {
+                               data,
+                               range = {},
+                               notNullKeys = [],
+                               numberKeys = [],
+                               completeMatchingKeys = [],
+                               ifDeleted = true,
+                               ifDataSegregation = false,
+                             }: {
+                               data?: P,
+                               range?: object,
+                               notNullKeys?: string[]
+                               numberKeys?: string[]
+                               completeMatchingKeys?: string[]
+                               ifDeleted?: boolean,
+                               ifDataSegregation?: boolean,
+                             } = {}, ifUseGenSelParams = true,
   ): Promise<number> {
     const arg: any = {
-      where: ifUseGenSelParams ? this.genSelParams<T, object>({
+      where: ifUseGenSelParams ? this.genSelParams<T, P>({
         data,
         range,
         notNullKeys,
