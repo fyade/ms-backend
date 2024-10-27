@@ -10,14 +10,14 @@ export class DicDataService {
   constructor(private readonly prisma: PrismaService) {
   }
 
-  async selDicDataOfType(perm: string): Promise<R> {
+  async selDicDataOfType(perm: string, label: string = ''): Promise<R<DicDataDto[]>> {
     const dicTypeDto = await this.prisma.findFirst<DicTypeDto>('sys_dic_type', { type: perm });
-    const ret = [];
+    const ret: DicDataDto[] = [];
     if (dicTypeDto) {
       const dicDataDtos = await this.prisma.findAll<DicDataDto>('sys_dic_data', {
-        data: { dicTypeId: dicTypeDto.id },
+        data: { dicTypeId: dicTypeDto.id, label: label },
         orderBy: true,
-        notNullKeys: ['dicTypeId'],
+        notNullKeys: ['label', 'dicTypeId'],
         numberKeys: ['dicTypeId'],
       });
       ret.push(...dicDataDtos);
