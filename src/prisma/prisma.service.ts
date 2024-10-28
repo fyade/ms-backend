@@ -6,6 +6,7 @@ import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
 import { PageDto } from '../common/dto/PageDto';
 import { objToCamelCase, objToSnakeCase, toCamelCase, toSnakeCase, toSnakeCases, typeOf } from '../util/BaseUtils';
+import { PageVo } from '../common/vo/PageVo';
 
 const env = currentEnv();
 const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
@@ -268,10 +269,7 @@ export class PrismaService extends PrismaClient {
                                          ifDeleted?: boolean,
                                          ifDataSegregation?: boolean,
                                        } = {}, ifUseGenSelParams = true,
-  ): Promise<{
-    list: T[]
-    total: number
-  }> {
+  ): Promise<PageVo<T>> {
     const pageNum = Number(data.pageNum);
     const pageSize = Number(data.pageSize);
     delete data.pageNum;
@@ -316,8 +314,12 @@ export class PrismaService extends PrismaClient {
     const count = await model1.count(arg2);
     return new Promise((resolve) => {
       resolve({
+        pageNum,
+        pageSize,
         list: list1,
         total: count,
+        ifFirst: pageNum === 1,
+        ifLast: Math.ceil(count / pageSize) === pageNum,
       });
     });
   }
