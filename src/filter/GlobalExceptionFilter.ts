@@ -1,14 +1,22 @@
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
-import { UnauthorizedException } from "../exception/UnauthorizedException";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { UnknownException } from '../exception/UnknownException';
 
-@Catch(UnauthorizedException)
+@Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  catch(exception: UnauthorizedException, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost) {
     // You can override the response object to customize the error response
     const response = host.switchToHttp().getResponse();
-    response.status(exception.getStatus()).json({
-      statusCode: exception.getStatus(),
-      message: exception.message,
-    });
+    try {
+      response.status(exception.getStatus()).json({
+        code: exception.getStatus(),
+        msg: exception.message,
+      });
+    } catch (e) {
+      const unknownException = new UnknownException(exception);
+      response.status(unknownException.getStatus()).json({
+        code: unknownException.getStatus(),
+        msg: unknownException.getMessage(),
+      });
+    }
   }
 }

@@ -27,6 +27,10 @@ export class AppController {
   @ApiOperation({
     summary: '获取系统版本信息',
   })
+  @Authorize({
+    permission: '-',
+    ifIgnore: true
+  })
   async getVersion(): Promise<R> {
     return await this.appService.getVersion();
   }

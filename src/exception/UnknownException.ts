@@ -1,16 +1,20 @@
-import { HttpException, Logger } from "@nestjs/common";
-import { genId } from '../util/IdUtils';
+import { HttpException, Logger } from '@nestjs/common';
+import { getCurrentUser } from '../util/baseContext';
 
 export class UnknownException extends HttpException {
-  constructor() {
+  constructor(exception?: HttpException) {
     const logger = new Logger();
-    const id = genId();
+    const id = getCurrentUser().reqId;
     super(`未知错误，请反馈管理员并提供此识别码：${id}。`, 501);
-    logger.error(`${id} ${this.message}`)
+    logger.error(`${this.message}`);
+    if (exception) {
+      logger.error(`${id}的错误信息如下：`)
+      logger.error(exception);
+    }
   }
 
   getMessage() {
-    return this.getResponse().message
+    return this.message;
   }
 
   getResponse() {

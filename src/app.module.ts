@@ -4,9 +4,6 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './module/module/main/sys-manage/user/user.module';
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
-import { AuthGuard } from './guard/authGuard';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtService } from '@nestjs/jwt';
 import { currentEnv } from '../config/config';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -33,7 +30,9 @@ import { InterfaceModule } from './module/module/algorithm/interface/interface.m
 import {
   InterfaceInterfaceGroupModule,
 } from './module/module/algorithm/interface-interface-group/interface-interface-group.module';
-import { UserGroupPermissionModule } from './module/module/algorithm/user-group-permission/user-group-permission.module';
+import {
+  UserGroupPermissionModule,
+} from './module/module/algorithm/user-group-permission/user-group-permission.module';
 import { LogAlgorithmCallModule } from './module/module/algorithm/log-algorithm-call/log-algorithm-call.module';
 import { AuthModule } from './module/auth/auth.module';
 import { CacheModule } from './module/cache/cache.module';
@@ -43,6 +42,7 @@ import { AlgorithmModule } from './module/module/algorithm/algorithm/algorithm.m
 import { SysModule } from './module/module/main/sys-manage/sys/sys.module';
 import { RoleSysModule } from './module/module/main/sys-manage/role-sys/role-sys.module';
 import { DeptSysModule } from './module/module/main/sys-manage/dept-sys/dept-sys.module';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -89,12 +89,10 @@ import { DeptSysModule } from './module/module/main/sys-manage/dept-sys/dept-sys
   ],
   providers: [
     {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
     },
-    GlobalExceptionFilter,
     AppService,
-    JwtService,
   ],
   controllers: [
     AppController,

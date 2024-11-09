@@ -21,6 +21,10 @@ export class UserLoginController {
   @ApiOperation({
     summary: '用户注册',
   })
+  @Authorize({
+    permission: '-',
+    ifIgnore: true
+  })
   async regist(@Body() dto: RegistDto): Promise<R> {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
@@ -32,6 +36,10 @@ export class UserLoginController {
   @Post('/login')
   @ApiOperation({
     summary: '用户登录',
+  })
+  @Authorize({
+    permission: '-',
+    ifIgnore: true
   })
   async login(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
     if (dto.psdType === 'b') {
@@ -49,6 +57,7 @@ export class UserLoginController {
   @Authorize({
     permission: 'system:user:adminlogin',
     label: '管理员登录',
+    ifAdminLogin: true
   })
   async adminLogin(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
     if (dto.psdType === 'b') {

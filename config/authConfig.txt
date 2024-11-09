@@ -3,5 +3,3 @@ export const jwtConstants = {
   expireTime: 3600,
 };
 export const SECRET_KEY = ''; // 你的盐，注意需与前端保持一致
-export const reqWhiteList = ['/sys/user/regist', '/sys/user/login', '/sys/base/v'];
-export const adminLoginUrl = '/sys/user/adminlogin';

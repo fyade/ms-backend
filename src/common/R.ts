@@ -1,5 +1,6 @@
 import { HTTP } from './Enum';
 import { time, timestamp as timeStamp } from '../util/TimeUtils';
+import { getCurrentUser } from '../util/baseContext';
 
 export class R<T = any> {
   public code: number;
@@ -7,6 +8,7 @@ export class R<T = any> {
   public msg: string;
   private time: Date;
   private timestamp: number;
+  private reqId: string;
 
   constructor(code: number, data: any, msg: string) {
     this.code = code;
@@ -14,6 +16,7 @@ export class R<T = any> {
     this.msg = msg;
     this.time = time();
     this.timestamp = timeStamp(time());
+    this.reqId = getCurrentUser().reqId;
   }
 
   static ok(data: any = true) {

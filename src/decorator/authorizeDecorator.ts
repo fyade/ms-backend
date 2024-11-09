@@ -1,6 +1,8 @@
 import { PreAuthorize, PreAuthorizeParams } from './customDecorator';
-import { applyDecorators, UseGuards } from '@nestjs/common';
-import { PermissionsGuard } from '../guard/permissionsGuard';
+import { applyDecorators, UseGuards, UseInterceptors } from '@nestjs/common';
+import { AuthGuard } from '../guard/authGuard';
+import { PermissionGuard } from '../guard/permissionGuard';
+import { ResponseInterceptor } from '../interceptor/responseInterceptor';
 
 export function Authorize(param: string | PreAuthorizeParams) {
   let param_;
@@ -13,6 +15,8 @@ export function Authorize(param: string | PreAuthorizeParams) {
   }
   return applyDecorators(
     PreAuthorize(param_),
-    UseGuards(PermissionsGuard),
+    UseGuards(AuthGuard),
+    UseGuards(PermissionGuard),
+    UseInterceptors(ResponseInterceptor),
   );
 }

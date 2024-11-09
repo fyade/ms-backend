@@ -7,6 +7,7 @@ import { UnknownException } from '../exception/UnknownException';
 import { PageDto } from '../common/dto/PageDto';
 import { objToCamelCase, objToSnakeCase, toCamelCase, toSnakeCase, toSnakeCases, typeOf } from '../util/BaseUtils';
 import { PageVo } from '../common/vo/PageVo';
+import { deepClone } from '../util/ObjectUtils';
 
 const env = currentEnv();
 const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
@@ -272,12 +273,13 @@ export class PrismaService extends PrismaClient {
   ): Promise<PageVo<T>> {
     const pageNum = Number(data.pageNum);
     const pageSize = Number(data.pageSize);
-    delete data.pageNum;
-    delete data.pageSize;
+    const data2 = deepClone(data);
+    delete data2.pageNum;
+    delete data2.pageSize;
     const publicData = this.defaultSelArg({ ifDeleted, ifDataSegregation }).where;
     const arg: any = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
-        data,
+        data: data2,
         orderBy,
         range,
         notNullKeys,
@@ -287,7 +289,7 @@ export class PrismaService extends PrismaClient {
         ifDataSegregation,
       }) : {
         ...publicData,
-        ...(objToSnakeCase(data) || {}),
+        ...(objToSnakeCase(data2) || {}),
       },
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
@@ -537,14 +539,15 @@ export class PrismaService extends PrismaClient {
                     ifDeleted?: boolean,
                   } = {},
   ): Promise<T> {
+    const data2 = deepClone(data);
     if (!ifCustomizeId) {
-      delete data.id;
+      delete data2.id;
     }
     const publicData = this.defaultInsArg({ ifCreateBy, ifUpdateBy, ifCreateTime, ifUpdateTime, ifDeleted }).data;
     const arg = {
       data: {
         ...publicData,
-        ...(objToSnakeCase(data) || {}),
+        ...(objToSnakeCase(data2) || {}),
       },
     };
     const retData = await this.getModel(model).create(arg);
@@ -613,14 +616,17 @@ export class PrismaService extends PrismaClient {
                       } = {},
   ): Promise<T> {
     const id = data.id;
-    delete data.id;
+    const data2 = deepClone(data);
+    delete data2.id;
+    const publicData = this.defaultUpdArg({ ifUpdateBy, ifUpdateTime, ifDeleted });
     const arg = {
       where: {
-        ...this.defaultUpdArg({ ifUpdateBy, ifUpdateTime, ifDeleted }).where,
+        ...publicData.where,
         id: id,
       },
       data: {
-        ...objToSnakeCase(data),
+        ...objToSnakeCase(data2),
+        ...publicData.data,
       },
     };
     const retData = await this.getModel(model).update(arg);

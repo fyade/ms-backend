@@ -1,4 +1,4 @@
-import { UserDto } from '../module/main/sys-manage/user/dto';
+import { UserDto, UserDto2 } from '../module/main/sys-manage/user/dto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { base } from '../../util/base';
 import { Injectable } from '@nestjs/common';
@@ -7,9 +7,11 @@ import { LogAlgorithmCallDto } from '../module/algorithm/log-algorithm-call/dto'
 import { getIpInfoFromRequest } from '../../util/RequestUtils';
 import { UserGroupPermissionDto } from '../module/algorithm/user-group-permission/dto';
 import { Exception } from '../../exception/Exception';
-import { Request } from 'express';
 import { InterfaceDto } from '../module/algorithm/interface/dto';
 import { timestamp } from '../../util/TimeUtils';
+import { Request } from 'express';
+import { LogOperationDto } from '../module/main/sys-log/log-operation/dto';
+import { getCurrentUser } from '../../util/baseContext';
 
 @Injectable()
 export class AuthService {
@@ -488,5 +490,20 @@ export class AuthService {
       order by sugp.order_num;
     `;
     return userSFPermissions;
+  }
+
+  /**
+   * 插入操作记录
+   * @param permission
+   * @param request
+   * @param ifSuccess
+   * @param remark
+   */
+  async insLogOperation(permission: string, request: Request, ifSuccess: boolean, remark: string = '') {
+    const user = getCurrentUser().user;
+    await this.prisma.$queryRaw`
+      insert into log_operation (req_id, perms, user_id, req_param, old_value, operate_type, if_success, remark, create_time)
+      values (${getCurrentUser().reqId}, ${permission}, ${user ? user.userid : '???'}, ${JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${ifSuccess?base.Y:base.N}, ${remark}, ${new Date(timestamp())});
+    `;
   }
 }

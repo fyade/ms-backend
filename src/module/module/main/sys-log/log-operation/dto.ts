@@ -7,6 +7,8 @@ import { ApiProperty } from '@nestjs/swagger';
 export class LogOperationDto extends BaseDto {
   id: number;
 
+  reqId: string;
+
   perms: string;
 
   userId: string;
@@ -25,6 +27,9 @@ export class LogOperationDto extends BaseDto {
 export class LogOperationSelListDto extends PageDto {
   @ApiProperty({ description: '主键id', required: false })
   id: number;
+
+  @ApiProperty({ description: '请求id', required: false })
+  reqId: string;
 
   @ApiProperty({ description: '权限标识', required: false })
   perms: string;
@@ -49,6 +54,9 @@ export class LogOperationSelListDto extends PageDto {
 }
 
 export class LogOperationSelAllDto {
+  @ApiProperty({ description: '请求id', required: false })
+  reqId: string;
+
   @ApiProperty({ description: '权限标识', required: false })
   perms: string;
 
@@ -72,6 +80,10 @@ export class LogOperationSelAllDto {
 }
 
 export class LogOperationInsOneDto {
+  @ApiProperty({ description: '请求id', required: true })
+  @IsNotEmpty({ message: '请求id不能为空' })
+  reqId: string;
+
   @ApiProperty({ description: '权限标识', required: true })
   @IsNotEmpty({ message: '权限标识不能为空' })
   perms: string;
