@@ -14,6 +14,47 @@ const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../
 
 @Injectable()
 export class PrismaService extends PrismaClient {
+  constructor() {
+    super({
+      datasources: {
+        db: {
+          url: getMysqlUrlFromEnv(env),
+        },
+      },
+      log: env.mode === base.DEV ? ['query', 'info', 'warn'] : [],
+    });
+    // 使用中间件对查询结果中的Bigint类型进行序列化
+    super.$use(async (params, next) => {
+      const t1 = Date.now();
+      const result = await next(params);
+      const t2 = Date.now();
+      if ([base.DEV, base.TEST].includes(currentEnv().mode)) {
+        console.info(`Query ${params.model}.${params.action} took ${t2 - t1}ms`);
+      }
+      return this.serialize(result);
+    });
+  }
+
+  private serialize(obj) {
+    if (typeOf(obj) === 'bigint') {
+      return parseInt(`${obj}`);
+    } else if (typeOf(obj) === 'object') {
+      return JSON.parse(
+        JSON.stringify(obj, (key, value) => {
+          if (typeOf(value) === 'bigint') {
+            return parseInt(`${value}`);
+          }
+          return value;
+        }),
+      );
+    } else if (typeOf(obj) === 'array') {
+      return obj.map(item => {
+        return this.serialize(item);
+      });
+    }
+    return obj;
+  }
+
   private defaultSelArg = ({
                              ifDeleted = true,
                              ifDataSegregation = false,
@@ -68,14 +109,17 @@ export class PrismaService extends PrismaClient {
                              ifUpdateBy = true,
                              ifUpdateTime = true,
                              ifDeleted = true,
+                             ifDataSegregation = false,
                            }: {
                              ifUpdateBy?: boolean,
                              ifUpdateTime?: boolean,
                              ifDeleted?: boolean,
+                             ifDataSegregation?: boolean,
                            } = {},
   ) => {
     const retObj = {
       where: {
+        create_by: getCurrentUser().user?.userid,
         deleted: base.N,
       },
       data: {
@@ -86,11 +130,18 @@ export class PrismaService extends PrismaClient {
     if (!ifUpdateBy) delete retObj.data.update_by;
     if (!ifUpdateTime) delete retObj.data.update_time;
     if (!ifDeleted) delete retObj.where.deleted;
+    if (!ifDataSegregation) delete retObj.where.create_by;
     return retObj;
   };
-  private defaultDelArg = () => {
-    return {
+  private defaultDelArg = ({
+                             ifDataSegregation = false,
+                           }: {
+                             ifDataSegregation?: boolean
+                           } = {},
+  ) => {
+    const retObj = {
       where: {
+        create_by: getCurrentUser().user?.userid,
         deleted: base.N,
       },
       data: {
@@ -99,48 +150,9 @@ export class PrismaService extends PrismaClient {
         deleted: base.Y,
       },
     };
+    if (!ifDataSegregation) delete retObj.where.create_by;
+    return retObj;
   };
-
-  constructor() {
-    super({
-      datasources: {
-        db: {
-          url: getMysqlUrlFromEnv(env),
-        },
-      },
-      log: env.mode === base.DEV ? ['query', 'info', 'warn'] : [],
-    });
-    // 使用中间件对查询结果中的Bigint类型进行序列化
-    super.$use(async (params, next) => {
-      const t1 = Date.now();
-      const result = await next(params);
-      const t2 = Date.now();
-      if ([base.DEV, base.TEST].includes(currentEnv().mode)) {
-        console.info(`Query ${params.model}.${params.action} took ${t2 - t1}ms`);
-      }
-      return this.serialize(result);
-    });
-  }
-
-  private serialize(obj) {
-    if (typeOf(obj) === 'bigint') {
-      return parseInt(`${obj}`);
-    } else if (typeOf(obj) === 'object') {
-      return JSON.parse(
-        JSON.stringify(obj, (key, value) => {
-          if (typeOf(value) === 'bigint') {
-            return parseInt(`${value}`);
-          }
-          return value;
-        }),
-      );
-    } else if (typeOf(obj) === 'array') {
-      return obj.map(item => {
-        return this.serialize(item);
-      });
-    }
-    return obj;
-  }
 
   private getModel(model: string): any {
     const modelInstance = this[model];
@@ -269,7 +281,8 @@ export class PrismaService extends PrismaClient {
                                          completeMatchingKeys?: string[],
                                          ifDeleted?: boolean,
                                          ifDataSegregation?: boolean,
-                                       } = {}, ifUseGenSelParams = true,
+                                       } = {},
+                                       ifUseGenSelParams = true,
   ): Promise<PageVo<T>> {
     const pageNum = Number(data.pageNum);
     const pageSize = Number(data.pageSize);
@@ -357,7 +370,8 @@ export class PrismaService extends PrismaClient {
                                  completeMatchingKeys?: string[]
                                  ifDeleted?: boolean,
                                  ifDataSegregation?: boolean,
-                               } = {}, ifUseGenSelParams = true,
+                               } = {},
+                               ifUseGenSelParams = true,
   ): Promise<T[]> {
     const arg: any = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
@@ -492,7 +506,8 @@ export class PrismaService extends PrismaClient {
                                completeMatchingKeys?: string[]
                                ifDeleted?: boolean,
                                ifDataSegregation?: boolean,
-                             } = {}, ifUseGenSelParams = true,
+                             } = {},
+                             ifUseGenSelParams = true,
   ): Promise<number> {
     const arg: any = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
@@ -604,21 +619,24 @@ export class PrismaService extends PrismaClient {
    * @param ifUpdateBy
    * @param ifUpdateTime
    * @param ifDeleted
+   * @param ifDataSegregation
    */
   async updateById<T>(model: string, data?: any, {
                         ifUpdateBy = true,
                         ifUpdateTime = true,
                         ifDeleted = true,
+                        ifDataSegregation = false,
                       }: {
                         ifUpdateBy?: boolean,
                         ifUpdateTime?: boolean,
                         ifDeleted?: boolean,
+                        ifDataSegregation?: boolean
                       } = {},
   ): Promise<T> {
     const id = data.id;
     const data2 = deepClone(data);
     delete data2.id;
-    const publicData = this.defaultUpdArg({ ifUpdateBy, ifUpdateTime, ifDeleted });
+    const publicData = this.defaultUpdArg({ ifUpdateBy, ifUpdateTime, ifDeleted, ifDataSegregation });
     const arg = {
       where: {
         ...publicData.where,
@@ -629,8 +647,12 @@ export class PrismaService extends PrismaClient {
         ...publicData.data,
       },
     };
-    const retData = await this.getModel(model).update(arg);
-    return new Promise(resolve => resolve(objToCamelCase(retData)));
+    try {
+      const retData = await this.getModel(model).update(arg);
+      return new Promise(resolve => resolve(objToCamelCase(retData)));
+    } catch (e) {
+      return new Promise(resolve => resolve(JSON.parse(JSON.stringify({}))));
+    }
   }
 
   /**
@@ -640,20 +662,23 @@ export class PrismaService extends PrismaClient {
    * @param ifUpdateBy
    * @param ifUpdateTime
    * @param ifDeleted
+   * @param ifDataSegregation
    */
   async updateMany<T>(model: string, data?: any[], {
                         ifUpdateBy = true,
                         ifUpdateTime = true,
                         ifDeleted = true,
+                        ifDataSegregation = false,
                       }: {
                         ifUpdateBy?: boolean,
                         ifUpdateTime?: boolean,
                         ifDeleted?: boolean,
+                        ifDataSegregation?: boolean
                       } = {},
   ): Promise<T[]> {
     const retArr: T[] = [];
     for (let i = 0; i < data.length; i++) {
-      const ret = await this.updateById<T>(model, data[i], { ifUpdateBy, ifUpdateTime, ifDeleted });
+      const ret = await this.updateById<T>(model, data[i], { ifUpdateBy, ifUpdateTime, ifDeleted, ifDataSegregation });
       retArr.push(ret);
     }
     return new Promise(resolve => resolve(retArr));
@@ -663,17 +688,24 @@ export class PrismaService extends PrismaClient {
    * 批量删除
    * @param model
    * @param ids
+   * @param ifDataSegregation
    */
-  async deleteById<T>(model: string, ids: number[] | string[]): Promise<{ count: number }> {
+  async deleteById<T>(model: string, ids: number[] | string[], {
+                        ifDataSegregation = false,
+                      }: {
+                        ifDataSegregation?: boolean
+                      } = {},
+  ): Promise<{ count: number }> {
+    const publicData = this.defaultDelArg({ ifDataSegregation });
     const arg = {
       where: {
-        ...this.defaultDelArg().where,
+        ...publicData.where,
         id: {
           in: ids,
         },
       },
       data: {
-        ...this.defaultDelArg().data,
+        ...publicData.data,
       },
     };
     return this.getModel(model).updateMany(arg);
@@ -684,17 +716,24 @@ export class PrismaService extends PrismaClient {
    * @param model
    * @param key
    * @param values
+   * @param ifDataSegregation
    */
-  async delete<T>(model: string, key: string, values: any[]): Promise<{ count: number }> {
+  async delete<T>(model: string, key: string, values: any[], {
+                    ifDataSegregation = false,
+                  }: {
+                    ifDataSegregation?: boolean
+                  } = {},
+  ): Promise<{ count: number }> {
+    const publicData = this.defaultDelArg({ ifDataSegregation });
     const arg = {
       where: {
-        ...this.defaultDelArg().where,
+        ...publicData.where,
         [key]: {
           in: values,
         },
       },
       data: {
-        ...this.defaultDelArg().data,
+        ...publicData.data,
       },
     };
     return this.getModel(model).updateMany(arg);
