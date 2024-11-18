@@ -3,7 +3,7 @@ import { RedisService } from '../../redis/redis.service';
 import { generateToken, verifyToken } from '../../util/AuthUtils';
 import { randomUUID } from '../../util/IdUtils';
 import { UserDto } from '../module/main/sys-manage/user/dto';
-import { jwtConstants } from '../../../config/authConfig';
+import { jwtConstants } from '../../../config/config';
 
 @Injectable()
 export class CacheTokenService {

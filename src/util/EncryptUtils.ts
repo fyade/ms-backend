@@ -1,4 +1,4 @@
-import { SECRET_KEY } from '../../config/authConfig';
+import { SECRET_KEY } from '../../config/config';
 
 const bcrypt = require('bcryptjs');
 const CryptoJS = require('crypto-js');

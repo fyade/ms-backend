@@ -3,6 +3,13 @@ import { base } from '../src/util/base';
 
 export const currentVersion = '0.0.01'
 
+export const jwtConstants = {
+  secret: '',
+  expireTime: 3600,
+};
+export const SECRET_KEY = '' // 前端-后端接口敏感信息加密盐，注意需与前端保持一致
+export const SECRET_KEY_HD_DB = '' // 后端-数据库敏感信息加密盐
+
 export const currentEnv = () => {
   const env = process.env.NODE_ENV || base.DEV;
   return config[env];

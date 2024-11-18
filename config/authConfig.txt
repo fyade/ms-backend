@@ -1,5 +1,0 @@
-export const jwtConstants = {
-  secret: '',
-  expireTime: 3600,
-};
-export const SECRET_KEY = ''; // 你的盐，注意需与前端保持一致
