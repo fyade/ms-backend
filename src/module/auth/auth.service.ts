@@ -499,11 +499,11 @@ export class AuthService {
    * @param ifSuccess
    * @param remark
    */
-  async insLogOperation(permission: string, request: Request, ifSuccess: boolean, remark: string = '') {
+  async insLogOperation(permission: string, request: Request, ifSuccess: boolean | string, remark: string = '') {
     const user = getCurrentUser().user;
     await this.prisma.$queryRaw`
       insert into log_operation (req_id, perms, user_id, req_param, old_value, operate_type, if_success, remark, create_time)
-      values (${getCurrentUser().reqId}, ${permission}, ${user ? user.userid : '???'}, ${JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${ifSuccess?base.Y:base.N}, ${remark}, ${new Date(timestamp())});
+      values (${getCurrentUser().reqId}, ${permission}, ${user ? user.userid : '???'}, ${JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${typeof ifSuccess==='boolean' ? ifSuccess ? base.Y : base.N : ifSuccess}, ${remark}, ${new Date(timestamp())});
     `;
   }
 }

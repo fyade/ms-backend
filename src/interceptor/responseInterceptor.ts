@@ -1,5 +1,4 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { catchError, Observable, tap } from 'rxjs';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
@@ -24,7 +23,7 @@ export class ResponseInterceptor implements NestInterceptor {
           context.getHandler(),
         );
         const { permission } = authorizeParams;
-        await this.authService.insLogOperation(permission, request, response.code === 200);
+        await this.authService.insLogOperation(permission, request, response ? response.code === 200 : 'O');
       }),
       catchError(async (error) => {
         const request: Request = context.switchToHttp().getRequest();
