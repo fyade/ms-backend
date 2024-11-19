@@ -76,16 +76,20 @@ export class LogUserLoginInsOneDto {
   @IsNotEmpty({ message: '用户id不能为空' })
   userId: string;
 
-  @ApiProperty({ description: '登录ip', required: false })
+  @ApiProperty({ description: '登录ip', required: true })
+  @IsNotEmpty({ message: '登录ip不能为空' })
   loginIp: string;
 
-  @ApiProperty({ description: '登录地', required: false })
+  @ApiProperty({ description: '登录地', required: true })
+  @IsNotEmpty({ message: '登录地不能为空' })
   loginPosition: string;
 
-  @ApiProperty({ description: '登录浏览器', required: false })
+  @ApiProperty({ description: '登录浏览器', required: true })
+  @IsNotEmpty({ message: '登录浏览器不能为空' })
   loginBrowser: string;
 
-  @ApiProperty({ description: '登录系统', required: false })
+  @ApiProperty({ description: '登录系统', required: true })
+  @IsNotEmpty({ message: '登录系统不能为空' })
   loginOs: string;
 
   @ApiProperty({ description: '是否成功', required: true })

@@ -39,6 +39,7 @@ import { AlgorithmModule } from './module/module/algorithm/algorithm/algorithm.m
 import { SysModule } from './module/module/main/sys-manage/sys/sys.module';
 import { RoleSysModule } from './module/module/main/sys-manage/role-sys/role-sys.module';
 import { DeptSysModule } from './module/module/main/sys-manage/dept-sys/dept-sys.module';
+import { MenuIpWhiteListModule } from './module/module/main/sys-manage/menu-ip-white-list/menu-ip-white-list.module';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { DeptSysModule } from './module/module/main/sys-manage/dept-sys/dept-sys
     SysModule,
     RoleSysModule,
     DeptSysModule,
+    MenuIpWhiteListModule,
   ],
   providers: [
     {

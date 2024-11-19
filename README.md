@@ -129,6 +129,14 @@ $ nest g s module/name --no-spec # 创建不带测试文件的服务层
 $ nest g pipe validation pipe # 管道
 ```
 
+## 注意 NOTICE
+
+菜单相关常量：
+* mm表示菜单
+* mc表示组件
+* ma表示接口组
+* mb表示接口
+
 ## 许可证 License
 
 [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.txt)

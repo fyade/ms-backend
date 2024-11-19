@@ -12,8 +12,9 @@ export class LogUserLoginService {
     const res = await this.prisma.findPage<LogUserLoginDto, LogUserLoginSelListDto>('log_user_login', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'ifSuccess'],
+      notNullKeys: ['userId', 'loginIp', 'loginPosition', 'loginBrowser', 'loginOs', 'ifSuccess'],
       numberKeys: [],
+      completeMatchingKeys: [],
       ifDeleted: false,
     });
     return R.ok(res);
@@ -31,8 +32,9 @@ export class LogUserLoginService {
       data: dto,
       orderBy,
       range,
-      notNullKeys: ['userId', 'ifSuccess'],
+      notNullKeys: ['userId', 'loginIp', 'loginPosition', 'loginBrowser', 'loginOs', 'ifSuccess'],
       numberKeys: [],
+      completeMatchingKeys: [],
       ifDeleted: false,
     });
     return R.ok(res);

@@ -65,10 +65,12 @@ export class LogAlgorithmCallInsOneDto {
   @IsNotEmpty({ message: '用户id不能为空' })
   userId: string;
 
-  @ApiProperty({ description: '请求ip', required: false })
+  @ApiProperty({ description: '请求ip', required: true })
+  @IsNotEmpty({ message: '请求ip不能为空' })
   callIp: string;
 
-  @ApiProperty({ description: '是否成功', required: false })
+  @ApiProperty({ description: '是否成功', required: true })
+  @IsNotEmpty({ message: '是否成功不能为空' })
   ifSuccess: string;
 
   @ApiProperty({ description: '备注', required: false })

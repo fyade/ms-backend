@@ -12,6 +12,7 @@ import { ParameterException } from '../exception/ParameterException';
 import { LoginDto } from '../module/module/main/sys-manage/user/dto';
 import { AlgorithmDto } from '../module/module/algorithm/algorithm/dto';
 import { Request } from 'express';
+import { IpNotInWhiteListException } from '../exception/IpNotInWhiteListException';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -86,6 +87,14 @@ export class PermissionGuard implements CanActivate {
           return true;
         }
         await this.cachePermissionService.setPublicPermissionInCache(permission, base.N);
+      }
+      // 请求ip是否在此接口的ip白名单中
+      const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);
+      if (!ifIpInWhiteList) {
+        const b = await this.authService.hasTopAdminPermission(user.userid);
+        if (!b) {
+          throw new IpNotInWhiteListException();
+        }
       }
       // 用户是否有当前接口的权限
       if (user) {
