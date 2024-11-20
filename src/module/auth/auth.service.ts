@@ -195,7 +195,7 @@ export class AuthService {
     if (ipInfoFromRequest.ip === '::1' && (whiteList_ip.includes('localhost') || whiteList_ip.includes('127.0.0.1'))) {
       return true;
     }
-    const whiteList_host = ips.filter(item => item.fromType === T_HOST).map(item => item.whiteList)
+    const whiteList_host = ips.filter(item => item.fromType === T_HOST).map(item => item.whiteList);
     if (whiteList_host.includes(ipInfoFromRequest.host)) {
       return true;
     }
