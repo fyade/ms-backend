@@ -14,7 +14,7 @@ import {
 import { PageVo } from '../../../../../common/vo/PageVo';
 import { PageDto } from '../../../../../common/dto/PageDto';
 import { randomUUID } from '../../../../../util/IdUtils';
-import { getCurrentUser } from '../../../../../util/baseContext';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 const SparkMD5 = require('spark-md5');
 
@@ -22,7 +22,10 @@ const SparkMD5 = require('spark-md5');
 export class FileUploadService {
   private env: any;
 
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly baseContextService: BaseContextService,
+  ) {
     this.env = currentEnv();
   }
 
@@ -114,8 +117,8 @@ export class FileUploadService {
         if_first: base.Y,
         if_finished: base.N,
         module: module,
-        create_by: getCurrentUser().user.userid,
-        update_by: getCurrentUser().user.userid,
+        create_by: this.baseContextService.getUserData().user.userid,
+        update_by: this.baseContextService.getUserData().user.userid,
       };
       if (sameFile) {
         // 如果已有相同文件，直接存库
@@ -123,7 +126,7 @@ export class FileUploadService {
         fillObj.file_size = BigInt(sameFile.file_size);
         fillObj.if_first = base.N;
         fillObj.if_finished = base.Y;
-        fillObj.create_by = getCurrentUser().user.userid;
+        fillObj.create_by = this.baseContextService.getUserData().user.userid;
         await this.prisma.tbl_file.create({
           data: fillObj,
         });
@@ -186,8 +189,8 @@ export class FileUploadService {
           if_first: base.N,
           if_merge: base.Y,
           if_finished: base.Y,
-          create_by: getCurrentUser().user.userid,
-          update_by: getCurrentUser().user.userid,
+          create_by: this.baseContextService.getUserData().user.userid,
+          update_by: this.baseContextService.getUserData().user.userid,
         };
         await this.prisma.tbl_file.create({
           data: fillObj,
@@ -206,8 +209,8 @@ export class FileUploadService {
           if_first: base.N,
           if_merge: base.N,
           if_finished: base.N,
-          create_by: getCurrentUser().user.userid,
-          update_by: getCurrentUser().user.userid,
+          create_by: this.baseContextService.getUserData().user.userid,
+          update_by: this.baseContextService.getUserData().user.userid,
         };
         await this.prisma.tbl_file.create({
           data: fillObj,
@@ -239,8 +242,8 @@ export class FileUploadService {
         if_first: base.Y,
         if_merge: base.N,
         if_finished: base.N,
-        create_by: getCurrentUser().user.userid,
-        update_by: getCurrentUser().user.userid,
+        create_by: this.baseContextService.getUserData().user.userid,
+        update_by: this.baseContextService.getUserData().user.userid,
       };
       await this.prisma.tbl_file.create({
         data: fillObj,
@@ -266,7 +269,7 @@ export class FileUploadService {
           chunk_name: chunkName,
           chunk_index: dto.chunkIndex,
           if_finished: base.N,
-          create_by: getCurrentUser().user.userid,
+          create_by: this.baseContextService.getUserData().user.userid,
         },
       });
       // 保存文件

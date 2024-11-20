@@ -1,20 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { currentEnv, getMysqlUrlFromEnv } from '../../config/config';
 import { base } from '../util/base';
-import { getCurrentUser } from '../util/baseContext';
 import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
 import { PageDto } from '../common/dto/PageDto';
-import { objToCamelCase, objToSnakeCase, toCamelCase, toSnakeCase, toSnakeCases, typeOf } from '../util/BaseUtils';
+import { objToCamelCase, objToSnakeCase, toSnakeCase, toSnakeCases, typeOf } from '../util/BaseUtils';
 import { PageVo } from '../common/vo/PageVo';
 import { deepClone } from '../util/ObjectUtils';
+import { BaseContextService } from '../module/base-context/base-context.service';
 
 const env = currentEnv();
 const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
 
 @Injectable()
 export class PrismaService extends PrismaClient {
-  constructor() {
+  constructor(
+    private readonly baseContextService: BaseContextService,
+  ) {
     super({
       datasources: {
         db: {
@@ -65,7 +67,7 @@ export class PrismaService extends PrismaClient {
   ) => {
     const retObj = {
       where: {
-        create_by: getCurrentUser().user?.userid,
+        create_by: this.baseContextService.getUserData().user?.userid,
         deleted: base.N,
       },
     };
@@ -87,7 +89,7 @@ export class PrismaService extends PrismaClient {
                              ifDeleted?: boolean,
                            } = {},
   ) => {
-    const userid = getCurrentUser().user?.userid;
+    const userid = this.baseContextService.getUserData().user?.userid;
     const time1 = time();
     const retObj = {
       data: {
@@ -119,11 +121,11 @@ export class PrismaService extends PrismaClient {
   ) => {
     const retObj = {
       where: {
-        create_by: getCurrentUser().user?.userid,
+        create_by: this.baseContextService.getUserData().user?.userid,
         deleted: base.N,
       },
       data: {
-        update_by: getCurrentUser().user?.userid,
+        update_by: this.baseContextService.getUserData().user?.userid,
         update_time: time(),
       },
     };
@@ -141,11 +143,11 @@ export class PrismaService extends PrismaClient {
   ) => {
     const retObj = {
       where: {
-        create_by: getCurrentUser().user?.userid,
+        create_by: this.baseContextService.getUserData().user?.userid,
         deleted: base.N,
       },
       data: {
-        update_by: getCurrentUser().user?.userid,
+        update_by: this.baseContextService.getUserData().user?.userid,
         update_time: time(),
         deleted: base.Y,
       },
@@ -157,7 +159,7 @@ export class PrismaService extends PrismaClient {
   private getModel(model: string): any {
     const modelInstance = this[model];
     if (!modelInstance) {
-      throw new UnknownException();
+      throw new UnknownException(this.baseContextService.getUserData().reqId);
     }
     return modelInstance;
   }

@@ -1,12 +1,17 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { currentEnv } from '../config/config';
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
-import { ServeStaticModule } from '@nestjs/serve-static';
+import { GlobalMiddleware } from './middleware/golbal.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './module/auth/auth.module';
+import { CacheModule } from './module/cache/cache.module';
+import { BaseContextModule } from './module/base-context/base-context.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { RedisModule } from './redis/redis.module';
 import { UserModule } from './module/module/main/sys-manage/user/user.module';
 import { FileUploadModule } from './module/module/main/common/file-upload/file-upload.module';
 import { SmsModule } from './module/module/main/common/sms/sms.module';
@@ -25,14 +30,11 @@ import { UserGroupModule } from './module/module/algorithm/user-group/user-group
 import { UserDeptModule } from './module/module/main/sys-manage/user-dept/user-dept.module';
 import { InterfaceGroupModule } from './module/module/algorithm/interface-group/interface-group.module';
 import { DeptPermissionModule } from './module/module/main/sys-manage/dept-permission/dept-permission.module';
-import { RedisModule } from './redis/redis.module';
 import { UserUserGroupModule } from './module/module/algorithm/user-user-group/user-user-group.module';
 import { InterfaceModule } from './module/module/algorithm/interface/interface.module';
 import { InterfaceInterfaceGroupModule } from './module/module/algorithm/interface-interface-group/interface-interface-group.module';
 import { UserGroupPermissionModule } from './module/module/algorithm/user-group-permission/user-group-permission.module';
 import { LogAlgorithmCallModule } from './module/module/algorithm/log-algorithm-call/log-algorithm-call.module';
-import { AuthModule } from './module/auth/auth.module';
-import { CacheModule } from './module/cache/cache.module';
 import { OnlineUserModule } from './module/module/main/sys-monitor/online-user/online-user.module';
 import { LogOperationModule } from './module/module/main/sys-log/log-operation/log-operation.module';
 import { AlgorithmModule } from './module/module/algorithm/algorithm/algorithm.module';
@@ -50,10 +52,11 @@ import { MenuIpWhiteListModule } from './module/module/main/sys-manage/menu-ip-w
       rootPath: currentEnv().file.fileUploadPath,
       serveRoot: currentEnv().staticRoot,
     }),
-    PrismaModule,
-    RedisModule,
     AuthModule,
     CacheModule,
+    BaseContextModule,
+    PrismaModule,
+    RedisModule,
     FileUploadModule,
     SmsModule,
     UserModule,
@@ -97,4 +100,9 @@ import { MenuIpWhiteListModule } from './module/module/main/sys-manage/menu-ip-w
   ],
 })
 export class AppModule {
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer
+  //     .apply(GlobalMiddleware)
+  //     .forRoutes('*');
+  // }
 }

@@ -1,11 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { UnauthorizedException } from '../exception/UnauthorizedException';
-import { clearCurrentUser, setCurrentUser } from '../util/baseContext';
 import { UserDto2 } from '../module/module/main/sys-manage/user/dto';
 import { CacheTokenService } from '../module/cache/cache.token.service';
 import { PRE_AUTHORIZE_KEY, PreAuthorizeParams } from '../decorator/customDecorator';
 import { Reflector } from '@nestjs/core';
 import { AuthService } from '../module/auth/auth.service';
+import { Request } from 'express';
+import { genCurrentUser } from '../module/base-context/baseContext';
+import { BaseContextService } from '../module/base-context/base-context.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -13,6 +15,7 @@ export class AuthGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly cacheTokenService: CacheTokenService,
     private readonly authService: AuthService,
+    private readonly baseContextService: BaseContextService,
   ) {
   }
 
@@ -22,8 +25,8 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
     );
     const { ifIgnore, ifAdminLogin, permission } = authorizeParams;
-    clearCurrentUser();
-    const request = context.switchToHttp().getRequest();
+    // clearCurrentUser();
+    const request: Request = context.switchToHttp().getRequest();
     // request.body = {
     //   reqBody: request.body,
     // };
@@ -36,7 +39,7 @@ export class AuthGuard implements CanActivate {
         if (decoded) {
           // Token is valid and not expired
           // request.body.user = decoded;
-          await setCurrentUser(decoded as UserDto2, token);
+          this.baseContextService.setUserData(genCurrentUser(decoded as UserDto2, token));
         } else {
           // Token is invalid or expired
           await this.authService.insLogOperation(permission, request, false, '401');

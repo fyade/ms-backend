@@ -3,14 +3,15 @@ import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
 import { UserUserGroupDto, UserUserGroupSelListDto, UserUserGroupSelAllDto, UserUserGroupInsOneDto, UserUserGroupUpdOneDto, UserUserGroupUpdUUGDtp, UserUserGroupUpdUGUDtp } from './dto';
 import { AuthService } from '../../../auth/auth.service';
-import { getCurrentUser } from '../../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../../exception/UserPermissionDeniedException';
+import { BaseContextService } from '../../../base-context/base-context.service';
 
 @Injectable()
 export class UserUserGroupService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
+    private readonly baseContextService: BaseContextService,
   ) {
   }
 
@@ -47,7 +48,7 @@ export class UserUserGroupService {
   }
 
   async updUserUserGroupUUG(dto: UserUserGroupUpdUUGDtp): Promise<R> {
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
     const allUserGroups = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', { data: { userId: dto.userId } });
@@ -73,7 +74,7 @@ export class UserUserGroupService {
     const userIds = dto.userId.filter(item => allUserIdsOfThisUserGroup.indexOf(item) === -1);
     for (let i = 0; i < userIds.length; i++) {
       const userId = userIds[i];
-      if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, userId)) {
+      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().user.userid, userId)) {
         throw new UserPermissionDeniedException();
       }
       data.push({

@@ -10,14 +10,15 @@ import { Exception } from '../../exception/Exception';
 import { InterfaceDto } from '../module/algorithm/interface/dto';
 import { timestamp } from '../../util/TimeUtils';
 import { Request } from 'express';
-import { getCurrentUser } from '../../util/baseContext';
 import { MenuDto } from '../module/main/sys-manage/menu/dto';
 import { MenuIpWhiteListDto } from '../module/main/sys-manage/menu-ip-white-list/dto';
+import { BaseContextService } from '../base-context/base-context.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly baseContextService: BaseContextService,
   ) {
   }
 
@@ -573,11 +574,11 @@ export class AuthService {
    * @param remark
    */
   async insLogOperation(permission: string, request: Request, ifSuccess: boolean | string, remark: string = '') {
-    const user = getCurrentUser().user;
+    const user = this.baseContextService.getUserData().user;
     const ipInfoFromRequest = getIpInfoFromRequest(request);
     await this.prisma.$queryRaw`
       insert into log_operation (req_id, call_ip, host_name, perms, user_id, req_param, old_value, operate_type, if_success, remark, create_time)
-      values (${getCurrentUser().reqId}, ${ipInfoFromRequest.ip}, ${ipInfoFromRequest.host}, ${permission}, ${user ? user.userid : '???'}, ${JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${typeof ifSuccess==='boolean' ? ifSuccess ? base.Y : base.N : ifSuccess}, ${remark}, ${new Date(timestamp())});
+      values (${this.baseContextService.getUserData().reqId}, ${ipInfoFromRequest.ip}, ${ipInfoFromRequest.host}, ${permission}, ${user ? user.userid : '???'}, ${JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${typeof ifSuccess==='boolean' ? ifSuccess ? base.Y : base.N : ifSuccess}, ${remark}, ${new Date(timestamp())});
     `;
   }
 }

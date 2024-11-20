@@ -6,13 +6,13 @@ import { ForbiddenException } from '../exception/ForbiddenException';
 import { UserUnknownException } from '../exception/UserUnknownException';
 import { CachePermissionService } from '../module/cache/cache.permission.service';
 import { base } from '../util/base';
-import { getCurrentUser } from '../util/baseContext';
 import { Exception } from '../exception/Exception';
 import { ParameterException } from '../exception/ParameterException';
 import { LoginDto } from '../module/module/main/sys-manage/user/dto';
 import { AlgorithmDto } from '../module/module/algorithm/algorithm/dto';
 import { Request } from 'express';
 import { IpNotInWhiteListException } from '../exception/IpNotInWhiteListException';
+import { BaseContextService } from '../module/base-context/base-context.service';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -20,6 +20,7 @@ export class PermissionGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
     private readonly cachePermissionService: CachePermissionService,
+    private readonly baseContextService: BaseContextService,
   ) {
   }
 
@@ -30,7 +31,7 @@ export class PermissionGuard implements CanActivate {
     );
     const { permission, label, ifSF, ifIgnore, ifAdminLogin } = authorizeParams;
     const request: Request = context.switchToHttp().getRequest();
-    const user = getCurrentUser().user;
+    const user = this.baseContextService.getUserData().user;
     // const user = request.body.user as userDto2;
     // delete request.body.user;
     // request.body = request.body.reqBody;

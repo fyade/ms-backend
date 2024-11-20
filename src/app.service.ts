@@ -7,9 +7,9 @@ import * as diskinfo from 'diskinfo';
 import { NonSupportedException } from './exception/NonSupportedException';
 import { currentVersion } from '../config/config';
 import { AuthService } from './module/auth/auth.service';
-import { getCurrentUser } from './util/baseContext';
 import { getAllFiles } from './util/FileUtils';
 import { T_COMP, T_MENU } from './util/base';
+import { BaseContextService } from './module/base-context/base-context.service';
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -20,6 +20,7 @@ export class AppService {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly baseContextService: BaseContextService,
   ) {
     this.cpuUsageMSDefault = 100; // CPU 利用率默认时间段
   }
@@ -89,12 +90,12 @@ export class AppService {
   }
 
   async getPermissions(sysId: number): Promise<R> {
-    const permissionsOfUser = await this.authService.permissionsOfUser({ userId: getCurrentUser().user.userid, sysId, menuType: [T_MENU, T_COMP] });
+    const permissionsOfUser = await this.authService.permissionsOfUser({ userId: this.baseContextService.getUserData().user.userid, sysId, menuType: [T_MENU, T_COMP] });
     return R.ok(permissionsOfUser);
   }
 
   async getSystems(): Promise<R> {
-    const systemsOfUser = await this.authService.systemsOfUser(getCurrentUser().user.userid);
+    const systemsOfUser = await this.authService.systemsOfUser(this.baseContextService.getUserData().user.userid);
     return R.ok(systemsOfUser);
   }
 

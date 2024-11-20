@@ -9,7 +9,6 @@ import { base } from '../../../../../util/base';
 import { UserRoleDto } from '../user-role/dto';
 import { UserUnknownException } from '../../../../../exception/UserUnknownException';
 import { AdminTopDto } from '../../../../admin-top/dto';
-import { getCurrentUser } from '../../../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../../../exception/UserPermissionDeniedException';
 import { LogUserLoginService } from '../../sys-log/log-user-login/log-user-login.service';
 import { comparePassword, hashPassword } from '../../../../../util/EncryptUtils';
@@ -19,7 +18,8 @@ import { UserUserGroupDto } from '../../../algorithm/user-user-group/dto';
 import { RoleDto } from '../role/dto';
 import { DeptDto } from '../dept/dto';
 import { CacheTokenService } from '../../../../cache/cache.token.service';
-import { time, timestamp } from '../../../../../util/TimeUtils';
+import { timestamp } from '../../../../../util/TimeUtils';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class UserService {
@@ -30,12 +30,13 @@ export class UserService {
     private readonly authService: AuthService,
     private readonly logUserLoginService: LogUserLoginService,
     private readonly cacheTokenService: CacheTokenService,
+    private readonly baseContextService: BaseContextService,
   ) {
     this.maxLoginFailCount = 10;
   }
 
   async getSelfInfo(): Promise<R> {
-    const currentUser = getCurrentUser().user;
+    const currentUser = this.baseContextService.getUserData().user;
     const user = await this.prisma.findById<UserDto>('sys_user', currentUser.userid);
     delete user.password;
     return R.ok(user);
@@ -156,7 +157,7 @@ export class UserService {
   }
 
   async updPsd(dto: UpdPsdDto): Promise<R> {
-    const user_ = await this.prisma.findById<UserDto>('sys_user', getCurrentUser().user.userid);
+    const user_ = await this.prisma.findById<UserDto>('sys_user', this.baseContextService.getUserData().user.userid);
     const ifUserYes = await comparePassword(dto.oldp, user_.password);
     if (!ifUserYes) {
       return R.err('旧密码错误。');
@@ -169,7 +170,7 @@ export class UserService {
   }
 
   async adminResetUserPsd(dto: ResetPsdDto): Promise<R> {
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.id)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().user.userid, dto.id)) {
       throw new UserPermissionDeniedException();
     }
     await this.prisma.updateById('sys_user', { ...dto, password: await hashPassword(dto.password) });

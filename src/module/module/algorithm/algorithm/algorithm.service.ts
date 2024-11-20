@@ -3,10 +3,10 @@ import { R } from '../../../../common/R';
 import { AlgorithmDto } from './dto';
 import { InterfaceService } from '../interface/interface.service';
 import { InterfaceGroupService } from '../interface-group/interface-group.service';
-import { getCurrentUser } from '../../../../util/baseContext';
 import { AuthService } from '../../../auth/auth.service';
 import { requestSF } from '../../../../api/request';
 import { base } from '../../../../util/base';
+import { BaseContextService } from '../../../base-context/base-context.service';
 
 @Injectable()
 export class AlgorithmService {
@@ -14,11 +14,12 @@ export class AlgorithmService {
     private readonly authService: AuthService,
     private readonly interfaceService: InterfaceService,
     private readonly interfaceGroupService: InterfaceGroupService,
+    private readonly baseContextService: BaseContextService,
   ) {
   }
 
   async algorithm(dto: AlgorithmDto): Promise<R> {
-    const userId = getCurrentUser().user.userid;
+    const userId = this.baseContextService.getUserData().user.userid;
     const permission = dto.perms;
     const sfPermissionsOfUserid = await this.authService.getSFPermissionsOfUserid(userId, permission, base.Y);
     if (sfPermissionsOfUserid.length > 0) {

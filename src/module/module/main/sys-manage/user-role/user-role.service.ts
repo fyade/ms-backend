@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
-import { getCurrentUser } from '../../../../../util/baseContext';
 import { UserPermissionDeniedException } from '../../../../../exception/UserPermissionDeniedException';
 import { AuthService } from '../../../../auth/auth.service';
 import { UserRoleDto, UserRoleSelListDto, UserRoleSelAllDto, UserRoleInsOneDto, UserRoleUpdOneDto, UserRoleUpdManyURDto, UserRoleUpdManyRUDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class UserRoleService {
@@ -13,6 +13,7 @@ export class UserRoleService {
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
     private readonly cachePermissionService: CachePermissionService,
+    private readonly baseContextService: BaseContextService,
   ) {
   }
 
@@ -43,7 +44,7 @@ export class UserRoleService {
 
   async updUserRoleUR(dto: UserRoleUpdManyURDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, dto.userId)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().user.userid, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
     const allRoles = await this.prisma.findAll<UserRoleUpdOneDto>('sys_user_role', { data: { userId: dto.userId } });
@@ -67,7 +68,7 @@ export class UserRoleService {
     const userIds = dto.userId.filter(item => allUserIdsOfThisRole.indexOf(item) === -1);
     for (let i = 0; i < userIds.length; i++) {
       const userId = userIds[i];
-      if (!await this.authService.ifAdminUserUpdNotAdminUser(getCurrentUser().user.userid, userId)) {
+      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().user.userid, userId)) {
         throw new UserPermissionDeniedException();
       }
       data.push({
