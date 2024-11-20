@@ -43,7 +43,7 @@ export class PermissionGuard implements CanActivate {
       const reqBody = request.body as unknown as LoginDto;
       const userDto = await this.authService.findUserByUsername(reqBody.username);
       if (!!!userDto) {
-        await this.authService.insLogOperation(permission, request, false, '用户不存在');
+        await this.authService.insLogOperation(permission, request, false, '用户不存在。');
         throw new UserUnknownException();
       }
       const ifHasPermission = await this.authService.ifAdminUser(reqBody.username);
@@ -93,6 +93,7 @@ export class PermissionGuard implements CanActivate {
       if (!ifIpInWhiteList) {
         const b = await this.authService.hasTopAdminPermission(user.userid);
         if (!b) {
+          await this.authService.insLogOperation(permission, request, false, '请求源IP不在白名单内。')
           throw new IpNotInWhiteListException();
         }
       }
