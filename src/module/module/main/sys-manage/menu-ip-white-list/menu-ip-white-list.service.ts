@@ -12,7 +12,7 @@ export class MenuIpWhiteListService {
     const res = await this.prisma.findPage<MenuIpWhiteListDto, MenuIpWhiteListSelListDto>('sys_menu_ip_white_list', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['menuId', 'ipWhiteList', 'type'],
+      notNullKeys: ['menuId', 'whiteList', 'fromType', 'type'],
       numberKeys: ['menuId'],
       completeMatchingKeys: [],
     });
@@ -23,7 +23,7 @@ export class MenuIpWhiteListService {
     const res = await this.prisma.findAll<MenuIpWhiteListDto>('sys_menu_ip_white_list', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['menuId', 'ipWhiteList', 'type'],
+      notNullKeys: ['menuId', 'whiteList', 'fromType', 'type'],
       numberKeys: ['menuId'],
       completeMatchingKeys: [],
     });

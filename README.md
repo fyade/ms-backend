@@ -137,6 +137,10 @@ $ nest g pipe validation pipe # 管道
 * ma表示接口组
 * mb表示接口
 
+菜单ip限制相关常量：
+* ip表示ip
+* ho表示host
+
 ## 许可证 License
 
 [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.txt)

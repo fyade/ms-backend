@@ -6,7 +6,8 @@ import { Request } from 'express';
  * @param request
  */
 export function getIpInfoFromRequest(request: Request) {
-  const loginIp = request.headers['x-real-ip'] || request.headers['x-forwarded-for'] || (request as any).ip;
+  const loginIp: string = request.headers['x-real-ip'] || request.headers['x-forwarded-for'] || (request as any).ip;
+  const hostname = request.hostname;
   const userAgentString = request.headers['user-agent'];
   const userAgent = uaparser(userAgentString);
   const browser = userAgent.browser;
@@ -15,6 +16,7 @@ export function getIpInfoFromRequest(request: Request) {
   const loginOs = `${os.name} ${os.version}`;
   return {
     ip: loginIp,
+    host: hostname,
     browser: loginBrowser,
     os: loginOs,
   };

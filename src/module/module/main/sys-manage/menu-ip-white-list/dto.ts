@@ -9,7 +9,9 @@ export class MenuIpWhiteListDto extends BaseDto {
 
   menuId: number;
 
-  ipWhiteList: string;
+  whiteList: string;
+
+  fromType: string;
 
   type: string;
 
@@ -23,8 +25,11 @@ export class MenuIpWhiteListSelListDto extends PageDto {
   @ApiProperty({ description: '菜单', required: false })
   menuId: number;
 
-  @ApiProperty({ description: 'ip白名单', required: false })
-  ipWhiteList: string;
+  @ApiProperty({ description: '白名单', required: false })
+  whiteList: string;
+
+  @ApiProperty({ description: '来源类型', required: false })
+  fromType: string;
 
   @ApiProperty({ description: '白名单类型', required: false })
   type: string;
@@ -37,8 +42,11 @@ export class MenuIpWhiteListSelAllDto {
   @ApiProperty({ description: '菜单', required: false })
   menuId: number;
 
-  @ApiProperty({ description: 'ip白名单', required: false })
-  ipWhiteList: string;
+  @ApiProperty({ description: '白名单', required: false })
+  whiteList: string;
+
+  @ApiProperty({ description: '来源类型', required: false })
+  fromType: string;
 
   @ApiProperty({ description: '白名单类型', required: false })
   type: string;
@@ -53,9 +61,13 @@ export class MenuIpWhiteListInsOneDto {
   @IsNotEmpty({ message: '菜单不能为空' })
   menuId: number;
 
-  @ApiProperty({ description: 'ip白名单', required: true })
-  @IsNotEmpty({ message: 'ip白名单不能为空' })
-  ipWhiteList: string;
+  @ApiProperty({ description: '白名单', required: true })
+  @IsNotEmpty({ message: '白名单不能为空' })
+  whiteList: string;
+
+  @ApiProperty({ description: '来源类型', required: true })
+  @IsNotEmpty({ message: '来源类型不能为空' })
+  fromType: string;
 
   @ApiProperty({ description: '白名单类型', required: true })
   @IsNotEmpty({ message: '白名单类型不能为空' })

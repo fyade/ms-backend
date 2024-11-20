@@ -28,7 +28,7 @@ export class LogAlgorithmCallSelListDto extends PageDto {
   @ApiProperty({ description: '用户id', required: false })
   userId: string;
 
-  @ApiProperty({ description: '请求ip', required: false })
+  @ApiProperty({ description: '请求源ip', required: false })
   callIp: string;
 
   @ApiProperty({ description: '是否成功', required: false })
@@ -45,7 +45,7 @@ export class LogAlgorithmCallSelAllDto {
   @ApiProperty({ description: '用户id', required: false })
   userId: string;
 
-  @ApiProperty({ description: '请求ip', required: false })
+  @ApiProperty({ description: '请求源ip', required: false })
   callIp: string;
 
   @ApiProperty({ description: '是否成功', required: false })
@@ -65,8 +65,8 @@ export class LogAlgorithmCallInsOneDto {
   @IsNotEmpty({ message: '用户id不能为空' })
   userId: string;
 
-  @ApiProperty({ description: '请求ip', required: true })
-  @IsNotEmpty({ message: '请求ip不能为空' })
+  @ApiProperty({ description: '请求源ip', required: true })
+  @IsNotEmpty({ message: '请求源ip不能为空' })
   callIp: string;
 
   @ApiProperty({ description: '是否成功', required: true })

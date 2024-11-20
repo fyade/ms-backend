@@ -9,6 +9,7 @@ import { currentVersion } from '../config/config';
 import { AuthService } from './module/auth/auth.service';
 import { getCurrentUser } from './util/baseContext';
 import { getAllFiles } from './util/FileUtils';
+import { T_COMP, T_MENU } from './util/base';
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -88,7 +89,7 @@ export class AppService {
   }
 
   async getPermissions(sysId: number): Promise<R> {
-    const permissionsOfUser = await this.authService.permissionsOfUser({ userId: getCurrentUser().user.userid, sysId, menuType: ['mm', 'mc'] });
+    const permissionsOfUser = await this.authService.permissionsOfUser({ userId: getCurrentUser().user.userid, sysId, menuType: [T_MENU, T_COMP] });
     return R.ok(permissionsOfUser);
   }
 

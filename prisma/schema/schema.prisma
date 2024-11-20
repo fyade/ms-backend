@@ -352,17 +352,18 @@ model sys_dept_sys {
 
 // 2.11 菜单-ip白名单表
 model sys_menu_ip_white_list {
-  id            Int      @id @default(autoincrement()) @db.Int
-  menu_id       Int      @db.Int
-  ip_white_list String   @db.VarChar(100)
-  type          String   @db.VarChar(2)
-  remark        String?  @db.VarChar(300)
-  create_by     String   @db.VarChar(10)
-  update_by     String   @db.VarChar(10)
-  create_time   DateTime @default(now())
-  update_time   DateTime @updatedAt
-  deleted       String   @default("N") @db.Char(1)
-  menu_id_      sys_menu @relation(fields: [menu_id], references: [id])
+  id          Int      @id @default(autoincrement()) @db.Int
+  menu_id     Int      @db.Int
+  white_list  String   @db.VarChar(100)
+  from_type   String   @db.VarChar(2)
+  type        String   @db.VarChar(2)
+  remark      String?  @db.VarChar(300)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+  menu_id_    sys_menu @relation(fields: [menu_id], references: [id])
 }
 
 // 2.12 用户组表
@@ -569,6 +570,7 @@ model log_operation {
   id           Int      @id @default(autoincrement()) @db.Int
   req_id       String   @db.VarChar(40)
   call_ip      String   @db.VarChar(20)
+  host_name    String   @db.VarChar(100)
   perms        String   @db.VarChar(100)
   user_id      String   @db.VarChar(10)
   req_param    String   @db.Text

@@ -1,6 +1,6 @@
 import { UserDto } from '../module/main/sys-manage/user/dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { base } from '../../util/base';
+import { base, T_COMP, T_HOST, T_Inter, T_IP, T_IS, T_MENU } from '../../util/base';
 import { Injectable } from '@nestjs/common';
 import { AdminTopDto } from '../admin-top/dto';
 import { LogAlgorithmCallDto } from '../module/algorithm/log-algorithm-call/dto';
@@ -155,43 +155,48 @@ export class AuthService {
       from sys_menu
       where deleted = ${base.N}
         and if_disabled = ${base.N}
-        and type = 'ma'
+        and type = ${T_IS}
         and id =
             (select parent_id
              from sys_menu
              where deleted = ${base.N}
                and if_disabled = ${base.N}
-               and type = 'mb'
+               and type = ${T_Inter}
                and perms = ${permission});
     `;
     if (menu.length === 0) {
       return true;
     }
     const ips: MenuIpWhiteListDto[] = await this.prisma.$queryRaw`
-      select id            as id,
-             menu_id       as menuId,
-             ip_white_list as ipWhiteList,
-             type          as type,
-             remark        as remark,
-             create_by     as createBy,
-             update_by     as updateBy,
-             create_time   as createTime,
-             update_time   as updateTime,
-             deleted       as deleted
+      select id          as id,
+             menu_id     as menuId,
+             white_list  as whiteList,
+             from_type   as fromType,
+             type        as type,
+             remark      as remark,
+             create_by   as createBy,
+             update_by   as updateBy,
+             create_time as createTime,
+             update_time as updateTime,
+             deleted     as deleted
       from sys_menu_ip_white_list
-      where menu_id = ${menu[0].id}
-        and deleted = ${base.N}
-        and type = 'ma';
+      where deleted = ${base.N}
+        and menu_id = ${menu[0].id}
+        and type = ${T_IS};
     `;
     if (ips.length === 0) {
       return true;
     }
-    const whiteList = ips.map(item => item.ipWhiteList);
     const ipInfoFromRequest = getIpInfoFromRequest(request);
-    if (whiteList.includes(ipInfoFromRequest.ip)) {
+    const whiteList_ip = ips.filter(item => item.fromType === T_IP).map(item => item.whiteList);
+    if (whiteList_ip.includes(ipInfoFromRequest.ip)) {
       return true;
     }
-    if (ipInfoFromRequest.ip === '::1' && (whiteList.includes('localhost') || whiteList.includes('127.0.0.1'))) {
+    if (ipInfoFromRequest.ip === '::1' && (whiteList_ip.includes('localhost') || whiteList_ip.includes('127.0.0.1'))) {
+      return true;
+    }
+    const whiteList_host = ips.filter(item => item.fromType === T_HOST).map(item => item.whiteList)
+    if (whiteList_host.includes(ipInfoFromRequest.host)) {
       return true;
     }
     return false;
@@ -270,13 +275,13 @@ export class AuthService {
    * @param userId
    * @param permission
    * @param sysId
-   * @param menuType mm菜单 mc组件 ma接口组 mb接口
+   * @param menuType
    */
   async permissionsOfUser({
                             userId,
                             permission,
                             sysId,
-                            menuType = ['mm', 'mc', 'ma', 'mb'],
+                            menuType = [T_MENU, T_COMP, T_IS, T_Inter],
                           }: {
                             userId: string
                             permission?: string
@@ -571,8 +576,8 @@ export class AuthService {
     const user = getCurrentUser().user;
     const ipInfoFromRequest = getIpInfoFromRequest(request);
     await this.prisma.$queryRaw`
-      insert into log_operation (req_id, call_ip, perms, user_id, req_param, old_value, operate_type, if_success, remark, create_time)
-      values (${getCurrentUser().reqId}, ${ipInfoFromRequest.ip}, ${permission}, ${user ? user.userid : '???'}, ${JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${typeof ifSuccess==='boolean' ? ifSuccess ? base.Y : base.N : ifSuccess}, ${remark}, ${new Date(timestamp())});
+      insert into log_operation (req_id, call_ip, host_name, perms, user_id, req_param, old_value, operate_type, if_success, remark, create_time)
+      values (${getCurrentUser().reqId}, ${ipInfoFromRequest.ip}, ${ipInfoFromRequest.host}, ${permission}, ${user ? user.userid : '???'}, ${JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${typeof ifSuccess==='boolean' ? ifSuccess ? base.Y : base.N : ifSuccess}, ${remark}, ${new Date(timestamp())});
     `;
   }
 }

@@ -11,6 +11,8 @@ export class LogOperationDto extends BaseDto {
 
   callIp: string;
 
+  hostName: string;
+
   perms: string;
 
   userId: string;
@@ -33,8 +35,11 @@ export class LogOperationSelListDto extends PageDto {
   @ApiProperty({ description: '请求id', required: false })
   reqId: string;
 
-  @ApiProperty({ description: '请求ip', required: false })
+  @ApiProperty({ description: '请求源ip', required: false })
   callIp: string;
+
+  @ApiProperty({ description: '请求源地址', required: false })
+  hostName: string;
 
   @ApiProperty({ description: '权限标识', required: false })
   perms: string;
@@ -62,8 +67,11 @@ export class LogOperationSelAllDto {
   @ApiProperty({ description: '请求id', required: false })
   reqId: string;
 
-  @ApiProperty({ description: '请求ip', required: false })
+  @ApiProperty({ description: '请求源ip', required: false })
   callIp: string;
+
+  @ApiProperty({ description: '请求源地址', required: false })
+  hostName: string;
 
   @ApiProperty({ description: '权限标识', required: false })
   perms: string;
@@ -92,9 +100,13 @@ export class LogOperationInsOneDto {
   @IsNotEmpty({ message: '请求id不能为空' })
   reqId: string;
 
-  @ApiProperty({ description: '请求ip', required: true })
-  @IsNotEmpty({ message: '请求ip不能为空' })
+  @ApiProperty({ description: '请求源ip', required: true })
+  @IsNotEmpty({ message: '请求源ip不能为空' })
   callIp: string;
+
+  @ApiProperty({ description: '请求源地址', required: true })
+  @IsNotEmpty({ message: '请求源地址不能为空' })
+  hostName: string;
 
   @ApiProperty({ description: '权限标识', required: true })
   @IsNotEmpty({ message: '权限标识不能为空' })
