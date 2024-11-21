@@ -24,7 +24,8 @@ export class UserLoginController {
   @Authorize({
     permission: '-',
     label: '用户注册',
-    ifIgnore: true
+    ifIgnore: true,
+    ifIgnoreParamInLog: true,
   })
   async regist(@Body() dto: RegistDto): Promise<R> {
     if (dto.psdType === 'b') {
@@ -41,7 +42,8 @@ export class UserLoginController {
   @Authorize({
     permission: '-',
     label: '用户登录',
-    ifIgnore: true
+    ifIgnore: true,
+    ifIgnoreParamInLog: true,
   })
   async login(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
     if (dto.psdType === 'b') {
@@ -59,7 +61,8 @@ export class UserLoginController {
   @Authorize({
     permission: 'system:user:adminlogin',
     label: '管理员登录',
-    ifAdminLogin: true
+    ifAdminLogin: true,
+    ifIgnoreParamInLog: true,
   })
   async adminLogin(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
     if (dto.psdType === 'b') {
