@@ -1,7 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
 import { UnknownException } from '../exception/UnknownException';
 import { Request } from 'express';
-import { getReqIdFromReqHeader } from '../module/base-context/baseContext';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -19,7 +18,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         msg: exception.message,
       });
     } catch (e) {
-      const unknownException = new UnknownException(getReqIdFromReqHeader(request), exception);
+      const unknownException = new UnknownException('no code', exception);
       response.status(unknownException.getStatus()).json({
         code: unknownException.getStatus(),
         msg: unknownException.getMessage(),

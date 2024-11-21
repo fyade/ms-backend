@@ -8,10 +8,13 @@ import { CachePermissionService } from '../module/cache/cache.permission.service
 import { base } from '../util/base';
 import { Exception } from '../exception/Exception';
 import { ParameterException } from '../exception/ParameterException';
-import { LoginDto } from '../module/module/main/sys-manage/user/dto';
+import { LoginDto, UserDto2 } from '../module/module/main/sys-manage/user/dto';
 import { AlgorithmDto } from '../module/module/algorithm/algorithm/dto';
 import { Request } from 'express';
 import { IpNotInWhiteListException } from '../exception/IpNotInWhiteListException';
+import { genCurrentUser } from '../module/base-context/baseContext';
+import { UnauthorizedException } from '../exception/UnauthorizedException';
+import { CacheTokenService } from '../module/cache/cache.token.service';
 import { BaseContextService } from '../module/base-context/base-context.service';
 
 @Injectable()
@@ -19,6 +22,7 @@ export class PermissionGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
+    private readonly cacheTokenService: CacheTokenService,
     private readonly cachePermissionService: CachePermissionService,
     private readonly baseContextService: BaseContextService,
   ) {
@@ -31,14 +35,33 @@ export class PermissionGuard implements CanActivate {
     );
     const { permission, label, ifSF, ifIgnore, ifAdminLogin } = authorizeParams;
     const request: Request = context.switchToHttp().getRequest();
-    const user = this.baseContextService.getUserData().user;
-    // const user = request.body.user as userDto2;
-    // delete request.body.user;
-    // request.body = request.body.reqBody;
+
+    const oauth = request.headers['authorization'];
+    const token = typeof oauth === 'string' ? (oauth.startsWith('Bearer') ? oauth.substring(6) : oauth).trim() : '';
+    if (ifIgnore || ifAdminLogin) {
+    } else if (token) {
+      try {
+        const decoded = await this.cacheTokenService.verifyToken(token);
+        if (decoded) {
+          // Token is valid and not expired
+          this.baseContextService.setUserData(genCurrentUser(decoded as UserDto2, token));
+        } else {
+          // Token is invalid or expired
+          await this.authService.insLogOperation(permission, request, false, '401');
+          throw new UnauthorizedException();
+        }
+      } catch (e) {
+        // Token is invalid or expired
+        await this.authService.insLogOperation(permission, request, false, '401');
+        throw new UnauthorizedException();
+      }
+    }
+
     // 放行白名单接口
     if (ifIgnore) {
       return true;
     }
+    const user = this.baseContextService.getUserData().user;
     // 放行管理员登录接口
     if (ifAdminLogin && !!!user) {
       const reqBody = request.body as unknown as LoginDto;
@@ -94,7 +117,7 @@ export class PermissionGuard implements CanActivate {
       if (!ifIpInWhiteList) {
         const b = await this.authService.hasTopAdminPermission(user.userid);
         if (!b) {
-          await this.authService.insLogOperation(permission, request, false, '请求源IP不在白名单内。')
+          await this.authService.insLogOperation(permission, request, false, '请求源IP不在白名单内。');
           throw new IpNotInWhiteListException();
         }
       }

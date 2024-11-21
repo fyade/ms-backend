@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ClsModule } from 'nestjs-cls';
 import { currentEnv } from '../config/config';
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
 import { GlobalMiddleware } from './middleware/golbal.middleware';
@@ -51,6 +52,12 @@ import { MenuIpWhiteListModule } from './module/module/main/sys-manage/menu-ip-w
     ServeStaticModule.forRoot({
       rootPath: currentEnv().file.fileUploadPath,
       serveRoot: currentEnv().staticRoot,
+    }),
+    ClsModule.forRoot({
+      global: true,
+      middleware: {
+        mount: true,
+      },
     }),
     AuthModule,
     CacheModule,

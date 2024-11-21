@@ -1,18 +1,16 @@
-import { Inject, Injectable, Scope } from '@nestjs/common';
-import { CurrentUser, genCurrentUser, REQUEST_SCOPE, USER_INFO_LINSHI_FIELD_NAME } from './baseContext';
-import { Request } from 'express';
+import { Injectable } from '@nestjs/common';
+import { ClsService } from 'nestjs-cls';
+import { CurrentUser, genCurrentUser, USER_INFO_LINSHI_FIELD_NAME } from './baseContext';
 
-@Injectable({
-  scope: Scope.REQUEST,
-})
+@Injectable()
 export class BaseContextService {
-  constructor(@Inject(REQUEST_SCOPE) private requestScope) {
+  constructor(private readonly cls: ClsService) {
   }
 
   getUserData(): CurrentUser {
-    const header = this.requestScope.getRequest().headers[USER_INFO_LINSHI_FIELD_NAME];
+    const header = this.cls.get(USER_INFO_LINSHI_FIELD_NAME);
     if (header) {
-      return JSON.parse(header);
+      return header;
     }
     const currentUser = genCurrentUser();
     this.setUserData(currentUser);
@@ -20,6 +18,6 @@ export class BaseContextService {
   }
 
   setUserData(userData: CurrentUser) {
-    this.requestScope.getRequest().headers[USER_INFO_LINSHI_FIELD_NAME] = JSON.stringify(userData);
+    this.cls.set(USER_INFO_LINSHI_FIELD_NAME, userData);
   }
 }
