@@ -33,7 +33,7 @@ export class PermissionGuard implements CanActivate {
       PRE_AUTHORIZE_KEY,
       context.getHandler(),
     );
-    const { permission, label, ifSF, ifIgnore, ifAdminLogin } = authorizeParams;
+    const { permission, label, ifSF, ifIgnore, ifAdminLogin, ifIgnoreParamInLog } = authorizeParams;
     const request: Request = context.switchToHttp().getRequest();
 
     const oauth = request.headers['authorization'];
@@ -47,12 +47,12 @@ export class PermissionGuard implements CanActivate {
           this.baseContextService.setUserData(genCurrentUser(decoded as UserDto2, token));
         } else {
           // Token is invalid or expired
-          await this.authService.insLogOperation(permission, request, false, '401');
+          await this.authService.insLogOperation(permission, request, false, { remark: '401', ifIgnoreParamInLog });
           throw new UnauthorizedException();
         }
       } catch (e) {
         // Token is invalid or expired
-        await this.authService.insLogOperation(permission, request, false, '401');
+        await this.authService.insLogOperation(permission, request, false, { remark: '401', ifIgnoreParamInLog });
         throw new UnauthorizedException();
       }
     }
@@ -67,14 +67,17 @@ export class PermissionGuard implements CanActivate {
       const reqBody = request.body as unknown as LoginDto;
       const userDto = await this.authService.findUserByUsername(reqBody.username);
       if (!!!userDto) {
-        await this.authService.insLogOperation(permission, request, false, '用户不存在。');
+        await this.authService.insLogOperation(permission, request, false, {
+          remark: '用户不存在。',
+          ifIgnoreParamInLog,
+        });
         throw new UserUnknownException();
       }
       const ifHasPermission = await this.authService.ifAdminUser(reqBody.username);
       if (ifHasPermission) {
         return true;
       } else {
-        await this.authService.insLogOperation(permission, request, false, '403');
+        await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
         throw new ForbiddenException(label);
       }
     }
@@ -83,7 +86,10 @@ export class PermissionGuard implements CanActivate {
       const reqBody = request.body as unknown as AlgorithmDto;
       const permission = reqBody.perms;
       if (!permission) {
-        await this.authService.insLogOperation(permission, request, false, '参数错误，权限标识不可为空。');
+        await this.authService.insLogOperation(permission, request, false, {
+          remark: '参数错误，权限标识不可为空。',
+          ifIgnoreParamInLog,
+        });
         throw new ParameterException('参数错误，权限标识不可为空。');
       }
       if (user) {
@@ -92,7 +98,10 @@ export class PermissionGuard implements CanActivate {
           return true;
         }
       }
-      await this.authService.insLogOperation(permission, request, false, '用户您无当前算法权限。');
+      await this.authService.insLogOperation(permission, request, false, {
+        remark: '用户您无当前算法权限。',
+        ifIgnoreParamInLog,
+      });
       throw new Exception('您无当前算法权限。');
       // throw new ForbiddenException(label);
     }
@@ -117,7 +126,10 @@ export class PermissionGuard implements CanActivate {
       if (!ifIpInWhiteList) {
         const b = await this.authService.hasTopAdminPermission(user.userid);
         if (!b) {
-          await this.authService.insLogOperation(permission, request, false, '请求源IP不在白名单内。');
+          await this.authService.insLogOperation(permission, request, false, {
+            remark: '请求源IP不在白名单内。',
+            ifIgnoreParamInLog,
+          });
           throw new IpNotInWhiteListException();
         }
       }
@@ -134,7 +146,7 @@ export class PermissionGuard implements CanActivate {
         }
       }
     }
-    await this.authService.insLogOperation(permission, request, false, '403');
+    await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
     throw new ForbiddenException(label);
   }
 }

@@ -23,6 +23,7 @@ export class UserLoginController {
   })
   @Authorize({
     permission: '-',
+    label: '用户注册',
     ifIgnore: true
   })
   async regist(@Body() dto: RegistDto): Promise<R> {
@@ -39,6 +40,7 @@ export class UserLoginController {
   })
   @Authorize({
     permission: '-',
+    label: '用户登录',
     ifIgnore: true
   })
   async login(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {

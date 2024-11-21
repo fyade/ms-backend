@@ -29,6 +29,7 @@ export class AppController {
   })
   @Authorize({
     permission: '-',
+    label: '-',
     ifIgnore: true
   })
   async getVersion(): Promise<R> {

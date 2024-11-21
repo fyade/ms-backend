@@ -30,8 +30,8 @@ export class ResponseInterceptor implements NestInterceptor {
           PRE_AUTHORIZE_KEY,
           context.getHandler(),
         );
-        const { permission } = authorizeParams;
-        await this.authService.insLogOperation(permission, request, response ? response.code === 200 : 'O');
+        const { permission, ifIgnoreParamInLog } = authorizeParams;
+        await this.authService.insLogOperation(permission, request, response ? response.code === 200 : 'O', { ifIgnoreParamInLog });
       }),
       catchError(async (error) => {
         const request: Request = context.switchToHttp().getRequest();
@@ -39,8 +39,8 @@ export class ResponseInterceptor implements NestInterceptor {
           PRE_AUTHORIZE_KEY,
           context.getHandler(),
         );
-        const { permission } = authorizeParams;
-        await this.authService.insLogOperation(permission, request, false);
+        const { permission, ifIgnoreParamInLog } = authorizeParams;
+        await this.authService.insLogOperation(permission, request, false, { ifIgnoreParamInLog });
         throw error;
       }),
     );

@@ -1,11 +1,4 @@
-import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common';
-
-// export const GetReqUser = createParamDecorator(
-//   (data: unknown, ctx: ExecutionContext) => {
-//     const request = ctx.switchToHttp().getRequest();
-//     return request.body.user;
-//   },
-// );
+import { SetMetadata } from '@nestjs/common';
 
 export const PRE_AUTHORIZE_KEY = 'perAuthorize';
 
@@ -13,11 +6,13 @@ export class PreAuthorizeParams {
   // 权限字符
   permission: string;
   // 接口描述
-  label?: string;
+  label: string;
   // 是否算法接口
   ifSF?: boolean;
   // 是否忽略权限控制
   ifIgnore?: boolean;
+  // 是否在记录操作日志时不记录参数
+  ifIgnoreParamInLog?: boolean;
   // 是否管理员登录接口
   ifAdminLogin?: boolean;
 }

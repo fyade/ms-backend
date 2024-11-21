@@ -572,13 +572,24 @@ export class AuthService {
    * @param request
    * @param ifSuccess
    * @param remark
+   * @param ifIgnoreParamInLog
    */
-  async insLogOperation(permission: string, request: Request, ifSuccess: boolean | string, remark: string = '') {
+  async insLogOperation(permission: string, request: Request, ifSuccess: boolean | string, {
+                          remark,
+                          ifIgnoreParamInLog,
+                        }: {
+                          remark?: string
+                          ifIgnoreParamInLog?: boolean
+                        } = {
+                          remark: '',
+                          ifIgnoreParamInLog: false,
+                        },
+  ) {
     const user = this.baseContextService.getUserData().user;
     const ipInfoFromRequest = getIpInfoFromRequest(request);
     await this.prisma.$queryRaw`
       insert into log_operation (req_id, call_ip, host_name, perms, user_id, req_param, old_value, operate_type, if_success, remark, create_time)
-      values (${this.baseContextService.getUserData().reqId}, ${ipInfoFromRequest.ip}, ${ipInfoFromRequest.host}, ${permission}, ${user ? user.userid : '???'}, ${JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${typeof ifSuccess==='boolean' ? ifSuccess ? base.Y : base.N : ifSuccess}, ${remark}, ${new Date(timestamp())});
+      values (${this.baseContextService.getUserData().reqId}, ${ipInfoFromRequest.ip}, ${ipInfoFromRequest.host}, ${permission}, ${user ? user.userid : '???'}, ${ifIgnoreParamInLog ? JSON.stringify({body:'hidden',query:'hidden'}) : JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${typeof ifSuccess==='boolean' ? ifSuccess ? base.Y : base.N : ifSuccess}, ${remark}, ${new Date(timestamp())});
     `;
   }
 }
