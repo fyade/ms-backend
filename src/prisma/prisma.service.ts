@@ -8,23 +8,27 @@ import { objToCamelCase, objToSnakeCase, toSnakeCase, toSnakeCases, typeOf } fro
 import { PageVo } from '../common/vo/PageVo';
 import { deepClone } from '../util/ObjectUtils';
 import { BaseContextService } from '../module/base-context/base-context.service';
+import { PrismaClient } from '@prisma/client';
 
 const env = currentEnv();
-const { PrismaClient } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
+const { PrismaClient: PrismaClientOrigin } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
 
 @Injectable()
-export class PrismaService extends PrismaClient {
+export class PrismaService extends PrismaClientOrigin {
+  private prismaClient: PrismaClient;
+
   constructor(
     private readonly baseContextService: BaseContextService,
   ) {
-    super({
+    const dbConfig = {
       datasources: {
         db: {
           url: getMysqlUrlFromEnv(env),
         },
       },
       log: env.mode === base.DEV ? ['query', 'info', 'warn'] : [],
-    });
+    };
+    super(dbConfig);
     // 使用中间件对查询结果中的Bigint类型进行序列化
     super.$use(async (params, next) => {
       const t1 = Date.now();
@@ -35,6 +39,11 @@ export class PrismaService extends PrismaClient {
       }
       return this.serialize(result);
     });
+    this.prismaClient = new PrismaClientOrigin(dbConfig);
+  }
+
+  getOrigin() {
+    return this.prismaClient;
   }
 
   private serialize(obj) {
