@@ -1,8 +1,8 @@
-INSERT INTO `sys_sys` (id, name, perms, order_num, path, if_disabled, remark, create_by, update_by, create_time, update_time, deleted)
+INSERT INTO `sys_sys` (`id`, `name`, `perms`, `order_num`, `path`, `if_disabled`, `remark`, `create_by`, `update_by`, `create_time`, `update_time`, `deleted`)
 VALUES (1,'主系统','sys:main',0,'main','N','','fyaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (2,'算法系统','sys:algorithm',1,'algorithm','N','','fyaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N');
 
-INSERT INTO `sys_menu` (id, label, type, path, parent_id, component, icon, order_num, if_link, if_visible, if_disabled, if_public, perms, sys_id, remark, create_by, update_by, create_time, update_time, deleted)
+INSERT INTO `sys_menu` (`id`, `label`, `type`, `path`, `parent_id`, `component`, `icon`, `order_num`, `if_link`, `if_visible`, `if_disabled`, `if_public`, `perms`, `sys_id`, `remark`, `create_by`, `update_by`, `create_time`, `update_time`, `deleted`)
 VALUES (1,'系统管理','mm','sys-manage',0,'#','system',1,'N','Y','N','N','main:sysManage',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (2,'菜单管理','mc','menu',1,'/sysManage/menu/index.vue','application-menu',5,'N','Y','N','N','main:sysManage:menu',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (3,'系统管理','mc','sys',1,'/sysManage/sys/index.vue','system',1,'N','Y','N','N','main:sysManage:sys',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
@@ -45,13 +45,13 @@ VALUES (1,'系统管理','mm','sys-manage',0,'#','system',1,'N','Y','N','N','mai
        (40,'字典数据','ma','#',36,'#','',4,'N','Y','N','N','i:sysManage:dicData',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (41,'字典类型','ma','#',36,'#','',5,'N','Y','N','N','i:sysManage:dicType',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (42,'菜单','ma','#',36,'#','',6,'N','Y','N','N','i:sysManage:menu',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (43,'角色','ma','#',36,'#','',7,'N','Y','N','N','i:sysManage:role',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (44,'角色权限','ma','#',36,'#','',8,'N','Y','N','N','i:sysManage:rolePermission',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (45,'角色系统','ma','#',36,'#','',9,'N','Y','N','N','i:sysManage:roleSys',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (46,'系统','ma','#',36,'#','',10,'N','Y','N','N','i:sysManage:sys',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (47,'用户','ma','#',36,'#','',11,'N','Y','N','N','i:sysManage:user',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (48,'用户部门','ma','#',36,'#','',12,'N','Y','N','N','i:sysManage:userDept',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (49,'用户角色','ma','#',36,'#','',13,'N','Y','N','N','i:sysManage:userRole',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (43,'角色','ma','#',36,'#','',8,'N','Y','N','N','i:sysManage:role',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (44,'角色权限','ma','#',36,'#','',9,'N','Y','N','N','i:sysManage:rolePermission',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (45,'角色系统','ma','#',36,'#','',10,'N','Y','N','N','i:sysManage:roleSys',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (46,'系统','ma','#',36,'#','',11,'N','Y','N','N','i:sysManage:sys',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (47,'用户','ma','#',36,'#','',12,'N','Y','N','N','i:sysManage:user',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (48,'用户部门','ma','#',36,'#','',13,'N','Y','N','N','i:sysManage:userDept',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (49,'用户角色','ma','#',36,'#','',14,'N','Y','N','N','i:sysManage:userRole',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (50,'分页查询部门','mb','#',37,'#','',0,'N','Y','N','N','main:sysManage:dept:selList',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (51,'查询所有部门','mb','#',37,'#','',0,'N','Y','N','N','main:sysManage:dept:selAll',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (52,'查询多个部门（根据id）','mb','#',37,'#','',0,'N','Y','N','N','main:sysManage:dept:selOnes',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
@@ -270,4 +270,14 @@ VALUES (1,'系统管理','mm','sys-manage',0,'#','system',1,'N','Y','N','N','mai
        (265,'查询多个角色（根据id）','mb','#',43,'#','',3,'N','Y','N','N','main:sysManage:role:selOnes',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (266,'批量新增角色','mb','#',43,'#','',6,'N','Y','N','N','main:sysManage:role:inss',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (267,'批量修改角色','mb','#',43,'#','',8,'N','Y','N','N','main:sysManage:role:upds',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (268,'获取某类型下的字典数据','mb','#',40,'#','',0,'N','Y','N','N','main:sysManage:dicData:selDataOfPerm',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N');
+       (268,'获取某类型下的字典数据','mb','#',40,'#','',0,'N','Y','N','N','main:sysManage:dicData:selDataOfPerm',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (269,'菜单ip白名单','ma','#',36,'#','',7,'N','Y','N','N','i:sysManage:menuIpWhiteList',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (270,'分页查询菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:selList',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (271,'查询所有菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:selAll',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (272,'查询多个菜单ip白名单（根据id）','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:selOnes',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (273,'查询单个菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:selOne',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (274,'新增菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:ins',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (275,'批量新增菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:inss',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (276,'修改菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:upd',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (277,'批量修改菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:upds',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (278,'删除菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:del',1,'','fyaaa','fyaaa','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N');

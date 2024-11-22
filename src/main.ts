@@ -5,6 +5,8 @@ import { time } from './util/TimeUtils';
 import { base } from './util/base';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+const banner = 'This is a banner.';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use((req, res, next) => {
@@ -23,6 +25,7 @@ async function bootstrap() {
     SwaggerModule.setup('/api', app, swaggerDocuemnt);
   }
   await app.listen(node_env.port);
+  console.info(banner);
   console.info(`${time()} ${node_env.mode} ${node_env.port}`);
 }
 
