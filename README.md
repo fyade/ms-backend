@@ -46,7 +46,7 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 4. 接下来
 
-首先需要全局安装 nest ，命令为 `npm i -g @nestjs/cli`；
+若未全局安装 nest ，则先需要全局安装 nest ，命令为 `npm i -g @nestjs/cli`；
 
 其次下载项目依赖，命令为 `npm i`；
 
