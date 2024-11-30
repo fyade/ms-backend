@@ -4,13 +4,14 @@ import { PermissionGuard } from '../guard/permissionGuard';
 import { ResponseInterceptor } from '../interceptor/responseInterceptor';
 
 export function Authorize(param: string | PreAuthorizeParams) {
-  let param_;
+  const param_ = new PreAuthorizeParams();
   if (typeof param === 'string') {
-    param_ = {
-      permission: param,
-    };
+    param_.permission = param;
+    param_.label = param;
   } else {
-    param_ = param;
+    Object.keys(param).forEach(key => {
+      param_[key] = param[key];
+    });
   }
   return applyDecorators(
     PreAuthorize(param_),

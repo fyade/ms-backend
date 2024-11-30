@@ -11,11 +11,10 @@ export class PreAuthorizeParams {
   ifSF?: boolean;
   // 是否忽略权限控制
   ifIgnore?: boolean;
+  // 是否忽略权限控制但仍需要解析token
+  ifIgnoreButResolveToken?: boolean;
   // 是否在记录操作日志时不记录参数
   ifIgnoreParamInLog?: boolean;
-  // 是否管理员登录接口
-  ifAdminLogin?: boolean;
 }
 
 export const PreAuthorize = (param: PreAuthorizeParams) => SetMetadata(PRE_AUTHORIZE_KEY, param);
-

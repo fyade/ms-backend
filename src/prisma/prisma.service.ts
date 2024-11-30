@@ -66,13 +66,13 @@ export class PrismaService extends PrismaClientOrigin {
     return obj;
   }
 
-  private defaultSelArg = ({
-                             ifDeleted = true,
-                             ifDataSegregation = false,
-                           }: {
-                             ifDeleted?: boolean
-                             ifDataSegregation?: boolean
-                           } = {},
+  defaultSelArg = ({
+                     ifDeleted = true,
+                     ifDataSegregation = false,
+                   }: {
+                     ifDeleted?: boolean
+                     ifDataSegregation?: boolean
+                   } = {},
   ) => {
     const retObj = {
       where: {
@@ -165,7 +165,7 @@ export class PrismaService extends PrismaClientOrigin {
     return retObj;
   };
 
-  private getModel(model: string): any {
+  private getModel(model: string) {
     const modelInstance = this[model];
     if (!modelInstance) {
       throw new UnknownException(this.baseContextService.getUserData().reqId);
@@ -301,7 +301,7 @@ export class PrismaService extends PrismaClientOrigin {
     delete data2.pageNum;
     delete data2.pageSize;
     const publicData = this.defaultSelArg({ ifDeleted, ifDataSegregation }).where;
-    const arg: any = {
+    const arg = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
         data: data2,
         orderBy,
@@ -319,21 +319,21 @@ export class PrismaService extends PrismaClientOrigin {
       take: pageSize,
     };
     if (typeof orderBy === 'boolean' && orderBy) {
-      arg.orderBy = {
+      arg['orderBy'] = {
         order_num: 'asc',
       };
     } else if (orderBy) {
-      arg.orderBy = {
+      arg['orderBy'] = {
         [toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
       };
     } else {
-      arg.orderBy = {
+      arg['orderBy'] = {
         create_time: 'desc',
       };
     }
     const model1 = this.getModel(model);
     const list = await model1.findMany(arg);
-    const list1 = list.map((item: any) => objToCamelCase(item));
+    const list1 = list.map((item: object) => objToCamelCase(item));
     const arg2 = {
       where: arg.where,
     };
@@ -384,7 +384,7 @@ export class PrismaService extends PrismaClientOrigin {
                                } = {},
                                ifUseGenSelParams = true,
   ): Promise<T[]> {
-    const arg: any = {
+    const arg = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
         data,
         orderBy,
@@ -400,20 +400,20 @@ export class PrismaService extends PrismaClientOrigin {
       },
     };
     if (typeof orderBy === 'boolean' && orderBy) {
-      arg.orderBy = {
+      arg['orderBy'] = {
         order_num: 'asc',
       };
     } else if (orderBy) {
-      arg.orderBy = {
+      arg['orderBy'] = {
         [toSnakeCase(Object.keys(orderBy)[0])]: Object.values(orderBy)[0],
       };
     } else {
-      arg.orderBy = {
+      arg['orderBy'] = {
         create_time: 'desc',
       };
     }
     const res2 = await this.getModel(model).findMany(arg);
-    const res3 = res2.map((item: any) => objToCamelCase(item));
+    const res3 = res2.map((item: object) => objToCamelCase(item));
     return new Promise(resolve => resolve(res3));
   }
 
@@ -485,7 +485,7 @@ export class PrismaService extends PrismaClientOrigin {
       },
     };
     const list = await this.getModel(model).findMany(arg);
-    const list2 = list.map((item: any) => objToCamelCase(item));
+    const list2 = ids.map((id) => objToCamelCase(list.find(item => item.id === id)));
     return new Promise(resolve => resolve(list2));
   }
 
@@ -520,7 +520,7 @@ export class PrismaService extends PrismaClientOrigin {
                              } = {},
                              ifUseGenSelParams = true,
   ): Promise<number> {
-    const arg: any = {
+    const arg = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
         data,
         range,
@@ -549,7 +549,7 @@ export class PrismaService extends PrismaClientOrigin {
    * @param ifUpdateTime
    * @param ifDeleted
    */
-  async create<T>(model: string, data: any, {
+  async create<T>(model: string, data, {
                     ifCustomizeId = false,
                     ifCreateBy = true,
                     ifUpdateBy = true,
@@ -591,7 +591,7 @@ export class PrismaService extends PrismaClientOrigin {
    * @param ifUpdateTime
    * @param ifDeleted
    */
-  async createMany<T>(model: string, data: any[], {
+  async createMany<T>(model: string, data, {
                         ifCustomizeId = false,
                         ifCreateBy = true,
                         ifUpdateBy = true,
@@ -632,7 +632,7 @@ export class PrismaService extends PrismaClientOrigin {
    * @param ifDeleted
    * @param ifDataSegregation
    */
-  async updateById<T>(model: string, data?: any, {
+  async updateById<T>(model: string, data?, {
                         ifUpdateBy = true,
                         ifUpdateTime = true,
                         ifDeleted = true,
@@ -675,7 +675,7 @@ export class PrismaService extends PrismaClientOrigin {
    * @param ifDeleted
    * @param ifDataSegregation
    */
-  async updateMany<T>(model: string, data?: any[], {
+  async updateMany<T>(model: string, data?, {
                         ifUpdateBy = true,
                         ifUpdateTime = true,
                         ifDeleted = true,
@@ -729,7 +729,7 @@ export class PrismaService extends PrismaClientOrigin {
    * @param values
    * @param ifDataSegregation
    */
-  async delete<T>(model: string, key: string, values: any[], {
+  async delete<T>(model: string, key: string, values, {
                     ifDataSegregation = false,
                   }: {
                     ifDataSegregation?: boolean

@@ -38,6 +38,7 @@ export class AppService {
     try {
       const directoryPath = path.join(__dirname, '../../src/module');
       const files = await getAllFiles(directoryPath);
+      files.push(path.join(__dirname, '../../src/app.controller.ts'));
       for (const filePath of files.filter(fileName => fileName.endsWith('.controller.ts'))) {
         const text = await fs.readFile(filePath, 'utf-8');
         // 正则表达式来匹配单引号或双引号内的字符串

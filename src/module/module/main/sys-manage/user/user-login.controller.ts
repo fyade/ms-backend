@@ -59,9 +59,9 @@ export class UserLoginController {
     summary: '管理员登录',
   })
   @Authorize({
-    permission: 'system:user:adminlogin',
+    permission: '-',
     label: '管理员登录',
-    ifAdminLogin: true,
+    ifIgnore: true,
     ifIgnoreParamInLog: true,
   })
   async adminLogin(@Body() dto: LoginDto, @Req() request: Request): Promise<R> {
@@ -71,5 +71,20 @@ export class UserLoginController {
     delete dto.psdType;
     const { ip: loginIp, browser: loginBrowser, os: loginOs } = getIpInfoFromRequest(request);
     return this.userService.adminlogin(dto, { loginIp, loginBrowser, loginOs });
+  }
+
+  @Post('/log-out')
+  @ApiOperation({
+    summary: '登出',
+  })
+  @Authorize({
+    permission: '-',
+    label: '登出',
+    ifIgnore: true,
+    ifIgnoreButResolveToken: true,
+    ifIgnoreParamInLog: true,
+  })
+  async logOut(): Promise<R> {
+    return this.userService.logOut();
   }
 }

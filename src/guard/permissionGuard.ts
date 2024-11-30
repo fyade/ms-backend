@@ -3,12 +3,9 @@ import { Reflector } from '@nestjs/core';
 import { PRE_AUTHORIZE_KEY, PreAuthorizeParams } from '../decorator/customDecorator';
 import { AuthService } from '../module/auth/auth.service';
 import { ForbiddenException } from '../exception/ForbiddenException';
-import { UserUnknownException } from '../exception/UserUnknownException';
-import { CachePermissionService } from '../module/cache/cache.permission.service';
-import { base } from '../util/base';
 import { Exception } from '../exception/Exception';
 import { ParameterException } from '../exception/ParameterException';
-import { LoginDto, UserDto2 } from '../module/module/main/sys-manage/user/dto';
+import { UserDto2 } from '../module/module/main/sys-manage/user/dto';
 import { AlgorithmDto } from '../module/module/algorithm/algorithm/dto';
 import { Request } from 'express';
 import { IpNotInWhiteListException } from '../exception/IpNotInWhiteListException';
@@ -23,7 +20,6 @@ export class PermissionGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
     private readonly cacheTokenService: CacheTokenService,
-    private readonly cachePermissionService: CachePermissionService,
     private readonly baseContextService: BaseContextService,
   ) {
   }
@@ -33,13 +29,13 @@ export class PermissionGuard implements CanActivate {
       PRE_AUTHORIZE_KEY,
       context.getHandler(),
     );
-    const { permission, label, ifSF, ifIgnore, ifAdminLogin, ifIgnoreParamInLog } = authorizeParams;
+    const { permission, label, ifSF, ifIgnore, ifIgnoreButResolveToken, ifIgnoreParamInLog } = authorizeParams;
     const request: Request = context.switchToHttp().getRequest();
 
-    const oauth = request.headers['authorization'];
-    const token = typeof oauth === 'string' ? (oauth.startsWith('Bearer') ? oauth.substring(6) : oauth).trim() : '';
-    if (ifIgnore || ifAdminLogin) {
-    } else if (token) {
+    if (ifIgnore && !ifIgnoreButResolveToken) {
+    } else {
+      const oauth = request.headers['authorization'];
+      const token = typeof oauth === 'string' ? (oauth.startsWith('Bearer') ? oauth.substring(6) : oauth).trim() : '';
       try {
         const decoded = await this.cacheTokenService.verifyToken(token);
         if (decoded) {
@@ -62,25 +58,6 @@ export class PermissionGuard implements CanActivate {
       return true;
     }
     const user = this.baseContextService.getUserData().user;
-    // 放行管理员登录接口
-    if (ifAdminLogin && !!!user) {
-      const reqBody = request.body as unknown as LoginDto;
-      const userDto = await this.authService.findUserByUsername(reqBody.username);
-      if (!!!userDto) {
-        await this.authService.insLogOperation(permission, request, false, {
-          remark: '用户不存在。',
-          ifIgnoreParamInLog,
-        });
-        throw new UserUnknownException();
-      }
-      const ifHasPermission = await this.authService.ifAdminUser(reqBody.username);
-      if (ifHasPermission) {
-        return true;
-      } else {
-        await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
-        throw new ForbiddenException(label);
-      }
-    }
     // 算法接口权限控制
     if (ifSF) {
       const reqBody = request.body as unknown as AlgorithmDto;
@@ -99,27 +76,30 @@ export class PermissionGuard implements CanActivate {
         }
       }
       await this.authService.insLogOperation(permission, request, false, {
-        remark: '用户您无当前算法权限。',
+        remark: '您无当前算法权限。',
         ifIgnoreParamInLog,
       });
       throw new Exception('您无当前算法权限。');
-      // throw new ForbiddenException(label);
     }
     // 页面接口权限控制
     else {
       // 是否公共接口
-      const ifPublicInterfaceInCache = await this.cachePermissionService.getIfPublicPermissionInCache(permission);
-      if (ifPublicInterfaceInCache) {
-        if (ifPublicInterfaceInCache === base.Y) {
-          return true;
+      const ifPublicInterface = await this.authService.ifPublicInterface(permission);
+      if (ifPublicInterface) {
+        // 请求ip是否在此接口的ip白名单中
+        const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);
+        if (!ifIpInWhiteList) {
+          await this.authService.insLogOperation(permission, request, false, {
+            remark: '请求源IP不在白名单内。',
+            ifIgnoreParamInLog,
+          });
+          throw new IpNotInWhiteListException();
         }
-      } else {
-        const ifPublicInterface = await this.authService.ifPublicInterface(permission);
-        if (ifPublicInterface) {
-          await this.cachePermissionService.setPublicPermissionInCache(permission);
-          return true;
-        }
-        await this.cachePermissionService.setPublicPermissionInCache(permission, base.N);
+        return true;
+      }
+      if (!user) {
+        await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
+        throw new ForbiddenException(label);
       }
       // 请求ip是否在此接口的ip白名单中
       const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);
@@ -134,19 +114,12 @@ export class PermissionGuard implements CanActivate {
         }
       }
       // 用户是否有当前接口的权限
-      if (user) {
-        const ifHavePermissionInCache = await this.cachePermissionService.ifHavePermissionInCache(user.userid, permission);
-        if (ifHavePermissionInCache) {
-          return true;
-        }
-        const ifHasPermission = await this.authService.hasAdminPermissionByUserid(user.userid, permission);
-        if (ifHasPermission) {
-          await this.cachePermissionService.setPermissionInCache(user.userid, permission);
-          return true;
-        }
+      const ifHasPermission = await this.authService.hasAdminPermissionByUserid(user.userid, permission);
+      if (ifHasPermission) {
+        return true;
       }
+      await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
+      throw new ForbiddenException(label);
     }
-    await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
-    throw new ForbiddenException(label);
   }
 }

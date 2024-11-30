@@ -178,7 +178,9 @@ export class UserService {
   }
 
   async regist(dto: RegistDto): Promise<R> {
-    const user = await this.authService.findUserByUsername(dto.username);
+    const user = await this.prisma.findFirst<UserDto>('sys_user', {
+      username: dto.username,
+    });
     if (user) {
       return R.err('用户名已被使用。');
     }
@@ -193,7 +195,7 @@ export class UserService {
     return R.ok('注册成功。');
   }
 
-  async login(dto: LoginDto, { loginIp, loginBrowser, loginOs }): Promise<R> {
+  async login(dto: LoginDto, { loginIp, loginBrowser, loginOs }): Promise<R<{ token: string, user: UserDto }>> {
     let user: UserDto;
     const user_ = await this.prisma.findFirst<UserDto>('sys_user', {
       username: dto.username,
@@ -288,12 +290,16 @@ export class UserService {
     if (userinfo.code !== HTTP.SUCCESS().code) {
       return R.err(userinfo.msg);
     }
-    // const permissions = await this.authService.permissionsOfUser(userinfo.data.user);
-    // const systems = await this.authService.systemsOfUser(userinfo.data.user);
-    return R.ok({
-      ...userinfo.data,
-      // permissions,
-      // systems,
-    });
+    const ifAdminUser = await this.authService.ifAdminUser(userinfo.data.user.id);
+    if (ifAdminUser) {
+      return R.ok(userinfo.data);
+    } else {
+      return R.err('你不是管理员用户。');
+    }
+  }
+
+  async logOut(): Promise<R> {
+    await this.cacheTokenService.deleteToken(this.baseContextService.getUserData().token);
+    return R.ok();
   }
 }

@@ -8,6 +8,7 @@ import { jwtConstants } from '../../../config/config';
 @Injectable()
 export class CacheTokenService {
   readonly UUID_TOKEN = 'zzz:uuid:token';
+
   // readonly USERID_UUID = 'userid:uuid';
 
   constructor(
@@ -51,5 +52,9 @@ export class CacheTokenService {
     const decoded = verifyToken(token);
     // await this.freshToken(decoded, tokenUuid);
     return decoded;
+  }
+
+  async deleteToken(tokenUuid: string) {
+    await this.redis.del(`${this.UUID_TOKEN}:${tokenUuid}`);
   }
 }

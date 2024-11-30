@@ -1,10 +1,14 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Injectable } from '@nestjs/common';
 import { UnknownException } from '../exception/UnknownException';
 import { Request } from 'express';
+import { BaseContextService } from '../module/base-context/base-context.service';
 
 @Catch()
+@Injectable()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  constructor() {
+  constructor(
+    private readonly baseContextService: BaseContextService
+  ) {
   }
 
   catch(exception: HttpException, host: ArgumentsHost) {
@@ -18,7 +22,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         msg: exception.message,
       });
     } catch (e) {
-      const unknownException = new UnknownException('no code', exception);
+      const unknownException = new UnknownException(this.baseContextService.getUserData().reqId, exception);
       response.status(unknownException.getStatus()).json({
         code: unknownException.getStatus(),
         msg: unknownException.getMessage(),

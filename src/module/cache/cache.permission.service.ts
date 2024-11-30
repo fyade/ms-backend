@@ -19,16 +19,17 @@ export class CachePermissionService {
    */
   async ifHavePermissionInCache(userId: string, permission: string) {
     const value = await this.redis.hget(this.USER_PERMISSION, `${permission}---${userId}`);
-    return value === base.Y;
+    return value;
   }
 
   /**
    * 添加用户权限至缓存
    * @param userId
    * @param permission
+   * @param ifHave
    */
-  async setPermissionInCache(userId: string, permission: string) {
-    await this.redis.hset(this.USER_PERMISSION, `${permission}---${userId}`, base.Y);
+  async setPermissionInCache(userId: string, permission: string, ifHave: boolean) {
+    await this.redis.hset(this.USER_PERMISSION, `${permission}---${userId}`, ifHave ? base.Y : base.N);
   }
 
   /**

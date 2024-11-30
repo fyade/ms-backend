@@ -13,38 +13,30 @@ import { Request } from 'express';
 import { MenuDto } from '../module/main/sys-manage/menu/dto';
 import { MenuIpWhiteListDto } from '../module/main/sys-manage/menu-ip-white-list/dto';
 import { BaseContextService } from '../base-context/base-context.service';
+import { CachePermissionService } from '../cache/cache.permission.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly cachePermissionService: CachePermissionService,
     private readonly baseContextService: BaseContextService,
   ) {
   }
 
   /**
-   * 根据用户名查询用户
-   * @param username
-   */
-  async findUserByUsername(username: string): Promise<UserDto> {
-    const userDto = await this.prisma.findFirst<UserDto>('sys_user', { username: username });
-    return userDto;
-  }
-
-  /**
    * 是否管理员用户
-   * @param username
+   * @param userid
    */
-  async ifAdminUser(username: string) {
-    const user = await this.prisma.findFirst<UserDto>('sys_user', { username: username });
-    if (await this.hasTopAdminPermission(user.id)) {
+  async ifAdminUser(userid: string) {
+    if (await this.hasTopAdminPermission(userid)) {
       return true;
     }
     const ps1 = await this.prisma.$queryRaw`
       select sur.id as surId
       from sys_user_role sur
       where sur.deleted = ${base.N}
-        and sur.user_id = ${user.id}
+        and sur.user_id = ${userid}
         and sur.role_id in
             (select sr.id
              from sys_role sr
@@ -56,7 +48,7 @@ export class AuthService {
       select sud.id as sudId
       from sys_user_dept sud
       where sud.deleted = ${base.N}
-        and sud.user_id = ${user.id}
+        and sud.user_id = ${userid}
         and sud.dept_id in
             (select sd.id
              from sys_dept sd
@@ -78,42 +70,21 @@ export class AuthService {
   }
 
   /**
-   * 是否有某权限（根据用户名查询）
-   * @param username
-   * @param permission
-   */
-  async hasAdminPermissionByUsername(username: string, permission: string) {
-    const user = await this.prisma.findFirst<UserDto>('sys_user', { username: username });
-    if (user) {
-      return this.hasAdminPermissionByUser(user, permission);
-    }
-    return false;
-  }
-
-  /**
    * 是否有某权限（根据用户id查询）
    * @param userid
    * @param permission
    */
   async hasAdminPermissionByUserid(userid: string, permission: string) {
-    const user = await this.prisma.findFirst<UserDto>('sys_user', { id: userid });
-    if (user) {
-      return this.hasAdminPermissionByUser(user, permission);
+    const b = await this.cachePermissionService.ifHavePermissionInCache(userid, permission);
+    if (b) {
+      return b === base.Y;
     }
-    return false;
-  }
-
-  /**
-   * 是否有某权限（根据用户查询）
-   * @param user
-   * @param permission
-   */
-  async hasAdminPermissionByUser(user: UserDto, permission: string) {
-    if (await this.hasTopAdminPermission(user.id)) {
+    if (await this.hasTopAdminPermission(userid)) {
       return true;
     }
-    const permissionsOfUser = await this.permissionsOfUser({ userId: user.id, permission });
+    const permissionsOfUser = await this.permissionsOfUser({ userId: userid, permission });
     const index = permissionsOfUser.findIndex(item => item.perms === permission);
+    await this.cachePermissionService.setPermissionInCache(userid, permission, index > -1);
     return index > -1;
   }
 
@@ -122,15 +93,26 @@ export class AuthService {
    * @param permission
    */
   async ifPublicInterface(permission: string) {
+    const ifPublicInterfaceInCache = await this.cachePermissionService.getIfPublicPermissionInCache(permission);
+    if (ifPublicInterfaceInCache) {
+      return ifPublicInterfaceInCache === base.Y;
+    }
     const raw = await this.prisma.$queryRaw`
       select if_public
       from sys_menu
       where perms = ${permission}
         and if_public = ${base.Y};
     `;
-    return raw.length > 0;
+    const b = raw.length > 0;
+    await this.cachePermissionService.setPublicPermissionInCache(permission, b ? base.Y : base.N);
+    return b;
   }
 
+  /**
+   * 请求源是否在接口的ip白名单中
+   * @param permission
+   * @param request
+   */
   async ifIpInWhiteListOfPermission(permission: string, request: Request): Promise<boolean> {
     const menu: MenuDto[] = await this.prisma.$queryRaw`
       select id          as id,
@@ -587,9 +569,22 @@ export class AuthService {
   ) {
     const user = this.baseContextService.getUserData().user;
     const ipInfoFromRequest = getIpInfoFromRequest(request);
-    await this.prisma.$queryRaw`
-      insert into log_operation (req_id, call_ip, host_name, perms, user_id, req_param, old_value, operate_type, if_success, remark, create_time)
-      values (${this.baseContextService.getUserData().reqId}, ${ipInfoFromRequest.ip}, ${ipInfoFromRequest.host}, ${permission}, ${user ? user.userid : '???'}, ${ifIgnoreParamInLog ? JSON.stringify({body:'hidden',query:'hidden'}) : JSON.stringify({body:request.body,query:request.query})}, '', ${request.method}, ${typeof ifSuccess==='boolean' ? ifSuccess ? base.Y : base.N : ifSuccess}, ${remark}, ${new Date(timestamp())});
-    `;
+    await this.prisma.getOrigin().log_operation.create({
+      data: {
+        req_id: this.baseContextService.getUserData().reqId,
+        call_ip: ipInfoFromRequest.ip,
+        host_name: ipInfoFromRequest.host,
+        perms: permission,
+        user_id: user ? user.userid : '???',
+        req_param: ifIgnoreParamInLog ?
+          JSON.stringify({ body: 'hidden', query: 'hidden' }) :
+          JSON.stringify({ body: request.body, query: request.query }),
+        old_value: '',
+        operate_type: request.method,
+        if_success: typeof ifSuccess === 'boolean' ? ifSuccess ? base.Y : base.N : ifSuccess,
+        remark: remark,
+        create_time: new Date(timestamp()),
+      },
+    });
   }
 }

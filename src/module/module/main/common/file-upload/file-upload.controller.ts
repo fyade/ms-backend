@@ -4,7 +4,7 @@ import { R } from '../../../../../common/R';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { currentEnv } from '../../../../../../config/config';
 import {
-  FileUploadSelListDto,
+  FileSelListDto,
   FileUploadOneChunk_check,
   FileUploadOneChunk_merge,
   FileUploadOneChunk_upload,
@@ -13,7 +13,7 @@ import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 
-@Controller('/main/sys-common/file-upload')
+@Controller('/main/sys/file-upload')
 @ApiTags('通用/文件上传')
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
@@ -32,7 +32,7 @@ export class FileUploadController {
     permission: 'main:system:fileupload:selList',
     label: '分页查询文件上传列表',
   })
-  async selList(@Query() dto: FileUploadSelListDto): Promise<R> {
+  async selList(@Query() dto: FileSelListDto): Promise<R> {
     return this.fileUploadService.selList(dto);
   }
 
@@ -125,10 +125,4 @@ export class FileUploadController {
   async fileUploadOneChunkMerge(@Body() dto: FileUploadOneChunk_merge): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkMerge(dto);
   }
-
-  // @Get('/image-waterfall-flow')
-  // @Authorize('main:system:fileupload:waterfall')
-  // async getImageWaterfallFlow(@Query() dto: pageDto) {
-  //   return this.fileUploadService.getImageWaterfallFlow(dto);
-  // }
 }
