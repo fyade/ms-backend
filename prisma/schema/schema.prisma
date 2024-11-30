@@ -122,44 +122,6 @@ model sys_code_gen_column {
   table_id_   sys_code_gen_table @relation(fields: [table_id], references: [id])
 }
 
-// // 1.6 配置表-用户用
-// model sys_config_for_user {
-//   id          Int      @id @default(autoincrement()) @db.Int
-//   user_id     String   @db.VarChar(10)
-//   remark      String?  @db.VarChar(300)
-//   create_by   String   @db.VarChar(10)
-//   update_by   String   @db.VarChar(10)
-//   create_time DateTime @default(now())
-//   update_time DateTime @updatedAt
-//   deleted     String   @default("N") @db.Char(1)
-// }
-//
-// // 1.7 配置表-管理员用
-// model sys_config_for_admin {
-//   id                     Int      @id @default(autoincrement()) @db.Int
-//   user_id                String   @db.VarChar(10)
-//   if_show_all_permission String   @db.Char(1) // 是否显示所有无权限的按钮
-//   remark                 String?  @db.VarChar(300)
-//   create_by              String   @db.VarChar(10)
-//   update_by              String   @db.VarChar(10)
-//   create_time            DateTime @default(now())
-//   update_time            DateTime @updatedAt
-//   deleted                String   @default("N") @db.Char(1)
-// }
-//
-// // 1.8 用户权限显示表
-// model sys_permission_show {
-//   id            Int      @id @default(autoincrement()) @db.Int
-//   user_id       String   @db.VarChar(10)
-//   permission_id Int      @db.Int
-//   remark        String?  @db.VarChar(300)
-//   create_by     String   @db.VarChar(10)
-//   update_by     String   @db.VarChar(10)
-//   create_time   DateTime @default(now())
-//   update_time   DateTime @updatedAt
-//   deleted       String   @default("N") @db.Char(1)
-// }
-
 // 2.0 顶级管理员表
 model sys_admin_top {
   id          Int      @id @default(autoincrement()) @db.Int
@@ -224,7 +186,6 @@ model sys_user_role {
   id          Int      @id @default(autoincrement()) @db.Int
   user_id     String   @db.VarChar(10)
   role_id     Int      @db.Int
-  remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -238,9 +199,7 @@ model sys_user_role {
 model sys_role_permission {
   id             Int      @id @default(autoincrement()) @db.Int
   role_id        Int      @db.Int
-  type           String   @db.VarChar(2)
   permission_id  Int      @db.Int
-  remark         String?  @db.VarChar(300)
   create_by      String   @db.VarChar(10)
   update_by      String   @db.VarChar(10)
   create_time    DateTime @default(now())
@@ -274,7 +233,6 @@ model sys_user_dept {
   id          Int      @id @default(autoincrement()) @db.Int
   user_id     String   @db.VarChar(10)
   dept_id     Int      @db.Int
-  remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -288,9 +246,7 @@ model sys_user_dept {
 model sys_dept_permission {
   id             Int      @id @default(autoincrement()) @db.Int
   dept_id        Int      @db.Int
-  type           String   @db.VarChar(2)
   permission_id  Int      @db.Int
-  remark         String?  @db.VarChar(300)
   create_by      String   @db.VarChar(10)
   update_by      String   @db.VarChar(10)
   create_time    DateTime @default(now())
@@ -325,7 +281,6 @@ model sys_role_sys {
   id          Int      @id @default(autoincrement()) @db.Int
   role_id     Int      @db.Int
   sys_id      Int      @db.Int
-  remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -340,7 +295,6 @@ model sys_dept_sys {
   id          Int      @id @default(autoincrement()) @db.Int
   dept_id     Int      @db.Int
   sys_id      Int      @db.Int
-  remark      String?  @db.VarChar(300)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -387,7 +341,6 @@ model sys_user_user_group {
   id             Int            @id @default(autoincrement()) @db.Int
   user_id        String         @db.VarChar(10)
   user_group_id  Int            @db.Int
-  remark         String?        @db.VarChar(300)
   create_by      String         @db.VarChar(10)
   update_by      String         @db.VarChar(10)
   create_time    DateTime       @default(now())
@@ -438,7 +391,6 @@ model sys_interface_interface_group {
   id                  Int                 @id @default(autoincrement()) @db.Int
   interface_id        Int                 @db.Int
   interface_group_id  Int                 @db.Int
-  remark              String?             @db.VarChar(300)
   create_by           String              @db.VarChar(10)
   update_by           String              @db.VarChar(10)
   create_time         DateTime            @default(now())
@@ -470,21 +422,6 @@ model sys_user_group_permission {
   user_group_id_           sys_user_group       @relation(fields: [user_group_id], references: [id])
   permission_id_           sys_interface_group  @relation(fields: [permission_id], references: [id])
   log_algorithm_calls      log_algorithm_call[]
-}
-
-// 3.1 sms记录表
-model tbl_sms {
-  id                 Int      @id @default(autoincrement()) @db.Int
-  from               String   @db.VarChar(15)
-  to                 String   @db.VarChar(15)
-  params             String   @db.VarChar(500)
-  send_type          String   @db.VarChar(50)
-  send_status        String   @db.VarChar(2)
-  send_status_remark String   @db.VarChar(300)
-  remark             String?  @db.VarChar(300)
-  create_by          String   @db.VarChar(10)
-  create_time        DateTime @default(now())
-  deleted            String   @default("N") @db.Char(1)
 }
 
 // 3.2 文件表

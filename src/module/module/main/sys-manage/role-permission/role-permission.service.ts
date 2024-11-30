@@ -21,7 +21,7 @@ export class RolePermissionService {
     const res = await this.prisma.findAll<RolePermissionDto>('sys_role_permission', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['roleId', 'type', 'permissionId'],
+      notNullKeys: ['roleId', 'permissionId'],
       numberKeys: ['roleId', 'permissionId'],
     });
     return R.ok(res);
@@ -38,7 +38,7 @@ export class RolePermissionService {
       data: { roleId: dto.roleId },
       numberKeys: ['roleId'],
     });
-    const perIds = allRolePermissions.filter(item => item.type === 'm').map(item => item.permissionId);
+    const perIds = allRolePermissions.map(item => item.permissionId);
     const addRPSPIDS = dto.permissionId.filter(item => perIds.indexOf(item) === -1);
     const delRPS = perIds.filter(item => dto.permissionId.indexOf(item) === -1);
     const delids = allRolePermissions.filter(item => delRPS.indexOf(item.permissionId) > -1).map(item => item.id);
@@ -46,7 +46,6 @@ export class RolePermissionService {
     const addRPS = addRPSPIDS.map(item => ({
       roleId: dto.roleId,
       permissionId: item,
-      type: 'm',
     }));
     await this.prisma.createMany('sys_role_permission', addRPS);
     return R.ok();

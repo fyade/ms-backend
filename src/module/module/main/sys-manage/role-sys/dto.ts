@@ -10,8 +10,6 @@ export class RoleSysDto extends BaseDto {
   roleId: number;
 
   sysId: number;
-
-  remark: string;
 }
 
 export class RoleSysSelListDto extends PageDto {
@@ -23,9 +21,6 @@ export class RoleSysSelListDto extends PageDto {
 
   @ApiProperty({ description: '系统', required: false })
   sysId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class RoleSysSelAllDto {
@@ -34,9 +29,6 @@ export class RoleSysSelAllDto {
 
   @ApiProperty({ description: '系统', required: false })
   sysId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class RoleSysInsOneDto {
@@ -49,9 +41,6 @@ export class RoleSysInsOneDto {
   @Type(() => Number)
   @IsNotEmpty({ message: '系统不能为空' })
   sysId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class RoleSysUpdOneDto extends RoleSysInsOneDto {

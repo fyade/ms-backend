@@ -10,8 +10,6 @@ export class InterfaceInterfaceGroupDto extends BaseDto {
   interfaceId: number;
 
   interfaceGroupId: number;
-
-  remark: string;
 }
 
 export class InterfaceInterfaceGroupSelListDto extends PageDto {
@@ -23,9 +21,6 @@ export class InterfaceInterfaceGroupSelListDto extends PageDto {
 
   @ApiProperty({ description: '接口组', required: false })
   interfaceGroupId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class InterfaceInterfaceGroupSelAllDto {
@@ -34,9 +29,6 @@ export class InterfaceInterfaceGroupSelAllDto {
 
   @ApiProperty({ description: '接口组', required: false })
   interfaceGroupId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class InterfaceInterfaceGroupInsOneDto {
@@ -49,9 +41,6 @@ export class InterfaceInterfaceGroupInsOneDto {
   @Type(() => Number)
   @IsNotEmpty({ message: '接口组不能为空' })
   interfaceGroupId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class InterfaceInterfaceGroupUpdOneDto extends InterfaceInterfaceGroupInsOneDto {

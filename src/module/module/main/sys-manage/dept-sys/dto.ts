@@ -10,8 +10,6 @@ export class DeptSysDto extends BaseDto {
   deptId: number;
 
   sysId: number;
-
-  remark: string;
 }
 
 export class DeptSysSelListDto extends PageDto {
@@ -23,9 +21,6 @@ export class DeptSysSelListDto extends PageDto {
 
   @ApiProperty({ description: '系统', required: false })
   sysId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class DeptSysSelAllDto {
@@ -34,9 +29,6 @@ export class DeptSysSelAllDto {
 
   @ApiProperty({ description: '系统', required: false })
   sysId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class DeptSysInsOneDto {
@@ -49,9 +41,6 @@ export class DeptSysInsOneDto {
   @Type(() => Number)
   @IsNotEmpty({ message: '系统不能为空' })
   sysId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class DeptSysUpdOneDto extends DeptSysInsOneDto {

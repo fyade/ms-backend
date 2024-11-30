@@ -10,8 +10,6 @@ export class UserDeptDto extends BaseDto {
   userId: string;
 
   deptId: number;
-
-  remark: string;
 }
 
 export class UserDeptSelListDto extends PageDto {
@@ -23,9 +21,6 @@ export class UserDeptSelListDto extends PageDto {
 
   @ApiProperty({ description: '部门', required: false })
   deptId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class UserDeptSelAllDto {
@@ -34,9 +29,6 @@ export class UserDeptSelAllDto {
 
   @ApiProperty({ description: '部门', required: false })
   deptId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class UserDeptInsOneDto {
@@ -48,9 +40,6 @@ export class UserDeptInsOneDto {
   @Type(() => Number)
   @IsNotEmpty({ message: '部门不能为空' })
   deptId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class UserDeptUpdOneDto extends UserDeptInsOneDto {
@@ -67,9 +56,6 @@ export class UserDeptUpdUDDto {
   @ApiProperty({ description: '部门', required: true })
   @IsArray({ message: '部门应为数组' })
   deptId: number[];
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class UserDeptUpdDUDto {
@@ -80,7 +66,4 @@ export class UserDeptUpdDUDto {
   @ApiProperty({ description: '部门', required: true })
   @IsNotEmpty({ message: '部门不能为空' })
   deptId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }

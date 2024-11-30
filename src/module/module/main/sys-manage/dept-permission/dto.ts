@@ -9,11 +9,7 @@ export class DeptPermissionDto extends BaseDto {
 
   deptId: number;
 
-  type: string;
-
   permissionId: number;
-
-  remark: string;
 }
 
 export class DeptPermissionSelListDto extends PageDto {
@@ -23,28 +19,16 @@ export class DeptPermissionSelListDto extends PageDto {
   @ApiProperty({ description: '部门', required: false })
   deptId: number;
 
-  @ApiProperty({ description: '权限类型', required: false })
-  type: string;
-
   @ApiProperty({ description: '权限', required: false })
   permissionId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class DeptPermissionSelAllDto {
   @ApiProperty({ description: '部门', required: false })
   deptId: number;
 
-  @ApiProperty({ description: '权限类型', required: false })
-  type: string;
-
   @ApiProperty({ description: '权限', required: false })
   permissionId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class DeptPermissionInsOneDto {
@@ -53,17 +37,10 @@ export class DeptPermissionInsOneDto {
   @IsNotEmpty({ message: '部门不能为空' })
   deptId: number;
 
-  @ApiProperty({ description: '权限类型', required: true })
-  @IsNotEmpty({ message: '权限类型不能为空' })
-  type: string;
-
   @ApiProperty({ description: '权限', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '权限不能为空' })
   permissionId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class DeptPermissionUpdOneDto extends DeptPermissionInsOneDto {

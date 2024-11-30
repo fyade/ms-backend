@@ -16,7 +16,7 @@ export class DeptPermissionService {
     const res = await this.prisma.findPage<DeptPermissionDto, DeptPermissionSelListDto>('sys_dept_permission', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['deptId', 'type', 'permissionId'],
+      notNullKeys: ['deptId', 'permissionId'],
       numberKeys: ['deptId', 'permissionId'],
       completeMatchingKeys: [],
     });
@@ -27,7 +27,7 @@ export class DeptPermissionService {
     const res = await this.prisma.findAll<DeptPermissionDto>('sys_dept_permission', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['deptId', 'type', 'permissionId'],
+      notNullKeys: ['deptId', 'permissionId'],
       numberKeys: ['deptId', 'permissionId'],
       completeMatchingKeys: [],
     });
@@ -50,7 +50,7 @@ export class DeptPermissionService {
       data: { deptId: dto.deptId },
       numberKeys: ['deptId'],
     });
-    const perIds = allDeptPermission.filter(item => item.type === 'm').map(item => item.permissionId);
+    const perIds = allDeptPermission.map(item => item.permissionId);
     const addDPSPIDS = dto.permissionId.filter(item => perIds.indexOf(item) === -1);
     const delDPS = perIds.filter(item => dto.permissionId.indexOf(item) === -1);
     const delids = allDeptPermission.filter(item => delDPS.indexOf(item.permissionId) > -1).map(item => item.id);
@@ -58,7 +58,6 @@ export class DeptPermissionService {
     const addDPS = addDPSPIDS.map(item => ({
       deptId: dto.deptId,
       permissionId: item,
-      type: 'm',
     }));
     await this.prisma.createMany('sys_dept_permission', addDPS);
     return R.ok();

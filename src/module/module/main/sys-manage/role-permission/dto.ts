@@ -9,11 +9,7 @@ export class RolePermissionDto extends BaseDto {
 
   roleId: number;
 
-  type: string;
-
   permissionId: number;
-
-  remark: string;
 }
 
 export class RolePermissionSelListDto extends PageDto {
@@ -23,28 +19,16 @@ export class RolePermissionSelListDto extends PageDto {
   @ApiProperty({ description: '角色', required: false })
   roleId: number;
 
-  @ApiProperty({ description: '权限类型', required: false })
-  type: string;
-
   @ApiProperty({ description: '权限', required: false })
   permissionId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class RolePermissionSelAllDto {
   @ApiProperty({ description: '角色', required: false })
   roleId: number;
 
-  @ApiProperty({ description: '权限类型', required: false })
-  type: string;
-
   @ApiProperty({ description: '权限', required: false })
   permissionId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class RolePermissionSelByRoleIdDto {
@@ -63,13 +47,6 @@ export class RolePermissionInsManyDto {
   @ApiProperty({ description: '权限', required: true })
   @IsArray({ message: '权限应为数组' })
   permissionId: number[];
-
-  @ApiProperty({ description: '权限类型', required: false })
-    // @IsNotEmpty({ message: '权限类型不能为空' })
-  type: string;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class RolePermissionUpdManyDto extends RolePermissionInsManyDto {
@@ -81,17 +58,10 @@ export class RolePermissionInsOneDto {
   @IsNotEmpty({ message: '角色不能为空' })
   roleId: number;
 
-  @ApiProperty({ description: '权限类型', required: true })
-  @IsNotEmpty({ message: '权限类型不能为空' })
-  type: string;
-
   @ApiProperty({ description: '权限', required: true })
   @Type(() => Number)
   @IsNotEmpty({ message: '权限不能为空' })
   permissionId: number;
-
-  @ApiProperty({ description: '备注', required: false })
-  remark: string;
 }
 
 export class RolePermissionUpdOneDto extends RolePermissionInsOneDto {
