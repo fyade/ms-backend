@@ -1,6 +1,5 @@
-import { UserDto } from '../module/main/sys-manage/user/dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { base, T_COMP, T_HOST, T_Inter, T_IP, T_IS, T_MENU, T_ROLE } from '../../util/base';
+import { base, T_COMP, T_DEPT, T_HOST, T_Inter, T_IP, T_IS, T_MENU, T_ROLE } from '../../util/base';
 import { Injectable } from '@nestjs/common';
 import { AdminTopDto } from '../admin-top/dto';
 import { LogAlgorithmCallDto } from '../module/algorithm/log-algorithm-call/dto';
@@ -36,66 +35,8 @@ export class AuthService {
     if (await this.hasTopAdminPermission(userId)) {
       return true;
     }
-    const ps1: { surId: number }[] = await this.prisma.$queryRaw`
-      select sur.id as surId
-      from sys_user_role sur
-      where sur.deleted = ${base.N}
-        and sur.login_role = ${loginRole}
-        and sur.user_id = ${userId}
-        and sur.role_id in
-            (select sr.id
-             from sys_role sr
-             where sr.deleted = ${base.N}
-               and sr.if_disabled = ${base.N}
-               and sr.if_admin = ${base.Y});
-    `;
-    const ps2: { sudId: number }[] = await this.prisma.$queryRaw`
-      select sud.id as sudId
-      from sys_user_dept sud
-      where sud.deleted = ${base.N}
-        and sud.login_role = ${loginRole}
-        and sud.user_id = ${userId}
-        and sud.dept_id in
-            (select sd.id
-             from sys_dept sd
-             where sd.deleted = ${base.N}
-               and sd.if_disabled = ${base.N}
-               and sd.if_admin = ${base.Y});
-    `;
-    if (ps1.length > 0 || ps2.length > 0) {
-      return true;
-    }
-    if (loginRole === 'visitor') {
-      const sutdps_ = await this.prisma.getOrigin().sys_user_table_default_permission.findMany({
-        where: {
-          table_name: 'sys_user_visitor',
-          ...this.prisma.defaultSelArg().where,
-        },
-      });
-      const sutdps = objToCamelCase<UserTableDefaultPermissionDto[]>(sutdps_);
-      const number1 = await this.prisma.getOrigin().sys_role.count({
-        where: {
-          if_admin: base.Y,
-          if_disabled: base.N,
-          id: {
-            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
-          },
-          ...this.prisma.defaultSelArg().where,
-        },
-      });
-      const number2 = await this.prisma.getOrigin().sys_dept.count({
-        where: {
-          if_admin: base.Y,
-          if_disabled: base.N,
-          id: {
-            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
-          },
-          ...this.prisma.defaultSelArg().where,
-        },
-      });
-      return number1 > 0 || number2 > 0;
-    }
-    return false;
+    const { allRoleIds, allDeptIds } = await this.rolesAndDeptsOfUser(userId, loginRole);
+    return allRoleIds.length > 0 || allDeptIds.length > 0;
   }
 
   /**
@@ -613,7 +554,7 @@ export class AuthService {
           if_admin: base.Y,
           if_disabled: base.N,
           id: {
-            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
+            in: sutdps.filter(item => item.permType === T_DEPT).map(item => item.permId),
           },
           ...this.prisma.defaultSelArg().where,
         },
