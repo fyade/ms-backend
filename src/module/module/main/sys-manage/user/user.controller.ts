@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AdminNewUserDto, ResetPsdDto, UpdPsdDto, UserDto, UserListSelDto } from './dto';
+import { AdminNewUserDto, ResetUserPsdDto, UpdPsdDto, UserDto, UserSelListDto } from './dto';
 import { R } from '../../../../../common/R';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -13,6 +13,18 @@ import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
 @UsePipes(new ValidationPipe())
 export class UserController {
   constructor(private readonly userService: UserService) {
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: '分页查询用户',
+  })
+  @Authorize({
+    permission: 'main:sysManage:user:selList',
+    label: '分页查询用户',
+  })
+  async selUser(@Query() dto: UserSelListDto): Promise<R> {
+    return this.userService.selUser(dto);
   }
 
   @Get('/self-info')
@@ -45,19 +57,7 @@ export class UserController {
     return this.userService.selOnesUser(ids);
   }
 
-  @Get()
-  @ApiOperation({
-    summary: '分页查询用户',
-  })
-  @Authorize({
-    permission: 'main:sysManage:user:selList',
-    label: '分页查询用户',
-  })
-  async userSelList(@Query() dto: UserListSelDto): Promise<R> {
-    return this.userService.userSelList(dto);
-  }
-
-  @Post()
+  @Post('/admin-new')
   @ApiOperation({
     summary: '管理员新增用户',
   })
@@ -119,7 +119,7 @@ export class UserController {
     permission: 'main:sysManage:user:adminResetUserPsd',
     label: '管理员重置用户密码',
   })
-  async adminResetUserPsd(@Body() dto: ResetPsdDto): Promise<R> {
+  async adminResetUserPsd(@Body() dto: ResetUserPsdDto): Promise<R> {
     if (dto.psdType === 'b') {
       dto.password = decrypt(dto.password);
     }

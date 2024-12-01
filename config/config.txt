@@ -47,9 +47,6 @@ const config = {
     log: {
       logSavePath: '',
     },
-    req: {
-      baseURL: '',
-    },
   },
   test: {},
   prod: {}

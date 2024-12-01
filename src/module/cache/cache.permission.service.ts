@@ -16,9 +16,10 @@ export class CachePermissionService {
    * 用户是否有权限在缓存中
    * @param userId
    * @param permission
+   * @param loginRole
    */
-  async ifHavePermissionInCache(userId: string, permission: string) {
-    const value = await this.redis.hget(this.USER_PERMISSION, `${permission}---${userId}`);
+  async ifHavePermissionInCache(userId: string, permission: string, loginRole: string) {
+    const value = await this.redis.hget(this.USER_PERMISSION, `${permission}---${loginRole}---${userId}`);
     return value;
   }
 
@@ -26,10 +27,11 @@ export class CachePermissionService {
    * 添加用户权限至缓存
    * @param userId
    * @param permission
+   * @param loginRole
    * @param ifHave
    */
-  async setPermissionInCache(userId: string, permission: string, ifHave: boolean) {
-    await this.redis.hset(this.USER_PERMISSION, `${permission}---${userId}`, ifHave ? base.Y : base.N);
+  async setPermissionInCache(userId: string, permission: string, loginRole: string, ifHave: boolean) {
+    await this.redis.hset(this.USER_PERMISSION, `${permission}---${loginRole}---${userId}`, ifHave ? base.Y : base.N);
   }
 
   /**
@@ -55,7 +57,7 @@ export class CachePermissionService {
    * @param permission
    * @param value
    */
-  async setPublicPermissionInCache(permission: string, value = base.Y) {
+  async setPublicPermissionInCache(permission: string, value: string) {
     await this.redis.hset(this.PERMISSION_PUBLIC, `${permission}`, value);
   }
 

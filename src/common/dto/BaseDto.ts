@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class BaseDto {
+  @ApiProperty({ description: 'createRole', required: false })
+  createRole: string;
+
+  @ApiProperty({ description: 'updateRole', required: false })
+  updateRole: string;
+
   @ApiProperty({ description: 'createBy', required: false })
   createBy: string;
 

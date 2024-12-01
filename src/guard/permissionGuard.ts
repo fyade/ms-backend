@@ -5,7 +5,6 @@ import { AuthService } from '../module/auth/auth.service';
 import { ForbiddenException } from '../exception/ForbiddenException';
 import { Exception } from '../exception/Exception';
 import { ParameterException } from '../exception/ParameterException';
-import { UserDto2 } from '../module/module/main/sys-manage/user/dto';
 import { AlgorithmDto } from '../module/module/algorithm/algorithm/dto';
 import { Request } from 'express';
 import { IpNotInWhiteListException } from '../exception/IpNotInWhiteListException';
@@ -40,7 +39,7 @@ export class PermissionGuard implements CanActivate {
         const decoded = await this.cacheTokenService.verifyToken(token);
         if (decoded) {
           // Token is valid and not expired
-          this.baseContextService.setUserData(genCurrentUser(decoded as UserDto2, token));
+          this.baseContextService.setUserData(genCurrentUser(decoded.userid, token, decoded.loginRole));
         } else {
           // Token is invalid or expired
           await this.authService.insLogOperation(permission, request, false, { remark: '401', ifIgnoreParamInLog });
@@ -57,7 +56,8 @@ export class PermissionGuard implements CanActivate {
     if (ifIgnore) {
       return true;
     }
-    const user = this.baseContextService.getUserData().user;
+    const userId = this.baseContextService.getUserData().userId;
+    const loginRole = this.baseContextService.getUserData().loginRole;
     // 算法接口权限控制
     if (ifSF) {
       const reqBody = request.body as unknown as AlgorithmDto;
@@ -69,8 +69,8 @@ export class PermissionGuard implements CanActivate {
         });
         throw new ParameterException('参数错误，权限标识不可为空。');
       }
-      if (user) {
-        const permissionsOfUser = await this.authService.hasSFPermissionByUserid(user.userid, permission, request);
+      if (userId) {
+        const permissionsOfUser = await this.authService.hasSFPermissionByUserid(userId, loginRole, permission, request);
         if (permissionsOfUser) {
           return true;
         }
@@ -97,14 +97,14 @@ export class PermissionGuard implements CanActivate {
         }
         return true;
       }
-      if (!user) {
+      if (!userId) {
         await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
         throw new ForbiddenException(label);
       }
       // 请求ip是否在此接口的ip白名单中
       const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);
       if (!ifIpInWhiteList) {
-        const b = await this.authService.hasTopAdminPermission(user.userid);
+        const b = await this.authService.hasTopAdminPermission(userId);
         if (!b) {
           await this.authService.insLogOperation(permission, request, false, {
             remark: '请求源IP不在白名单内。',
@@ -114,7 +114,7 @@ export class PermissionGuard implements CanActivate {
         }
       }
       // 用户是否有当前接口的权限
-      const ifHasPermission = await this.authService.hasAdminPermissionByUserid(user.userid, permission);
+      const ifHasPermission = await this.authService.hasAdminPermissionByUserid(userId, permission, loginRole);
       if (ifHasPermission) {
         return true;
       }

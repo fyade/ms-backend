@@ -91,12 +91,20 @@ export class AppService {
   }
 
   async getPermissions(sysId: number): Promise<R> {
-    const permissionsOfUser = await this.authService.permissionsOfUser({ userId: this.baseContextService.getUserData().user.userid, sysId, menuType: [T_MENU, T_COMP] });
+    const permissionsOfUser = await this.authService.permissionsOfUser({
+      userId: this.baseContextService.getUserData().userId,
+      loginRole: this.baseContextService.getUserData().loginRole,
+      sysId,
+      menuType: [T_MENU, T_COMP],
+    });
     return R.ok(permissionsOfUser);
   }
 
   async getSystems(): Promise<R> {
-    const systemsOfUser = await this.authService.systemsOfUser(this.baseContextService.getUserData().user.userid);
+    const systemsOfUser = await this.authService.systemsOfUser(
+      this.baseContextService.getUserData().userId,
+      this.baseContextService.getUserData().loginRole
+    );
     return R.ok(systemsOfUser);
   }
 

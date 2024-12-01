@@ -12,29 +12,29 @@ export class LogUserLoginService {
     const res = await this.prisma.findPage<LogUserLoginDto, LogUserLoginSelListDto>('log_user_login', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'loginIp', 'loginPosition', 'loginBrowser', 'loginOs', 'ifSuccess'],
+      notNullKeys: ['userId', 'loginIp', 'loginPosition', 'loginBrowser', 'loginOs', 'ifSuccess', 'failType', 'loginRole'],
       numberKeys: [],
-      completeMatchingKeys: [],
+      completeMatchingKeys: ['userId', 'failType', 'loginRole'],
       ifDeleted: false,
     });
     return R.ok(res);
   }
 
   async selAllLogUserLogin(dto: LogUserLoginSelAllDto, {
-                 orderBy = false,
-                 range = {},
-               }: {
-                 orderBy?: boolean | object,
-                 range?: object
-               } = {},
-  ): Promise<R> {
+                             orderBy = false,
+                             range = {},
+                           }: {
+                             orderBy?: boolean | object,
+                             range?: object
+                           } = {},
+  ): Promise<R<LogUserLoginDto[]>> {
     const res = await this.prisma.findAll<LogUserLoginDto>('log_user_login', {
       data: dto,
       orderBy,
       range,
-      notNullKeys: ['userId', 'loginIp', 'loginPosition', 'loginBrowser', 'loginOs', 'ifSuccess'],
+      notNullKeys: ['userId', 'loginIp', 'loginPosition', 'loginBrowser', 'loginOs', 'ifSuccess', 'failType', 'loginRole'],
       numberKeys: [],
-      completeMatchingKeys: [],
+      completeMatchingKeys: ['userId', 'failType', 'loginRole'],
       ifDeleted: false,
     });
     return R.ok(res);
@@ -50,28 +50,14 @@ export class LogUserLoginService {
     return R.ok(res);
   }
 
-  async insLogUserLogin(dto: LogUserLoginInsOneDto, {
-    ifCustomizeId = false,
-    ifCreateBy = true,
-    ifUpdateBy = true,
-    ifCreateTime = true,
-    ifUpdateTime = true,
-    ifDeleted = true,
-  }: {
-    ifCustomizeId?: boolean,
-    ifCreateBy?: boolean,
-    ifUpdateBy?: boolean,
-    ifCreateTime?: boolean,
-    ifUpdateTime?: boolean,
-    ifDeleted?: boolean,
-  } = {}): Promise<R> {
+  async insLogUserLogin(dto: LogUserLoginInsOneDto): Promise<R> {
     const res = await this.prisma.create<LogUserLoginDto>('log_user_login', dto, {
-      ifCustomizeId,
-      ifCreateBy,
-      ifUpdateBy,
-      ifCreateTime,
-      ifUpdateTime,
-      ifDeleted,
+      ifCreateRole: false,
+      ifUpdateRole: false,
+      ifCreateBy: false,
+      ifUpdateBy: false,
+      ifUpdateTime: false,
+      ifDeleted: false,
     });
     return R.ok(res);
   }

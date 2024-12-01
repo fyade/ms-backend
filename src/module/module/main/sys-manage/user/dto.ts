@@ -29,6 +29,23 @@ export class UserDto {
   tel: string;
 }
 
+export class UserSelListDto extends PageDto {
+  @ApiProperty({ description: '用户id', required: false })
+  id: string;
+
+  @ApiProperty({ description: '用户名', required: false })
+  username: string;
+
+  @ApiProperty({ description: '昵称', required: false })
+  nickname: string;
+
+  @ApiProperty({ description: '性别', required: false })
+  sex: string;
+
+  @ApiProperty({ description: '查询是否带权限', required: false })
+  ifWithRole: string;
+}
+
 export class LoginDto {
   @ApiProperty({ description: '用户名', required: true })
   @IsNotEmpty({ message: '用户名不能为空' })
@@ -37,6 +54,10 @@ export class LoginDto {
   @ApiProperty({ description: '密码', required: true })
   @IsNotEmpty({ message: '密码不能为空' })
   password: string;
+
+  @ApiProperty({ description: '登录身份', required: true })
+  @IsNotEmpty({ message: '登录身份不能为空' })
+  loginRole: string;
 
   @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
   @IsNotEmpty({ message: '密码类型不能为空' })
@@ -72,41 +93,21 @@ export class UpdPsdDto {
   newp2Type: string;
 }
 
-export class ReqUser {
-  userid: string;
-
-  username: string;
-}
-
-export class UserDto2 extends LoginDto {
-  userid: string;
-}
-
-export class UserDto3 extends UserDto {
-  userid: string;
-}
-
-export class AdminNewUserDto extends LoginDto {
-}
-
-export class UserListSelDto extends PageDto {
-  @ApiProperty({ description: '用户id', required: false })
-  id: string;
-
-  @ApiProperty({ description: '查询是否带权限', required: false })
-  ifWithRole: string;
-
-  @ApiProperty({ description: '用户名', required: false })
+export class AdminNewUserDto {
+  @ApiProperty({ description: '用户名', required: true })
+  @IsNotEmpty({ message: '用户名不能为空' })
   username: string;
 
-  @ApiProperty({ description: '昵称', required: false })
-  nickname: string;
+  @ApiProperty({ description: '密码', required: true })
+  @IsNotEmpty({ message: '密码不能为空' })
+  password: string;
 
-  @ApiProperty({ description: '性别', required: false })
-  sex: string;
+  @ApiProperty({ description: '密码类型，a:未加密/b:AES对称加密', required: true })
+  @IsNotEmpty({ message: '密码类型不能为空' })
+  psdType: string;
 }
 
-export class ResetPsdDto {
+export class ResetUserPsdDto {
   @ApiProperty({ description: '用户id', required: true })
   @IsNotEmpty({ message: '用户id不能为空' })
   id: string;

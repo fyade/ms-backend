@@ -18,25 +18,56 @@ datasource db {
 
 // 1.1 用户表
 model sys_user {
-  id                   String                @id @db.VarChar(10)
-  username             String                @db.VarChar(50)
-  nickname             String?               @db.VarChar(50)
-  password             String                @db.VarChar(100)
-  avatar               String?               @db.VarChar(50)
-  sex                  String?               @db.VarChar(10)
-  email                String?               @db.VarChar(50)
-  tel                  String?               @db.VarChar(15)
-  create_by            String                @db.VarChar(10)
-  update_by            String                @db.VarChar(10)
-  create_time          DateTime              @default(now())
-  update_time          DateTime              @updatedAt
-  deleted              String                @default("N") @db.Char(1)
-  sys_admin_tops       sys_admin_top[]
-  sys_user_roles       sys_user_role[]
-  sys_user_depts       sys_user_dept[]
-  sys_user_user_groups sys_user_user_group[]
-  log_user_logins      log_user_login[]
-  log_algorithm_calls  log_algorithm_call[]
+  id             String          @id @db.VarChar(10)
+  username       String          @db.VarChar(50)
+  nickname       String?         @db.VarChar(50)
+  password       String          @db.VarChar(100)
+  avatar         String?         @db.VarChar(50)
+  sex            String?         @db.VarChar(10)
+  email          String?         @db.VarChar(50)
+  tel            String?         @db.VarChar(15)
+  create_role    String          @db.VarChar(30)
+  update_role    String          @db.VarChar(30)
+  create_by      String          @db.VarChar(10)
+  update_by      String          @db.VarChar(10)
+  create_time    DateTime        @default(now())
+  update_time    DateTime        @updatedAt
+  deleted        String          @default("N") @db.Char(1)
+  sys_admin_tops sys_admin_top[]
+}
+
+// 1.1.1 访客用户表
+model sys_user_visitor {
+  id          String   @id @db.VarChar(10)
+  username    String   @db.VarChar(50)
+  nickname    String?  @db.VarChar(50)
+  password    String   @db.VarChar(100)
+  avatar      String?  @db.VarChar(50)
+  sex         String?  @db.VarChar(10)
+  email       String?  @db.VarChar(50)
+  tel         String?  @db.VarChar(15)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
+}
+
+// 1.1.2 用户表默认权限表
+model sys_user_table_default_permission {
+  id          Int      @id @default(autoincrement()) @db.Int
+  table_name  String   @db.VarChar(50) // 表名
+  perm_type   String   @db.VarChar(2) // 角色类型
+  perm_id     Int      @db.Int // 角色id
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
+  create_by   String   @db.VarChar(10)
+  update_by   String   @db.VarChar(10)
+  create_time DateTime @default(now())
+  update_time DateTime @updatedAt
+  deleted     String   @default("N") @db.Char(1)
 }
 
 // 1.2 字典类型表
@@ -47,6 +78,8 @@ model sys_dic_type {
   if_disabled   String         @db.Char(1)
   order_num     Int            @db.Int
   remark        String?        @db.VarChar(300)
+  create_role   String         @db.VarChar(30)
+  update_role   String         @db.VarChar(30)
   create_by     String         @db.VarChar(10)
   update_by     String         @db.VarChar(10)
   create_time   DateTime       @default(now())
@@ -65,6 +98,8 @@ model sys_dic_data {
   if_disabled String       @db.Char(1)
   order_num   Int          @db.Int
   remark      String?      @db.VarChar(300)
+  create_role String       @db.VarChar(30)
+  update_role String       @db.VarChar(30)
   create_by   String       @db.VarChar(10)
   update_by   String       @db.VarChar(10)
   create_time DateTime     @default(now())
@@ -87,6 +122,8 @@ model sys_code_gen_table {
   sys_id               Int                   @db.Int
   order_num            Int                   @db.Int
   remark               String?               @db.VarChar(300)
+  create_role          String                @db.VarChar(30)
+  update_role          String                @db.VarChar(30)
   create_by            String                @db.VarChar(10)
   update_by            String                @db.VarChar(10)
   create_time          DateTime              @default(now())
@@ -114,6 +151,8 @@ model sys_code_gen_column {
   form_type   String             @db.VarChar(20)
   order_num   Int                @db.Int
   remark      String?            @db.VarChar(300)
+  create_role String             @db.VarChar(30)
+  update_role String             @db.VarChar(30)
   create_by   String             @db.VarChar(10)
   update_by   String             @db.VarChar(10)
   create_time DateTime           @default(now())
@@ -127,6 +166,8 @@ model sys_admin_top {
   id          Int      @id @default(autoincrement()) @db.Int
   user_id     String   @db.VarChar(10)
   remark      String?  @db.VarChar(300)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -152,6 +193,8 @@ model sys_menu {
   perms                   String                   @db.VarChar(100)
   sys_id                  Int                      @db.Int
   remark                  String?                  @db.VarChar(300)
+  create_role             String                   @db.VarChar(30)
+  update_role             String                   @db.VarChar(30)
   create_by               String                   @db.VarChar(10)
   update_by               String                   @db.VarChar(10)
   create_time             DateTime                 @default(now())
@@ -171,6 +214,8 @@ model sys_role {
   if_disabled          String                @db.Char(1)
   order_num            Int                   @db.Int
   remark               String?               @db.VarChar(300)
+  create_role          String                @db.VarChar(30)
+  update_role          String                @db.VarChar(30)
   create_by            String                @db.VarChar(10)
   update_by            String                @db.VarChar(10)
   create_time          DateTime              @default(now())
@@ -186,12 +231,14 @@ model sys_user_role {
   id          Int      @id @default(autoincrement()) @db.Int
   user_id     String   @db.VarChar(10)
   role_id     Int      @db.Int
+  login_role  String   @db.VarChar(30)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
   deleted     String   @default("N") @db.Char(1)
-  user_id_    sys_user @relation(fields: [user_id], references: [id])
   role_id_    sys_role @relation(fields: [role_id], references: [id])
 }
 
@@ -200,6 +247,8 @@ model sys_role_permission {
   id             Int      @id @default(autoincrement()) @db.Int
   role_id        Int      @db.Int
   permission_id  Int      @db.Int
+  create_role    String   @db.VarChar(30)
+  update_role    String   @db.VarChar(30)
   create_by      String   @db.VarChar(10)
   update_by      String   @db.VarChar(10)
   create_time    DateTime @default(now())
@@ -218,6 +267,8 @@ model sys_dept {
   parent_id            Int                   @db.Int
   order_num            Int                   @db.Int
   remark               String?               @db.VarChar(300)
+  create_role          String                @db.VarChar(30)
+  update_role          String                @db.VarChar(30)
   create_by            String                @db.VarChar(10)
   update_by            String                @db.VarChar(10)
   create_time          DateTime              @default(now())
@@ -233,12 +284,14 @@ model sys_user_dept {
   id          Int      @id @default(autoincrement()) @db.Int
   user_id     String   @db.VarChar(10)
   dept_id     Int      @db.Int
+  login_role  String   @db.VarChar(30)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
   deleted     String   @default("N") @db.Char(1)
-  user_id_    sys_user @relation(fields: [user_id], references: [id])
   dept_id_    sys_dept @relation(fields: [dept_id], references: [id])
 }
 
@@ -247,6 +300,8 @@ model sys_dept_permission {
   id             Int      @id @default(autoincrement()) @db.Int
   dept_id        Int      @db.Int
   permission_id  Int      @db.Int
+  create_role    String   @db.VarChar(30)
+  update_role    String   @db.VarChar(30)
   create_by      String   @db.VarChar(10)
   update_by      String   @db.VarChar(10)
   create_time    DateTime @default(now())
@@ -265,6 +320,8 @@ model sys_sys {
   path                String               @db.VarChar(100)
   if_disabled         String               @db.Char(1)
   remark              String?              @db.VarChar(300)
+  create_role         String               @db.VarChar(30)
+  update_role         String               @db.VarChar(30)
   create_by           String               @db.VarChar(10)
   update_by           String               @db.VarChar(10)
   create_time         DateTime             @default(now())
@@ -281,6 +338,8 @@ model sys_role_sys {
   id          Int      @id @default(autoincrement()) @db.Int
   role_id     Int      @db.Int
   sys_id      Int      @db.Int
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -295,6 +354,8 @@ model sys_dept_sys {
   id          Int      @id @default(autoincrement()) @db.Int
   dept_id     Int      @db.Int
   sys_id      Int      @db.Int
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -312,6 +373,8 @@ model sys_menu_ip_white_list {
   from_type   String   @db.VarChar(2)
   type        String   @db.VarChar(2)
   remark      String?  @db.VarChar(300)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -327,6 +390,8 @@ model sys_user_group {
   parent_id                  Int                         @db.Int
   order_num                  Int                         @db.Int
   remark                     String?                     @db.VarChar(300)
+  create_role                String                      @db.VarChar(30)
+  update_role                String                      @db.VarChar(30)
   create_by                  String                      @db.VarChar(10)
   update_by                  String                      @db.VarChar(10)
   create_time                DateTime                    @default(now())
@@ -341,12 +406,14 @@ model sys_user_user_group {
   id             Int            @id @default(autoincrement()) @db.Int
   user_id        String         @db.VarChar(10)
   user_group_id  Int            @db.Int
+  login_role     String         @db.VarChar(30)
+  create_role    String         @db.VarChar(30)
+  update_role    String         @db.VarChar(30)
   create_by      String         @db.VarChar(10)
   update_by      String         @db.VarChar(10)
   create_time    DateTime       @default(now())
   update_time    DateTime       @updatedAt
   deleted        String         @default("N") @db.Char(1)
-  user_id_       sys_user       @relation(fields: [user_id], references: [id])
   user_group_id_ sys_user_group @relation(fields: [user_group_id], references: [id])
 }
 
@@ -361,6 +428,8 @@ model sys_interface {
   perms                          String                          @db.VarChar(100)
   url                            String                          @db.VarChar(100)
   remark                         String?                         @db.VarChar(300)
+  create_role                    String                          @db.VarChar(30)
+  update_role                    String                          @db.VarChar(30)
   create_by                      String                          @db.VarChar(10)
   update_by                      String                          @db.VarChar(10)
   create_time                    DateTime                        @default(now())
@@ -377,6 +446,8 @@ model sys_interface_group {
   base_u_r_l                     String                          @db.VarChar(300)
   order_num                      Int                             @db.Int
   remark                         String?                         @db.VarChar(300)
+  create_role                    String                          @db.VarChar(30)
+  update_role                    String                          @db.VarChar(30)
   create_by                      String                          @db.VarChar(10)
   update_by                      String                          @db.VarChar(10)
   create_time                    DateTime                        @default(now())
@@ -391,6 +462,8 @@ model sys_interface_interface_group {
   id                  Int                 @id @default(autoincrement()) @db.Int
   interface_id        Int                 @db.Int
   interface_group_id  Int                 @db.Int
+  create_role         String              @db.VarChar(30)
+  update_role         String              @db.VarChar(30)
   create_by           String              @db.VarChar(10)
   update_by           String              @db.VarChar(10)
   create_time         DateTime            @default(now())
@@ -414,6 +487,8 @@ model sys_user_group_permission {
   if_use_up                String               @default("N") @db.Char(1)
   order_num                Int                  @db.Int
   remark                   String?              @db.VarChar(300)
+  create_role              String               @db.VarChar(30)
+  update_role              String               @db.VarChar(30)
   create_by                String               @db.VarChar(10)
   update_by                String               @db.VarChar(10)
   create_time              DateTime             @default(now())
@@ -438,6 +513,8 @@ model tbl_file {
   if_finished   String   @db.Char(1)
   module        String?  @db.VarChar(50)
   remark        String?  @db.VarChar(300)
+  create_role   String   @db.VarChar(30)
+  update_role   String   @db.VarChar(30)
   create_by     String   @db.VarChar(10)
   update_by     String   @db.VarChar(10)
   create_time   DateTime @default(now())
@@ -454,6 +531,7 @@ model tbl_file_chunk {
   chunk_index   Int      @db.Int
   if_finished   String   @db.Char(1)
   remark        String?  @db.VarChar(300)
+  create_role   String   @db.VarChar(30)
   create_by     String   @db.VarChar(10)
   create_time   DateTime @default(now())
   deleted       String   @default("N") @db.Char(1)
@@ -468,6 +546,8 @@ model tbl_bulletin {
   if_top      String   @db.Char(1)
   if_pin      String   @db.Char(1)
   remark      String?  @db.VarChar(300)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -481,6 +561,8 @@ model tbl_bulletin_read {
   bulletin_id Int      @db.Int
   user_id     String   @db.VarChar(10)
   remark      String?  @db.VarChar(300)
+  create_role String   @db.VarChar(30)
+  update_role String   @db.VarChar(30)
   create_by   String   @db.VarChar(10)
   update_by   String   @db.VarChar(10)
   create_time DateTime @default(now())
@@ -497,9 +579,10 @@ model log_user_login {
   login_browser  String   @db.VarChar(30)
   login_os       String   @db.VarChar(30)
   if_success     String   @db.Char(1)
+  fail_type      String   @db.VarChar(20)
+  login_role     String   @db.VarChar(30)
   remark         String?  @db.VarChar(100)
   create_time    DateTime @default(now())
-  user_id_       sys_user @relation(fields: [user_id], references: [id])
 }
 
 // 0.2 系统操作日志表
@@ -514,6 +597,7 @@ model log_operation {
   old_value    String   @db.Text
   operate_type String   @db.VarChar(10)
   if_success   String   @db.Char(1)
+  login_role   String   @db.VarChar(30)
   remark       String?  @db.VarChar(100)
   create_time  DateTime @default(now())
 }
@@ -525,8 +609,8 @@ model log_algorithm_call {
   user_id                   String                    @db.VarChar(10)
   call_ip                   String                    @db.VarChar(20)
   if_success                String                    @db.Char(1)
+  login_role                String                    @db.VarChar(30)
   remark                    String?                   @db.VarChar(100)
   create_time               DateTime                  @default(now())
   user_group_permission_id_ sys_user_group_permission @relation(fields: [user_group_permission_id], references: [id])
-  user_id_                  sys_user                  @relation(fields: [user_id], references: [id])
 }

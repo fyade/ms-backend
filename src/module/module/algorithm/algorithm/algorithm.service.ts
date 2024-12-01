@@ -19,9 +19,8 @@ export class AlgorithmService {
   }
 
   async algorithm(dto: AlgorithmDto): Promise<R> {
-    const userId = this.baseContextService.getUserData().user.userid;
     const permission = dto.perms;
-    const sfPermissionsOfUserid = await this.authService.getSFPermissionsOfUserid(userId, permission, base.Y);
+    const sfPermissionsOfUserid = await this.authService.getSFPermissionsOfUserid(this.baseContextService.getUserData().userId, permission, this.baseContextService.getUserData().loginRole, base.Y);
     if (sfPermissionsOfUserid.length > 0) {
       const permissionId = sfPermissionsOfUserid.every(item => item.ifUseUp === base.Y)
         ? sfPermissionsOfUserid[sfPermissionsOfUserid.length - 1].permissionId

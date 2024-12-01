@@ -46,6 +46,14 @@ export class PrismaService extends PrismaClientOrigin {
     return this.prismaClient;
   }
 
+  private getUserId() {
+    return this.baseContextService.getUserData().userId || '???';
+  }
+
+  private getLoginRole() {
+    return this.baseContextService.getUserData().loginRole || '???';
+  }
+
   private serialize(obj) {
     if (typeOf(obj) === 'bigint') {
       return parseInt(`${obj}`);
@@ -76,21 +84,29 @@ export class PrismaService extends PrismaClientOrigin {
   ) => {
     const retObj = {
       where: {
-        create_by: this.baseContextService.getUserData().user?.userid,
+        create_role: this.getLoginRole(),
+        create_by: this.getUserId(),
         deleted: base.N,
       },
     };
     if (!ifDeleted) delete retObj.where.deleted;
-    if (!ifDataSegregation) delete retObj.where.create_by;
+    if (!ifDataSegregation) {
+      delete retObj.where.create_role;
+      delete retObj.where.create_by;
+    }
     return retObj;
   };
   private defaultInsArg = ({
+                             ifCreateRole = true,
+                             ifUpdateRole = true,
                              ifCreateBy = true,
                              ifUpdateBy = true,
                              ifCreateTime = true,
                              ifUpdateTime = true,
                              ifDeleted = true,
                            }: {
+                             ifCreateRole?: boolean,
+                             ifUpdateRole?: boolean,
                              ifCreateBy?: boolean,
                              ifUpdateBy?: boolean,
                              ifCreateTime?: boolean,
@@ -98,10 +114,12 @@ export class PrismaService extends PrismaClientOrigin {
                              ifDeleted?: boolean,
                            } = {},
   ) => {
-    const userid = this.baseContextService.getUserData().user?.userid;
+    const userid = this.getUserId();
     const time1 = time();
     const retObj = {
       data: {
+        create_role: this.getLoginRole(),
+        update_role: this.getLoginRole(),
         create_by: userid,
         update_by: userid,
         create_time: time1,
@@ -109,6 +127,8 @@ export class PrismaService extends PrismaClientOrigin {
         deleted: base.N,
       },
     };
+    if (!ifCreateRole) delete retObj.data.create_role;
+    if (!ifUpdateRole) delete retObj.data.update_role;
     if (!ifCreateBy) delete retObj.data.create_by;
     if (!ifUpdateBy) delete retObj.data.update_by;
     if (!ifCreateTime) delete retObj.data.create_time;
@@ -117,11 +137,13 @@ export class PrismaService extends PrismaClientOrigin {
     return retObj;
   };
   private defaultUpdArg = ({
+                             ifUpdateRole = true,
                              ifUpdateBy = true,
                              ifUpdateTime = true,
                              ifDeleted = true,
                              ifDataSegregation = false,
                            }: {
+                             ifUpdateRole?: boolean,
                              ifUpdateBy?: boolean,
                              ifUpdateTime?: boolean,
                              ifDeleted?: boolean,
@@ -130,18 +152,24 @@ export class PrismaService extends PrismaClientOrigin {
   ) => {
     const retObj = {
       where: {
-        create_by: this.baseContextService.getUserData().user?.userid,
+        create_role: this.getLoginRole(),
+        create_by: this.getUserId(),
         deleted: base.N,
       },
       data: {
-        update_by: this.baseContextService.getUserData().user?.userid,
+        update_role: this.getLoginRole(),
+        update_by: this.getUserId(),
         update_time: time(),
       },
     };
+    if (!ifUpdateRole) delete retObj.data.update_role;
     if (!ifUpdateBy) delete retObj.data.update_by;
     if (!ifUpdateTime) delete retObj.data.update_time;
     if (!ifDeleted) delete retObj.where.deleted;
-    if (!ifDataSegregation) delete retObj.where.create_by;
+    if (!ifDataSegregation) {
+      delete retObj.where.create_role;
+      delete retObj.where.create_by;
+    }
     return retObj;
   };
   private defaultDelArg = ({
@@ -152,16 +180,21 @@ export class PrismaService extends PrismaClientOrigin {
   ) => {
     const retObj = {
       where: {
-        create_by: this.baseContextService.getUserData().user?.userid,
+        create_role: this.getLoginRole(),
+        create_by: this.getUserId(),
         deleted: base.N,
       },
       data: {
-        update_by: this.baseContextService.getUserData().user?.userid,
+        update_role: this.getLoginRole(),
+        update_by: this.getUserId(),
         update_time: time(),
         deleted: base.Y,
       },
     };
-    if (!ifDataSegregation) delete retObj.where.create_by;
+    if (!ifDataSegregation) {
+      delete retObj.where.create_role;
+      delete retObj.where.create_by;
+    }
     return retObj;
   };
 
@@ -439,7 +472,7 @@ export class PrismaService extends PrismaClientOrigin {
       },
     };
     const first = await this.getModel(model).findFirst(arg);
-    const objToCamelCase1 = objToCamelCase(first);
+    const objToCamelCase1 = objToCamelCase<T>(first);
     return new Promise(resolve => resolve(objToCamelCase1));
   }
 
@@ -485,7 +518,7 @@ export class PrismaService extends PrismaClientOrigin {
       },
     };
     const list = await this.getModel(model).findMany(arg);
-    const list2 = ids.map((id) => objToCamelCase(list.find(item => item.id === id)));
+    const list2 = ids.map((id) => objToCamelCase<T>(list.find(item => item.id === id)));
     return new Promise(resolve => resolve(list2));
   }
 
@@ -543,6 +576,8 @@ export class PrismaService extends PrismaClientOrigin {
    * @param model
    * @param data
    * @param ifCustomizeId
+   * @param ifCreateRole
+   * @param ifUpdateRole
    * @param ifCreateBy
    * @param ifUpdateBy
    * @param ifCreateTime
@@ -551,6 +586,8 @@ export class PrismaService extends PrismaClientOrigin {
    */
   async create<T>(model: string, data, {
                     ifCustomizeId = false,
+                    ifCreateRole = true,
+                    ifUpdateRole = true,
                     ifCreateBy = true,
                     ifUpdateBy = true,
                     ifCreateTime = true,
@@ -558,6 +595,8 @@ export class PrismaService extends PrismaClientOrigin {
                     ifDeleted = true,
                   }: {
                     ifCustomizeId?: boolean,
+                    ifCreateRole?: boolean,
+                    ifUpdateRole?: boolean,
                     ifCreateBy?: boolean,
                     ifUpdateBy?: boolean,
                     ifCreateTime?: boolean,
@@ -569,11 +608,19 @@ export class PrismaService extends PrismaClientOrigin {
     if (!ifCustomizeId) {
       delete data2.id;
     }
-    const publicData = this.defaultInsArg({ ifCreateBy, ifUpdateBy, ifCreateTime, ifUpdateTime, ifDeleted }).data;
+    const publicData = this.defaultInsArg({
+      ifCreateRole,
+      ifUpdateRole,
+      ifCreateBy,
+      ifUpdateBy,
+      ifCreateTime,
+      ifUpdateTime,
+      ifDeleted,
+    }).data;
     const arg = {
       data: {
-        ...publicData,
         ...(objToSnakeCase(data2) || {}),
+        ...publicData,
       },
     };
     const retData = await this.getModel(model).create(arg);
@@ -585,6 +632,8 @@ export class PrismaService extends PrismaClientOrigin {
    * @param model
    * @param data
    * @param ifCustomizeId
+   * @param ifCreateRole
+   * @param ifUpdateRole
    * @param ifCreateBy
    * @param ifUpdateBy
    * @param ifCreateTime
@@ -593,6 +642,8 @@ export class PrismaService extends PrismaClientOrigin {
    */
   async createMany<T>(model: string, data, {
                         ifCustomizeId = false,
+                        ifCreateRole = true,
+                        ifUpdateRole = true,
                         ifCreateBy = true,
                         ifUpdateBy = true,
                         ifCreateTime = true,
@@ -600,6 +651,8 @@ export class PrismaService extends PrismaClientOrigin {
                         ifDeleted = true,
                       }: {
                         ifCustomizeId?: boolean,
+                        ifCreateRole?: boolean,
+                        ifUpdateRole?: boolean,
                         ifCreateBy?: boolean,
                         ifUpdateBy?: boolean,
                         ifCreateTime?: boolean,
@@ -607,15 +660,23 @@ export class PrismaService extends PrismaClientOrigin {
                         ifDeleted?: boolean,
                       } = {},
   ): Promise<T> {
-    const publicData = this.defaultInsArg({ ifCreateBy, ifUpdateBy, ifCreateTime, ifUpdateTime, ifDeleted }).data;
+    const publicData = this.defaultInsArg({
+      ifCreateRole,
+      ifUpdateRole,
+      ifCreateBy,
+      ifUpdateBy,
+      ifCreateTime,
+      ifUpdateTime,
+      ifDeleted,
+    }).data;
     const arg = {
       data: data.map(dat => {
         if (!ifCustomizeId) {
           delete dat.id;
         }
         return {
-          ...publicData,
           ...(objToSnakeCase(dat) || {}),
+          ...publicData,
         };
       }),
     };
@@ -627,17 +688,20 @@ export class PrismaService extends PrismaClientOrigin {
    * 修改
    * @param model
    * @param data
+   * @param ifUpdateRole
    * @param ifUpdateBy
    * @param ifUpdateTime
    * @param ifDeleted
    * @param ifDataSegregation
    */
   async updateById<T>(model: string, data?, {
+                        ifUpdateRole = true,
                         ifUpdateBy = true,
                         ifUpdateTime = true,
                         ifDeleted = true,
                         ifDataSegregation = false,
                       }: {
+                        ifUpdateRole?: boolean,
                         ifUpdateBy?: boolean,
                         ifUpdateTime?: boolean,
                         ifDeleted?: boolean,
@@ -647,7 +711,7 @@ export class PrismaService extends PrismaClientOrigin {
     const id = data.id;
     const data2 = deepClone(data);
     delete data2.id;
-    const publicData = this.defaultUpdArg({ ifUpdateBy, ifUpdateTime, ifDeleted, ifDataSegregation });
+    const publicData = this.defaultUpdArg({ ifUpdateRole, ifUpdateBy, ifUpdateTime, ifDeleted, ifDataSegregation });
     const arg = {
       where: {
         ...publicData.where,

@@ -1,19 +1,19 @@
-import { UserDto2 } from '../module/main/sys-manage/user/dto';
 import { randomUUID } from '../../util/IdUtils';
-import { Request } from 'express';
 
 export const USER_INFO_LINSHI_FIELD_NAME = 'user-info-linshi';
 
 export class CurrentUser {
-  user: UserDto2;
+  userId: string;
   token: string;
   reqId: string;
+  loginRole: string;
 }
 
-export function genCurrentUser(user?: UserDto2, token?: string) {
+export function genCurrentUser(user?: string, token?: string, loginRole?: string) {
   const currentUser = new CurrentUser();
-  currentUser.user = user;
+  currentUser.userId = user;
   currentUser.token = token;
   currentUser.reqId = randomUUID();
+  currentUser.loginRole = loginRole;
   return currentUser;
 }

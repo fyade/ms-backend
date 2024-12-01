@@ -1,6 +1,6 @@
 import { UserDto } from '../module/main/sys-manage/user/dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { base, T_COMP, T_HOST, T_Inter, T_IP, T_IS, T_MENU } from '../../util/base';
+import { base, T_COMP, T_HOST, T_Inter, T_IP, T_IS, T_MENU, T_ROLE } from '../../util/base';
 import { Injectable } from '@nestjs/common';
 import { AdminTopDto } from '../admin-top/dto';
 import { LogAlgorithmCallDto } from '../module/algorithm/log-algorithm-call/dto';
@@ -14,6 +14,9 @@ import { MenuDto } from '../module/main/sys-manage/menu/dto';
 import { MenuIpWhiteListDto } from '../module/main/sys-manage/menu-ip-white-list/dto';
 import { BaseContextService } from '../base-context/base-context.service';
 import { CachePermissionService } from '../cache/cache.permission.service';
+import { UserTableDefaultPermissionDto } from '../module/main/other-user/user-table-default-permission/dto';
+import { objToCamelCase } from '../../util/BaseUtils';
+import { SysDto } from '../module/main/sys-manage/sys/dto';
 
 @Injectable()
 export class AuthService {
@@ -26,17 +29,19 @@ export class AuthService {
 
   /**
    * 是否管理员用户
-   * @param userid
+   * @param userId
+   * @param loginRole
    */
-  async ifAdminUser(userid: string) {
-    if (await this.hasTopAdminPermission(userid)) {
+  async ifAdminUser(userId: string, loginRole: string) {
+    if (await this.hasTopAdminPermission(userId)) {
       return true;
     }
-    const ps1 = await this.prisma.$queryRaw`
+    const ps1: { surId: number }[] = await this.prisma.$queryRaw`
       select sur.id as surId
       from sys_user_role sur
       where sur.deleted = ${base.N}
-        and sur.user_id = ${userid}
+        and sur.login_role = ${loginRole}
+        and sur.user_id = ${userId}
         and sur.role_id in
             (select sr.id
              from sys_role sr
@@ -44,11 +49,12 @@ export class AuthService {
                and sr.if_disabled = ${base.N}
                and sr.if_admin = ${base.Y});
     `;
-    const ps2 = await this.prisma.$queryRaw`
+    const ps2: { sudId: number }[] = await this.prisma.$queryRaw`
       select sud.id as sudId
       from sys_user_dept sud
       where sud.deleted = ${base.N}
-        and sud.user_id = ${userid}
+        and sud.login_role = ${loginRole}
+        and sud.user_id = ${userId}
         and sud.dept_id in
             (select sd.id
              from sys_dept sd
@@ -56,35 +62,68 @@ export class AuthService {
                and sd.if_disabled = ${base.N}
                and sd.if_admin = ${base.Y});
     `;
-    const ps = [...ps1, ...ps2];
-    return ps.length > 0;
+    if (ps1.length > 0 || ps2.length > 0) {
+      return true;
+    }
+    if (loginRole === 'visitor') {
+      const sutdps_ = await this.prisma.getOrigin().sys_user_table_default_permission.findMany({
+        where: {
+          table_name: 'sys_user_visitor',
+          ...this.prisma.defaultSelArg().where,
+        },
+      });
+      const sutdps = objToCamelCase<UserTableDefaultPermissionDto[]>(sutdps_);
+      const number1 = await this.prisma.getOrigin().sys_role.count({
+        where: {
+          if_admin: base.Y,
+          if_disabled: base.N,
+          id: {
+            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
+          },
+          ...this.prisma.defaultSelArg().where,
+        },
+      });
+      const number2 = await this.prisma.getOrigin().sys_dept.count({
+        where: {
+          if_admin: base.Y,
+          if_disabled: base.N,
+          id: {
+            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
+          },
+          ...this.prisma.defaultSelArg().where,
+        },
+      });
+      return number1 > 0 || number2 > 0;
+    }
+    return false;
   }
 
   /**
    * 是否超级管理员用户
-   * @param userid
+   * @param userId
    */
-  async hasTopAdminPermission(userid: string) {
-    const admintop = await this.prisma.findFirst('sys_admin_top', { userId: userid });
+  async hasTopAdminPermission(userId: string) {
+    const admintop = await this.prisma.findFirst('sys_admin_top', { userId: userId });
     return !!admintop;
   }
 
   /**
-   * 是否有某权限（根据用户id查询）
-   * @param userid
+   * 用户是否有某权限
+   * @param userId
    * @param permission
+   * @param loginRole
    */
-  async hasAdminPermissionByUserid(userid: string, permission: string) {
-    const b = await this.cachePermissionService.ifHavePermissionInCache(userid, permission);
+  async hasAdminPermissionByUserid(userId: string, permission: string, loginRole: string) {
+    const b = await this.cachePermissionService.ifHavePermissionInCache(userId, permission, loginRole);
     if (b) {
       return b === base.Y;
     }
-    if (await this.hasTopAdminPermission(userid)) {
+    if (await this.hasTopAdminPermission(userId)) {
       return true;
     }
-    const permissionsOfUser = await this.permissionsOfUser({ userId: userid, permission });
+    const permissionsOfUser = await this.permissionsOfUser({ userId: userId, permission, loginRole });
     const index = permissionsOfUser.findIndex(item => item.perms === permission);
-    await this.cachePermissionService.setPermissionInCache(userid, permission, index > -1);
+    await this.cachePermissionService.setPermissionInCache(userId, permission, loginRole, index > -1);
     return index > -1;
   }
 
@@ -97,7 +136,7 @@ export class AuthService {
     if (ifPublicInterfaceInCache) {
       return ifPublicInterfaceInCache === base.Y;
     }
-    const raw = await this.prisma.$queryRaw`
+    const raw: { if_public: string }[] = await this.prisma.$queryRaw`
       select if_public
       from sys_menu
       where perms = ${permission}
@@ -188,176 +227,155 @@ export class AuthService {
   /**
    * 用户的系统
    * @param userId
+   * @param loginRole
    */
-  async systemsOfUser(userId: string) {
+  async systemsOfUser(userId: string, loginRole: string) {
     const retarr = [];
-    if (userId) {
-      const userSystems = await this.prisma.$queryRaw`
-        select ss.id          as id,
-               ss.name        as name,
-               ss.perms       as perms,
-               ss.order_num   as orderNum,
-               ss.path        as path,
-               ss.if_disabled as ifDisabled,
-               ss.remark      as remark,
-               ss.create_by   as createBy,
-               ss.update_by   as updateBy,
-               ss.create_time as createTime,
-               ss.update_time as updateTime,
-               ss.deleted     as deleted
-        from sys_sys ss
-        where ss.deleted = ${base.N}
-          and ss.if_disabled = ${base.N}
-          and (
-            if(exists
-                   (select 1
-                    from sys_admin_top sat
-                    where sat.deleted = ${base.N}
-                      and sat.user_id = ${userId}),
-               1 = 1,
-               (
-                   ss.id in (select srs.sys_id
-                             from sys_role_sys srs
-                             where srs.deleted = ${base.N}
-                               and srs.role_id in
-                                   (select sur.role_id
-                                    from sys_user_role sur
-                                    where sur.deleted = ${base.N}
-                                      and sur.user_id = ${userId}
-                                      and sur.role_id in
-                                          (select sr.id
-                                           from sys_role sr
-                                           where sr.deleted = ${base.N}
-                                             and sr.if_admin = ${base.Y}
-                                             and sr.if_disabled = ${base.N})))
-                       or ss.id in (select sds.sys_id
-                                    from sys_dept_sys sds
-                                    where sds.deleted = ${base.N}
-                                      and sds.dept_id in
-                                          (select sud.dept_id
-                                           from sys_user_dept sud
-                                           where sud.deleted = ${base.N}
-                                             and sud.user_id = ${userId}
-                                             and sud.dept_id in
-                                                 (select sd.id
-                                                  from sys_dept sd
-                                                  where sd.deleted = ${base.N}
-                                                    and sd.if_disabled = ${base.N}
-                                                    and sd.if_admin = ${base.Y})))
-                   )
-            ))
-        order by ss.order_num;
-      `;
-      retarr.push(...userSystems);
+    const sysPublicSelectParam = { if_disabled: base.N };
+    const ifTopAdmin = await this.hasTopAdminPermission(userId);
+    if (ifTopAdmin) {
+      const userSyss_ = await this.prisma.getOrigin().sys_sys.findMany({
+        where: {
+          ...sysPublicSelectParam,
+          ...this.prisma.defaultSelArg().where,
+        },
+        orderBy: {
+          order_num: 'asc',
+        },
+      });
+      const userSyss = objToCamelCase<SysDto[]>(userSyss_);
+      retarr.push(...userSyss);
+      return retarr;
     }
+    const { allRoleIds, allDeptIds } = await this.rolesAndDeptsOfUser(userId, loginRole);
+    const allSysIdsOfRole = await this.prisma.getOrigin().sys_role_sys.findMany({
+      select: {
+        sys_id: true,
+      },
+      where: {
+        role_id: {
+          in: allRoleIds,
+        },
+        ...this.prisma.defaultSelArg().where,
+      },
+    });
+    const allSysIdsOfDept = await this.prisma.getOrigin().sys_dept_sys.findMany({
+      select: {
+        sys_id: true,
+      },
+      where: {
+        dept_id: {
+          in: allDeptIds,
+        },
+        ...this.prisma.defaultSelArg().where,
+      },
+    });
+    const userSyss_ = await this.prisma.getOrigin().sys_sys.findMany({
+      where: {
+        id: {
+          in: [
+            ...allSysIdsOfRole.map(item => item.sys_id),
+            ...allSysIdsOfDept.map(item => item.sys_id),
+          ],
+        },
+        ...sysPublicSelectParam,
+        ...this.prisma.defaultSelArg().where,
+      },
+      orderBy: {
+        order_num: 'asc',
+      },
+    });
+    const userSyss = objToCamelCase<SysDto[]>(userSyss_);
+    retarr.push(...userSyss);
     return retarr;
   }
 
   /**
    * 用户的权限
    * @param userId
+   * @param loginRole
    * @param permission
    * @param sysId
    * @param menuType
    */
   async permissionsOfUser({
                             userId,
+                            loginRole,
                             permission,
                             sysId,
                             menuType = [T_MENU, T_COMP, T_IS, T_Inter],
                           }: {
                             userId: string
+                            loginRole: string
                             permission?: string
                             sysId?: number
                             menuType?: string[]
                           },
   ) {
     const retarr = [];
-    if (userId) {
-      /**
-       * 第三版
-       */
-      const userPermissions = await this.prisma.$queryRaw`
-        select sm.id          as id,
-               sm.label       as label,
-               sm.type        as type,
-               sm.path        as path,
-               sm.parent_id   as parentId,
-               sm.component   as component,
-               sm.icon        as icon,
-               sm.order_num   as orderNum,
-               sm.if_link     as ifLink,
-               sm.if_visible  as ifVisible,
-               sm.if_disabled as ifDisabled,
-               sm.if_public   as ifPublic,
-               sm.perms       as perms,
-               sm.remark      as remark,
-               sm.create_by   as createBy,
-               sm.update_by   as updateBy,
-               sm.create_time as createTime,
-               sm.update_time as updateTime,
-               sm.deleted     as deleted
-        from sys_menu sm
-        where sm.deleted = ${base.N}
-          and locate(sm.type, ${`-${menuType.join('-')}-`}) > 0
-          and (
-            if(exists
-                   (select 1
-                    from sys_admin_top sat
-                    where sat.deleted = ${base.N}
-                      and sat.user_id = ${userId}),
-               1 = 1,
-               (sm.id in
-                (select permission_id
-                 from sys_role_permission srp
-                 where srp.deleted = ${base.N}
-                   and srp.type = 'm'
-                   and srp.role_id in
-                       (select role_id
-                        from sys_user_role sur
-                        where sur.deleted = ${base.N}
-                          and sur.user_id = ${userId}
-                          and sur.role_id in
-                              (select id
-                               from sys_role sr
-                               where sr.deleted = ${base.N}
-                                 and sr.if_admin = ${base.Y}
-                                 and sr.if_disabled = ${base.N})))
-                   or sm.id in
-                      (select permission_id
-                       from sys_dept_permission sdp
-                       where sdp.deleted = ${base.N}
-                         and sdp.type = 'm'
-                         and sdp.dept_id in
-                             (select dept_id
-                              from sys_user_dept sud
-                              where sud.deleted = ${base.N}
-                                and sud.user_id = ${userId}))
-                   )))
-          and 1 = case
-                      when coalesce(${permission}, '') <> ''
-                          then
-                          case
-                              when sm.perms = ${permission}
-                                  then 1
-                              else 0
-                              end
-                      else 1
-            end
-          and 1 = case
-                      when coalesce(${sysId}, '') <> ''
-                          then
-                          case
-                              when sm.sys_id = ${sysId}
-                                  then 1
-                              else 0
-                              end
-                      else 1
-            end
-        order by sm.order_num;
-      `;
+    const menuPublicSelectParam = {
+      type: {
+        in: menuType,
+      },
+      ...(sysId ? { sys_id: Number(sysId) } : {}),
+      ...(permission ? { perms: permission } : {}),
+      if_disabled: base.N,
+    };
+    const ifTopAdmin = await this.hasTopAdminPermission(userId);
+    if (ifTopAdmin) {
+      const userPermissions_ = await this.prisma.getOrigin().sys_menu.findMany({
+        where: {
+          ...menuPublicSelectParam,
+          ...this.prisma.defaultSelArg().where,
+        },
+        orderBy: {
+          order_num: 'asc',
+        },
+      });
+      const userPermissions = objToCamelCase<MenuDto[]>(userPermissions_);
       retarr.push(...userPermissions);
+      return retarr;
     }
+    const { allRoleIds, allDeptIds } = await this.rolesAndDeptsOfUser(userId, loginRole);
+    const allPermissionIdsOfRole = await this.prisma.getOrigin().sys_role_permission.findMany({
+      select: {
+        permission_id: true,
+      },
+      where: {
+        role_id: {
+          in: allRoleIds,
+        },
+        ...this.prisma.defaultSelArg().where,
+      },
+    });
+    const allPermissionIdsOfDept = await this.prisma.getOrigin().sys_dept_permission.findMany({
+      select: {
+        permission_id: true,
+      },
+      where: {
+        dept_id: {
+          in: allDeptIds,
+        },
+        ...this.prisma.defaultSelArg().where,
+      },
+    });
+    const userPermissions_ = await this.prisma.getOrigin().sys_menu.findMany({
+      where: {
+        id: {
+          in: [
+            ...allPermissionIdsOfRole.map(item => item.permission_id),
+            ...allPermissionIdsOfDept.map(item => item.permission_id),
+          ],
+        },
+        ...menuPublicSelectParam,
+        ...this.prisma.defaultSelArg().where,
+      },
+      orderBy: {
+        order_num: 'asc',
+      },
+    });
+    const userPermissions = objToCamelCase<MenuDto[]>(userPermissions_);
+    retarr.push(...userPermissions);
     return retarr;
   }
 
@@ -373,7 +391,7 @@ export class AuthService {
           in: [controlUserId, controledUserId],
         },
       },
-    }, false);
+    });
     return (controlUserId === controledUserId)
       || (topAdminUser.findIndex(item => item.userId === controlUserId) > -1 && topAdminUser.findIndex(item => item.userId === controledUserId) === -1);
   }
@@ -381,10 +399,11 @@ export class AuthService {
   /**
    * 当前用户是否有此算法权限
    * @param userid
+   * @param loginRole
    * @param permission
    * @param request
    */
-  async hasSFPermissionByUserid(userid: string, permission: string, request?: Request) {
+  async hasSFPermissionByUserid(userid: string, loginRole: string, permission: string, request?: Request) {
     const algorithmCallDto = new LogAlgorithmCallDto();
     algorithmCallDto.userId = userid;
     algorithmCallDto.callIp = '';
@@ -422,10 +441,7 @@ export class AuthService {
     if (interf.length > 0) {
       // 是否公共算法
       if (interf[0].ifPublic === base.Y) {
-        await this.prisma.$queryRaw`
-        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark, create_time)
-        values (-1, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark}, ${new Date(timestamp())});
-      `;
+        await this.insLogAlgorithmCall(-1, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
         return true;
       }
       // 是否禁用
@@ -433,9 +449,9 @@ export class AuthService {
         throw new Exception('当前算法被禁用。');
       }
     }
-    const permissions = await this.getSFPermissionsOfUserid(userid, permission);
+    const permissions = await this.getSFPermissionsOfUserid(userid, permission, loginRole);
     if (permissions.length === 0) {
-      const permissions2 = await this.getSFPermissionsOfUserid(userid, permission, base.Y);
+      const permissions2 = await this.getSFPermissionsOfUserid(userid, permission, loginRole, base.Y);
       if (permissions2.length > 0) {
         throw new Exception('请求次数已使用完。');
       } else {
@@ -452,25 +468,19 @@ export class AuthService {
     }
     // 在期限内，且不限制次数，则放行
     if (userGroupPermission.ifLimitRequestTimes === base.N) {
-      await this.prisma.$queryRaw`
-        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark, create_time)
-        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark}, ${new Date(timestamp())});
-      `;
+      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
       return true;
     }
     // 在时间期限内，次数还没用光，则放行
     const limitRequestTimes = userGroupPermission.limitRequestTimes;
-    const count1 = await this.prisma.$queryRaw`
+    const count1: { count: number }[] = await this.prisma.$queryRaw`
       select count(id) as count
       from log_algorithm_call
       where user_group_permission_id = ${userGroupPermission.id};
     `;
     const count = count1[0].count;
     if (limitRequestTimes > count) {
-      await this.prisma.$queryRaw`
-        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark, create_time)
-        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark}, ${new Date(timestamp())});
-      `;
+      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
       if (Number(count) === limitRequestTimes - 1) {
         if (userGroupPermission.ifRejectRequestUseUp === base.N) {
         } else {
@@ -486,10 +496,7 @@ export class AuthService {
     }
     // 次数用光后是否停止服务
     if (userGroupPermission.ifRejectRequestUseUp === base.N) {
-      await this.prisma.$queryRaw`
-        insert into log_algorithm_call (user_group_permission_id, user_id, call_ip, if_success, remark, create_time)
-        values (${algorithmCallDto.userGroupPermissionId}, ${algorithmCallDto.userId}, ${algorithmCallDto.callIp}, '?', ${algorithmCallDto.remark}, ${new Date(timestamp())});
-      `;
+      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
       return true;
     } else {
       // 把状态更改为已用完
@@ -506,10 +513,11 @@ export class AuthService {
    * 当前用户的算法权限列表
    * @param userid
    * @param permission
+   * @param loginRole
    * @param ifIgnoreUseUp
    */
-  async getSFPermissionsOfUserid(userid: string, permission: string, ifIgnoreUseUp = base.N): Promise<UserGroupPermissionDto[]> {
-    const userSFPermissions = await this.prisma.$queryRaw`
+  async getSFPermissionsOfUserid(userid: string, permission: string, loginRole: string, ifIgnoreUseUp = base.N): Promise<UserGroupPermissionDto[]> {
+    const userSFPermissions: UserGroupPermissionDto[] = await this.prisma.$queryRaw`
       select sugp.id                       as id,
              sugp.user_group_id            as userGroupId,
              sugp.permission_id            as permissionId,
@@ -522,6 +530,8 @@ export class AuthService {
              sugp.if_use_up                as ifUseUp,
              sugp.order_num                as orderNum,
              sugp.remark                   as remark,
+             sugp.create_role              as createRole,
+             sugp.update_role              as updateRole,
              sugp.create_by                as createBy,
              sugp.update_by                as updateBy,
              sugp.create_time              as createTime,
@@ -534,6 +544,7 @@ export class AuthService {
             (select suug.user_group_id
              from sys_user_user_group suug
              where suug.deleted = ${base.N}
+               and suug.login_role = ${loginRole}
                and suug.user_id = ${userid})
         and sugp.permission_id in
             (select siig.interface_group_id
@@ -546,6 +557,74 @@ export class AuthService {
       order by sugp.order_num;
     `;
     return userSFPermissions;
+  }
+
+  async rolesAndDeptsOfUser(userId: string, loginRole: string) {
+    const allRoleIds1: { role_id: number }[] = await this.prisma.$queryRaw`
+        select sur.role_id
+        from sys_user_role sur
+                 left join
+             sys_role sr
+             on sur.role_id = sr.id
+        where sur.deleted = ${base.N}
+          and sur.login_role = ${loginRole}
+          and sur.user_id = ${userId}
+          and sr.deleted = ${base.N}
+          and sr.if_admin = ${base.Y}
+          and sr.if_disabled = ${base.N}
+        group by sur.role_id;
+      `;
+    const allDeptIds1: { dept_id: number }[] = await this.prisma.$queryRaw`
+        select sud.dept_id
+        from sys_user_dept sud
+                 left join
+             sys_dept sd
+             on sud.dept_id = sd.id
+        where sud.deleted = ${base.N}
+          and sud.login_role = ${loginRole}
+          and sud.user_id = ${userId}
+          and sd.deleted = ${base.N}
+          and sd.if_admin = ${base.Y}
+          and sd.if_disabled = ${base.N}
+        group by sud.dept_id;
+      `;
+    const allRoleIds = [...allRoleIds1.map(item => item.role_id)];
+    const allDeptIds = [...allDeptIds1.map(item => item.dept_id)];
+    if (loginRole === 'visitor') {
+      const sutdps_ = await this.prisma.getOrigin().sys_user_table_default_permission.findMany({
+        where: {
+          table_name: 'sys_user_visitor',
+          ...this.prisma.defaultSelArg().where,
+        },
+      });
+      const sutdps = objToCamelCase<UserTableDefaultPermissionDto[]>(sutdps_);
+      const allRoleIds2 = await this.prisma.getOrigin().sys_role.findMany({
+        where: {
+          if_admin: base.Y,
+          if_disabled: base.N,
+          id: {
+            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
+          },
+          ...this.prisma.defaultSelArg().where,
+        },
+      });
+      const allDeptIds2 = await this.prisma.getOrigin().sys_dept.findMany({
+        where: {
+          if_admin: base.Y,
+          if_disabled: base.N,
+          id: {
+            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
+          },
+          ...this.prisma.defaultSelArg().where,
+        },
+      });
+      allRoleIds.push(...allRoleIds2.map(item => item.id));
+      allDeptIds.push(...allDeptIds2.map(item => item.id));
+    }
+    return {
+      allRoleIds,
+      allDeptIds,
+    };
   }
 
   /**
@@ -567,7 +646,8 @@ export class AuthService {
                           ifIgnoreParamInLog: false,
                         },
   ) {
-    const user = this.baseContextService.getUserData().user;
+    const userId = this.baseContextService.getUserData().userId || '???';
+    const loginRole = this.baseContextService.getUserData().loginRole || '???';
     const ipInfoFromRequest = getIpInfoFromRequest(request);
     await this.prisma.getOrigin().log_operation.create({
       data: {
@@ -575,15 +655,38 @@ export class AuthService {
         call_ip: ipInfoFromRequest.ip,
         host_name: ipInfoFromRequest.host,
         perms: permission,
-        user_id: user ? user.userid : '???',
+        user_id: userId,
         req_param: ifIgnoreParamInLog ?
           JSON.stringify({ body: 'hidden', query: 'hidden' }) :
           JSON.stringify({ body: request.body, query: request.query }),
         old_value: '',
         operate_type: request.method,
         if_success: typeof ifSuccess === 'boolean' ? ifSuccess ? base.Y : base.N : ifSuccess,
+        login_role: loginRole,
         remark: remark,
         create_time: new Date(timestamp()),
+      },
+    });
+  }
+
+  /**
+   * 插入算法调用日志
+   * @param userGroupPermissionId
+   * @param userId
+   * @param callIp
+   * @param ifSuccess
+   * @param loginRole
+   * @param remark
+   */
+  async insLogAlgorithmCall(userGroupPermissionId: number, userId: string, callIp: string, ifSuccess: string, loginRole: string, remark: string) {
+    await this.prisma.getOrigin().log_algorithm_call.create({
+      data: {
+        user_group_permission_id: userGroupPermissionId,
+        user_id: userId,
+        call_ip: callIp,
+        if_success: ifSuccess,
+        login_role: loginRole,
+        remark: remark,
       },
     });
   }

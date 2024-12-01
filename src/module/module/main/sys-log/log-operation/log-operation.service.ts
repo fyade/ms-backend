@@ -12,9 +12,9 @@ export class LogOperationService {
     const res = await this.prisma.findPage<LogOperationDto, LogOperationSelListDto>('log_operation', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['reqId', 'callIp', 'hostName', 'perms', 'userId', 'reqParam', 'oldValue', 'operateType', 'ifSuccess'],
+      notNullKeys: ['reqId', 'callIp', 'hostName', 'perms', 'userId', 'reqParam', 'oldValue', 'operateType', 'ifSuccess', 'loginRole'],
       numberKeys: [],
-      completeMatchingKeys: [],
+      completeMatchingKeys: ['userId', 'loginRole'],
       ifDeleted: false,
     });
     return R.ok(res);
@@ -24,9 +24,9 @@ export class LogOperationService {
     const res = await this.prisma.findAll<LogOperationDto>('log_operation', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['reqId', 'callIp', 'hostName', 'perms', 'userId', 'reqParam', 'oldValue', 'operateType', 'ifSuccess'],
+      notNullKeys: ['reqId', 'callIp', 'hostName', 'perms', 'userId', 'reqParam', 'oldValue', 'operateType', 'ifSuccess', 'loginRole'],
       numberKeys: [],
-      completeMatchingKeys: [],
+      completeMatchingKeys: ['userId', 'loginRole'],
       ifDeleted: false,
     });
     return R.ok(res);

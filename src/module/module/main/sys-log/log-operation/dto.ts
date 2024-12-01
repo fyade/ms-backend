@@ -25,6 +25,8 @@ export class LogOperationDto extends BaseDto {
 
   ifSuccess: string;
 
+  loginRole: string;
+
   remark: string;
 }
 
@@ -59,6 +61,9 @@ export class LogOperationSelListDto extends PageDto {
   @ApiProperty({ description: '是否成功', required: false })
   ifSuccess: string;
 
+  @ApiProperty({ description: '登录身份', required: false })
+  loginRole: string;
+
   @ApiProperty({ description: '备注', required: false })
   remark: string;
 }
@@ -90,6 +95,9 @@ export class LogOperationSelAllDto {
 
   @ApiProperty({ description: '是否成功', required: false })
   ifSuccess: string;
+
+  @ApiProperty({ description: '登录身份', required: false })
+  loginRole: string;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;
@@ -131,6 +139,10 @@ export class LogOperationInsOneDto {
   @ApiProperty({ description: '是否成功', required: true })
   @IsNotEmpty({ message: '是否成功不能为空' })
   ifSuccess: string;
+
+  @ApiProperty({ description: '登录身份', required: true })
+  @IsNotEmpty({ message: '登录身份不能为空' })
+  loginRole: string;
 
   @ApiProperty({ description: '备注', required: false })
   remark: string;

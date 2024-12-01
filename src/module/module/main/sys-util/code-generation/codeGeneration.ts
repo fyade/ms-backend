@@ -16,13 +16,29 @@
 import { CodeGenTableDto } from '../code-gen-table/dto';
 import { CodeGenColumnDto } from '../code-gen-column/dto';
 import { capitalizeFirstLetter, lowercaseFirstLetter, toCamelCase, toKebabCase } from '../../../../../util/BaseUtils';
-import { base, publicDict } from '../../../../../util/base';
+import { base } from '../../../../../util/base';
 import { getDBTableName } from '../../../../../util/RegularUtils';
 import { Exception } from '../../../../../exception/Exception';
 import { BaseDto } from '../../../../../common/dto/BaseDto';
 import { SysDto } from '../../sys-manage/sys/dto';
 
+const publicDict = {
+  id: '主键id',
+  remark: '备注',
+  orderNum: '顺序',
+  ifDefault: '是否默认',
+  ifDisabled: '是否禁用',
+  createRole: 'createRole',
+  updateRole: 'updateRole',
+  createBy: 'createBy',
+  updateBy: 'updateBy',
+  createTime: 'createTime',
+  updateTime: 'updateTime',
+  deleted: '逻辑删除',
+};
 const baseInterfaceColumns = [
+  'createRole',
+  'updateRole',
   'createBy',
   'updateBy',
   'createTime',
@@ -890,6 +906,8 @@ ${
       .join('\n')
   }
 ${`      <!--在此上方添加表格列-->`}
+${`      <!--<el-table-column prop="createRole" :label="${moduleName1}Dict.createRole" width="120"/>-->`}
+${`      <!--<el-table-column prop="updateRole" :label="${moduleName1}Dict.updateRole" width="120"/>-->`}
 ${`      <!--<el-table-column prop="createBy" :label="${moduleName1}Dict.createBy" width="120"/>-->`}
 ${`      <!--<el-table-column prop="updateBy" :label="${moduleName1}Dict.updateBy" width="120"/>-->`}
 ${`      <!--<el-table-column prop="createTime" :label="${moduleName1}Dict.createTime" width="220"/>-->`}
@@ -976,7 +994,7 @@ ${`</style>`}
     },
     {
       fileName: `index.vue`,
-      filePath: `/src/views/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}`,
+      filePath: `/src/views/module/${sysPath}${isBusiness?`/${businessName1}`:''}/${moduleName1}`,
       canCopy: true,
       code: qd4,
     },

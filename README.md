@@ -60,7 +60,8 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 {
   "username": "username",
   "password": "password",
-  "psdType": "a"
+  "psdType": "a",
+  "loginRole": "admin"
 }
 ```
 
@@ -140,6 +141,11 @@ $ nest g pipe validation pipe # 管道
 菜单ip限制相关常量：
 * ip表示ip
 * ho表示host
+
+权限身份类型相关常量：
+* ro表示角色
+* de表示部门
+* ug表示用户组
 
 ## 许可证 License
 

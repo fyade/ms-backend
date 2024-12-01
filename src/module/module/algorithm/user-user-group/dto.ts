@@ -10,6 +10,8 @@ export class UserUserGroupDto extends BaseDto {
   userId: string;
 
   userGroupId: number;
+
+  loginRole: string;
 }
 
 export class UserUserGroupSelListDto extends PageDto {
@@ -21,6 +23,9 @@ export class UserUserGroupSelListDto extends PageDto {
 
   @ApiProperty({ description: '用户组', required: false })
   userGroupId: number;
+
+  @ApiProperty({ description: '登录身份', required: false })
+  loginRole: string;
 }
 
 export class UserUserGroupSelAllDto {
@@ -29,6 +34,9 @@ export class UserUserGroupSelAllDto {
 
   @ApiProperty({ description: '用户组', required: false })
   userGroupId: number;
+
+  @ApiProperty({ description: '登录身份', required: false })
+  loginRole: string;
 }
 
 export class UserUserGroupInsOneDto {
@@ -40,6 +48,10 @@ export class UserUserGroupInsOneDto {
   @Type(() => Number)
   @IsNotEmpty({ message: '用户组不能为空' })
   userGroupId: number;
+
+  @ApiProperty({ description: '登录身份', required: true })
+  @IsNotEmpty({ message: '登录身份不能为空' })
+  loginRole: string;
 }
 
 export class UserUserGroupUpdOneDto extends UserUserGroupInsOneDto {
@@ -57,6 +69,10 @@ export class UserUserGroupUpdUUGDtp {
   @Type(() => Number)
   @IsArray({ message: '用户组应为数组' })
   userGroupId: number[];
+
+  @ApiProperty({ description: '登录身份', required: true })
+  @IsNotEmpty({ message: '登录身份不能为空' })
+  loginRole: string;
 }
 
 export class UserUserGroupUpdUGUDtp {
@@ -68,4 +84,8 @@ export class UserUserGroupUpdUGUDtp {
   @Type(() => Number)
   @IsNotEmpty({ message: '用户组不能为空' })
   userGroupId: number;
+
+  @ApiProperty({ description: '登录身份', required: true })
+  @IsNotEmpty({ message: '登录身份不能为空' })
+  loginRole: string;
 }

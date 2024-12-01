@@ -19,6 +19,23 @@ export const T_HOST = 'ho'
 export type T_IP = 'ip'
 export type T_HOST = 'ho'
 export type TMIWLType = T_IP | T_HOST
+export const mIWLTypeDict = {
+  [T_IP]: 'ip',
+  [T_HOST]: 'host',
+}
+
+export const T_ROLE = 'ro'
+export const T_DEPT = 'de'
+export const T_UG = 'ug'
+export type T_ROLE = 'ro'
+export type T_DEPT = 'de'
+export type T_UG = 'ug'
+export type TUTDPType = T_ROLE | T_DEPT | T_UG
+export const uTDPTypeDict = {
+  [T_ROLE]: '角色',
+  [T_DEPT]: '部门',
+  [T_UG]: '用户组',
+}
 
 export const base = {
   Y: 'Y',
@@ -26,17 +43,4 @@ export const base = {
   DEV: 'dev',
   TEST: 'test',
   PROD: 'prod',
-};
-
-export const publicDict = {
-  id: '主键id',
-  remark: '备注',
-  orderNum: '顺序',
-  ifDefault: '是否默认',
-  ifDisabled: '是否禁用',
-  createBy: 'createBy',
-  updateBy: 'updateBy',
-  createTime: 'createTime',
-  updateTime: 'updateTime',
-  deleted: '逻辑删除',
 };

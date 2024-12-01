@@ -39,7 +39,9 @@ export class UserGroupPermissionService {
     const res = await this.prisma.findById<UserGroupPermissionDto>('sys_user_group_permission', Number(id));
     const count = await this.prisma.count<LogAlgorithmCallDto>('log_algorithm_call', {
       data: { userGroupPermissionId: id },
+      notNullKeys: ['userGroupPermissionId', 'userId', 'callIp', 'ifSuccess', 'loginRole'],
       numberKeys: ['userGroupPermissionId'],
+      completeMatchingKeys: ['userGroupPermissionId', 'userId', 'loginRole'],
       ifDeleted: false,
     });
     (res as any).count = count;

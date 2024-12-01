@@ -19,9 +19,9 @@ export class UserUserGroupService {
     const res = await this.prisma.findPage<UserUserGroupDto, UserUserGroupSelListDto>('sys_user_user_group', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'userGroupId'],
+      notNullKeys: ['userId', 'userGroupId', 'loginRole'],
       numberKeys: ['userGroupId'],
-      completeMatchingKeys: [],
+      completeMatchingKeys: ['userId', 'userGroupId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -30,9 +30,9 @@ export class UserUserGroupService {
     const res = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'userGroupId'],
+      notNullKeys: ['userId', 'userGroupId', 'loginRole'],
       numberKeys: ['userGroupId'],
-      completeMatchingKeys: [],
+      completeMatchingKeys: ['userId', 'userGroupId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -48,7 +48,7 @@ export class UserUserGroupService {
   }
 
   async updUserUserGroupUUG(dto: UserUserGroupUpdUUGDtp): Promise<R> {
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().user.userid, dto.userId)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
     const allUserGroups = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', { data: { userId: dto.userId } });
@@ -60,6 +60,7 @@ export class UserUserGroupService {
     await this.prisma.createMany('sys_user_user_group', addUserGroups.map(item => ({
       userId: dto.userId,
       userGroupId: item,
+      loginRole: dto.loginRole
     })));
     return R.ok();
   }
@@ -74,12 +75,13 @@ export class UserUserGroupService {
     const userIds = dto.userId.filter(item => allUserIdsOfThisUserGroup.indexOf(item) === -1);
     for (let i = 0; i < userIds.length; i++) {
       const userId = userIds[i];
-      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().user.userid, userId)) {
+      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, userId)) {
         throw new UserPermissionDeniedException();
       }
       data.push({
         userId: userId,
         userGroupId: dto.userGroupId,
+        loginRole: dto.loginRole
       });
     }
     await this.prisma.createMany('sys_user_user_group', data);

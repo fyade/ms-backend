@@ -21,9 +21,9 @@ export class UserDeptService {
     const res = await this.prisma.findPage<UserDeptDto, UserDeptSelListDto>('sys_user_dept', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'deptId'],
+      notNullKeys: ['userId', 'deptId', 'loginRole'],
       numberKeys: ['deptId'],
-      completeMatchingKeys: [],
+      completeMatchingKeys: ['userId', 'deptId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -32,9 +32,9 @@ export class UserDeptService {
     const res = await this.prisma.findAll<UserDeptDto>('sys_user_dept', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'deptId'],
+      notNullKeys: ['userId', 'deptId', 'loginRole'],
       numberKeys: ['deptId'],
-      completeMatchingKeys: [],
+      completeMatchingKeys: ['userId', 'deptId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -51,7 +51,7 @@ export class UserDeptService {
 
   async updUserDeptUD(dto: UserDeptUpdUDDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().user.userid, dto.userId)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
     const allDepts = await this.prisma.findAll<UserDeptDto>('sys_user_dept', { data: { userId: dto.userId } });
@@ -60,7 +60,7 @@ export class UserDeptService {
     const delDeptIds = allDeptIds.filter(id => dto.deptId.indexOf(id) === -1);
     const delDepts = allDepts.filter(item => delDeptIds.indexOf(item.deptId) > -1).map(item => item.id);
     await this.prisma.deleteById('sys_user_dept', delDepts);
-    await this.prisma.createMany('sys_user_dept', addDepts.map(item => ({ userId: dto.userId, deptId: item })));
+    await this.prisma.createMany('sys_user_dept', addDepts.map(item => ({ userId: dto.userId, deptId: item, loginRole: dto.loginRole })));
     return R.ok();
   }
 
@@ -75,12 +75,13 @@ export class UserDeptService {
     const userIds = dto.userId.filter(item => allUserIdsOfThisDept.indexOf(item) === -1);
     for (let i = 0; i < userIds.length; i++) {
       const userId = userIds[i];
-      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().user.userid, userId)) {
+      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, userId)) {
         throw new UserPermissionDeniedException();
       }
       data.push({
         userId: userId,
         deptId: dto.deptId,
+        loginRole: dto.loginRole,
       });
     }
     await this.prisma.createMany('sys_user_dept', data);

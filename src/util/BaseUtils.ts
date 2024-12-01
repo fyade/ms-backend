@@ -89,7 +89,7 @@ type ObjectType = Record<string, any>;
  * 对象的key下划线命名转驼峰命名
  * @param obj
  */
-export function objToCamelCase<T extends ObjectType>(obj: T): T {
+export function objToCamelCase<T extends ObjectType>(obj): T {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }

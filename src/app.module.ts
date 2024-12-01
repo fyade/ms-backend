@@ -43,6 +43,8 @@ import { SysModule } from './module/module/main/sys-manage/sys/sys.module';
 import { RoleSysModule } from './module/module/main/sys-manage/role-sys/role-sys.module';
 import { DeptSysModule } from './module/module/main/sys-manage/dept-sys/dept-sys.module';
 import { MenuIpWhiteListModule } from './module/module/main/sys-manage/menu-ip-white-list/menu-ip-white-list.module';
+import { UserVisitorModule } from './module/module/main/other-user/user-visitor/user-visitor.module';
+import { UserTableDefaultPermissionModule } from './module/module/main/other-user/user-table-default-permission/user-table-default-permission.module';
 
 @Module({
   imports: [
@@ -94,6 +96,8 @@ import { MenuIpWhiteListModule } from './module/module/main/sys-manage/menu-ip-w
     RoleSysModule,
     DeptSysModule,
     MenuIpWhiteListModule,
+    UserVisitorModule,
+    UserTableDefaultPermissionModule,
   ],
   providers: [
     {

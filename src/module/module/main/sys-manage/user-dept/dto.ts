@@ -10,6 +10,8 @@ export class UserDeptDto extends BaseDto {
   userId: string;
 
   deptId: number;
+
+  loginRole: string;
 }
 
 export class UserDeptSelListDto extends PageDto {
@@ -21,6 +23,9 @@ export class UserDeptSelListDto extends PageDto {
 
   @ApiProperty({ description: '部门', required: false })
   deptId: number;
+
+  @ApiProperty({ description: '登录身份', required: false })
+  loginRole: string;
 }
 
 export class UserDeptSelAllDto {
@@ -29,6 +34,9 @@ export class UserDeptSelAllDto {
 
   @ApiProperty({ description: '部门', required: false })
   deptId: number;
+
+  @ApiProperty({ description: '登录身份', required: false })
+  loginRole: string;
 }
 
 export class UserDeptInsOneDto {
@@ -40,6 +48,10 @@ export class UserDeptInsOneDto {
   @Type(() => Number)
   @IsNotEmpty({ message: '部门不能为空' })
   deptId: number;
+
+  @ApiProperty({ description: '登录身份', required: true })
+  @IsNotEmpty({ message: '登录身份不能为空' })
+  loginRole: string;
 }
 
 export class UserDeptUpdOneDto extends UserDeptInsOneDto {
@@ -56,6 +68,10 @@ export class UserDeptUpdUDDto {
   @ApiProperty({ description: '部门', required: true })
   @IsArray({ message: '部门应为数组' })
   deptId: number[];
+
+  @ApiProperty({ description: '登录身份', required: true })
+  @IsNotEmpty({ message: '登录身份不能为空' })
+  loginRole: string;
 }
 
 export class UserDeptUpdDUDto {
@@ -66,4 +82,8 @@ export class UserDeptUpdDUDto {
   @ApiProperty({ description: '部门', required: true })
   @IsNotEmpty({ message: '部门不能为空' })
   deptId: number;
+
+  @ApiProperty({ description: '登录身份', required: true })
+  @IsNotEmpty({ message: '登录身份不能为空' })
+  loginRole: string;
 }
