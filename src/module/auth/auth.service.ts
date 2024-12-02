@@ -77,12 +77,14 @@ export class AuthService {
     if (ifPublicInterfaceInCache) {
       return ifPublicInterfaceInCache === base.Y;
     }
-    const raw: { if_public: string }[] = await this.prisma.$queryRaw`
-      select if_public
-      from sys_menu
-      where perms = ${permission}
-        and if_public = ${base.Y};
-    `;
+    const raw = await this.prisma.getOrigin().sys_menu.findMany({
+      where: {
+        perms: permission,
+        if_public: base.Y,
+        if_disabled: base.N,
+        ...this.prisma.defaultSelArg().where,
+      },
+    });
     const b = raw.length > 0;
     await this.cachePermissionService.setPublicPermissionInCache(permission, b ? base.Y : base.N);
     return b;
@@ -374,6 +376,7 @@ export class AuthService {
              si.deleted     as deleted
       from sys_interface si
       where si.deleted = ${base.N}
+        and si.if_disabled = ${base.N}
         and si.perms = ${permission};
     `;
     if (interf.length === 0) {
