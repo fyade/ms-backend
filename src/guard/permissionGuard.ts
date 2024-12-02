@@ -31,6 +31,8 @@ export class PermissionGuard implements CanActivate {
     const { permission, label, ifSF, ifIgnore, ifIgnoreButResolveToken, ifIgnoreParamInLog } = authorizeParams;
     const request: Request = context.switchToHttp().getRequest();
 
+    let tokenUsable = true
+
     if (ifIgnore && !ifIgnoreButResolveToken) {
     } else {
       const oauth = request.headers['authorization'];
@@ -38,17 +40,12 @@ export class PermissionGuard implements CanActivate {
       try {
         const decoded = await this.cacheTokenService.verifyToken(token);
         if (decoded) {
-          // Token is valid and not expired
           this.baseContextService.setUserData(genCurrentUser(decoded.userid, token, decoded.loginRole));
         } else {
-          // Token is invalid or expired
-          await this.authService.insLogOperation(permission, request, false, { remark: '401', ifIgnoreParamInLog });
-          throw new UnauthorizedException();
+          tokenUsable = false
         }
       } catch (e) {
-        // Token is invalid or expired
-        await this.authService.insLogOperation(permission, request, false, { remark: '401', ifIgnoreParamInLog });
-        throw new UnauthorizedException();
+        tokenUsable = false
       }
     }
 
@@ -56,6 +53,13 @@ export class PermissionGuard implements CanActivate {
     if (ifIgnore) {
       return true;
     }
+
+    const ifPublicInterface = await this.authService.ifPublicInterface(permission);
+    if (!tokenUsable && !ifPublicInterface) {
+      await this.authService.insLogOperation(permission, request, false, { remark: '401', ifIgnoreParamInLog });
+      throw new UnauthorizedException();
+    }
+
     const userId = this.baseContextService.getUserData().userId;
     const loginRole = this.baseContextService.getUserData().loginRole;
     // 算法接口权限控制
@@ -84,7 +88,6 @@ export class PermissionGuard implements CanActivate {
     // 页面接口权限控制
     else {
       // 是否公共接口
-      const ifPublicInterface = await this.authService.ifPublicInterface(permission);
       if (ifPublicInterface) {
         // 请求ip是否在此接口的ip白名单中
         const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);

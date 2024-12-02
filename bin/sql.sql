@@ -270,7 +270,7 @@ VALUES (1,'系统管理','mm','sys-manage',0,'#','system',1,'N','Y','N','N','mai
        (265,'查询多个角色（根据id）','mb','#',43,'#','',3,'N','Y','N','N','main:sysManage:role:selOnes',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (266,'批量新增角色','mb','#',43,'#','',6,'N','Y','N','N','main:sysManage:role:inss',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (267,'批量修改角色','mb','#',43,'#','',8,'N','Y','N','N','main:sysManage:role:upds',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (268,'获取某类型下的字典数据','mb','#',40,'#','',0,'N','Y','N','N','main:sysManage:dicData:selDataOfPerm',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (268,'获取某类型下的字典数据','mb','#',40,'#','',0,'N','Y','N','Y','main:sysManage:dicData:selDataOfPerm',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (269,'菜单ip白名单','ma','#',36,'#','',7,'N','Y','N','N','i:sysManage:menuIpWhiteList',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (270,'分页查询菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:selList',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (271,'查询所有菜单ip白名单','mb','#',269,'#','',0,'N','Y','N','N','main:sysManage:menuIpWhiteList:selAll',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
