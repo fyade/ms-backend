@@ -734,17 +734,20 @@ export class PrismaService extends PrismaClientOrigin {
    * 批量修改
    * @param model
    * @param data
+   * @param ifUpdateRole
    * @param ifUpdateBy
    * @param ifUpdateTime
    * @param ifDeleted
    * @param ifDataSegregation
    */
   async updateMany<T>(model: string, data?, {
+                        ifUpdateRole = true,
                         ifUpdateBy = true,
                         ifUpdateTime = true,
                         ifDeleted = true,
                         ifDataSegregation = false,
                       }: {
+                        ifUpdateRole?: boolean,
                         ifUpdateBy?: boolean,
                         ifUpdateTime?: boolean,
                         ifDeleted?: boolean,
@@ -753,7 +756,13 @@ export class PrismaService extends PrismaClientOrigin {
   ): Promise<T[]> {
     const retArr: T[] = [];
     for (let i = 0; i < data.length; i++) {
-      const ret = await this.updateById<T>(model, data[i], { ifUpdateBy, ifUpdateTime, ifDeleted, ifDataSegregation });
+      const ret = await this.updateById<T>(model, data[i], {
+        ifUpdateRole,
+        ifUpdateBy,
+        ifUpdateTime,
+        ifDeleted,
+        ifDataSegregation,
+      });
       retArr.push(ret);
     }
     return new Promise(resolve => resolve(retArr));
