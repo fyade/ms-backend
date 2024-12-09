@@ -36,7 +36,7 @@ const publicDict = {
   updateTime: 'updateTime',
   deleted: '逻辑删除',
 };
-const baseInterfaceColumns = [
+export const baseInterfaceColumns = [
   'createRole',
   'updateRole',
   'createBy',

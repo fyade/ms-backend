@@ -9,6 +9,7 @@ import { PageVo } from '../common/vo/PageVo';
 import { deepClone } from '../util/ObjectUtils';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { PrismaClient } from '@prisma/client';
+import { baseInterfaceColumns } from '../module/module/main/sys-util/code-generation/codeGeneration';
 
 const env = currentEnv();
 const { PrismaClient: PrismaClientOrigin } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
@@ -75,14 +76,22 @@ export class PrismaService extends PrismaClientOrigin {
   }
 
   defaultSelArg = ({
+                     selKeys = [],
                      ifDeleted = true,
                      ifDataSegregation = false,
                    }: {
-                     ifDeleted?: boolean
-                     ifDataSegregation?: boolean
+                     selKeys?: string[],
+                     ifDeleted?: boolean,
+                     ifDataSegregation?: boolean,
                    } = {},
   ) => {
     const retObj = {
+      ...(selKeys.length > 0 ? {
+        select: [...selKeys, ...baseInterfaceColumns].reduce((o, a) => ({
+          ...o,
+          [toSnakeCase(a)]: true,
+        }), {}),
+      } : {}),
       where: {
         create_role: this.getLoginRole(),
         create_by: this.getUserId(),
@@ -210,6 +219,7 @@ export class PrismaService extends PrismaClientOrigin {
                                data,
                                orderBy,
                                range = {},
+                               selKeys = [],
                                notNullKeys = [],
                                numberKeys = [],
                                completeMatchingKeys = [],
@@ -219,15 +229,16 @@ export class PrismaService extends PrismaClientOrigin {
                                data?: P,
                                orderBy?: boolean | object,
                                range?: object,
-                               notNullKeys?: string[]
-                               numberKeys?: string[]
-                               completeMatchingKeys?: string[]
-                               ifDeleted?: boolean
-                               ifDataSegregation?: boolean
+                               selKeys?: string[],
+                               notNullKeys?: string[],
+                               numberKeys?: string[],
+                               completeMatchingKeys?: string[],
+                               ifDeleted?: boolean,
+                               ifDataSegregation?: boolean,
                              } = {},
   ) {
     const data_ = objToSnakeCase(data);
-    const publicData = this.defaultSelArg({ ifDeleted, ifDataSegregation }).where;
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation }).where;
     return {
       AND: [
         ...Object.keys(publicData).reduce((obj, item) => [
@@ -300,6 +311,7 @@ export class PrismaService extends PrismaClientOrigin {
    * @param data
    * @param orderBy
    * @param range
+   * @param selKeys
    * @param notNullKeys
    * @param numberKeys
    * @param completeMatchingKeys
@@ -311,6 +323,7 @@ export class PrismaService extends PrismaClientOrigin {
                                          data,
                                          orderBy,
                                          range = {},
+                                         selKeys = [],
                                          notNullKeys = [],
                                          numberKeys = [],
                                          completeMatchingKeys = [],
@@ -320,7 +333,8 @@ export class PrismaService extends PrismaClientOrigin {
                                          data?: P,
                                          orderBy?: boolean | object,
                                          range?: object,
-                                         notNullKeys?: string[]
+                                         selKeys?: string[],
+                                         notNullKeys?: string[],
                                          numberKeys?: string[],
                                          completeMatchingKeys?: string[],
                                          ifDeleted?: boolean,
@@ -333,21 +347,23 @@ export class PrismaService extends PrismaClientOrigin {
     const data2 = deepClone(data);
     delete data2.pageNum;
     delete data2.pageSize;
-    const publicData = this.defaultSelArg({ ifDeleted, ifDataSegregation }).where;
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation });
     const arg = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
         data: data2,
         orderBy,
         range,
+        selKeys,
         notNullKeys,
         numberKeys,
         completeMatchingKeys,
         ifDeleted,
         ifDataSegregation,
       }) : {
-        ...publicData,
+        ...publicData.where,
         ...(objToSnakeCase(data2) || {}),
       },
+      ...(publicData.select ? { select: publicData.select } : {}),
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     };
@@ -389,6 +405,7 @@ export class PrismaService extends PrismaClientOrigin {
    * @param data
    * @param orderBy
    * @param range
+   * @param selKeys
    * @param notNullKeys
    * @param numberKeys
    * @param completeMatchingKeys
@@ -400,6 +417,7 @@ export class PrismaService extends PrismaClientOrigin {
                                  data,
                                  orderBy,
                                  range = {},
+                                 selKeys = [],
                                  notNullKeys = [],
                                  numberKeys = [],
                                  completeMatchingKeys = [],
@@ -409,28 +427,32 @@ export class PrismaService extends PrismaClientOrigin {
                                  data?: P,
                                  orderBy?: boolean | object,
                                  range?: object,
-                                 notNullKeys?: string[]
-                                 numberKeys?: string[]
-                                 completeMatchingKeys?: string[]
+                                 selKeys?: string[],
+                                 notNullKeys?: string[],
+                                 numberKeys?: string[],
+                                 completeMatchingKeys?: string[],
                                  ifDeleted?: boolean,
                                  ifDataSegregation?: boolean,
                                } = {},
                                ifUseGenSelParams = true,
   ): Promise<T[]> {
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation });
     const arg = {
       where: ifUseGenSelParams ? this.genSelParams<T, P>({
         data,
         orderBy,
         range,
+        selKeys,
         notNullKeys,
         numberKeys,
         completeMatchingKeys,
         ifDeleted,
         ifDataSegregation,
       }) : {
-        ...this.defaultSelArg({ ifDeleted, ifDataSegregation }).where,
+        ...publicData.where,
         ...(objToSnakeCase(data) || {}),
       },
+      ...(publicData.select ? { select: publicData.select } : {}),
     };
     if (typeof orderBy === 'boolean' && orderBy) {
       arg['orderBy'] = {
@@ -454,22 +476,27 @@ export class PrismaService extends PrismaClientOrigin {
    * 查询首个
    * @param model
    * @param args
+   * @param selKeys
    * @param ifDeleted
    * @param ifDataSegregation
    */
   async findFirst<T, P = any>(model: string, args?: Partial<P>, {
+                                selKeys = [],
                                 ifDeleted = true,
                                 ifDataSegregation = false,
                               }: {
-                                ifDeleted?: boolean
-                                ifDataSegregation?: boolean
+                                selKeys?: string[],
+                                ifDeleted?: boolean,
+                                ifDataSegregation?: boolean,
                               } = {},
   ): Promise<T> {
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation });
     const arg = {
       where: {
-        ...this.defaultSelArg({ ifDeleted, ifDataSegregation }).where,
+        ...publicData.where,
         ...(objToSnakeCase(args) || {}),
       },
+      ...(publicData.select ? { select: publicData.select } : {}),
     };
     const first = await this.getModel(model).findFirst(arg);
     const objToCamelCase1 = objToCamelCase<T>(first);
@@ -480,42 +507,50 @@ export class PrismaService extends PrismaClientOrigin {
    * 查询单个
    * @param model
    * @param id
+   * @param selKeys
    * @param ifDeleted
    * @param ifDataSegregation
    */
   async findById<T>(model: string, id: number | string, {
+                      selKeys = [],
                       ifDeleted = true,
                       ifDataSegregation = false,
                     }: {
-                      ifDeleted?: boolean
-                      ifDataSegregation?: boolean
+                      selKeys?: string[],
+                      ifDeleted?: boolean,
+                      ifDataSegregation?: boolean,
                     } = {},
   ): Promise<T> {
-    return this.findFirst<T>(model, { id: id }, { ifDeleted, ifDataSegregation });
+    return this.findFirst<T>(model, { id: id }, { selKeys, ifDeleted, ifDataSegregation });
   }
 
   /**
    * 查询多个（根据id）
    * @param model
    * @param ids
+   * @param selKeys
    * @param ifDeleted
    * @param ifDataSegregation
    */
   async findByIds<T>(model: string, ids: number[] | string[], {
+                       selKeys = [],
                        ifDeleted = true,
                        ifDataSegregation = false,
                      }: {
-                       ifDeleted?: boolean
-                       ifDataSegregation?: boolean
+                       selKeys?: string[],
+                       ifDeleted?: boolean,
+                       ifDataSegregation?: boolean,
                      } = {},
   ): Promise<T[]> {
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation });
     const arg = {
       where: {
-        ...this.defaultSelArg({ ifDeleted, ifDataSegregation }).where,
+        ...publicData.where,
         id: {
           in: ids,
         },
       },
+      ...(publicData.select ? { select: publicData.select } : {}),
     };
     const list = await this.getModel(model).findMany(arg);
     const list2 = ids.map((id) => objToCamelCase<T>(list.find(item => item.id === id)));
