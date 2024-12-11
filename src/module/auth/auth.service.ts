@@ -385,7 +385,7 @@ export class AuthService {
     if (interf.length > 0) {
       // 是否公共算法
       if (interf[0].ifPublic === base.Y) {
-        await this.insLogAlgorithmCall(-1, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+        await this.insLogAlgorithmCall(-1, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
         return true;
       }
       // 是否禁用
@@ -412,7 +412,7 @@ export class AuthService {
     }
     // 在期限内，且不限制次数，则放行
     if (userGroupPermission.ifLimitRequestTimes === base.N) {
-      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
       return true;
     }
     // 在时间期限内，次数还没用光，则放行
@@ -424,7 +424,7 @@ export class AuthService {
     `;
     const count = count1[0].count;
     if (limitRequestTimes > count) {
-      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
       if (Number(count) === limitRequestTimes - 1) {
         if (userGroupPermission.ifRejectRequestUseUp === base.N) {
         } else {
@@ -440,7 +440,7 @@ export class AuthService {
     }
     // 次数用光后是否停止服务
     if (userGroupPermission.ifRejectRequestUseUp === base.N) {
-      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
       return true;
     } else {
       // 把状态更改为已用完
@@ -534,6 +534,37 @@ export class AuthService {
       `;
     const allRoleIds = [...allRoleIds1.map(item => item.role_id)];
     const allDeptIds = [...allDeptIds1.map(item => item.dept_id)];
+    if (loginRole === 'admin') {
+      const sutdps_ = await this.prisma.getOrigin().sys_user_table_default_permission.findMany({
+        where: {
+          table_name: 'sys_user',
+          ...this.prisma.defaultSelArg().where,
+        },
+      });
+      const sutdps = objToCamelCase<UserTableDefaultPermissionDto[]>(sutdps_);
+      const allRoleIds2 = await this.prisma.getOrigin().sys_role.findMany({
+        where: {
+          if_admin: base.Y,
+          if_disabled: base.N,
+          id: {
+            in: sutdps.filter(item => item.permType === T_ROLE).map(item => item.permId),
+          },
+          ...this.prisma.defaultSelArg().where,
+        },
+      });
+      const allDeptIds2 = await this.prisma.getOrigin().sys_dept.findMany({
+        where: {
+          if_admin: base.Y,
+          if_disabled: base.N,
+          id: {
+            in: sutdps.filter(item => item.permType === T_DEPT).map(item => item.permId),
+          },
+          ...this.prisma.defaultSelArg().where,
+        },
+      });
+      allRoleIds.push(...allRoleIds2.map(item => item.id));
+      allDeptIds.push(...allDeptIds2.map(item => item.id));
+    }
     if (loginRole === 'visitor') {
       const sutdps_ = await this.prisma.getOrigin().sys_user_table_default_permission.findMany({
         where: {
@@ -616,16 +647,18 @@ export class AuthService {
   /**
    * 插入算法调用日志
    * @param userGroupPermissionId
+   * @param perms
    * @param userId
    * @param callIp
    * @param ifSuccess
    * @param loginRole
    * @param remark
    */
-  async insLogAlgorithmCall(userGroupPermissionId: number, userId: string, callIp: string, ifSuccess: string, loginRole: string, remark: string) {
+  async insLogAlgorithmCall(userGroupPermissionId: number, perms: string, userId: string, callIp: string, ifSuccess: string, loginRole: string, remark: string) {
     await this.prisma.getOrigin().log_algorithm_call.create({
       data: {
         user_group_permission_id: userGroupPermissionId,
+        perms: perms,
         user_id: userId,
         call_ip: callIp,
         if_success: ifSuccess,

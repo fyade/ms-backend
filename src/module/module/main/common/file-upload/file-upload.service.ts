@@ -215,6 +215,7 @@ export class FileUploadService {
         chunkIndex: dto.chunkIndex,
         ifFinished: base.N,
       }, {
+        ifUpdateRole: false,
         ifUpdateBy: false,
         ifUpdateTime: false,
       });
@@ -226,6 +227,7 @@ export class FileUploadService {
         id: info.id,
         ifFinished: base.Y,
       }, {
+        ifUpdateRole: false,
         ifUpdateBy: false,
         ifUpdateTime: false,
       });

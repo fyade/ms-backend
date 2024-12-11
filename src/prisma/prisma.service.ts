@@ -9,7 +9,7 @@ import { PageVo } from '../common/vo/PageVo';
 import { deepClone } from '../util/ObjectUtils';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { PrismaClient } from '@prisma/client';
-import { baseInterfaceColumns } from '../module/module/main/sys-util/code-generation/codeGeneration';
+import { baseInterfaceColumns2 } from '../module/module/main/sys-util/code-generation/codeGeneration';
 
 const env = currentEnv();
 const { PrismaClient: PrismaClientOrigin } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
@@ -87,7 +87,7 @@ export class PrismaService extends PrismaClientOrigin {
   ) => {
     const retObj = {
       ...(selKeys.length > 0 ? {
-        select: [...selKeys, ...baseInterfaceColumns].reduce((o, a) => ({
+        select: [...selKeys, ...baseInterfaceColumns2].reduce((o, a) => ({
           ...o,
           [toSnakeCase(a)]: true,
         }), {}),

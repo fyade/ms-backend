@@ -14,7 +14,6 @@ export class DicTypeService {
       orderBy: true,
       notNullKeys: ['name', 'type', 'ifDisabled', 'orderNum'],
       numberKeys: ['orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -25,7 +24,6 @@ export class DicTypeService {
       orderBy: true,
       notNullKeys: ['name', 'type', 'ifDisabled', 'orderNum'],
       numberKeys: ['orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

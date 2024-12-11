@@ -606,6 +606,7 @@ model log_operation {
 model log_algorithm_call {
   id                        Int                       @id @default(autoincrement()) @db.Int
   user_group_permission_id  Int                       @db.Int
+  perms                     String                    @db.VarChar(100)
   user_id                   String                    @db.VarChar(10)
   call_ip                   String                    @db.VarChar(20)
   if_success                String                    @db.Char(1)

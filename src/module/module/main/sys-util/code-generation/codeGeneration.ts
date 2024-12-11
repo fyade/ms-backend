@@ -15,11 +15,15 @@
  */
 import { CodeGenTableDto } from '../code-gen-table/dto';
 import { CodeGenColumnDto } from '../code-gen-column/dto';
-import { capitalizeFirstLetter, lowercaseFirstLetter, toCamelCase, toKebabCase } from '../../../../../util/BaseUtils';
+import {
+  capitalizeFirstLetter,
+  lowercaseFirstLetter,
+  toCamelCase,
+  toKebabCase,
+  typeOf,
+} from '../../../../../util/BaseUtils';
 import { base } from '../../../../../util/base';
-import { getDBTableName } from '../../../../../util/RegularUtils';
 import { Exception } from '../../../../../exception/Exception';
-import { BaseDto } from '../../../../../common/dto/BaseDto';
 import { SysDto } from '../../sys-manage/sys/dto';
 
 const publicDict = {
@@ -45,12 +49,12 @@ export const baseInterfaceColumns = [
   'updateTime',
   'deleted'
 ]
+export const baseInterfaceColumns2 = [
+  'id',
+  ...baseInterfaceColumns
+]
 
-/**
- * 代码生成
- * @param table
- * @param columns
- */
+// 代码生成
 export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto, columns: CodeGenColumnDto[], sys: SysDto }) {
   const find = columns.find(item => item.colName === 'id');
   if (!find) {
@@ -73,8 +77,114 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
   // 是否有业务模块
   const isBusiness = !!table.businessName
 
-  const getDefaultValue = (tsName: string, tsType: string) => {
-  };
+  const hd2_prismaConfig = (() => {
+    const tsNames = columns.map(item => item.tsName);
+    const selListParam = {
+      data: 'dto',
+      orderBy: columns
+        .filter(item => !baseInterfaceColumns2.includes(item.tsName))
+        .findIndex(item => item.colName === 'order_num') > -1,
+      selKeys: columns
+        .filter(item => !baseInterfaceColumns2.includes(item.tsName))
+        .filter(item => item.ifSelMore === base.Y)
+        .map(item => toCamelCase(item.colName)),
+      notNullKeys: columns
+        .filter(item => !baseInterfaceColumns2.includes(item.tsName))
+        .filter(item => item.ifRequired === base.Y)
+        .map(item => toCamelCase(item.colName)),
+      numberKeys: columns
+        .filter(item => !baseInterfaceColumns2.includes(item.tsName))
+        .filter(item => item.tsType === 'number')
+        .map(item => toCamelCase(item.colName)),
+      completeMatchingKeys: columns
+        .filter(item => !baseInterfaceColumns2.includes(item.tsName))
+        .filter(item => item.selType === 'equals')
+        .map(item => toCamelCase(item.colName)),
+      ifDeleted: false,
+    };
+    if (ifDelSelKeys(selListParam.selKeys)) delete selListParam.selKeys;
+    if (selListParam.notNullKeys.length === 0) delete selListParam.notNullKeys;
+    if (selListParam.numberKeys.length === 0) delete selListParam.numberKeys;
+    if (selListParam.completeMatchingKeys.length === 0) delete selListParam.completeMatchingKeys;
+    if (tsNames.includes('deleted')) delete selListParam.ifDeleted;
+
+    const selAllParam = selListParam;
+
+    const selOnesParam = {
+      selKeys: columns.filter(item => item.ifSelMore === base.Y).map(item => toCamelCase(item.colName)),
+      ifDeleted: false,
+    };
+    if (ifDelSelKeys(selOnesParam.selKeys)) delete selOnesParam.selKeys;
+    if (tsNames.includes('deleted')) delete selOnesParam.ifDeleted;
+
+    const selOneParam = {
+      selKeys: columns.filter(item => item.ifSelOne === base.Y).map(item => toCamelCase(item.colName)),
+      ifDeleted: false,
+    };
+    if (ifDelSelKeys(selOneParam.selKeys)) delete selOneParam.selKeys;
+    if (tsNames.includes('deleted')) delete selOneParam.ifDeleted;
+
+    const insParam = {
+      ifCreateRole: false,
+      ifUpdateRole: false,
+      ifCreateBy: false,
+      ifUpdateBy: false,
+      ifCreateTime: false,
+      ifUpdateTime: false,
+      ifDeleted: false,
+    };
+    if (tsNames.includes('createRole')) delete insParam.ifCreateRole;
+    if (tsNames.includes('updateRole')) delete insParam.ifUpdateRole;
+    if (tsNames.includes('createBy')) delete insParam.ifCreateBy;
+    if (tsNames.includes('updateBy')) delete insParam.ifUpdateBy;
+    if (tsNames.includes('createTime')) delete insParam.ifCreateTime;
+    if (tsNames.includes('updateTime')) delete insParam.ifUpdateTime;
+    if (tsNames.includes('deleted')) delete insParam.ifDeleted;
+
+    const inssParam = insParam;
+
+    const updParam = {
+      ifUpdateRole: false,
+      ifUpdateBy: false,
+      ifUpdateTime: false,
+      ifDeleted: false,
+    };
+    if (tsNames.includes('updateRole')) delete updParam.ifUpdateRole;
+    if (tsNames.includes('updateBy')) delete updParam.ifUpdateBy;
+    if (tsNames.includes('updateTime')) delete updParam.ifUpdateTime;
+    if (tsNames.includes('deleted')) delete updParam.ifDeleted;
+
+    const updsParam = updParam;
+
+    function ifDelSelKeys(strs: string[]) {
+      return strs.length === 0 || tsNames.filter(item => !baseInterfaceColumns2.includes(item)).every(item => strs.includes(item));
+    }
+
+    function _(param) {
+      return Object.keys(param).length === 0 ? '' : ', {\n' + Object.keys(param).map(key => {
+        if (typeOf(param[key]) === 'string') {
+          return `      ${key}: ${param[key]}`;
+        }
+        if (typeOf(param[key]) === 'boolean') {
+          return `      ${key}: ${param[key]}`;
+        }
+        if (typeOf(param[key]) === 'array') {
+          return `      ${key}: [${(param[key] as string[]).map(t => `'${t}'`).join(', ')}]`;
+        }
+      }).join(',\n') + ',\n    }';
+    }
+
+    return {
+      selListParam: _(selListParam),
+      selAllParam: _(selAllParam),
+      selOnesParam: _(selOnesParam),
+      selOneParam: _(selOneParam),
+      insParam: _(insParam),
+      inssParam: _(inssParam),
+      updParam: _(updParam),
+      updsParam: _(updsParam),
+    };
+  })();
   const qd3_dialogFormDefaultData = [
     [
       (key?: string) => key === 'ifDefault',
@@ -285,54 +395,42 @@ ${`  constructor(private readonly prisma: PrismaService) {`}
 ${`  }`}
 ${``}
 ${`  async sel${moduleName2}(dto: ${moduleName2}SelListDto): Promise<R> {`}
-${`    const res = await this.prisma.findPage<${moduleName2}Dto, ${moduleName2}SelListDto>('${table.tableName}', {`}
-${`      data: dto,`}
-${`      orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},`}
-${`      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`    });`}
+${`    const res = await this.prisma.findPage<${moduleName2}Dto, ${moduleName2}SelListDto>('${table.tableName}'${hd2_prismaConfig.selListParam});`}
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
 ${`  async selAll${moduleName2}(dto: ${moduleName2}SelAllDto): Promise<R> {`}
-${`    const res = await this.prisma.findAll<${moduleName2}Dto>('${table.tableName}', {`}
-${`      data: dto,`}
-${`      orderBy: ${columns.findIndex(item => item.colName === 'order_num') > -1},`}
-${`      notNullKeys: [${columns.filter(item => item.ifRequired === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      numberKeys: [${columns.filter(item => item.tsType === 'number' && item.ifSelMore === base.Y).map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`      completeMatchingKeys: [${columns.filter(item => item.selType === 'equals').map(item => `'${toCamelCase(item.colName)}'`).join(', ')}],`}
-${`    });`}
+${`    const res = await this.prisma.findAll<${moduleName2}Dto>('${table.tableName}'${hd2_prismaConfig.selAllParam});`}
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
 ${`  async selOnes${moduleName2}(ids: number[]): Promise<R> {`}
-${`    const res = await this.prisma.findByIds<${moduleName2}Dto>('${table.tableName}', Object.values(ids).map(n => Number(n)));`}
+${`    const res = await this.prisma.findByIds<${moduleName2}Dto>('${table.tableName}', Object.values(ids).map(n => Number(n))${hd2_prismaConfig.selOnesParam});`}
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
 ${`  async selOne${moduleName2}(id: number): Promise<R> {`}
-${`    const res = await this.prisma.findById<${moduleName2}Dto>('${table.tableName}', Number(id));`}
+${`    const res = await this.prisma.findById<${moduleName2}Dto>('${table.tableName}', Number(id)${hd2_prismaConfig.selOneParam});`}
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
 ${`  async ins${moduleName2}(dto: ${moduleName2}InsOneDto): Promise<R> {`}
-${`    const res = await this.prisma.create<${moduleName2}Dto>('${table.tableName}', dto);`}
+${`    const res = await this.prisma.create<${moduleName2}Dto>('${table.tableName}', dto${hd2_prismaConfig.insParam});`}
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
 ${`  async ins${moduleName2}s(dtos: ${moduleName2}InsOneDto[]): Promise<R> {`}
-${`    const res = await this.prisma.createMany<${moduleName2}Dto>('${table.tableName}', dtos);`}
+${`    const res = await this.prisma.createMany<${moduleName2}Dto>('${table.tableName}', dtos${hd2_prismaConfig.inssParam});`}
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
 ${`  async upd${moduleName2}(dto: ${moduleName2}UpdOneDto): Promise<R> {`}
-${`    const res = await this.prisma.updateById<${moduleName2}Dto>('${table.tableName}', dto);`}
+${`    const res = await this.prisma.updateById<${moduleName2}Dto>('${table.tableName}', dto${hd2_prismaConfig.updParam});`}
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
 ${`  async upd${moduleName2}s(dtos: ${moduleName2}UpdOneDto[]): Promise<R> {`}
-${`    const res = await this.prisma.updateMany<${moduleName2}Dto>('${table.tableName}', dtos);`}
+${`    const res = await this.prisma.updateMany<${moduleName2}Dto>('${table.tableName}', dtos${hd2_prismaConfig.updsParam});`}
 ${`    return R.ok(res);`}
 ${`  }`}
 ${``}
@@ -900,7 +998,7 @@ ${`      <!--上面id列的宽度改一下-->`}
 ${`      <!--在此下方添加表格列-->`}
 ${
     columns
-      .filter(item => item.ifSelOne === base.Y)
+      .filter(item => item.ifSelMore === base.Y)
       .map(item => `      <el-table-column prop="${item.tsName}" :label="${moduleName1}Dict.${item.tsName}" width="120"/>`,
       )
       .join('\n')

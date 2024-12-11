@@ -3,7 +3,7 @@ import { SetMetadata } from '@nestjs/common';
 export const PRE_AUTHORIZE_KEY = 'perAuthorize';
 
 export class PreAuthorizeParams {
-  // 权限字符
+  // 权限标识
   permission: string;
   // 接口描述
   label: string;

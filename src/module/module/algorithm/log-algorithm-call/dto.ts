@@ -9,6 +9,8 @@ export class LogAlgorithmCallDto extends BaseDto {
 
   userGroupPermissionId: number;
 
+  perms: string;
+
   userId: string;
 
   callIp: string;
@@ -26,6 +28,9 @@ export class LogAlgorithmCallSelListDto extends PageDto {
 
   @ApiProperty({ description: '用户组权限id', required: false })
   userGroupPermissionId: number;
+
+  @ApiProperty({ description: '权限标识', required: false })
+  perms: string;
 
   @ApiProperty({ description: '用户id', required: false })
   userId: string;
@@ -46,6 +51,9 @@ export class LogAlgorithmCallSelListDto extends PageDto {
 export class LogAlgorithmCallSelAllDto {
   @ApiProperty({ description: '用户组权限id', required: false })
   userGroupPermissionId: number;
+
+  @ApiProperty({ description: '权限标识', required: false })
+  perms: string;
 
   @ApiProperty({ description: '用户id', required: false })
   userId: string;
@@ -68,6 +76,10 @@ export class LogAlgorithmCallInsOneDto {
   @Type(() => Number)
   @IsNotEmpty({ message: '用户组权限id不能为空' })
   userGroupPermissionId: number;
+
+  @ApiProperty({ description: '权限标识', required: true })
+  @IsNotEmpty({ message: '权限标识不能为空' })
+  perms: string;
 
   @ApiProperty({ description: '用户id', required: true })
   @IsNotEmpty({ message: '用户id不能为空' })

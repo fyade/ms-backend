@@ -12,9 +12,9 @@ export class LogAlgorithmCallService {
     const res = await this.prisma.findPage<LogAlgorithmCallDto, LogAlgorithmCallSelListDto>('log_algorithm_call', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userGroupPermissionId', 'userId', 'callIp', 'ifSuccess', 'loginRole'],
+      notNullKeys: ['userGroupPermissionId', 'perms', 'userId', 'callIp', 'ifSuccess', 'loginRole'],
       numberKeys: ['userGroupPermissionId'],
-      completeMatchingKeys: ['userGroupPermissionId', 'userId', 'loginRole'],
+      completeMatchingKeys: ['userGroupPermissionId', 'perms', 'userId', 'loginRole'],
       ifDeleted: false,
     });
     return R.ok(res);
@@ -24,9 +24,9 @@ export class LogAlgorithmCallService {
     const res = await this.prisma.findAll<LogAlgorithmCallDto>('log_algorithm_call', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userGroupPermissionId', 'userId', 'callIp', 'ifSuccess', 'loginRole'],
+      notNullKeys: ['userGroupPermissionId', 'perms', 'userId', 'callIp', 'ifSuccess', 'loginRole'],
       numberKeys: ['userGroupPermissionId'],
-      completeMatchingKeys: ['userGroupPermissionId', 'userId', 'loginRole'],
+      completeMatchingKeys: ['userGroupPermissionId', 'perms', 'userId', 'loginRole'],
       ifDeleted: false,
     });
     return R.ok(res);
@@ -48,6 +48,8 @@ export class LogAlgorithmCallService {
 
   async insLogAlgorithmCall(dto: LogAlgorithmCallInsOneDto): Promise<R> {
     const res = await this.prisma.create<LogAlgorithmCallDto>('log_algorithm_call', dto, {
+      ifCreateRole: false,
+      ifUpdateRole: false,
       ifCreateBy: false,
       ifUpdateBy: false,
       ifUpdateTime: false,
@@ -58,6 +60,8 @@ export class LogAlgorithmCallService {
 
   async insLogAlgorithmCalls(dtos: LogAlgorithmCallInsOneDto[]): Promise<R> {
     const res = await this.prisma.createMany<LogAlgorithmCallDto>('log_algorithm_call', dtos, {
+      ifCreateRole: false,
+      ifUpdateRole: false,
       ifCreateBy: false,
       ifUpdateBy: false,
       ifUpdateTime: false,
@@ -68,6 +72,7 @@ export class LogAlgorithmCallService {
 
   async updLogAlgorithmCall(dto: LogAlgorithmCallUpdOneDto): Promise<R> {
     const res = await this.prisma.updateById<LogAlgorithmCallDto>('log_algorithm_call', dto, {
+      ifUpdateRole: false,
       ifUpdateBy: false,
       ifUpdateTime: false,
       ifDeleted: false,
@@ -77,6 +82,7 @@ export class LogAlgorithmCallService {
 
   async updLogAlgorithmCalls(dtos: LogAlgorithmCallUpdOneDto[]): Promise<R> {
     const res = await this.prisma.updateMany<LogAlgorithmCallDto>('log_algorithm_call', dtos, {
+      ifUpdateRole: false,
       ifUpdateBy: false,
       ifUpdateTime: false,
       ifDeleted: false,
