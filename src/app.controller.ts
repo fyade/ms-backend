@@ -28,8 +28,8 @@ export class AppController {
     summary: '获取系统版本信息',
   })
   @Authorize({
-    permission: '-',
-    label: '-',
+    permission: 'system:home:version',
+    label: '获取系统版本信息',
     ifIgnore: true
   })
   async getVersion(): Promise<R> {

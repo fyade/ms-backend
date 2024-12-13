@@ -23,3 +23,11 @@ export function getIpInfoFromRequest(request: Request) {
     os: loginOs,
   };
 }
+
+/**
+ * 从oauth中获取tokenUuid
+ * @param oauth
+ */
+export function getTokenUuidFromAuth(oauth: string) {
+  return typeof oauth === 'string' ? (oauth.startsWith('Bearer') ? oauth.substring(6) : oauth).trim() : '';
+}

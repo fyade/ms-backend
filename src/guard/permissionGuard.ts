@@ -12,6 +12,7 @@ import { genCurrentUser } from '../module/base-context/baseContext';
 import { UnauthorizedException } from '../exception/UnauthorizedException';
 import { CacheTokenService } from '../module/cache/cache.token.service';
 import { BaseContextService } from '../module/base-context/base-context.service';
+import { getTokenUuidFromAuth } from '../util/RequestUtils';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
@@ -36,7 +37,7 @@ export class PermissionGuard implements CanActivate {
     if (ifIgnore && !ifIgnoreButResolveToken) {
     } else {
       const oauth = request.headers['authorization'];
-      const token = typeof oauth === 'string' ? (oauth.startsWith('Bearer') ? oauth.substring(6) : oauth).trim() : '';
+      const token = getTokenUuidFromAuth(oauth);
       try {
         const decoded = await this.cacheTokenService.verifyToken(token);
         if (decoded) {

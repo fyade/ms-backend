@@ -1,21 +1,21 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ClsModule } from 'nestjs-cls';
 import { currentEnv } from '../config/config';
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
-import { GlobalMiddleware } from './middleware/golbal.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './module/auth/auth.module';
-import { CacheModule } from './module/cache/cache.module';
 import { BaseContextModule } from './module/base-context/base-context.module';
+import { CacheModule } from './module/cache/cache.module';
+import { StaticModule } from './module/static/static.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
-import { UserModule } from './module/module/main/sys-manage/user/user.module';
 import { FileUploadModule } from './module/module/main/common/file-upload/file-upload.module';
 import { SmsModule } from './module/module/main/common/sms/sms.module';
+import { UserModule } from './module/module/main/sys-manage/user/user.module';
 import { MenuModule } from './module/module/main/sys-manage/menu/menu.module';
 import { RoleModule } from './module/module/main/sys-manage/role/role.module';
 import { UserRoleModule } from './module/module/main/sys-manage/user-role/user-role.module';
@@ -62,8 +62,9 @@ import { UserTableDefaultPermissionModule } from './module/module/main/other-use
       },
     }),
     AuthModule,
-    CacheModule,
     BaseContextModule,
+    CacheModule,
+    StaticModule,
     PrismaModule,
     RedisModule,
     FileUploadModule,
@@ -111,9 +112,4 @@ import { UserTableDefaultPermissionModule } from './module/module/main/other-use
   ],
 })
 export class AppModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer
-  //     .apply(GlobalMiddleware)
-  //     .forRoutes('*');
-  // }
 }

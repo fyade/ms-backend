@@ -1,0 +1,14 @@
+import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
+import { currentEnv } from '../../../config/config';
+import { StaticGuard } from '../../guard/staticGuard';
+import { Response } from 'express';
+
+@Controller(currentEnv().staticRoot)
+@UseGuards(StaticGuard)
+export class StaticController {
+  @Get('/:filename')
+  static(@Param('filename') filename: string, @Res() res: Response) {
+    const filepath = currentEnv().file.fileUploadPath + filename;
+    res.sendFile(filepath);
+  }
+}
