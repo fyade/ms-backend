@@ -10,6 +10,9 @@ import { AuthService } from './module/auth/auth.service';
 import { getAllFiles } from './util/FileUtils';
 import { T_COMP, T_MENU } from './util/base';
 import { BaseContextService } from './module/base-context/base-context.service';
+import { sonProjAuthDto } from './common/app';
+import { CacheTokenService } from './module/cache/cache.token.service';
+import { getTokenUuidFromAuth } from './util/RequestUtils';
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -21,6 +24,7 @@ export class AppService {
   constructor(
     private readonly authService: AuthService,
     private readonly baseContextService: BaseContextService,
+    private readonly cacheTokenService: CacheTokenService,
   ) {
     this.cpuUsageMSDefault = 100; // CPU 利用率默认时间段
   }
@@ -103,9 +107,14 @@ export class AppService {
   async getSystems(): Promise<R> {
     const systemsOfUser = await this.authService.systemsOfUser(
       this.baseContextService.getUserData().userId,
-      this.baseContextService.getUserData().loginRole
+      this.baseContextService.getUserData().loginRole,
     );
     return R.ok(systemsOfUser);
+  }
+
+  async sonProjAuth(dto: sonProjAuthDto): Promise<R> {
+    const decoded = await this.cacheTokenService.verifyToken(getTokenUuidFromAuth(dto.token));
+    return R.ok(decoded);
   }
 
   /**

@@ -1,9 +1,10 @@
-import { Controller, Get, Param, Query, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
 import { AppService } from './app.service';
 import { R } from './common/R';
 import { Authorize } from './decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from './pipe/validation/validation.pipe';
+import { sonProjAuthDto } from './common/app';
 
 @Controller('/sys/base')
 @ApiTags('系统')
@@ -28,9 +29,9 @@ export class AppController {
     summary: '获取系统版本信息',
   })
   @Authorize({
-    permission: 'system:home:version',
+    permission: '-',
     label: '获取系统版本信息',
-    ifIgnore: true
+    ifIgnore: true,
   })
   async getVersion(): Promise<R> {
     return await this.appService.getVersion();
@@ -83,4 +84,17 @@ export class AppController {
   async getSystems(): Promise<R> {
     return this.appService.getSystems();
   }
+
+  // @Post('/son-proj-auth')
+  // @ApiOperation({
+  //   summary: '子系统鉴权',
+  // })
+  // @Authorize({
+  //   permission: 'system:home:sonProjAuth',
+  //   label: '子系统鉴权',
+  //   ifIgnore: true,
+  // })
+  // async sonProjAuth(@Body() dto: sonProjAuthDto): Promise<R> {
+  //   return this.appService.sonProjAuth(dto);
+  // }
 }

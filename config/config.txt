@@ -1,7 +1,7 @@
 import * as process from 'process';
 import { base } from '../src/util/base';
 
-export const currentVersion = '0.0.01'
+export const currentVersion = '0.0.01';
 
 export const jwtConstants = {
   secret: '',
@@ -9,6 +9,7 @@ export const jwtConstants = {
 };
 export const SECRET_KEY = '' // 前端-后端接口敏感信息加密盐，注意需与前端保持一致
 export const SECRET_KEY_HD_DB = '' // 后端-数据库敏感信息加密盐
+export const SECRET_CON_PROJ_AUTH = ''; // 后端主项目-后端子项目请求信息加密盐
 
 export const currentEnv = () => {
   const env = process.env.NODE_ENV || base.DEV;
@@ -49,7 +50,7 @@ const config = {
     },
   },
   test: {},
-  prod: {}
+  prod: {},
 }
 
 export function getMysqlUrlFromEnv(env: any): string {
