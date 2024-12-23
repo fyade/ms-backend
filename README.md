@@ -1,6 +1,6 @@
 ## 关于 About
 
-这是一个后台管理系统模板，前端语言为Vue.js（Vue3），后端语言为Nest.js，建议Node版本：20.12.0。
+这是一个后台管理系统模板，前端语言为 Vue.js（Vue3），后端语言为 Nest.js，建议 Node 版本：20.12.0。
 
 版本建议：
 - Node 20.12.0
@@ -46,7 +46,7 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 4. 接下来
 
-若未全局安装 nest ，则先需要全局安装 nest ，命令为 `npm i -g @nestjs/cli`；
+若未全局安装 nest，则先需要全局安装 nest，命令为 `npm i -g @nestjs/cli`；
 
 其次下载项目依赖，命令为 `npm i`；
 
@@ -54,7 +54,7 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 随后需要插入一个初始用户，步骤如下：
 
-4.1 打开 api 工具如 postman，调用 /sys/user/regist 接口，请求方法为 POST ，请求体参数如下，其中username和password改成管理员的用户名和密码、psdType勿更改；
+4.1 打开 api 工具如 postman，调用 /sys/user/regist 接口，请求方法为 POST，请求体参数如下，其中 username 和 password 改成管理员的用户名和密码、psdType 勿更改、loginRole 勿更改；
 
 ```json
 {
@@ -67,13 +67,13 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 4.2 随后发送请求，请求成功后，打开数据库管理软件，打开 sys_user 表，复制刚注册的用户的 id 字段；
 
-4.3 打开 sys_admin_top 表，添加一条记录，其中 user_id 为刚复制的 id ， deleted 为 'N'，其他随意；
+4.3 打开 sys_admin_top 表，添加一条记录，其中 user_id 为刚复制的 id，deleted 为 'N'，其他随意；
 
 4.4 `npm run start:dev` 运行；
 
 ## 打包教程 How to build
 
-注意：以生产环境为例子：在 config.ts 中有一个变量，叫 config ，其第一个键为 dev ，表示开发环境的配置，接下来你需要加一个键 prod ，表示生产环境的配置，然后你需要把 dev 的值复制进去并修改为生产环境的配置。
+注意：以生产环境为例子：在 config.ts 中有一个变量，叫 config，其第一个键为 dev，表示开发环境的配置，接下来你需要加一个键 prod，表示生产环境的配置，然后你需要把 dev 的值复制进去并修改为生产环境的配置。
 
 1. 将 /prisma/schema/schema.prisma 中的 generator client.output （第9行）配置为 '../../generated/client'；
 
@@ -133,19 +133,19 @@ $ nest g pipe validation pipe # 管道
 ## 注意 NOTICE
 
 菜单相关常量：
-* mm表示菜单
-* mc表示组件
-* ma表示接口组
-* mb表示接口
+* mm 表示菜单
+* mc 表示组件
+* ma 表示接口组
+* mb 表示接口
 
-菜单ip限制相关常量：
-* ip表示ip
-* ho表示host
+菜单 ip 限制相关常量：
+* ip 表示 ip
+* ho 表示 host
 
 权限身份类型相关常量：
-* ro表示角色
-* de表示部门
-* ug表示用户组
+* ro 表示角色
+* de 表示部门
+* ug 表示用户组
 
 ## 许可证 License
 

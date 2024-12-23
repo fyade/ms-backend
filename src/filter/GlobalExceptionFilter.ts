@@ -2,12 +2,14 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Injectable } from
 import { UnknownException } from '../exception/UnknownException';
 import { Request } from 'express';
 import { BaseContextService } from '../module/base-context/base-context.service';
+import { HTTP } from '../common/Enum';
+import { R } from '../common/R';
 
 @Catch()
 @Injectable()
 export class GlobalExceptionFilter implements ExceptionFilter {
   constructor(
-    private readonly baseContextService: BaseContextService
+    private readonly baseContextService: BaseContextService,
   ) {
   }
 
@@ -17,16 +19,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const request: Request = ctx.getRequest();
     try {
-      response.status(exception.getStatus()).json({
-        code: exception.getStatus(),
-        msg: exception.message,
-      });
+      response.status(HTTP.SERVER_ERROR().code).json(new R(exception.getStatus(), null, exception.message));
     } catch (e) {
       const unknownException = new UnknownException(this.baseContextService.getUserData().reqId, exception);
-      response.status(unknownException.getStatus()).json({
-        code: unknownException.getStatus(),
-        msg: unknownException.getMessage(),
-      });
+      response.status(unknownException.getStatus()).json(new R(unknownException.getStatus(), null, unknownException.getMessage()));
     }
   }
 }

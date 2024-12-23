@@ -46,7 +46,7 @@ export class UserSelListDto extends PageDto {
   ifWithRole: string;
 }
 
-export class LoginDto {
+export class LoginDto2 {
   @ApiProperty({ description: '用户名', required: true })
   @IsNotEmpty({ message: '用户名不能为空' })
   username: string;
@@ -64,7 +64,17 @@ export class LoginDto {
   psdType: string;
 }
 
-export class RegistDto extends LoginDto {
+export class LoginDto extends LoginDto2 {
+  @ApiProperty({ description: '验证码', required: true })
+  @IsNotEmpty({ message: '验证码不能为空' })
+  verificationCode: string;
+
+  @ApiProperty({ description: '验证码uuid', required: true })
+  @IsNotEmpty({ message: '验证码uuid不能为空' })
+  verificationCodeUuid: string;
+}
+
+export class RegistDto extends LoginDto2 {
 }
 
 export class UpdPsdDto {

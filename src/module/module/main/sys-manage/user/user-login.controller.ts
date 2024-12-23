@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginDto, RegistDto } from './dto';
 import { R } from '../../../../../common/R';
@@ -86,5 +86,20 @@ export class UserLoginController {
   })
   async logOut(): Promise<R> {
     return this.userService.logOut();
+  }
+
+  @Get('/verification-code')
+  @ApiOperation({
+    summary: '获取验证码',
+  })
+  @Authorize({
+    permission: '-',
+    label: '获取验证码',
+    ifIgnore: true,
+    ifIgnoreButResolveToken: true,
+    ifIgnoreParamInLog: true,
+  })
+  async getVerificationCode(): Promise<R> {
+    return this.userService.getVerificationCode();
   }
 }

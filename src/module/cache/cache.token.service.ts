@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../../redis/redis.service';
 import { randomUUID } from '../../util/IdUtils';
-import { jwtConstants } from '../../../config/config';
+import { jwtConstants, VERIFICATION_CODE_EXPIRE_TIME } from '../../../config/config';
 import * as jwt from 'jsonwebtoken';
 import { TokenDto } from '../../common/token';
 
 @Injectable()
 export class CacheTokenService {
   readonly UUID_TOKEN = 'zzz:uuid:token';
+  readonly VERIFICATION_CODE = 'zzz:verification:code';
 
   // readonly USERID_UUID = 'userid:uuid';
 
@@ -47,7 +48,36 @@ export class CacheTokenService {
     return decoded;
   }
 
+  /**
+   * 删除token
+   * @param tokenUuid
+   */
   async deleteToken(tokenUuid: string) {
     await this.redis.del(`${this.UUID_TOKEN}:${tokenUuid}`);
+  }
+
+  /**
+   * 保存验证码内容
+   * @param uuid
+   * @param code
+   */
+  async saveVerificationCode(uuid: string, code: string) {
+    await this.redis.setex(`${this.VERIFICATION_CODE}:${uuid}`, VERIFICATION_CODE_EXPIRE_TIME, code);
+  }
+
+  /**
+   * 获取验证码内容
+   * @param uuid
+   */
+  async getVerificationCode(uuid: string) {
+    return await this.redis.get(`${this.VERIFICATION_CODE}:${uuid}`);
+  }
+
+  /**
+   * 删除验证码内容
+   * @param uuid
+   */
+  async deleteVerificationCode(uuid: string) {
+    await this.redis.del(`${this.VERIFICATION_CODE}:${uuid}`);
   }
 }
