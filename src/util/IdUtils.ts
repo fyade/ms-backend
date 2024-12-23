@@ -5,8 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 /**
  * 生成uuid
  */
-export function randomUUID() {
-  return uuidv4()
+export function randomUUID(): string {
+  return uuidv4();
 }
 
 const strArr = [
@@ -14,9 +14,9 @@ const strArr = [
   'h', 'i', 'j', 'k', 'l', 'm', 'n',
   'o', 'p', 'q', 'r', 's', 't',
   'u', 'v', 'w', 'x', 'y', 'z',
-  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-]
-const idsOfLengthStr: string[] = []
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+];
+const idsOfLengthStr: string[] = [];
 
 /**
  * 生成id
@@ -25,7 +25,7 @@ const idsOfLengthStr: string[] = []
  */
 export function genId(length = 16, suffix = true): string {
   if (idsOfLengthStr.length >= Math.pow(strArr.length, length)) {
-    throw new Error("数量过多，无法计算。")
+    throw new Error('数量过多，无法计算。');
   }
 
   /**
@@ -33,16 +33,16 @@ export function genId(length = 16, suffix = true): string {
    * @returns {string}
    */
   function generateLengthStr() {
-    let str: string = ''
+    let str: string = '';
     while (!!!str || idsOfLengthStr.includes(str)) {
-      str = ''
+      str = '';
       for (let i = 0; i < length; i++) {
-        str += strArr[Math.floor(Math.random() * strArr.length)]
+        str += strArr[Math.floor(Math.random() * strArr.length)];
       }
     }
-    idsOfLengthStr.push(str)
-    return str
+    idsOfLengthStr.push(str);
+    return str;
   }
 
-  return suffix ? `${generateLengthStr()}_${timestamp()}` : generateLengthStr()
+  return suffix ? `${generateLengthStr()}_${timestamp()}` : generateLengthStr();
 }

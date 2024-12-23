@@ -23,8 +23,7 @@ import { BaseContextService } from '../../../../base-context/base-context.servic
 import { LogUserLoginDto, NOT_ADMIN, PASSWORD_ERROR } from '../../sys-log/log-user-login/dto';
 import { UserVisitorDto } from '../../other-user/user-visitor/dto';
 import { VerificationCodeErrorException } from '../../../../../exception/VerificationCodeErrorException';
-
-const svgCaptcha = require('svg-captcha');
+import * as svgCaptcha from 'svg-captcha';
 
 @Injectable()
 export class UserService {
