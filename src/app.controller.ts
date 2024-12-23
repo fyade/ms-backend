@@ -37,40 +37,28 @@ export class AppController {
     return await this.appService.getVersion();
   }
 
-  @Get('/apis')
-  @ApiOperation({
-    summary: '获取全部鉴权接口',
-  })
-  @Authorize({
-    permission: 'system:home:apis',
-    label: '获取全部鉴权接口',
-  })
-  async getAllAuthApis(): Promise<R> {
-    return this.appService.getAllAuthApis();
-  }
-
-  @Get('/info')
+  @Get('/system-base-info')
   @ApiOperation({
     summary: '获取系统基本信息',
   })
   @Authorize({
-    permission: 'system:home:base',
+    permission: 'system:home:systemBaseInfo',
     label: '获取系统基本信息',
   })
   async getSystemUsingInfo(): Promise<R> {
     return this.appService.getSystemUsingInfo();
   }
 
-  @Get('/permission/:sysId')
+  @Get('/system-all-apis')
   @ApiOperation({
-    summary: '获取有权限的页面',
+    summary: '获取全部鉴权接口',
   })
   @Authorize({
-    permission: 'system:home:permission',
-    label: '获取有权限的页面',
+    permission: 'system:home:systemAllApis',
+    label: '获取全部鉴权接口',
   })
-  async getPermissions(@Param('sysId') sysId: number): Promise<R> {
-    return this.appService.getPermissions(sysId);
+  async getAllAuthApis(): Promise<R> {
+    return this.appService.getAllAuthApis();
   }
 
   @Get('/system')
@@ -83,6 +71,30 @@ export class AppController {
   })
   async getSystems(): Promise<R> {
     return this.appService.getSystems();
+  }
+
+  @Get('/page/:sysId')
+  @ApiOperation({
+    summary: '获取有权限的页面',
+  })
+  @Authorize({
+    permission: 'system:home:page',
+    label: '获取有权限的页面',
+  })
+  async getPages(@Param('sysId') sysId: number): Promise<R> {
+    return this.appService.getPages(sysId);
+  }
+
+  @Get('/button/:sysId')
+  @ApiOperation({
+    summary: '获取有权限的按钮',
+  })
+  @Authorize({
+    permission: 'system:home:button',
+    label: '获取有权限的按钮',
+  })
+  async getButtons(@Param('sysId') sysId: number): Promise<R> {
+    return this.appService.getButtons(sysId);
   }
 
   // @Post('/son-proj-auth')

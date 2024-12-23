@@ -154,14 +154,21 @@ export class AuthService {
     }
     const ipInfoFromRequest = getIpInfoFromRequest(request);
     const whiteList_ip = ips.filter(item => item.fromType === T_IP).map(item => item.whiteList);
-    if (whiteList_ip.includes(ipInfoFromRequest.ip)) {
-      return true;
-    }
-    if (ipInfoFromRequest.ip === '::1' && (whiteList_ip.includes('localhost') || whiteList_ip.includes('127.0.0.1'))) {
+    if (
+      whiteList_ip.findIndex(wip => {
+        return (wip.startsWith('http://') || wip.startsWith('https://')) ? wip === `${ipInfoFromRequest.proto}://${ipInfoFromRequest.ip}` : wip === ipInfoFromRequest.ip;
+      }) > -1 ||
+      (ipInfoFromRequest.ip === '::1' && whiteList_ip.includes('127.0.0.1')) ||
+      (ipInfoFromRequest.ip === '::1' && whiteList_ip.includes(`${ipInfoFromRequest.proto}://127.0.0.1`))
+    ) {
       return true;
     }
     const whiteList_host = ips.filter(item => item.fromType === T_HOST).map(item => item.whiteList);
-    if (whiteList_host.includes(ipInfoFromRequest.host)) {
+    if (
+      whiteList_host.findIndex(who => {
+        return (who.startsWith('http://') || who.startsWith('https://')) ? who === `${ipInfoFromRequest.proto}://${ipInfoFromRequest.host}` : who === ipInfoFromRequest.host;
+      }) > -1
+    ) {
       return true;
     }
     return false;
@@ -354,7 +361,7 @@ export class AuthService {
     if (request) {
       try {
         const ipInfoFromRequest = getIpInfoFromRequest(request);
-        algorithmCallDto.callIp = ipInfoFromRequest.ip;
+        algorithmCallDto.callIp = `${ipInfoFromRequest.proto}://${ipInfoFromRequest.ip}`;
       } catch (e) {
         console.error(e);
       }
@@ -628,7 +635,7 @@ export class AuthService {
       data: {
         req_id: this.baseContextService.getUserData().reqId,
         call_ip: ipInfoFromRequest.ip,
-        host_name: ipInfoFromRequest.host,
+        host_name: `${ipInfoFromRequest.proto}://${ipInfoFromRequest.host}`,
         perms: permission,
         user_id: userId,
         req_param: ifIgnoreParamInLog ?

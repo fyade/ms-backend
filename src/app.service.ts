@@ -8,7 +8,7 @@ import { NonSupportedException } from './exception/NonSupportedException';
 import { currentVersion } from '../config/config';
 import { AuthService } from './module/auth/auth.service';
 import { getAllFiles } from './util/FileUtils';
-import { T_COMP, T_MENU } from './util/base';
+import { T_COMP, T_Inter, T_MENU } from './util/base';
 import { BaseContextService } from './module/base-context/base-context.service';
 import { sonProjAuthDto } from './common/app';
 import { CacheTokenService } from './module/cache/cache.token.service';
@@ -35,6 +35,17 @@ export class AppService {
 
   async getVersion(): Promise<R> {
     return R.ok(currentVersion);
+  }
+
+  async getSystemUsingInfo(): Promise<R> {
+    const cpuUsage = await this.getCPUUsage();
+    const memoryInfo = this.getMemoryInfo();
+    const diskInfo = await this.getDiskInfo();
+    return R.ok({
+      cpu: cpuUsage,
+      memory: memoryInfo,
+      disk: diskInfo,
+    });
   }
 
   async getAllAuthApis(): Promise<R> {
@@ -83,18 +94,15 @@ export class AppService {
     return R.ok(allAuthApis);
   }
 
-  async getSystemUsingInfo(): Promise<R> {
-    const cpuUsage = await this.getCPUUsage();
-    const memoryInfo = this.getMemoryInfo();
-    const diskInfo = await this.getDiskInfo();
-    return R.ok({
-      cpu: cpuUsage,
-      memory: memoryInfo,
-      disk: diskInfo,
-    });
+  async getSystems(): Promise<R> {
+    const systemsOfUser = await this.authService.systemsOfUser(
+      this.baseContextService.getUserData().userId,
+      this.baseContextService.getUserData().loginRole,
+    );
+    return R.ok(systemsOfUser);
   }
 
-  async getPermissions(sysId: number): Promise<R> {
+  async getPages(sysId: number): Promise<R> {
     const permissionsOfUser = await this.authService.permissionsOfUser({
       userId: this.baseContextService.getUserData().userId,
       loginRole: this.baseContextService.getUserData().loginRole,
@@ -104,12 +112,14 @@ export class AppService {
     return R.ok(permissionsOfUser);
   }
 
-  async getSystems(): Promise<R> {
-    const systemsOfUser = await this.authService.systemsOfUser(
-      this.baseContextService.getUserData().userId,
-      this.baseContextService.getUserData().loginRole,
-    );
-    return R.ok(systemsOfUser);
+  async getButtons(sysId: number): Promise<R> {
+    const buttonsOfUser = await this.authService.permissionsOfUser({
+      userId: this.baseContextService.getUserData().userId,
+      loginRole: this.baseContextService.getUserData().loginRole,
+      sysId,
+      menuType: [T_Inter],
+    });
+    return R.ok(buttonsOfUser);
   }
 
   async sonProjAuth(dto: sonProjAuthDto): Promise<R> {

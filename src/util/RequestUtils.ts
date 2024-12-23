@@ -7,9 +7,9 @@ import { Request } from 'express';
  */
 export function getIpInfoFromRequest(request: Request) {
   const loginIp: string = request.headers['x-real-ip'] || request.headers['x-forwarded-for'] || (request as any).ip;
-  const proto = request.headers['x-forwarded-proto'] || request.protocol || 'http';
+  const proto = (request.headers['x-forwarded-proto'] || request.protocol || 'http') as string;
   const hostname = request.hostname;
-  const port = request.headers['x-forwarded-port'];
+  const port = (request.headers['x-forwarded-port'] || '80') as string;
   const userAgentString = request.headers['user-agent'];
   const userAgent = uaparser(userAgentString);
   const browser = userAgent.browser;
@@ -21,6 +21,7 @@ export function getIpInfoFromRequest(request: Request) {
     host: hostname,
     browser: loginBrowser,
     os: loginOs,
+    proto: proto,
   };
 }
 
