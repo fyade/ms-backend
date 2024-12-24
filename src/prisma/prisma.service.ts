@@ -105,7 +105,7 @@ export class PrismaService extends PrismaClientOrigin {
     }
     return retObj;
   };
-  private defaultInsArg = ({
+  defaultInsArg = ({
                              ifCreateRole = true,
                              ifUpdateRole = true,
                              ifCreateBy = true,
@@ -145,7 +145,7 @@ export class PrismaService extends PrismaClientOrigin {
     if (!ifDeleted) delete retObj.data.deleted;
     return retObj;
   };
-  private defaultUpdArg = ({
+  defaultUpdArg = ({
                              ifUpdateRole = true,
                              ifUpdateBy = true,
                              ifUpdateTime = true,
@@ -181,7 +181,7 @@ export class PrismaService extends PrismaClientOrigin {
     }
     return retObj;
   };
-  private defaultDelArg = ({
+  defaultDelArg = ({
                              ifDataSegregation = false,
                            }: {
                              ifDataSegregation?: boolean
