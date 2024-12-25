@@ -66,4 +66,5 @@ package-lock.json
 /config/config.ts
 /config/config.test.ts
 /config/config.prod.ts
+/dist.zip
 
