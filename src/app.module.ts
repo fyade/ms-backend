@@ -45,6 +45,7 @@ import { DeptSysModule } from './module/module/main/sys-manage/dept-sys/dept-sys
 import { MenuIpWhiteListModule } from './module/module/main/sys-manage/menu-ip-white-list/menu-ip-white-list.module';
 import { UserVisitorModule } from './module/module/main/other-user/user-visitor/user-visitor.module';
 import { UserTableDefaultPermissionModule } from './module/module/main/other-user/user-table-default-permission/user-table-default-permission.module';
+import { TableRowPermissionModule } from './module/module/main/sys-manage/table-row-permission/table-row-permission.module';
 
 @Module({
   imports: [
@@ -99,6 +100,7 @@ import { UserTableDefaultPermissionModule } from './module/module/main/other-use
     MenuIpWhiteListModule,
     UserVisitorModule,
     UserTableDefaultPermissionModule,
+    TableRowPermissionModule,
   ],
   providers: [
     {

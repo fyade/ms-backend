@@ -12,7 +12,7 @@ export class ResponseInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
   }
 
@@ -20,7 +20,7 @@ export class ResponseInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map(data => {
         if (typeof data === 'object') {
-          data.reqId = this.baseContextService.getUserData().reqId;
+          data.reqId = this.bcs.getUserData().reqId;
         }
         return data;
       }),

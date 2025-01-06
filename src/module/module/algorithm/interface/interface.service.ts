@@ -2,19 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
 import { InterfaceDto, InterfaceSelListDto, InterfaceSelAllDto, InterfaceInsOneDto, InterfaceUpdOneDto } from './dto';
+import { BaseContextService } from '../../../base-context/base-context.service';
 
 @Injectable()
 export class InterfaceService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_interface', {
+      notNullKeys: ['label', 'orderNum', 'ifDisabled', 'ifPublic', 'perms', 'url'],
+      numberKeys: ['orderNum'],
+      completeMatchingKeys: ['perms'],
+    });
   }
 
   async selInterface(dto: InterfaceSelListDto): Promise<R> {
     const res = await this.prisma.findPage<InterfaceDto, InterfaceSelListDto>('sys_interface', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'orderNum', 'ifDisabled', 'ifPublic', 'perms', 'url'],
-      numberKeys: ['orderNum'],
-      completeMatchingKeys: ['perms'],
     });
     return R.ok(res);
   }
@@ -23,9 +29,6 @@ export class InterfaceService {
     const res = await this.prisma.findAll<InterfaceDto>('sys_interface', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'orderNum', 'ifDisabled', 'ifPublic', 'perms', 'url'],
-      numberKeys: ['orderNum'],
-      completeMatchingKeys: ['perms'],
     });
     return R.ok(res);
   }

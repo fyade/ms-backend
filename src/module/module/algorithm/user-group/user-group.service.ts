@@ -2,19 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
 import { UserGroupDto, UserGroupSelListDto, UserGroupSelAllDto, UserGroupInsOneDto, UserGroupUpdOneDto } from './dto';
+import { BaseContextService } from '../../../base-context/base-context.service';
 
 @Injectable()
 export class UserGroupService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_user_group', {
+      notNullKeys: ['label', 'parentId', 'orderNum'],
+      numberKeys: ['parentId', 'orderNum'],
+    })
   }
 
   async selUserGroup(dto: UserGroupSelListDto): Promise<R> {
     const res = await this.prisma.findPage<UserGroupDto, UserGroupSelListDto>('sys_user_group', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'parentId', 'orderNum'],
-      numberKeys: ['parentId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -23,9 +28,6 @@ export class UserGroupService {
     const res = await this.prisma.findAll<UserGroupDto>('sys_user_group', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'parentId', 'orderNum'],
-      numberKeys: ['parentId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

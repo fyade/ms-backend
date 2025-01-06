@@ -14,13 +14,13 @@ export class AlgorithmService {
     private readonly authService: AuthService,
     private readonly interfaceService: InterfaceService,
     private readonly interfaceGroupService: InterfaceGroupService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
   }
 
   async algorithm(dto: AlgorithmDto): Promise<R> {
     const permission = dto.perms;
-    const sfPermissionsOfUserid = await this.authService.getSFPermissionsOfUserid(this.baseContextService.getUserData().userId, permission, this.baseContextService.getUserData().loginRole, base.Y);
+    const sfPermissionsOfUserid = await this.authService.getSFPermissionsOfUserid(this.bcs.getUserData().userId, permission, this.bcs.getUserData().loginRole, base.Y);
     if (sfPermissionsOfUserid.length > 0) {
       const permissionId = sfPermissionsOfUserid.every(item => item.ifUseUp === base.Y)
         ? sfPermissionsOfUserid[sfPermissionsOfUserid.length - 1].permissionId

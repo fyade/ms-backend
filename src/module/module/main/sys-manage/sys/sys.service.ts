@@ -2,19 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { SysDto, SysSelListDto, SysSelAllDto, SysInsOneDto, SysUpdOneDto } from './dto';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class SysService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_sys', {
+      notNullKeys: ['name', 'perms', 'orderNum', 'path', 'ifDisabled'],
+      numberKeys: ['orderNum'],
+    })
   }
 
   async selSys(dto: SysSelListDto): Promise<R> {
     const res = await this.prisma.findPage<SysDto, SysSelListDto>('sys_sys', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['name', 'perms', 'orderNum', 'path', 'ifDisabled'],
-      numberKeys: ['orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -23,9 +28,6 @@ export class SysService {
     const res = await this.prisma.findAll<SysDto>('sys_sys', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['name', 'perms', 'orderNum', 'path', 'ifDisabled'],
-      numberKeys: ['orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

@@ -2,19 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { MenuIpWhiteListDto, MenuIpWhiteListSelListDto, MenuIpWhiteListSelAllDto, MenuIpWhiteListInsOneDto, MenuIpWhiteListUpdOneDto } from './dto';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class MenuIpWhiteListService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_menu_ip_white_list', {
+      notNullKeys: ['menuId', 'whiteList', 'fromType', 'type'],
+      numberKeys: ['menuId'],
+    })
   }
 
   async selMenuIpWhiteList(dto: MenuIpWhiteListSelListDto): Promise<R> {
     const res = await this.prisma.findPage<MenuIpWhiteListDto, MenuIpWhiteListSelListDto>('sys_menu_ip_white_list', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['menuId', 'whiteList', 'fromType', 'type'],
-      numberKeys: ['menuId'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -23,9 +28,6 @@ export class MenuIpWhiteListService {
     const res = await this.prisma.findAll<MenuIpWhiteListDto>('sys_menu_ip_white_list', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['menuId', 'whiteList', 'fromType', 'type'],
-      numberKeys: ['menuId'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

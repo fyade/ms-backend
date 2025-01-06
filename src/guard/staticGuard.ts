@@ -14,7 +14,7 @@ export class StaticGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
     private readonly cacheTokenService: CacheTokenService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
   }
 
@@ -29,11 +29,11 @@ export class StaticGuard implements CanActivate {
       const token = getTokenUuidFromAuth(oauth as string);
       const decoded = await this.cacheTokenService.verifyToken(token);
       if (decoded) {
-        this.baseContextService.setUserData(genCurrentUser(decoded.userid, token, decoded.loginRole));
+        this.bcs.setUserData(genCurrentUser(decoded.userid, token, decoded.loginRole));
       } else {
         throw new UnauthorizedException();
       }
-      const userData = this.baseContextService.getUserData();
+      const userData = this.bcs.getUserData();
       const b = await this.authService.ifAdminUser(decoded.userid, decoded.loginRole);
       return true;
     } catch (e) {

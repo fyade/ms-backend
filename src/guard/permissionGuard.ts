@@ -20,7 +20,7 @@ export class PermissionGuard implements CanActivate {
     private readonly reflector: Reflector,
     private readonly authService: AuthService,
     private readonly cacheTokenService: CacheTokenService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
   }
 
@@ -32,7 +32,7 @@ export class PermissionGuard implements CanActivate {
     const { permission, label, ifSF, ifIgnore, ifIgnoreButResolveToken, ifIgnoreParamInLog } = authorizeParams;
     const request: Request = context.switchToHttp().getRequest();
 
-    let tokenUsable = true
+    let tokenUsable = true;
 
     if (ifIgnore && !ifIgnoreButResolveToken) {
     } else {
@@ -41,28 +41,26 @@ export class PermissionGuard implements CanActivate {
       try {
         const decoded = await this.cacheTokenService.verifyToken(token);
         if (decoded) {
-          this.baseContextService.setUserData(genCurrentUser(decoded.userid, token, decoded.loginRole));
+          this.bcs.setUserData(genCurrentUser(decoded.userid, token, decoded.loginRole, permission));
         } else {
-          tokenUsable = false
+          tokenUsable = false;
         }
       } catch (e) {
-        tokenUsable = false
+        tokenUsable = false;
       }
     }
 
+    // 是否有权限
+    let ifTrue = false;
+
     // 放行白名单接口
     if (ifIgnore) {
-      return true;
+      ifTrue = true;
     }
 
-    const ifPublicInterface = await this.authService.ifPublicInterface(permission);
-    if (!tokenUsable && !ifPublicInterface) {
-      await this.authService.insLogOperation(permission, request, false, { remark: '401', ifIgnoreParamInLog });
-      throw new UnauthorizedException();
-    }
+    const userId = this.bcs.getUserData().userId;
+    const loginRole = this.bcs.getUserData().loginRole;
 
-    const userId = this.baseContextService.getUserData().userId;
-    const loginRole = this.baseContextService.getUserData().loginRole;
     // 算法接口权限控制
     if (ifSF) {
       const reqBody = request.body as unknown as AlgorithmDto;
@@ -86,44 +84,49 @@ export class PermissionGuard implements CanActivate {
       });
       throw new Exception('您无当前算法权限。');
     }
+
     // 页面接口权限控制
-    else {
-      // 是否公共接口
-      if (ifPublicInterface) {
-        // 请求ip是否在此接口的ip白名单中
-        const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);
-        if (!ifIpInWhiteList) {
-          await this.authService.insLogOperation(permission, request, false, {
-            remark: '请求源IP不在白名单内。',
-            ifIgnoreParamInLog,
-          });
-          throw new IpNotInWhiteListException();
-        }
-        return true;
-      }
-      if (!userId) {
-        await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
-        throw new ForbiddenException(label);
-      }
-      // 请求ip是否在此接口的ip白名单中
-      const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);
-      if (!ifIpInWhiteList) {
-        const b = await this.authService.hasTopAdminPermission(userId);
-        if (!b) {
-          await this.authService.insLogOperation(permission, request, false, {
-            remark: '请求源IP不在白名单内。',
-            ifIgnoreParamInLog,
-          });
-          throw new IpNotInWhiteListException();
-        }
-      }
-      // 用户是否有当前接口的权限
-      const ifHasPermission = await this.authService.hasAdminPermissionByUserid(userId, permission, loginRole);
-      if (ifHasPermission) {
-        return true;
-      }
+
+    // 是否公共接口
+    const ifPublicInterface = await this.authService.ifPublicInterface(permission);
+    if (!ifTrue && !tokenUsable && !ifPublicInterface) {
+      await this.authService.insLogOperation(permission, request, false, { remark: '401', ifIgnoreParamInLog });
+      throw new UnauthorizedException();
+    }
+    if (ifPublicInterface) {
+      ifTrue = true;
+    }
+    if (!ifTrue && !userId) {
       await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
       throw new ForbiddenException(label);
     }
+    // 请求ip是否在此接口的ip白名单中
+    const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);
+    if (!ifIpInWhiteList) {
+      await this.authService.insLogOperation(permission, request, false, {
+        remark: '请求源IP不在白名单内。',
+        ifIgnoreParamInLog,
+      });
+      throw new IpNotInWhiteListException();
+    }
+    // 是否超级管理员
+    const ifTopAdmin = await this.authService.hasTopAdminPermission(userId);
+    if (ifTopAdmin) {
+      this.bcs.setUserToTopAdmin();
+      ifTrue = true;
+    }
+    // 用户是否有当前接口的权限
+    if (!ifTrue) {
+      const ifHasPermission = await this.authService.hasAdminPermissionByUserid(userId, permission, loginRole);
+      if (ifHasPermission) {
+        ifTrue = true;
+      }
+    }
+    // 返回
+    if (ifTrue) {
+      return true;
+    }
+    await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
+    throw new ForbiddenException(label);
   }
 }

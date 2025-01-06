@@ -73,7 +73,6 @@ export class CodeGenerationService {
     const table = await this.prisma.findById<CodeGenTableDto>('sys_code_gen_table', Number(id));
     const columns = await this.prisma.findAll<CodeGenColumnDto>('sys_code_gen_column', {
       data: { tableId: Number(id) },
-      numberKeys: ['tableId'],
       orderBy: true,
     });
     const sys = await this.prisma.findById<SysDto>('sys_sys', table.sysId);

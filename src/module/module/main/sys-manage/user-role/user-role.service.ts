@@ -13,17 +13,19 @@ export class UserRoleService {
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
     private readonly cachePermissionService: CachePermissionService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
+    this.bcs.setFieldSelectParam('sys_user_role', {
+      notNullKeys: ['userId', 'roleId', 'loginRole'],
+      numberKeys: ['roleId'],
+      completeMatchingKeys: ['userId', 'roleId', 'loginRole'],
+    })
   }
 
   async selUserRole(dto: UserRoleSelListDto): Promise<R> {
     const res = await this.prisma.findPage<UserRoleDto, UserRoleSelListDto>('sys_user_role', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'roleId', 'loginRole'],
-      numberKeys: ['roleId'],
-      completeMatchingKeys: ['userId', 'roleId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -32,9 +34,6 @@ export class UserRoleService {
     const res = await this.prisma.findAll<UserRoleDto>('sys_user_role', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'roleId', 'loginRole'],
-      numberKeys: ['roleId'],
-      completeMatchingKeys: ['userId', 'roleId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -46,7 +45,7 @@ export class UserRoleService {
 
   async updUserRoleUR(dto: UserRoleUpdManyURDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, dto.userId)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.bcs.getUserData().userId, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
     const allRoles = await this.prisma.findAll<UserRoleUpdOneDto>('sys_user_role', { data: { userId: dto.userId } });
@@ -64,13 +63,12 @@ export class UserRoleService {
     const data = [];
     const allUsersOfThisRole = await this.prisma.findAll<UserRoleDto>('sys_user_role', {
       data: { roleId: dto.roleId },
-      numberKeys: ['roleId'],
     });
     const allUserIdsOfThisRole = allUsersOfThisRole.map(item => item.userId);
     const userIds = dto.userId.filter(item => allUserIdsOfThisRole.indexOf(item) === -1);
     for (let i = 0; i < userIds.length; i++) {
       const userId = userIds[i];
-      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, userId)) {
+      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.bcs.getUserData().userId, userId)) {
         throw new UserPermissionDeniedException();
       }
       data.push({

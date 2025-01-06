@@ -3,22 +3,25 @@ import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { DeptDto, DeptSelListDto, DeptSelAllDto, DeptInsOneDto, DeptUpdOneDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class DeptService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
     private readonly cachePermissionService: CachePermissionService,
   ) {
+    this.bcs.setFieldSelectParam('sys_dept', {
+      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'parentId', 'orderNum'],
+      numberKeys: ['parentId', 'orderNum'],
+    })
   }
 
   async selDept(dto: DeptSelListDto): Promise<R> {
     const res = await this.prisma.findPage<DeptDto, DeptSelListDto>('sys_dept', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'parentId', 'orderNum'],
-      numberKeys: ['parentId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -27,9 +30,6 @@ export class DeptService {
     const res = await this.prisma.findAll<DeptDto>('sys_dept', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'parentId', 'orderNum'],
-      numberKeys: ['parentId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

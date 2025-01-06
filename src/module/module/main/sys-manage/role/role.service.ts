@@ -3,22 +3,25 @@ import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { RoleDto, RoleSelListDto, RoleSelAllDto, RoleInsOneDto, RoleUpdOneDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class RoleService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
     private readonly cachePermissionService: CachePermissionService,
   ) {
+    this.bcs.setFieldSelectParam('sys_role', {
+      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'orderNum'],
+      numberKeys: ['orderNum'],
+    })
   }
 
   async selRole(dto: RoleSelListDto): Promise<R> {
     const res = await this.prisma.findPage<RoleDto, RoleSelListDto>('sys_role', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'orderNum'],
-      numberKeys: ['orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -27,9 +30,6 @@ export class RoleService {
     const res = await this.prisma.findAll<RoleDto>('sys_role', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'ifAdmin', 'ifDisabled', 'orderNum'],
-      numberKeys: ['orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

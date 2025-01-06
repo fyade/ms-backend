@@ -3,13 +3,19 @@ import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { RolePermissionDto, RolePermissionSelListDto, RolePermissionSelAllDto, RolePermissionInsOneDto, RolePermissionUpdOneDto, RolePermissionUpdManyDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class RolePermissionService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
     private readonly cachePermissionService: CachePermissionService,
   ) {
+    this.bcs.setFieldSelectParam('sys_role_permission', {
+      notNullKeys: ['roleId', 'permissionId'],
+      numberKeys: ['roleId', 'permissionId'],
+    })
   }
 
   async selRolePermission(dto: RolePermissionSelListDto): Promise<R> {
@@ -21,8 +27,6 @@ export class RolePermissionService {
     const res = await this.prisma.findAll<RolePermissionDto>('sys_role_permission', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['roleId', 'permissionId'],
-      numberKeys: ['roleId', 'permissionId'],
     });
     return R.ok(res);
   }
@@ -36,7 +40,6 @@ export class RolePermissionService {
     await this.cachePermissionService.clearPermissionsInCache();
     const allRolePermissions = await this.prisma.findAll<RolePermissionDto>('sys_role_permission', {
       data: { roleId: dto.roleId },
-      numberKeys: ['roleId'],
     });
     const perIds = allRolePermissions.map(item => item.permissionId);
     const addRPSPIDS = dto.permissionId.filter(item => perIds.indexOf(item) === -1);

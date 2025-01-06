@@ -2,19 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { CodeGenColumnDto, CodeGenColumnSelListDto, CodeGenColumnSelAllDto, CodeGenColumnInsOneDto, CodeGenColumnUpdOneDto } from './dto';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class CodeGenColumnService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_code_gen_column', {
+      notNullKeys: ['tableId', 'colName', 'colDescr', 'mysqlType', 'tsType', 'tsName', 'ifIns', 'ifUpd', 'ifSelOne', 'ifSelMore', 'ifRequired', 'selType', 'formType', 'orderNum'],
+      numberKeys: ['tableId', 'orderNum'],
+    })
   }
 
   async selCodeGenColumn(dto: CodeGenColumnSelListDto): Promise<R> {
     const res = await this.prisma.findPage<CodeGenColumnDto, CodeGenColumnSelListDto>('sys_code_gen_column', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['tableId', 'colName', 'colDescr', 'mysqlType', 'tsType', 'tsName', 'ifIns', 'ifUpd', 'ifSelOne', 'ifSelMore', 'ifRequired', 'selType', 'formType', 'orderNum'],
-      numberKeys: ['tableId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -23,9 +28,6 @@ export class CodeGenColumnService {
     const res = await this.prisma.findAll<CodeGenColumnDto>('sys_code_gen_column', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['tableId', 'colName', 'colDescr', 'mysqlType', 'tsType', 'tsName', 'ifIns', 'ifUpd', 'ifSelOne', 'ifSelMore', 'ifRequired', 'selType', 'formType', 'orderNum'],
-      numberKeys: ['tableId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

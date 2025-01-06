@@ -147,6 +147,14 @@ $ nest g pipe validation pipe # 管道
 * de 表示部门
 * ug 表示用户组
 
+数据表行(háng)权限管理相关常量：
+* ALL 表示全部
+* SELF_DEPT 表示本部门
+* DEPT_ONE_SON 表示本部门及直属子部门
+* DEPT_ALL_SON 表示本部门及全部子部门
+* SELF_ROLE 表示本角色
+* SELF 表示自己
+
 ## 许可证 License
 
 [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.txt)

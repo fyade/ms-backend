@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { currentEnv, getMysqlUrlFromEnv } from '../../config/config';
-import { base } from '../util/base';
+import { base, T_DEPT, T_ROLE } from '../util/base';
 import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
 import { PageDto } from '../common/dto/PageDto';
@@ -10,6 +10,8 @@ import { deepClone } from '../util/ObjectUtils';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { PrismaClient } from '@prisma/client';
 import { baseInterfaceColumns2 } from '../module/module/main/sys-util/code-generation/codeGeneration';
+import { Exception } from '../exception/Exception';
+import { PrismaParam, SelectParamObj } from './dto';
 
 const env = currentEnv();
 const { PrismaClient: PrismaClientOrigin } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
@@ -19,7 +21,7 @@ export class PrismaService extends PrismaClientOrigin {
   private prismaClient: PrismaClient;
 
   constructor(
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
     const dbConfig = {
       datasources: {
@@ -30,7 +32,7 @@ export class PrismaService extends PrismaClientOrigin {
       log: env.mode === base.DEV ? ['query', 'info', 'warn'] : [],
     };
     super(dbConfig);
-    // 使用中间件对查询结果中的Bigint类型进行序列化
+    // 使用中间件对查询结果中的 Bigint 类型进行序列化
     super.$use(async (params, next) => {
       const t1 = Date.now();
       const result = await next(params);
@@ -48,11 +50,11 @@ export class PrismaService extends PrismaClientOrigin {
   }
 
   private getUserId() {
-    return this.baseContextService.getUserData().userId || '???';
+    return this.bcs.getUserData().userId || '???';
   }
 
   private getLoginRole() {
-    return this.baseContextService.getUserData().loginRole || '???';
+    return this.bcs.getUserData().loginRole || '???';
   }
 
   private serialize(obj) {
@@ -78,11 +80,11 @@ export class PrismaService extends PrismaClientOrigin {
   defaultSelArg = ({
                      selKeys = [],
                      ifDeleted = true,
-                     ifDataSegregation = false,
+                     ifUseSelfData = false,
                    }: {
                      selKeys?: string[],
                      ifDeleted?: boolean,
-                     ifDataSegregation?: boolean,
+                     ifUseSelfData?: boolean,
                    } = {},
   ) => {
     const retObj = {
@@ -99,29 +101,29 @@ export class PrismaService extends PrismaClientOrigin {
       },
     };
     if (!ifDeleted) delete retObj.where.deleted;
-    if (!ifDataSegregation) {
+    if (!ifUseSelfData) {
       delete retObj.where.create_role;
       delete retObj.where.create_by;
     }
     return retObj;
   };
   defaultInsArg = ({
-                             ifCreateRole = true,
-                             ifUpdateRole = true,
-                             ifCreateBy = true,
-                             ifUpdateBy = true,
-                             ifCreateTime = true,
-                             ifUpdateTime = true,
-                             ifDeleted = true,
-                           }: {
-                             ifCreateRole?: boolean,
-                             ifUpdateRole?: boolean,
-                             ifCreateBy?: boolean,
-                             ifUpdateBy?: boolean,
-                             ifCreateTime?: boolean,
-                             ifUpdateTime?: boolean,
-                             ifDeleted?: boolean,
-                           } = {},
+                     ifCreateRole = true,
+                     ifUpdateRole = true,
+                     ifCreateBy = true,
+                     ifUpdateBy = true,
+                     ifCreateTime = true,
+                     ifUpdateTime = true,
+                     ifDeleted = true,
+                   }: {
+                     ifCreateRole?: boolean,
+                     ifUpdateRole?: boolean,
+                     ifCreateBy?: boolean,
+                     ifUpdateBy?: boolean,
+                     ifCreateTime?: boolean,
+                     ifUpdateTime?: boolean,
+                     ifDeleted?: boolean,
+                   } = {},
   ) => {
     const userid = this.getUserId();
     const time1 = time();
@@ -146,18 +148,18 @@ export class PrismaService extends PrismaClientOrigin {
     return retObj;
   };
   defaultUpdArg = ({
-                             ifUpdateRole = true,
-                             ifUpdateBy = true,
-                             ifUpdateTime = true,
-                             ifDeleted = true,
-                             ifDataSegregation = false,
-                           }: {
-                             ifUpdateRole?: boolean,
-                             ifUpdateBy?: boolean,
-                             ifUpdateTime?: boolean,
-                             ifDeleted?: boolean,
-                             ifDataSegregation?: boolean,
-                           } = {},
+                     ifUpdateRole = true,
+                     ifUpdateBy = true,
+                     ifUpdateTime = true,
+                     ifDeleted = true,
+                     ifUseSelfData = false,
+                   }: {
+                     ifUpdateRole?: boolean,
+                     ifUpdateBy?: boolean,
+                     ifUpdateTime?: boolean,
+                     ifDeleted?: boolean,
+                     ifUseSelfData?: boolean,
+                   } = {},
   ) => {
     const retObj = {
       where: {
@@ -175,17 +177,17 @@ export class PrismaService extends PrismaClientOrigin {
     if (!ifUpdateBy) delete retObj.data.update_by;
     if (!ifUpdateTime) delete retObj.data.update_time;
     if (!ifDeleted) delete retObj.where.deleted;
-    if (!ifDataSegregation) {
+    if (!ifUseSelfData) {
       delete retObj.where.create_role;
       delete retObj.where.create_by;
     }
     return retObj;
   };
   defaultDelArg = ({
-                             ifDataSegregation = false,
-                           }: {
-                             ifDataSegregation?: boolean
-                           } = {},
+                     ifUseSelfData = false,
+                   }: {
+                     ifUseSelfData?: boolean
+                   } = {},
   ) => {
     const retObj = {
       where: {
@@ -200,17 +202,117 @@ export class PrismaService extends PrismaClientOrigin {
         deleted: base.Y,
       },
     };
-    if (!ifDataSegregation) {
+    if (!ifUseSelfData) {
       delete retObj.where.create_role;
       delete retObj.where.create_by;
     }
     return retObj;
   };
 
+  /**
+   * 数据表行级别权限控制
+   * @param model
+   * @param arg
+   * @private
+   */
+  private async tableRowPermission<T>({
+                                        model,
+                                        arg,
+                                      }: {
+                                        model: string,
+                                        arg: PrismaParam
+                                      },
+  ): Promise<boolean | string | { key: string, value: (number | string)[] }> {
+    const userData = this.bcs.getUserData();
+    const permissionData = await this.getOrigin().sys_menu.findFirst({
+      where: {
+        perms: userData.perms,
+        type: 'mb',
+        ...this.defaultSelArg().where,
+      },
+    });
+    if (!permissionData) {
+      console.error(`不存在的权限：${userData.perms}`);
+      throw new UnknownException(userData.reqId);
+    }
+    const ifTopAdmin = userData.topAdmin;
+    if (ifTopAdmin) {
+      return true;
+    }
+    // 用户的角色/部门
+    const userRoles_ = await this.getOrigin().sys_user_role.findMany({
+      where: {
+        user_id: userData.userId,
+        ...this.defaultSelArg().where,
+      },
+    });
+    const userDepts_ = await this.getOrigin().sys_user_dept.findMany({
+      where: {
+        user_id: userData.userId,
+        ...this.defaultSelArg().where,
+      },
+    });
+    const userRoles = await this.getOrigin().sys_role.findMany({
+      where: {
+        if_admin: base.Y,
+        if_disabled: base.N,
+        id: {
+          in: userRoles_.map(item => item.role_id),
+        },
+        ...this.defaultSelArg().where,
+      },
+    });
+    const userDepts = await this.getOrigin().sys_dept.findMany({
+      where: {
+        if_admin: base.Y,
+        if_disabled: base.N,
+        id: {
+          in: userDepts_.map(item => item.dept_id),
+        },
+        ...this.defaultSelArg().where,
+      },
+    });
+    const trpsRole = await this.getOrigin().sys_table_row_permission.findMany({
+      where: {
+        action_type: T_ROLE,
+        action_id: {
+          in: userRoles.map(item => item.id).map(_ => `${_}`),
+        },
+        permission_id: permissionData.id,
+        ...this.defaultSelArg().where,
+      },
+    });
+    const trpsDept = await this.getOrigin().sys_table_row_permission.findMany({
+      where: {
+        action_type: T_DEPT,
+        action_id: {
+          in: userDepts.map(item => item.id).map(_ => `${_}`),
+        },
+        permission_id: permissionData.id,
+        ...this.defaultSelArg().where,
+      },
+    });
+    const trps = [...trpsRole, ...trpsDept];
+    if (trps.length === 0) {
+      return true;
+    }
+    const dataTypes = trps.map(item => item.data_type);
+    // 注：同一权限类型同一权限只能设置一个数据类型
+    if (dataTypes.includes('ALL')) {
+      return true;
+    }
+    if (dataTypes.includes('SELF')) {
+      return 'self';
+    }
+    if (dataTypes.includes('SELF_ROLE')) {
+      console.log('===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====', model, JSON.stringify(arg));
+    }
+  }
+
   private getModel(model: string) {
     const modelInstance = this[model];
     if (!modelInstance) {
-      throw new UnknownException(this.baseContextService.getUserData().reqId);
+      throw new UnknownException(this.bcs.getUserData().reqId);
     }
     return modelInstance;
   }
@@ -224,7 +326,7 @@ export class PrismaService extends PrismaClientOrigin {
                                numberKeys = [],
                                completeMatchingKeys = [],
                                ifDeleted = true,
-                               ifDataSegregation = false,
+                               ifUseSelfData = false,
                              }: {
                                data?: P,
                                orderBy?: boolean | object,
@@ -234,11 +336,11 @@ export class PrismaService extends PrismaClientOrigin {
                                numberKeys?: string[],
                                completeMatchingKeys?: string[],
                                ifDeleted?: boolean,
-                               ifDataSegregation?: boolean,
+                               ifUseSelfData?: boolean,
                              } = {},
   ) {
     const data_ = objToSnakeCase(data);
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation }).where;
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifUseSelfData }).where;
     return {
       AND: [
         ...Object.keys(publicData).reduce((obj, item) => [
@@ -254,44 +356,58 @@ export class PrismaService extends PrismaClientOrigin {
           } catch (e) {
             datum = data_[item];
           }
-          const ret = [
-            ...obj,
-            {
-              OR: [
-                {
-                  [item]: typeOf(datum) === 'object'
-                    ? Object.keys(datum).reduce((obj, itm) => {
-                      return {
-                        ...obj,
-                        [itm]: datum[itm].type === 'number'
-                          ? typeOf(datum[itm].value) === 'array'
-                            ? datum[itm].value.map(item => Number(item))
-                            : typeOf(datum[itm].value) === 'object'
-                              ? Object.keys(datum[itm].value).reduce((obj, key) => ({
-                                ...obj,
-                                [key]: Number(datum[itm].value[key]),
-                              }), {})
-                              : typeOf(datum[itm].value) === 'string'
-                                ? Number(datum[itm].value)
-                                : datum[itm].value
-                          : datum[itm].value,
-                      };
-                    }, {})
-                    : toSnakeCases(numberKeys).includes(item)
-                      ? Number(datum)
-                      : (toSnakeCases(completeMatchingKeys).includes(item) && !!datum)
-                        ? datum
-                        : {
-                          contains: `${datum}`,
-                        },
-                },
-                {
-                  [item]: null,
-                },
-              ].slice(0, (toSnakeCases(notNullKeys).includes(item) || datum !== '') ? 1 : 2),
-            },
-          ];
-          return ret;
+          // 开始拼接查询条件
+          const obj2 = {
+            OR: [],
+          };
+          // 如果这个字段接收到的是对象类型
+          if (typeOf(datum) === 'object') {
+            const items = { [item]: {} };
+            const datum_ = new SelectParamObj(datum as unknown as SelectParamObj);
+            for (const itm of Object.keys(datum_)) {
+              // 如果指定为数值类型
+              if (datum_[itm].type === 'number') {
+                switch (typeOf(datum_[itm].value)) {
+                  case 'array':
+                    items[item][itm] = datum_[itm].value.map(n => Number(n));
+                    break;
+                  // case 'object':
+                  //   items[item][itm] = Object.keys(datum_[itm].value)
+                  //     .reduce((obj, key) => ({ ...obj, [key]: Number(datum_[itm].value[key]) }), {});
+                  //   break;
+                  case 'string':
+                    items[item][itm] = Number(datum_[itm].value);
+                    break;
+                  default:
+                    items[item][itm] = datum_[itm].value;
+                    break;
+                }
+              }
+              // 未指定类型，原样返回
+              else {
+                items[item][itm] = datum_[itm].value;
+              }
+            }
+            obj2.OR.push(items);
+          } else {
+            // 数字
+            if (toSnakeCases(numberKeys).includes(item)) {
+              obj2.OR.push({ [item]: Number(datum) });
+            }
+            // 字符串完整匹配
+            else if (toSnakeCases(completeMatchingKeys).includes(item) && !!datum) {
+              obj2.OR.push({ [item]: `${datum}` });
+            }
+            // 字符串模糊匹配
+            else {
+              obj2.OR.push({ [item]: { contains: `${datum}` } });
+            }
+            // 可以为空
+            if (!toSnakeCases(notNullKeys).includes(item)) {
+              obj2.OR.push({ [item]: null });
+            }
+          }
+          return [...obj, obj2];
         }, []),
         ...Object.keys(range).map(item => (
           {
@@ -312,60 +428,44 @@ export class PrismaService extends PrismaClientOrigin {
    * @param orderBy
    * @param range
    * @param selKeys
-   * @param notNullKeys
-   * @param numberKeys
-   * @param completeMatchingKeys
-   * @param ifDeleted
-   * @param ifDataSegregation
-   * @param ifUseGenSelParams
+   * @param ifUseSelfData
    */
   async findPage<T, P extends PageDto>(model: string, {
                                          data,
                                          orderBy,
                                          range = {},
                                          selKeys = [],
-                                         notNullKeys = [],
-                                         numberKeys = [],
-                                         completeMatchingKeys = [],
-                                         ifDeleted = true,
-                                         ifDataSegregation = false,
+                                         ifUseSelfData = false,
                                        }: {
                                          data?: P,
                                          orderBy?: boolean | object,
                                          range?: object,
                                          selKeys?: string[],
-                                         notNullKeys?: string[],
-                                         numberKeys?: string[],
-                                         completeMatchingKeys?: string[],
-                                         ifDeleted?: boolean,
-                                         ifDataSegregation?: boolean,
+                                         ifUseSelfData?: boolean,
                                        } = {},
-                                       ifUseGenSelParams = true,
   ): Promise<PageVo<T>> {
     const pageNum = Number(data.pageNum);
     const pageSize = Number(data.pageSize);
     const data2 = deepClone(data);
     delete data2.pageNum;
     delete data2.pageSize;
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation });
-    const arg = {
-      where: ifUseGenSelParams ? this.genSelParams<T, P>({
+    const fieldSelectParam = this.bcs.getFieldSelectParam(model);
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
+    const arg: PrismaParam = {
+      where: this.genSelParams<T, P>({
         data: data2,
         orderBy,
         range,
         selKeys,
-        notNullKeys,
-        numberKeys,
-        completeMatchingKeys,
-        ifDeleted,
-        ifDataSegregation,
-      }) : {
-        ...publicData.where,
-        ...(objToSnakeCase(data2) || {}),
-      },
+        notNullKeys: fieldSelectParam.notNullKeys,
+        numberKeys: fieldSelectParam.numberKeys,
+        completeMatchingKeys: fieldSelectParam.completeMatchingKeys,
+        ifDeleted: fieldSelectParam.ifDeleted,
+        ifUseSelfData,
+      }),
       ...(publicData.select ? { select: publicData.select } : {}),
-      skip: (pageNum - 1) * pageSize,
-      take: pageSize,
+      skip: this.getSkipAndTakeFromPNS(pageNum, pageSize).skip,
+      take: this.getSkipAndTakeFromPNS(pageNum, pageSize).take,
     };
     if (typeof orderBy === 'boolean' && orderBy) {
       arg['orderBy'] = {
@@ -406,52 +506,36 @@ export class PrismaService extends PrismaClientOrigin {
    * @param orderBy
    * @param range
    * @param selKeys
-   * @param notNullKeys
-   * @param numberKeys
-   * @param completeMatchingKeys
-   * @param ifDeleted
-   * @param ifDataSegregation
-   * @param ifUseGenSelParams
+   * @param ifUseSelfData
    */
   async findAll<T, P = object>(model: string, {
                                  data,
                                  orderBy,
                                  range = {},
                                  selKeys = [],
-                                 notNullKeys = [],
-                                 numberKeys = [],
-                                 completeMatchingKeys = [],
-                                 ifDeleted = true,
-                                 ifDataSegregation = false,
+                                 ifUseSelfData = false,
                                }: {
                                  data?: P,
                                  orderBy?: boolean | object,
                                  range?: object,
                                  selKeys?: string[],
-                                 notNullKeys?: string[],
-                                 numberKeys?: string[],
-                                 completeMatchingKeys?: string[],
-                                 ifDeleted?: boolean,
-                                 ifDataSegregation?: boolean,
+                                 ifUseSelfData?: boolean,
                                } = {},
-                               ifUseGenSelParams = true,
   ): Promise<T[]> {
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation });
+    const fieldSelectParam = this.bcs.getFieldSelectParam(model);
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
     const arg = {
-      where: ifUseGenSelParams ? this.genSelParams<T, P>({
+      where: this.genSelParams<T, P>({
         data,
         orderBy,
         range,
         selKeys,
-        notNullKeys,
-        numberKeys,
-        completeMatchingKeys,
-        ifDeleted,
-        ifDataSegregation,
-      }) : {
-        ...publicData.where,
-        ...(objToSnakeCase(data) || {}),
-      },
+        notNullKeys: fieldSelectParam.notNullKeys,
+        numberKeys: fieldSelectParam.numberKeys,
+        completeMatchingKeys: fieldSelectParam.completeMatchingKeys,
+        ifDeleted: fieldSelectParam.ifDeleted,
+        ifUseSelfData,
+      }),
       ...(publicData.select ? { select: publicData.select } : {}),
     };
     if (typeof orderBy === 'boolean' && orderBy) {
@@ -477,20 +561,18 @@ export class PrismaService extends PrismaClientOrigin {
    * @param model
    * @param args
    * @param selKeys
-   * @param ifDeleted
-   * @param ifDataSegregation
+   * @param ifUseSelfData
    */
   async findFirst<T, P = any>(model: string, args?: Partial<P>, {
                                 selKeys = [],
-                                ifDeleted = true,
-                                ifDataSegregation = false,
+                                ifUseSelfData = false,
                               }: {
                                 selKeys?: string[],
-                                ifDeleted?: boolean,
-                                ifDataSegregation?: boolean,
+                                ifUseSelfData?: boolean,
                               } = {},
   ): Promise<T> {
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation });
+    const fieldSelectParam = this.bcs.getFieldSelectParam(model);
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
     const arg = {
       where: {
         ...publicData.where,
@@ -508,20 +590,17 @@ export class PrismaService extends PrismaClientOrigin {
    * @param model
    * @param id
    * @param selKeys
-   * @param ifDeleted
-   * @param ifDataSegregation
+   * @param ifUseSelfData
    */
   async findById<T>(model: string, id: number | string, {
                       selKeys = [],
-                      ifDeleted = true,
-                      ifDataSegregation = false,
+                      ifUseSelfData = false,
                     }: {
                       selKeys?: string[],
-                      ifDeleted?: boolean,
-                      ifDataSegregation?: boolean,
+                      ifUseSelfData?: boolean,
                     } = {},
   ): Promise<T> {
-    return this.findFirst<T>(model, { id: id }, { selKeys, ifDeleted, ifDataSegregation });
+    return this.findFirst<T>(model, { id: id }, { selKeys, ifUseSelfData });
   }
 
   /**
@@ -529,20 +608,18 @@ export class PrismaService extends PrismaClientOrigin {
    * @param model
    * @param ids
    * @param selKeys
-   * @param ifDeleted
-   * @param ifDataSegregation
+   * @param ifUseSelfData
    */
   async findByIds<T>(model: string, ids: number[] | string[], {
                        selKeys = [],
-                       ifDeleted = true,
-                       ifDataSegregation = false,
+                       ifUseSelfData = false,
                      }: {
                        selKeys?: string[],
-                       ifDeleted?: boolean,
-                       ifDataSegregation?: boolean,
+                       ifUseSelfData?: boolean,
                      } = {},
   ): Promise<T[]> {
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifDataSegregation });
+    const fieldSelectParam = this.bcs.getFieldSelectParam(model);
+    const publicData = this.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
     const arg = {
       where: {
         ...publicData.where,
@@ -562,45 +639,29 @@ export class PrismaService extends PrismaClientOrigin {
    * @param model
    * @param data
    * @param range
-   * @param notNullKeys
-   * @param numberKeys
-   * @param completeMatchingKeys
-   * @param ifDeleted
-   * @param ifDataSegregation
-   * @param ifUseGenSelParams
+   * @param ifUseSelfData
    */
   async count<T, P = object>(model: string, {
                                data,
                                range = {},
-                               notNullKeys = [],
-                               numberKeys = [],
-                               completeMatchingKeys = [],
-                               ifDeleted = true,
-                               ifDataSegregation = false,
+                               ifUseSelfData = false,
                              }: {
                                data?: P,
                                range?: object,
-                               notNullKeys?: string[]
-                               numberKeys?: string[]
-                               completeMatchingKeys?: string[]
-                               ifDeleted?: boolean,
-                               ifDataSegregation?: boolean,
+                               ifUseSelfData?: boolean,
                              } = {},
-                             ifUseGenSelParams = true,
   ): Promise<number> {
+    const fieldSelectParam = this.bcs.getFieldSelectParam(model);
     const arg = {
-      where: ifUseGenSelParams ? this.genSelParams<T, P>({
+      where: this.genSelParams<T, P>({
         data,
         range,
-        notNullKeys,
-        numberKeys,
-        completeMatchingKeys,
-        ifDeleted,
-        ifDataSegregation,
-      }) : {
-        ...this.defaultSelArg({ ifDeleted, ifDataSegregation }).where,
-        ...(objToSnakeCase(data) || {}),
-      },
+        notNullKeys: fieldSelectParam.notNullKeys,
+        numberKeys: fieldSelectParam.numberKeys,
+        completeMatchingKeys: fieldSelectParam.completeMatchingKeys,
+        ifDeleted: fieldSelectParam.ifDeleted,
+        ifUseSelfData,
+      }),
     };
     const count = await this.getModel(model).count(arg);
     return new Promise(resolve => resolve(count));
@@ -611,46 +672,26 @@ export class PrismaService extends PrismaClientOrigin {
    * @param model
    * @param data
    * @param ifCustomizeId
-   * @param ifCreateRole
-   * @param ifUpdateRole
-   * @param ifCreateBy
-   * @param ifUpdateBy
-   * @param ifCreateTime
-   * @param ifUpdateTime
-   * @param ifDeleted
    */
   async create<T>(model: string, data, {
                     ifCustomizeId = false,
-                    ifCreateRole = true,
-                    ifUpdateRole = true,
-                    ifCreateBy = true,
-                    ifUpdateBy = true,
-                    ifCreateTime = true,
-                    ifUpdateTime = true,
-                    ifDeleted = true,
                   }: {
                     ifCustomizeId?: boolean,
-                    ifCreateRole?: boolean,
-                    ifUpdateRole?: boolean,
-                    ifCreateBy?: boolean,
-                    ifUpdateBy?: boolean,
-                    ifCreateTime?: boolean,
-                    ifUpdateTime?: boolean,
-                    ifDeleted?: boolean,
                   } = {},
   ): Promise<T> {
     const data2 = deepClone(data);
     if (!ifCustomizeId) {
       delete data2.id;
     }
+    const fieldSelectParam = this.bcs.getFieldSelectParam(model);
     const publicData = this.defaultInsArg({
-      ifCreateRole,
-      ifUpdateRole,
-      ifCreateBy,
-      ifUpdateBy,
-      ifCreateTime,
-      ifUpdateTime,
-      ifDeleted,
+      ifCreateRole: fieldSelectParam.ifCreateRole,
+      ifUpdateRole: fieldSelectParam.ifUpdateRole,
+      ifCreateBy: fieldSelectParam.ifCreateBy,
+      ifUpdateBy: fieldSelectParam.ifUpdateBy,
+      ifCreateTime: fieldSelectParam.ifCreateTime,
+      ifUpdateTime: fieldSelectParam.ifUpdateTime,
+      ifDeleted: fieldSelectParam.ifDeleted,
     }).data;
     const arg = {
       data: {
@@ -667,42 +708,22 @@ export class PrismaService extends PrismaClientOrigin {
    * @param model
    * @param data
    * @param ifCustomizeId
-   * @param ifCreateRole
-   * @param ifUpdateRole
-   * @param ifCreateBy
-   * @param ifUpdateBy
-   * @param ifCreateTime
-   * @param ifUpdateTime
-   * @param ifDeleted
    */
   async createMany<T>(model: string, data, {
                         ifCustomizeId = false,
-                        ifCreateRole = true,
-                        ifUpdateRole = true,
-                        ifCreateBy = true,
-                        ifUpdateBy = true,
-                        ifCreateTime = true,
-                        ifUpdateTime = true,
-                        ifDeleted = true,
                       }: {
                         ifCustomizeId?: boolean,
-                        ifCreateRole?: boolean,
-                        ifUpdateRole?: boolean,
-                        ifCreateBy?: boolean,
-                        ifUpdateBy?: boolean,
-                        ifCreateTime?: boolean,
-                        ifUpdateTime?: boolean,
-                        ifDeleted?: boolean,
                       } = {},
   ): Promise<T> {
+    const fieldSelectParam = this.bcs.getFieldSelectParam(model);
     const publicData = this.defaultInsArg({
-      ifCreateRole,
-      ifUpdateRole,
-      ifCreateBy,
-      ifUpdateBy,
-      ifCreateTime,
-      ifUpdateTime,
-      ifDeleted,
+      ifCreateRole: fieldSelectParam.ifCreateRole,
+      ifUpdateRole: fieldSelectParam.ifUpdateRole,
+      ifCreateBy: fieldSelectParam.ifCreateBy,
+      ifUpdateBy: fieldSelectParam.ifUpdateBy,
+      ifCreateTime: fieldSelectParam.ifCreateTime,
+      ifUpdateTime: fieldSelectParam.ifUpdateTime,
+      ifDeleted: fieldSelectParam.ifDeleted,
     }).data;
     const arg = {
       data: data.map(dat => {
@@ -723,30 +744,25 @@ export class PrismaService extends PrismaClientOrigin {
    * 修改
    * @param model
    * @param data
-   * @param ifUpdateRole
-   * @param ifUpdateBy
-   * @param ifUpdateTime
-   * @param ifDeleted
-   * @param ifDataSegregation
+   * @param ifUseSelfData
    */
   async updateById<T>(model: string, data?, {
-                        ifUpdateRole = true,
-                        ifUpdateBy = true,
-                        ifUpdateTime = true,
-                        ifDeleted = true,
-                        ifDataSegregation = false,
+                        ifUseSelfData = false,
                       }: {
-                        ifUpdateRole?: boolean,
-                        ifUpdateBy?: boolean,
-                        ifUpdateTime?: boolean,
-                        ifDeleted?: boolean,
-                        ifDataSegregation?: boolean
+                        ifUseSelfData?: boolean
                       } = {},
   ): Promise<T> {
     const id = data.id;
     const data2 = deepClone(data);
     delete data2.id;
-    const publicData = this.defaultUpdArg({ ifUpdateRole, ifUpdateBy, ifUpdateTime, ifDeleted, ifDataSegregation });
+    const fieldSelectParam = this.bcs.getFieldSelectParam(model);
+    const publicData = this.defaultUpdArg({
+      ifUpdateRole: fieldSelectParam.ifUpdateRole,
+      ifUpdateBy: fieldSelectParam.ifUpdateBy,
+      ifUpdateTime: fieldSelectParam.ifUpdateTime,
+      ifDeleted: fieldSelectParam.ifDeleted,
+      ifUseSelfData,
+    });
     const arg = {
       where: {
         ...publicData.where,
@@ -769,34 +785,18 @@ export class PrismaService extends PrismaClientOrigin {
    * 批量修改
    * @param model
    * @param data
-   * @param ifUpdateRole
-   * @param ifUpdateBy
-   * @param ifUpdateTime
-   * @param ifDeleted
-   * @param ifDataSegregation
+   * @param ifUseSelfData
    */
   async updateMany<T>(model: string, data?, {
-                        ifUpdateRole = true,
-                        ifUpdateBy = true,
-                        ifUpdateTime = true,
-                        ifDeleted = true,
-                        ifDataSegregation = false,
+                        ifUseSelfData = false,
                       }: {
-                        ifUpdateRole?: boolean,
-                        ifUpdateBy?: boolean,
-                        ifUpdateTime?: boolean,
-                        ifDeleted?: boolean,
-                        ifDataSegregation?: boolean
+                        ifUseSelfData?: boolean
                       } = {},
   ): Promise<T[]> {
     const retArr: T[] = [];
     for (let i = 0; i < data.length; i++) {
       const ret = await this.updateById<T>(model, data[i], {
-        ifUpdateRole,
-        ifUpdateBy,
-        ifUpdateTime,
-        ifDeleted,
-        ifDataSegregation,
+        ifUseSelfData,
       });
       retArr.push(ret);
     }
@@ -807,15 +807,15 @@ export class PrismaService extends PrismaClientOrigin {
    * 批量删除
    * @param model
    * @param ids
-   * @param ifDataSegregation
+   * @param ifUseSelfData
    */
   async deleteById<T>(model: string, ids: number[] | string[], {
-                        ifDataSegregation = false,
+                        ifUseSelfData = false,
                       }: {
-                        ifDataSegregation?: boolean
+                        ifUseSelfData?: boolean
                       } = {},
   ): Promise<{ count: number }> {
-    const publicData = this.defaultDelArg({ ifDataSegregation });
+    const publicData = this.defaultDelArg({ ifUseSelfData });
     const arg = {
       where: {
         ...publicData.where,
@@ -827,7 +827,11 @@ export class PrismaService extends PrismaClientOrigin {
         ...publicData.data,
       },
     };
-    return this.getModel(model).updateMany(arg);
+    const many: { count: number } = await this.getModel(model).updateMany(arg);
+    if (many.count === 0) {
+      throw new Exception('【开发中】你可能无权限。');
+    }
+    return new Promise(resolve => resolve(many));
   }
 
   /**
@@ -835,15 +839,15 @@ export class PrismaService extends PrismaClientOrigin {
    * @param model
    * @param key
    * @param values
-   * @param ifDataSegregation
+   * @param ifUseSelfData
    */
   async delete<T>(model: string, key: string, values, {
-                    ifDataSegregation = false,
+                    ifUseSelfData = false,
                   }: {
-                    ifDataSegregation?: boolean
+                    ifUseSelfData?: boolean
                   } = {},
   ): Promise<{ count: number }> {
-    const publicData = this.defaultDelArg({ ifDataSegregation });
+    const publicData = this.defaultDelArg({ ifUseSelfData });
     const arg = {
       where: {
         ...publicData.where,
@@ -857,4 +861,51 @@ export class PrismaService extends PrismaClientOrigin {
     };
     return this.getModel(model).updateMany(arg);
   }
+
+  private getSkipAndTakeFromPNS(pageNum: number, pageSize: number) {
+    return {
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+    };
+  }
+
+  // /**
+  //  * 生成连表查询用的 sql
+  //  * @param model
+  //  * @param operateType
+  //  * @param pageNum
+  //  * @param pageSize
+  //  * @param dataTypes
+  //  * @private
+  //  */
+  // private async genSqlOfTRP({
+  //                             model,
+  //                             operateType,
+  //                             pageNum,
+  //                             pageSize,
+  //                             dataTypes,
+  //                           }: {
+  //                             model: string,
+  //                             operateType: string,
+  //                             pageNum?: number,
+  //                             pageSize?: number,
+  //                             dataTypes: string[]
+  //                           },
+  // ) {
+  //   let sql = '';
+  //   // todo 这里暂且只写一下 sys_user 表的，其他用户表的也记得写一下
+  //   if (dataTypes.includes('SELF_ROLE') && this.getLoginRole() === 'admin') {
+  //     sql = `select ${model}.id from ${model} join sys_user_role on ${model}.create_by = sys_user_role.user_id join sys_role on sys_user_role.role_id = sys_role.id where ${model}.deleted = '${base.N}' and sys_user_role.deleted = '${base.N}' and sys_role.deleted = '${base.N}' group by ${model}.id`;
+  //     if (operateType === 'SEL_LIST') {
+  //       const pns = this.getSkipAndTakeFromPNS(pageNum, pageSize);
+  //       sql = sql + ` limit ${pns.take} offset ${pns.skip}`;
+  //     }
+  //   }
+  //   if (sql) {
+  //     sql = sql + ';';
+  //     const datas: { id: number | string }[] = await this.getOrigin().$queryRawUnsafe(sql);
+  //     return datas.map(item => item.id);
+  //   }
+  //   return [];
+  // }
 }

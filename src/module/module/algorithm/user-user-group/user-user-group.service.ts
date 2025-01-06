@@ -11,17 +11,19 @@ export class UserUserGroupService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
+    this.bcs.setFieldSelectParam('sys_user_user_group', {
+      notNullKeys: ['userId', 'userGroupId', 'loginRole'],
+      numberKeys: ['userGroupId'],
+      completeMatchingKeys: ['userId', 'userGroupId', 'loginRole'],
+    })
   }
 
   async selUserUserGroup(dto: UserUserGroupSelListDto): Promise<R> {
     const res = await this.prisma.findPage<UserUserGroupDto, UserUserGroupSelListDto>('sys_user_user_group', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'userGroupId', 'loginRole'],
-      numberKeys: ['userGroupId'],
-      completeMatchingKeys: ['userId', 'userGroupId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -30,9 +32,6 @@ export class UserUserGroupService {
     const res = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'userGroupId', 'loginRole'],
-      numberKeys: ['userGroupId'],
-      completeMatchingKeys: ['userId', 'userGroupId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -48,7 +47,7 @@ export class UserUserGroupService {
   }
 
   async updUserUserGroupUUG(dto: UserUserGroupUpdUUGDtp): Promise<R> {
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, dto.userId)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.bcs.getUserData().userId, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
     const allUserGroups = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', { data: { userId: dto.userId } });
@@ -69,13 +68,12 @@ export class UserUserGroupService {
     const data = [];
     const allUsersOfThisUserGroup = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', {
       data: { userGroupId: dto.userGroupId },
-      numberKeys: ['userGroupId'],
     });
     const allUserIdsOfThisUserGroup = allUsersOfThisUserGroup.map(item => item.userId);
     const userIds = dto.userId.filter(item => allUserIdsOfThisUserGroup.indexOf(item) === -1);
     for (let i = 0; i < userIds.length; i++) {
       const userId = userIds[i];
-      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, userId)) {
+      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.bcs.getUserData().userId, userId)) {
         throw new UserPermissionDeniedException();
       }
       data.push({

@@ -2,19 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { CodeGenTableDto, CodeGenTableSelListDto, CodeGenTableSelAllDto, CodeGenTableInsOneDto, CodeGenTableUpdOneDto } from './dto';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class CodeGenTableService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_code_gen_table', {
+      notNullKeys: ['tableName', 'tableDescr', 'entityName', 'businessName', 'moduleName', 'businessNameCn', 'moduleNameCn', 'sysId', 'orderNum'],
+      numberKeys: ['sysId', 'orderNum'],
+    })
   }
 
   async selCodeGenTable(dto: CodeGenTableSelListDto): Promise<R> {
     const res = await this.prisma.findPage<CodeGenTableDto, CodeGenTableSelListDto>('sys_code_gen_table', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['tableName', 'tableDescr', 'entityName', 'businessName', 'moduleName', 'businessNameCn', 'moduleNameCn', 'sysId', 'orderNum'],
-      numberKeys: ['sysId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -23,9 +28,6 @@ export class CodeGenTableService {
     const res = await this.prisma.findAll<CodeGenTableDto>('sys_code_gen_table', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['tableName', 'tableDescr', 'entityName', 'businessName', 'moduleName', 'businessNameCn', 'moduleNameCn', 'sysId', 'orderNum'],
-      numberKeys: ['sysId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

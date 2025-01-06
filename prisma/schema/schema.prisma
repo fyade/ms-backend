@@ -178,32 +178,33 @@ model sys_admin_top {
 
 // 2.1 菜单表
 model sys_menu {
-  id                      Int                      @id @default(autoincrement()) @db.Int
-  label                   String                   @db.VarChar(30)
-  type                    String                   @db.VarChar(2)
-  path                    String                   @db.VarChar(100)
-  parent_id               Int                      @db.Int
-  component               String                   @db.VarChar(60)
-  icon                    String                   @db.VarChar(30)
-  order_num               Int                      @db.Int
-  if_link                 String                   @db.Char(1)
-  if_visible              String                   @db.Char(1)
-  if_disabled             String                   @db.Char(1)
-  if_public               String                   @db.Char(1)
-  perms                   String                   @db.VarChar(100)
-  sys_id                  Int                      @db.Int
-  remark                  String?                  @db.VarChar(300)
-  create_role             String                   @db.VarChar(30)
-  update_role             String                   @db.VarChar(30)
-  create_by               String                   @db.VarChar(10)
-  update_by               String                   @db.VarChar(10)
-  create_time             DateTime                 @default(now())
-  update_time             DateTime                 @updatedAt
-  deleted                 String                   @default("N") @db.Char(1)
-  sys_                    sys_sys                  @relation(fields: [sys_id], references: [id])
-  sys_role_permissions    sys_role_permission[]
-  sys_dept_permissions    sys_dept_permission[]
-  sys_menu_ip_white_lists sys_menu_ip_white_list[]
+  id                        Int                        @id @default(autoincrement()) @db.Int
+  label                     String                     @db.VarChar(30)
+  type                      String                     @db.VarChar(2)
+  path                      String                     @db.VarChar(100)
+  parent_id                 Int                        @db.Int
+  component                 String                     @db.VarChar(60)
+  icon                      String                     @db.VarChar(30)
+  order_num                 Int                        @db.Int
+  if_link                   String                     @db.Char(1)
+  if_visible                String                     @db.Char(1)
+  if_disabled               String                     @db.Char(1)
+  if_public                 String                     @db.Char(1)
+  perms                     String                     @db.VarChar(100)
+  sys_id                    Int                        @db.Int
+  remark                    String?                    @db.VarChar(300)
+  create_role               String                     @db.VarChar(30)
+  update_role               String                     @db.VarChar(30)
+  create_by                 String                     @db.VarChar(10)
+  update_by                 String                     @db.VarChar(10)
+  create_time               DateTime                   @default(now())
+  update_time               DateTime                   @updatedAt
+  deleted                   String                     @default("N") @db.Char(1)
+  sys_                      sys_sys                    @relation(fields: [sys_id], references: [id])
+  sys_role_permissions      sys_role_permission[]
+  sys_dept_permissions      sys_dept_permission[]
+  sys_menu_ip_white_lists   sys_menu_ip_white_list[]
+  sys_table_row_permissions sys_table_row_permission[]
 }
 
 // 2.2 角色表
@@ -383,7 +384,24 @@ model sys_menu_ip_white_list {
   menu_id_    sys_menu @relation(fields: [menu_id], references: [id])
 }
 
-// 2.12 用户组表
+// 2.12 菜单-数据表行权限表
+model sys_table_row_permission {
+  id             Int      @id @default(autoincrement()) @db.Int
+  permission_id  Int      @db.Int
+  action_type    String   @db.VarChar(20)
+  action_id      String   @db.VarChar(20)
+  data_type      String   @db.VarChar(20)
+  create_role    String   @db.VarChar(30)
+  update_role    String   @db.VarChar(30)
+  create_by      String   @db.VarChar(10)
+  update_by      String   @db.VarChar(10)
+  create_time    DateTime @default(now())
+  update_time    DateTime @updatedAt
+  deleted        String   @default("N") @db.Char(1)
+  permission_id_ sys_menu @relation(fields: [permission_id], references: [id])
+}
+
+// 2.13 用户组表
 model sys_user_group {
   id                         Int                         @id @default(autoincrement()) @db.Int
   label                      String                      @db.VarChar(30)
@@ -401,7 +419,7 @@ model sys_user_group {
   sys_user_group_permissions sys_user_group_permission[]
 }
 
-// 2.13 用户用户组表
+// 2.14 用户用户组表
 model sys_user_user_group {
   id             Int            @id @default(autoincrement()) @db.Int
   user_id        String         @db.VarChar(10)
@@ -417,7 +435,7 @@ model sys_user_user_group {
   user_group_id_ sys_user_group @relation(fields: [user_group_id], references: [id])
 }
 
-// 2.14 接口表
+// 2.15 接口表
 model sys_interface {
   id                             Int                             @id @default(autoincrement()) @db.Int
   label                          String                          @db.VarChar(30)
@@ -438,7 +456,7 @@ model sys_interface {
   sys_interface_interface_groups sys_interface_interface_group[]
 }
 
-// 2.15 接口组表
+// 2.16 接口组表
 model sys_interface_group {
   id                             Int                             @id @default(autoincrement()) @db.Int
   label                          String                          @db.VarChar(30)
@@ -457,7 +475,7 @@ model sys_interface_group {
   sys_user_group_permissions     sys_user_group_permission[]
 }
 
-// 2.16 接口接口组
+// 2.17 接口接口组
 model sys_interface_interface_group {
   id                  Int                 @id @default(autoincrement()) @db.Int
   interface_id        Int                 @db.Int
@@ -473,7 +491,7 @@ model sys_interface_interface_group {
   interface_group_id_ sys_interface_group @relation(fields: [interface_group_id], references: [id])
 }
 
-// 2.17 用户组接口组表
+// 2.18 用户组接口组表
 model sys_user_group_permission {
   id                       Int                  @id @default(autoincrement()) @db.Int
   user_group_id            Int                  @db.Int

@@ -24,6 +24,7 @@ import { LogUserLoginDto, NOT_ADMIN, PASSWORD_ERROR } from '../../sys-log/log-us
 import { UserVisitorDto } from '../../other-user/user-visitor/dto';
 import { VerificationCodeErrorException } from '../../../../../exception/VerificationCodeErrorException';
 import * as svgCaptcha from 'svg-captcha';
+import { currentEnv } from '../../../../../../config/config';
 
 @Injectable()
 export class UserService {
@@ -34,9 +35,12 @@ export class UserService {
     private readonly authService: AuthService,
     private readonly logUserLoginService: LogUserLoginService,
     private readonly cacheTokenService: CacheTokenService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
     this.maxLoginFailCount = 10;
+    this.bcs.setFieldSelectParam('sys_user', {
+      notNullKeys: ['id', 'username'],
+    })
   }
 
   async selUser(dto: UserSelListDto): Promise<R> {
@@ -45,9 +49,6 @@ export class UserService {
     const res = await this.prisma.findPage<UserDto, UserSelListDto>('sys_user', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['id', 'username'],
-      numberKeys: [],
-      completeMatchingKeys: [],
     });
     res.list.forEach(item => {
       delete item.password;
@@ -134,7 +135,7 @@ export class UserService {
   }
 
   async getSelfInfo(): Promise<R> {
-    const user = await this.prisma.findById<UserDto>('sys_user', this.baseContextService.getUserData().userId);
+    const user = await this.prisma.findById<UserDto>('sys_user', this.bcs.getUserData().userId);
     delete user.password;
     return R.ok(user);
   }
@@ -166,7 +167,7 @@ export class UserService {
   }
 
   async updPsd(dto: UpdPsdDto): Promise<R> {
-    const user_ = await this.prisma.findById<UserDto>('sys_user', this.baseContextService.getUserData().userId);
+    const user_ = await this.prisma.findById<UserDto>('sys_user', this.bcs.getUserData().userId);
     const ifUserYes = await comparePassword(dto.oldp, user_.password);
     if (!ifUserYes) {
       return R.err('旧密码错误。');
@@ -179,7 +180,7 @@ export class UserService {
   }
 
   async adminResetUserPsd(dto: ResetUserPsdDto): Promise<R> {
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, dto.id)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.bcs.getUserData().userId, dto.id)) {
       throw new UserPermissionDeniedException();
     }
     await this.prisma.updateById('sys_user', { ...dto, password: await hashPassword(dto.password) });
@@ -231,13 +232,15 @@ export class UserService {
     token: string,
     user: UserDto
   }>> {
-    const vcode = await this.cacheTokenService.getVerificationCode(dto.verificationCodeUuid);
-    if (!vcode) {
-      throw new VerificationCodeErrorException('验证码已过期。');
-    }
-    await this.cacheTokenService.deleteVerificationCode(dto.verificationCodeUuid);
-    if (vcode.toLowerCase() !== dto.verificationCode.toLowerCase()) {
-      throw new VerificationCodeErrorException('验证码错误。');
+    if ([base.PROD].includes(currentEnv().mode)) {
+      const vcode = await this.cacheTokenService.getVerificationCode(dto.verificationCodeUuid);
+      if (!vcode) {
+        throw new VerificationCodeErrorException('验证码已过期。');
+      }
+      await this.cacheTokenService.deleteVerificationCode(dto.verificationCodeUuid);
+      if (vcode.toLowerCase() !== dto.verificationCode.toLowerCase()) {
+        throw new VerificationCodeErrorException('验证码错误。');
+      }
     }
     if (dto.loginRole === 'admin') {
       const user = await this.prisma.findFirst<UserDto>('sys_user', {
@@ -313,14 +316,14 @@ export class UserService {
   }
 
   async logOut(): Promise<R> {
-    await this.cacheTokenService.deleteToken(this.baseContextService.getUserData().token);
+    await this.cacheTokenService.deleteToken(this.bcs.getUserData().token);
     return R.ok();
   }
 
   async getVerificationCode(): Promise<R> {
     const captcha = svgCaptcha.create({
       noise: 3,
-      ignoreChars: 'Oo01iIl',
+      ignoreChars: 'Oo01iIlt',
       width: 120,
       height: 40,
       fontSize: 45,

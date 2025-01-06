@@ -22,7 +22,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cachePermissionService: CachePermissionService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
   }
 
@@ -628,12 +628,12 @@ export class AuthService {
                           ifIgnoreParamInLog: false,
                         },
   ) {
-    const userId = this.baseContextService.getUserData().userId || '???';
-    const loginRole = this.baseContextService.getUserData().loginRole || '???';
+    const userId = this.bcs.getUserData().userId || '???';
+    const loginRole = this.bcs.getUserData().loginRole || '???';
     const ipInfoFromRequest = getIpInfoFromRequest(request);
     await this.prisma.getOrigin().log_operation.create({
       data: {
-        req_id: this.baseContextService.getUserData().reqId,
+        req_id: this.bcs.getUserData().reqId,
         call_ip: ipInfoFromRequest.ip,
         host_name: `${ipInfoFromRequest.proto}://${ipInfoFromRequest.host}`,
         perms: permission,

@@ -9,7 +9,7 @@ import { R } from '../common/R';
 @Injectable()
 export class GlobalExceptionFilter implements ExceptionFilter {
   constructor(
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
   }
 
@@ -21,7 +21,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     try {
       response.status(HTTP.SERVER_ERROR().code).json(new R(exception.getStatus(), null, exception.message));
     } catch (e) {
-      const unknownException = new UnknownException(this.baseContextService.getUserData().reqId, exception);
+      const unknownException = new UnknownException(this.bcs.getUserData().reqId, exception);
       response.status(unknownException.getStatus()).json(new R(unknownException.getStatus(), null, unknownException.getMessage()));
     }
   }

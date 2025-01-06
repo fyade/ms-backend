@@ -2,19 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { DeptSysDto, DeptSysSelListDto, DeptSysSelAllDto, DeptSysInsOneDto, DeptSysUpdOneDto } from './dto';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class DeptSysService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_dept_sys', {
+      notNullKeys: ['deptId', 'sysId'],
+      numberKeys: ['deptId', 'sysId'],
+    })
   }
 
   async selDeptSys(dto: DeptSysSelListDto): Promise<R> {
     const res = await this.prisma.findPage<DeptSysDto, DeptSysSelListDto>('sys_dept_sys', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['deptId', 'sysId'],
-      numberKeys: ['deptId', 'sysId'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -23,9 +28,6 @@ export class DeptSysService {
     const res = await this.prisma.findAll<DeptSysDto>('sys_dept_sys', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['deptId', 'sysId'],
-      numberKeys: ['deptId', 'sysId'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

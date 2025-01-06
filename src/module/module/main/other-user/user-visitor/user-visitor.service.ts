@@ -18,10 +18,17 @@ import { UserDeptDto } from '../../sys-manage/user-dept/dto';
 import { DeptDto } from '../../sys-manage/dept/dto';
 import { UserUserGroupDto } from '../../../algorithm/user-user-group/dto';
 import { UserGroupDto } from '../../../algorithm/user-group/dto';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class UserVisitorService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_user_visitor', {
+      notNullKeys: ['id', 'username'],
+    })
   }
 
   async selUserVisitor(dto: UserVisitorSelListDto): Promise<R> {
@@ -30,9 +37,6 @@ export class UserVisitorService {
     const res = await this.prisma.findPage<UserVisitorDto, UserVisitorSelListDto>('sys_user_visitor', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['id', 'username'],
-      numberKeys: [],
-      completeMatchingKeys: [],
     });
     res.list.forEach(item => {
       delete item.password;

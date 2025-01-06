@@ -3,22 +3,25 @@ import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { DeptPermissionDto, DeptPermissionSelListDto, DeptPermissionSelAllDto, DeptPermissionInsOneDto, DeptPermissionUpdOneDto, DeptPermissionUpdManyDPDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class DeptPermissionService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
     private readonly cachePermissionService: CachePermissionService,
   ) {
+    this.bcs.setFieldSelectParam('sys_dept_permission', {
+      notNullKeys: ['deptId', 'permissionId'],
+      numberKeys: ['deptId', 'permissionId'],
+    })
   }
 
   async selDeptPermission(dto: DeptPermissionSelListDto): Promise<R> {
     const res = await this.prisma.findPage<DeptPermissionDto, DeptPermissionSelListDto>('sys_dept_permission', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['deptId', 'permissionId'],
-      numberKeys: ['deptId', 'permissionId'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -27,9 +30,6 @@ export class DeptPermissionService {
     const res = await this.prisma.findAll<DeptPermissionDto>('sys_dept_permission', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['deptId', 'permissionId'],
-      numberKeys: ['deptId', 'permissionId'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -48,7 +48,6 @@ export class DeptPermissionService {
     await this.cachePermissionService.clearPermissionsInCache();
     const allDeptPermission = await this.prisma.findAll<DeptPermissionDto>('sys_dept_permission', {
       data: { deptId: dto.deptId },
-      numberKeys: ['deptId'],
     });
     const perIds = allDeptPermission.map(item => item.permissionId);
     const addDPSPIDS = dto.permissionId.filter(item => perIds.indexOf(item) === -1);

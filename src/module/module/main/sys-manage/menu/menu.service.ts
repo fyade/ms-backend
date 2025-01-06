@@ -3,22 +3,26 @@ import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { MenuDto, MenuSelListDto, MenuSelAllDto, MenuInsOneDto, MenuUpdOneDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class MenuService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
     private readonly cachePermissionService: CachePermissionService,
   ) {
+    this.bcs.setFieldSelectParam('sys_menu', {
+      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysId'],
+      numberKeys: ['parentId', 'orderNum', 'sysId'],
+      completeMatchingKeys: ['type'],
+    })
   }
 
   async selMenu(dto: MenuSelListDto): Promise<R> {
     const res = await this.prisma.findPage<MenuDto, MenuSelListDto>('sys_menu', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysId'],
-      numberKeys: ['parentId', 'orderNum', 'sysId'],
-      completeMatchingKeys: ['type'],
     });
     return R.ok(res);
   }
@@ -27,9 +31,6 @@ export class MenuService {
     const res = await this.prisma.findAll<MenuDto>('sys_menu', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysId'],
-      numberKeys: ['parentId', 'orderNum', 'sysId'],
-      completeMatchingKeys: ['type'],
     });
     return R.ok(res);
   }

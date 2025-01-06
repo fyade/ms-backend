@@ -2,18 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { DicTypeDto, DicTypeSelListDto, DicTypeSelAllDto, DicTypeInsOneDto, DicTypeUpdOneDto } from './dto';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class DicTypeService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_dic_type', {
+      notNullKeys: ['name', 'type', 'ifDisabled', 'orderNum'],
+      numberKeys: ['orderNum'],
+    });
   }
 
   async selDicType(dto: DicTypeSelListDto): Promise<R> {
     const res = await this.prisma.findPage<DicTypeDto, DicTypeSelListDto>('sys_dic_type', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['name', 'type', 'ifDisabled', 'orderNum'],
-      numberKeys: ['orderNum'],
     });
     return R.ok(res);
   }
@@ -22,8 +28,6 @@ export class DicTypeService {
     const res = await this.prisma.findAll<DicTypeDto>('sys_dic_type', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['name', 'type', 'ifDisabled', 'orderNum'],
-      numberKeys: ['orderNum'],
     });
     return R.ok(res);
   }

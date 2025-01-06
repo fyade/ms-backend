@@ -2,19 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { UserTableDefaultPermissionDto, UserTableDefaultPermissionSelListDto, UserTableDefaultPermissionSelAllDto, UserTableDefaultPermissionInsOneDto, UserTableDefaultPermissionUpdOneDto } from './dto';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class UserTableDefaultPermissionService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_user_table_default_permission', {
+      notNullKeys: ['tableName', 'permType', 'permId'],
+      numberKeys: ['permId'],
+      completeMatchingKeys: ['tableName', 'permType', 'permId'],
+    })
   }
 
   async selUserTableDefaultPermission(dto: UserTableDefaultPermissionSelListDto): Promise<R> {
     const res = await this.prisma.findPage<UserTableDefaultPermissionDto, UserTableDefaultPermissionSelListDto>('sys_user_table_default_permission', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['tableName', 'permType', 'permId'],
-      numberKeys: ['permId'],
-      completeMatchingKeys: ['tableName', 'permType', 'permId'],
     });
     return R.ok(res);
   }
@@ -23,9 +29,6 @@ export class UserTableDefaultPermissionService {
     const res = await this.prisma.findAll<UserTableDefaultPermissionDto>('sys_user_table_default_permission', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['tableName', 'permType', 'permId'],
-      numberKeys: ['permId'],
-      completeMatchingKeys: ['tableName', 'permType', 'permId'],
     });
     return R.ok(res);
   }

@@ -13,17 +13,19 @@ export class UserDeptService {
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
     private readonly cachePermissionService: CachePermissionService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
+    this.bcs.setFieldSelectParam('sys_user_dept', {
+      notNullKeys: ['userId', 'deptId', 'loginRole'],
+      numberKeys: ['deptId'],
+      completeMatchingKeys: ['userId', 'deptId', 'loginRole'],
+    })
   }
 
   async selUserDept(dto: UserDeptSelListDto): Promise<R> {
     const res = await this.prisma.findPage<UserDeptDto, UserDeptSelListDto>('sys_user_dept', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'deptId', 'loginRole'],
-      numberKeys: ['deptId'],
-      completeMatchingKeys: ['userId', 'deptId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -32,9 +34,6 @@ export class UserDeptService {
     const res = await this.prisma.findAll<UserDeptDto>('sys_user_dept', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['userId', 'deptId', 'loginRole'],
-      numberKeys: ['deptId'],
-      completeMatchingKeys: ['userId', 'deptId', 'loginRole'],
     });
     return R.ok(res);
   }
@@ -51,7 +50,7 @@ export class UserDeptService {
 
   async updUserDeptUD(dto: UserDeptUpdUDDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
-    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, dto.userId)) {
+    if (!await this.authService.ifAdminUserUpdNotAdminUser(this.bcs.getUserData().userId, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
     const allDepts = await this.prisma.findAll<UserDeptDto>('sys_user_dept', { data: { userId: dto.userId } });
@@ -69,13 +68,12 @@ export class UserDeptService {
     const data = [];
     const allUsersOfThisDept = await this.prisma.findAll<UserDeptDto>('sys_user_dept', {
       data: { deptId: dto.deptId },
-      numberKeys: ['deptId'],
     });
     const allUserIdsOfThisDept = allUsersOfThisDept.map(item => item.userId);
     const userIds = dto.userId.filter(item => allUserIdsOfThisDept.indexOf(item) === -1);
     for (let i = 0; i < userIds.length; i++) {
       const userId = userIds[i];
-      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.baseContextService.getUserData().userId, userId)) {
+      if (!await this.authService.ifAdminUserUpdNotAdminUser(this.bcs.getUserData().userId, userId)) {
         throw new UserPermissionDeniedException();
       }
       data.push({

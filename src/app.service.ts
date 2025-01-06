@@ -23,7 +23,7 @@ export class AppService {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
     private readonly cacheTokenService: CacheTokenService,
   ) {
     this.cpuUsageMSDefault = 100; // CPU 利用率默认时间段
@@ -96,16 +96,16 @@ export class AppService {
 
   async getSystems(): Promise<R> {
     const systemsOfUser = await this.authService.systemsOfUser(
-      this.baseContextService.getUserData().userId,
-      this.baseContextService.getUserData().loginRole,
+      this.bcs.getUserData().userId,
+      this.bcs.getUserData().loginRole,
     );
     return R.ok(systemsOfUser);
   }
 
   async getPages(sysId: number): Promise<R> {
     const permissionsOfUser = await this.authService.permissionsOfUser({
-      userId: this.baseContextService.getUserData().userId,
-      loginRole: this.baseContextService.getUserData().loginRole,
+      userId: this.bcs.getUserData().userId,
+      loginRole: this.bcs.getUserData().loginRole,
       sysId,
       menuType: [T_MENU, T_COMP],
     });
@@ -114,8 +114,8 @@ export class AppService {
 
   async getButtons(sysId: number): Promise<R> {
     const buttonsOfUser = await this.authService.permissionsOfUser({
-      userId: this.baseContextService.getUserData().userId,
-      loginRole: this.baseContextService.getUserData().loginRole,
+      userId: this.bcs.getUserData().userId,
+      loginRole: this.bcs.getUserData().loginRole,
       sysId,
       menuType: [T_Inter],
     });

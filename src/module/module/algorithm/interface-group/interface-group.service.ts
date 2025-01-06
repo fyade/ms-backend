@@ -2,19 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../prisma/prisma.service';
 import { R } from '../../../../common/R';
 import { InterfaceGroupDto, InterfaceGroupSelListDto, InterfaceGroupSelAllDto, InterfaceGroupInsOneDto, InterfaceGroupUpdOneDto } from './dto';
+import { BaseContextService } from '../../../base-context/base-context.service';
 
 @Injectable()
 export class InterfaceGroupService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_interface_group', {
+      notNullKeys: ['label', 'parentId', 'baseURL', 'orderNum'],
+      numberKeys: ['parentId', 'orderNum'],
+    })
   }
 
   async selInterfaceGroup(dto: InterfaceGroupSelListDto): Promise<R> {
     const res = await this.prisma.findPage<InterfaceGroupDto, InterfaceGroupSelListDto>('sys_interface_group', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'parentId', 'baseURL', 'orderNum'],
-      numberKeys: ['parentId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -23,9 +28,6 @@ export class InterfaceGroupService {
     const res = await this.prisma.findAll<InterfaceGroupDto>('sys_interface_group', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'parentId', 'baseURL', 'orderNum'],
-      numberKeys: ['parentId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

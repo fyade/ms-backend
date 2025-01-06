@@ -4,10 +4,18 @@ import { R } from '../../../../../common/R';
 import { DicDataDto, DicDataSelListDto, DicDataSelAllDto, DicDataInsOneDto, DicDataUpdOneDto } from './dto';
 import { DicTypeDto } from '../dic-type/dto';
 import { base } from '../../../../../util/base';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class DicDataService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs:BaseContextService
+    ) {
+    this.bcs.setFieldSelectParam('sys_dic_data',{
+      notNullKeys: ['label', 'value', 'dicTypeId', 'ifDefault', 'ifDisabled', 'orderNum'],
+      numberKeys: ['dicTypeId', 'orderNum'],
+    })
   }
 
   async selDicDataOfType(perm: string, label: string = ''): Promise<R<DicDataDto[]>> {
@@ -20,8 +28,6 @@ export class DicDataService {
       const dicDataDtos = await this.prisma.findAll<DicDataDto, DicDataSelAllDto>('sys_dic_data', {
         data: { label: label, dicTypeId: dicTypeDto.id, ifDisabled: base.N },
         orderBy: true,
-        notNullKeys: ['label', 'dicTypeId', 'ifDisabled'],
-        numberKeys: ['dicTypeId'],
       });
       ret.push(...dicDataDtos);
     }
@@ -32,9 +38,6 @@ export class DicDataService {
     const res = await this.prisma.findPage<DicDataDto, DicDataSelListDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'value', 'dicTypeId', 'ifDefault', 'ifDisabled', 'orderNum'],
-      numberKeys: ['dicTypeId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -43,9 +46,6 @@ export class DicDataService {
     const res = await this.prisma.findAll<DicDataDto>('sys_dic_data', {
       data: dto,
       orderBy: true,
-      notNullKeys: ['label', 'value', 'dicTypeId', 'ifDefault', 'ifDisabled', 'orderNum'],
-      numberKeys: ['dicTypeId', 'orderNum'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }

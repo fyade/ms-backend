@@ -7,7 +7,8 @@ import * as fs from 'fs';
 import { base } from '../../../../../util/base';
 import {
   FileChunkDto,
-  FileDto, FileSelListDto,
+  FileDto,
+  FileSelListDto,
   FileUploadOneChunk_check,
   FileUploadOneChunk_merge,
   FileUploadOneChunk_upload,
@@ -23,9 +24,20 @@ export class FileUploadService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly baseContextService: BaseContextService,
+    private readonly bcs: BaseContextService,
   ) {
     this.env = currentEnv();
+    this.bcs.setFieldSelectParam('tbl_file', {
+      notNullKeys: ['fileName', 'fileNewName', 'fileSize', 'fileMd5', 'ifChunk', 'chunkNum', 'ifMerge', 'ifFirst', 'ifFinished', 'module'],
+      numberKeys: ['fileSize', 'chunkNum'],
+    })
+    this.bcs.setFieldSelectParam('tbl_file_chunk', {
+      notNullKeys: ['fileName', 'fileNewName', 'fileSize', 'fileMd5', 'ifChunk', 'chunkNum', 'ifMerge', 'ifFirst', 'ifFinished', 'module'],
+      numberKeys: ['fileSize', 'chunkNum'],
+      ifUpdateRole: false,
+      ifUpdateBy: false,
+      ifUpdateTime: false,
+    })
   }
 
   async selList(dto: FileSelListDto): Promise<R> {
@@ -34,9 +46,6 @@ export class FileUploadService {
       orderBy: {
         createTime: 'desc',
       },
-      notNullKeys: ['fileName', 'fileNewName', 'fileSize', 'fileMd5', 'ifChunk', 'chunkNum', 'ifMerge', 'ifFirst', 'ifFinished', 'module'],
-      numberKeys: ['fileSize', 'chunkNum'],
-      completeMatchingKeys: [],
     });
     for (let i = 0; i < data.list.length; i++) {
       if (data.list[i].ifChunk === base.Y && data.list[i].ifMerge === base.N) {
@@ -45,9 +54,6 @@ export class FileUploadService {
             fileMd5: data.list[i].fileMd5,
             ifFinished: base.Y,
           },
-          notNullKeys: ['fileName', 'fileNewName', 'fileSize', 'fileMd5', 'ifChunk', 'chunkNum', 'ifMerge', 'ifFirst', 'ifFinished', 'module'],
-          numberKeys: ['fileSize', 'chunkNum'],
-          completeMatchingKeys: [],
         });
         data.list[i]['uploadedCount'] = count;
       }
@@ -214,10 +220,6 @@ export class FileUploadService {
         chunkName: chunkName,
         chunkIndex: dto.chunkIndex,
         ifFinished: base.N,
-      }, {
-        ifUpdateRole: false,
-        ifUpdateBy: false,
-        ifUpdateTime: false,
       });
       // 保存文件
       const filePath = join(this.env.file.fileChunkPath, chunkName);
@@ -226,10 +228,6 @@ export class FileUploadService {
       await this.prisma.updateById<FileChunkDto>('tbl_file_chunk', {
         id: info.id,
         ifFinished: base.Y,
-      }, {
-        ifUpdateRole: false,
-        ifUpdateBy: false,
-        ifUpdateTime: false,
       });
       return R.ok();
     } catch (e) {

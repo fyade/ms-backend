@@ -2,19 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { RoleSysDto, RoleSysSelListDto, RoleSysSelAllDto, RoleSysInsOneDto, RoleSysUpdOneDto } from './dto';
+import { BaseContextService } from '../../../../base-context/base-context.service';
 
 @Injectable()
 export class RoleSysService {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bcs: BaseContextService,
+  ) {
+    this.bcs.setFieldSelectParam('sys_role_sys', {
+      notNullKeys: ['roleId', 'sysId'],
+      numberKeys: ['roleId', 'sysId'],
+    })
   }
 
   async selRoleSys(dto: RoleSysSelListDto): Promise<R> {
     const res = await this.prisma.findPage<RoleSysDto, RoleSysSelListDto>('sys_role_sys', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['roleId', 'sysId'],
-      numberKeys: ['roleId', 'sysId'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
@@ -23,9 +28,6 @@ export class RoleSysService {
     const res = await this.prisma.findAll<RoleSysDto>('sys_role_sys', {
       data: dto,
       orderBy: false,
-      notNullKeys: ['roleId', 'sysId'],
-      numberKeys: ['roleId', 'sysId'],
-      completeMatchingKeys: [],
     });
     return R.ok(res);
   }
