@@ -19,7 +19,7 @@ export class LogUserLoginService {
       ifUpdateBy: false,
       ifUpdateTime: false,
       ifDeleted: false,
-    })
+    });
   }
 
   async selLogUserLogin(dto: LogUserLoginSelListDto): Promise<R> {

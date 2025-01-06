@@ -868,44 +868,4 @@ export class PrismaService extends PrismaClientOrigin {
       take: pageSize,
     };
   }
-
-  // /**
-  //  * 生成连表查询用的 sql
-  //  * @param model
-  //  * @param operateType
-  //  * @param pageNum
-  //  * @param pageSize
-  //  * @param dataTypes
-  //  * @private
-  //  */
-  // private async genSqlOfTRP({
-  //                             model,
-  //                             operateType,
-  //                             pageNum,
-  //                             pageSize,
-  //                             dataTypes,
-  //                           }: {
-  //                             model: string,
-  //                             operateType: string,
-  //                             pageNum?: number,
-  //                             pageSize?: number,
-  //                             dataTypes: string[]
-  //                           },
-  // ) {
-  //   let sql = '';
-  //   // todo 这里暂且只写一下 sys_user 表的，其他用户表的也记得写一下
-  //   if (dataTypes.includes('SELF_ROLE') && this.getLoginRole() === 'admin') {
-  //     sql = `select ${model}.id from ${model} join sys_user_role on ${model}.create_by = sys_user_role.user_id join sys_role on sys_user_role.role_id = sys_role.id where ${model}.deleted = '${base.N}' and sys_user_role.deleted = '${base.N}' and sys_role.deleted = '${base.N}' group by ${model}.id`;
-  //     if (operateType === 'SEL_LIST') {
-  //       const pns = this.getSkipAndTakeFromPNS(pageNum, pageSize);
-  //       sql = sql + ` limit ${pns.take} offset ${pns.skip}`;
-  //     }
-  //   }
-  //   if (sql) {
-  //     sql = sql + ';';
-  //     const datas: { id: number | string }[] = await this.getOrigin().$queryRawUnsafe(sql);
-  //     return datas.map(item => item.id);
-  //   }
-  //   return [];
-  // }
 }

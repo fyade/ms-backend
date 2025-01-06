@@ -19,7 +19,7 @@ export class LogOperationService {
       ifUpdateBy: false,
       ifUpdateTime: false,
       ifDeleted: false,
-    })
+    });
   }
 
   async selLogOperation(dto: LogOperationSelListDto): Promise<R> {

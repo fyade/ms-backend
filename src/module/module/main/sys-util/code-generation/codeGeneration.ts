@@ -78,6 +78,7 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
   const isBusiness = !!table.businessName
 
   const hd2_prismaConfig = (() => {
+    const o = {};
     const tsNames = columns.map(item => item.tsName);
     const selListParam = {
       data: 'dto',
@@ -102,11 +103,19 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
         .map(item => toCamelCase(item.colName)),
       ifDeleted: false,
     };
+    o['notNullKeys'] = selListParam.notNullKeys;
+    o['numberKeys'] = selListParam.numberKeys;
+    o['completeMatchingKeys'] = selListParam.completeMatchingKeys;
     if (ifDelSelKeys(selListParam.selKeys)) delete selListParam.selKeys;
     if (selListParam.notNullKeys.length === 0) delete selListParam.notNullKeys;
     if (selListParam.numberKeys.length === 0) delete selListParam.numberKeys;
     if (selListParam.completeMatchingKeys.length === 0) delete selListParam.completeMatchingKeys;
     if (tsNames.includes('deleted')) delete selListParam.ifDeleted;
+    
+    delete selListParam.notNullKeys;
+    delete selListParam.numberKeys;
+    delete selListParam.completeMatchingKeys;
+    delete selListParam.ifDeleted;
 
     const selAllParam = selListParam;
 
@@ -117,12 +126,16 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
     if (ifDelSelKeys(selOnesParam.selKeys)) delete selOnesParam.selKeys;
     if (tsNames.includes('deleted')) delete selOnesParam.ifDeleted;
 
+    delete selOnesParam.ifDeleted;
+
     const selOneParam = {
       selKeys: columns.filter(item => item.ifSelOne === base.Y).map(item => toCamelCase(item.colName)),
       ifDeleted: false,
     };
     if (ifDelSelKeys(selOneParam.selKeys)) delete selOneParam.selKeys;
     if (tsNames.includes('deleted')) delete selOneParam.ifDeleted;
+
+    delete selOneParam.ifDeleted;
 
     const insParam = {
       ifCreateRole: false,
@@ -140,6 +153,21 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
     if (tsNames.includes('createTime')) delete insParam.ifCreateTime;
     if (tsNames.includes('updateTime')) delete insParam.ifUpdateTime;
     if (tsNames.includes('deleted')) delete insParam.ifDeleted;
+    o['ifCreateRole'] = tsNames.includes('createRole');
+    o['ifUpdateRole'] = tsNames.includes('updateRole');
+    o['ifCreateBy'] = tsNames.includes('createBy');
+    o['ifUpdateBy'] = tsNames.includes('updateBy');
+    o['ifCreateTime'] = tsNames.includes('createTime');
+    o['ifUpdateTime'] = tsNames.includes('updateTime');
+    o['ifDeleted'] = tsNames.includes('deleted');
+
+    delete insParam.ifCreateRole;
+    delete insParam.ifUpdateRole;
+    delete insParam.ifCreateBy;
+    delete insParam.ifUpdateBy;
+    delete insParam.ifCreateTime;
+    delete insParam.ifUpdateTime;
+    delete insParam.ifDeleted;
 
     const inssParam = insParam;
 
@@ -153,6 +181,11 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
     if (tsNames.includes('updateBy')) delete updParam.ifUpdateBy;
     if (tsNames.includes('updateTime')) delete updParam.ifUpdateTime;
     if (tsNames.includes('deleted')) delete updParam.ifDeleted;
+
+    delete updParam.ifUpdateRole;
+    delete updParam.ifUpdateBy;
+    delete updParam.ifUpdateTime;
+    delete updParam.ifDeleted;
 
     const updsParam = updParam;
 
@@ -174,6 +207,21 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
       }).join(',\n') + ',\n    }';
     }
 
+    function __(o) {
+      return Object.keys(o).reduce((obj, key) => {
+        if (typeOf(o[key]) === 'boolean' && o[key] === true) {
+          return obj
+        }
+        if (typeOf(o[key]) === 'array' && o[key].length === 0) {
+          return obj
+        }
+        return {
+          ...obj,
+          [key]: o[key]
+        }
+      }, {})
+    }
+
     return {
       selListParam: _(selListParam),
       selAllParam: _(selAllParam),
@@ -183,6 +231,7 @@ export function codeGeneration({ table, columns, sys }: { table: CodeGenTableDto
       inssParam: _(inssParam),
       updParam: _(updParam),
       updsParam: _(updsParam),
+      _: _(__(o))
     };
   })();
   const qd3_dialogFormDefaultData = [
@@ -388,10 +437,15 @@ ${`}`}
 ${`import { PrismaService } from '../../../../${isBusiness?'../':''}prisma/prisma.service';`}
 ${`import { R } from '../../../../${isBusiness?'../':''}common/R';`}
 ${`import { ${moduleName2}Dto, ${moduleName2}SelListDto, ${moduleName2}SelAllDto, ${moduleName2}InsOneDto, ${moduleName2}UpdOneDto } from './dto';`}
+${`import { BaseContextService } from '../../../${isBusiness?'../':''}base-context/base-context.service';`}
 ${``}
 ${`@Injectable()`}
 ${`export class ${moduleName2}Service {`}
-${`  constructor(private readonly prisma: PrismaService) {`}
+${`  constructor(`}
+${`    private readonly prisma: PrismaService,`}
+${`    private readonly bcs: BaseContextService,`}
+${`  ) {`}
+${`    this.bcs.setFieldSelectParam('${table.tableName}'${hd2_prismaConfig._});`}
 ${`  }`}
 ${``}
 ${`  async sel${moduleName2}(dto: ${moduleName2}SelListDto): Promise<R> {`}
