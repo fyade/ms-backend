@@ -40,7 +40,7 @@ export class UserService {
     this.maxLoginFailCount = 10;
     this.bcs.setFieldSelectParam('sys_user', {
       notNullKeys: ['id', 'username'],
-    })
+    });
   }
 
   async selUser(dto: UserSelListDto): Promise<R> {
@@ -59,7 +59,9 @@ export class UserService {
     const topAdminUser = await this.prisma.findAll<AdminTopDto>('sys_admin_top', {
       data: {
         userId: {
-          in: res.list.map(item => item.id),
+          in: {
+            value: res.list.map(item => item.id),
+          },
         },
       },
     });
@@ -68,7 +70,9 @@ export class UserService {
     const allUserRolesOfThoseUsers = await this.prisma.findAll<UserRoleDto>('sys_user_role', {
       data: {
         userId: {
-          in: userIds,
+          in: {
+            value: userIds,
+          },
         },
         login_role: 'admin',
       },
@@ -77,14 +81,18 @@ export class UserService {
     const allRolesOfThoseUsers = await this.prisma.findAll<RoleDto>('sys_role', {
       data: {
         id: {
-          in: allRoleIdsOfThoseUsers,
+          in: {
+            value: allRoleIdsOfThoseUsers,
+          },
         },
       },
     });
     const allUserDeptsOfThoseUsers = await this.prisma.findAll<UserDeptDto>('sys_user_dept', {
       data: {
         userId: {
-          in: userIds,
+          in: {
+            value: userIds,
+          },
         },
         login_role: 'admin',
       },
@@ -93,14 +101,18 @@ export class UserService {
     const allDeptsOfThoseUsers = await this.prisma.findAll<DeptDto>('sys_dept', {
       data: {
         id: {
-          in: allUserDeptIdsOfThoseUsers,
+          in: {
+            value: allUserDeptIdsOfThoseUsers,
+          },
         },
       },
     });
     const allUserUserGroupsOfThoseUsers = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', {
       data: {
         userId: {
-          in: userIds,
+          in: {
+            value: userIds,
+          },
         },
         login_role: 'admin',
       },
@@ -109,7 +121,9 @@ export class UserService {
     const allUserGroupsOfThoseUsers = await this.prisma.findAll<UserGroupDto>('sys_user_group', {
       data: {
         id: {
-          in: allUserUserGroupIdsOfThoseUsers,
+          in: {
+            value: allUserUserGroupIdsOfThoseUsers,
+          },
         },
       },
     });
