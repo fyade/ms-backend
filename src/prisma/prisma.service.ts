@@ -828,9 +828,6 @@ export class PrismaService extends PrismaClientOrigin {
       },
     };
     const many: { count: number } = await this.getModel(model).updateMany(arg);
-    if (ids.length !== 0 && many.count === 0) {
-      throw new Exception('【开发中】你可能无权限。');
-    }
     return new Promise(resolve => resolve(many));
   }
 

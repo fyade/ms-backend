@@ -81,7 +81,9 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 3. 运行 `npm run build` 命令，然后将 /dist 目录复制至 生产环境根目录 /dist；
 
-4. 运行 `$env:NODE_ENV="prod"; node .\dist\main.js` 命令，其中 NODE_ENV 是命令行变量，在不同系统、不同命令行工具中写法可能不一样，请根据自身情况修改。
+4. 在 node_modules 文件夹中，找到 svg-captcha 文件夹，然后将文件夹内 /fonts 目录复制至 生产环境根目录 /fonts；
+
+5. 运行 `$env:NODE_ENV="prod"; node .\dist\main.js` 命令，其中 NODE_ENV 是命令行变量，在不同系统、不同命令行工具中写法可能不一样，请根据自身情况修改。
 
 ## 修改数据库结构 How to edit database
 
