@@ -365,7 +365,7 @@ export class AuthService {
     if (request) {
       try {
         const ipInfoFromRequest = getIpInfoFromRequest(request);
-        algorithmCallDto.callIp = `${ipInfoFromRequest.proto}://${ipInfoFromRequest.ip}`;
+        algorithmCallDto.callIp = `${ipInfoFromRequest.ip}`;
       } catch (e) {
         console.error(e);
       }
