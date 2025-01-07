@@ -16,6 +16,7 @@ import { CachePermissionService } from '../cache/cache.permission.service';
 import { UserTableDefaultPermissionDto } from '../module/main/other-user/user-table-default-permission/dto';
 import { objToCamelCase } from '../../util/BaseUtils';
 import { SysDto } from '../module/main/sys-manage/sys/dto';
+import { InterfaceGroupDto } from '../module/algorithm/interface-group/dto';
 
 @Injectable()
 export class AuthService {
@@ -338,7 +339,9 @@ export class AuthService {
     const topAdminUser = await this.prisma.findAll<AdminTopDto>('sys_admin_top', {
       data: {
         userId: {
-          in: [controlUserId, controledUserId],
+          in: {
+            value: [controlUserId, controledUserId],
+          },
         },
       },
     });
@@ -350,10 +353,11 @@ export class AuthService {
    * 当前用户是否有此算法权限
    * @param userid
    * @param loginRole
+   * @param ppermission
    * @param permission
    * @param request
    */
-  async hasSFPermissionByUserid(userid: string, loginRole: string, permission: string, request?: Request) {
+  async hasSFPermissionByUserid(userid: string, loginRole: string, ppermission: string, permission: string, request?: Request) {
     const algorithmCallDto = new LogAlgorithmCallDto();
     algorithmCallDto.userId = userid;
     algorithmCallDto.callIp = '';
@@ -366,43 +370,46 @@ export class AuthService {
         console.error(e);
       }
     }
-    const interf: InterfaceDto[] = await this.prisma.$queryRaw`
-      select si.id          as id,
-             si.label       as label,
-             si.icon        as icon,
-             si.order_num   as orderNum,
-             si.if_disabled as ifDisabled,
-             si.if_public   as ifPublic,
-             si.perms       as perms,
-             si.url         as url,
-             si.remark      as remark,
-             si.create_by   as createBy,
-             si.update_by   as updateBy,
-             si.create_time as createTime,
-             si.update_time as updateTime,
-             si.deleted     as deleted
-      from sys_interface si
-      where si.deleted = ${base.N}
-        and si.if_disabled = ${base.N}
-        and si.perms = ${permission};
-    `;
-    if (interf.length === 0) {
-      throw new Exception('当前算法不存在。');
+    const interfg = await this.prisma.getOrigin().sys_interface_group.findMany({
+      where: {
+        perms: ppermission,
+        ...this.prisma.defaultSelArg().where,
+      },
+    });
+    const interf = await this.prisma.getOrigin().sys_interface.findMany({
+      where: {
+        perms: permission,
+        if_disabled: base.N,
+        ...this.prisma.defaultSelArg().where,
+      },
+    });
+    if (interfg.length === 0 || interf.length === 0) {
+      throw new Exception('算法组或算法不存在。');
+    }
+    const interfgf = await this.prisma.getOrigin().sys_interface_interface_group.findMany({
+      where: {
+        interface_id: interf[0].id,
+        interface_group_id: interfg[0].id,
+        ...this.prisma.defaultSelArg().where,
+      },
+    });
+    if (interfgf.length === 0) {
+      throw new Exception('当前算法组中不存在当前算法。');
     }
     if (interf.length > 0) {
       // 是否公共算法
-      if (interf[0].ifPublic === base.Y) {
-        await this.insLogAlgorithmCall(-1, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      if (interf[0].if_public === base.Y) {
+        await this.insLogAlgorithmCall(-1, ppermission, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
         return true;
       }
       // 是否禁用
-      if (interf[0].ifDisabled === base.Y) {
+      if (interf[0].if_disabled === base.Y) {
         throw new Exception('当前算法被禁用。');
       }
     }
-    const permissions = await this.getSFPermissionsOfUserid(userid, permission, loginRole);
+    const permissions = await this.getSFPermissionsOfUserid(userid, ppermission, permission, loginRole);
     if (permissions.length === 0) {
-      const permissions2 = await this.getSFPermissionsOfUserid(userid, permission, loginRole, base.Y);
+      const permissions2 = await this.getSFPermissionsOfUserid(userid, ppermission, permission, loginRole, base.Y);
       if (permissions2.length > 0) {
         throw new Exception('请求次数已使用完。');
       } else {
@@ -419,7 +426,7 @@ export class AuthService {
     }
     // 在期限内，且不限制次数，则放行
     if (userGroupPermission.ifLimitRequestTimes === base.N) {
-      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, ppermission, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
       return true;
     }
     // 在时间期限内，次数还没用光，则放行
@@ -431,7 +438,7 @@ export class AuthService {
     `;
     const count = count1[0].count;
     if (limitRequestTimes > count) {
-      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, ppermission, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
       if (Number(count) === limitRequestTimes - 1) {
         if (userGroupPermission.ifRejectRequestUseUp === base.N) {
         } else {
@@ -447,7 +454,7 @@ export class AuthService {
     }
     // 次数用光后是否停止服务
     if (userGroupPermission.ifRejectRequestUseUp === base.N) {
-      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
+      await this.insLogAlgorithmCall(algorithmCallDto.userGroupPermissionId, ppermission, permission, algorithmCallDto.userId, algorithmCallDto.callIp, '?', loginRole, algorithmCallDto.remark);
       return true;
     } else {
       // 把状态更改为已用完
@@ -463,11 +470,12 @@ export class AuthService {
   /**
    * 当前用户的算法权限列表
    * @param userid
+   * @param ppermission
    * @param permission
    * @param loginRole
    * @param ifIgnoreUseUp
    */
-  async getSFPermissionsOfUserid(userid: string, permission: string, loginRole: string, ifIgnoreUseUp = base.N): Promise<UserGroupPermissionDto[]> {
+  async getSFPermissionsOfUserid(userid: string, ppermission: string, permission: string, loginRole: string, ifIgnoreUseUp = base.N): Promise<UserGroupPermissionDto[]> {
     const userSFPermissions: UserGroupPermissionDto[] = await this.prisma.$queryRaw`
       select sugp.id                       as id,
              sugp.user_group_id            as userGroupId,
@@ -501,9 +509,14 @@ export class AuthService {
             (select siig.interface_group_id
              from sys_interface_interface_group siig
              where siig.deleted = ${base.N}
+               and siig.interface_group_id = (select sig.id
+                                              from sys_interface_group sig
+                                              where sig.deleted = ${base.N}
+                                                and sig.perms = ${ppermission})
                and siig.interface_id = (select si.id
                                         from sys_interface si
                                         where si.deleted = ${base.N}
+                                          and si.if_disabled = ${base.N}
                                           and si.perms = ${permission}))
       order by sugp.order_num;
     `;
@@ -654,6 +667,7 @@ export class AuthService {
   /**
    * 插入算法调用日志
    * @param userGroupPermissionId
+   * @param pperms
    * @param perms
    * @param userId
    * @param callIp
@@ -661,10 +675,11 @@ export class AuthService {
    * @param loginRole
    * @param remark
    */
-  async insLogAlgorithmCall(userGroupPermissionId: number, perms: string, userId: string, callIp: string, ifSuccess: string, loginRole: string, remark: string) {
+  async insLogAlgorithmCall(userGroupPermissionId: number, pperms: string, perms: string, userId: string, callIp: string, ifSuccess: string, loginRole: string, remark: string) {
     await this.prisma.getOrigin().log_algorithm_call.create({
       data: {
         user_group_permission_id: userGroupPermissionId,
+        pperms: pperms,
         perms: perms,
         user_id: userId,
         call_ip: callIp,

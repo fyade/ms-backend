@@ -49,7 +49,9 @@ export class UserVisitorService {
     const allUserRolesOfThoseUsers = await this.prisma.findAll<UserRoleDto>('sys_user_role', {
       data: {
         userId: {
-          in: userIds,
+          in: {
+            value: userIds
+          },
         },
         login_role: 'visitor',
       },
@@ -58,14 +60,18 @@ export class UserVisitorService {
     const allRolesOfThoseUsers = await this.prisma.findAll<RoleDto>('sys_role', {
       data: {
         id: {
-          in: allRoleIdsOfThoseUsers,
+          in: {
+            value: allRoleIdsOfThoseUsers
+          },
         },
       },
     });
     const allUserDeptsOfThoseUsers = await this.prisma.findAll<UserDeptDto>('sys_user_dept', {
       data: {
         userId: {
-          in: userIds,
+          in: {
+            value: userIds
+          },
         },
         login_role: 'visitor',
       },
@@ -74,14 +80,18 @@ export class UserVisitorService {
     const allDeptsOfThoseUsers = await this.prisma.findAll<DeptDto>('sys_dept', {
       data: {
         id: {
-          in: allUserDeptIdsOfThoseUsers,
+          in: {
+            value: allUserDeptIdsOfThoseUsers
+          },
         },
       },
     });
     const allUserUserGroupsOfThoseUsers = await this.prisma.findAll<UserUserGroupDto>('sys_user_user_group', {
       data: {
         userId: {
-          in: userIds,
+          in: {
+            value: userIds
+          },
         },
         login_role: 'visitor',
       },
@@ -90,7 +100,9 @@ export class UserVisitorService {
     const allUserGroupsOfThoseUsers = await this.prisma.findAll<UserGroupDto>('sys_user_group', {
       data: {
         id: {
-          in: allUserUserGroupIdsOfThoseUsers,
+          in: {
+            value: allUserUserGroupIdsOfThoseUsers
+          },
         },
       },
     });

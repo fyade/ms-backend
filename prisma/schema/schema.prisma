@@ -461,6 +461,7 @@ model sys_interface_group {
   id                             Int                             @id @default(autoincrement()) @db.Int
   label                          String                          @db.VarChar(30)
   parent_id                      Int                             @db.Int
+  perms                          String                          @db.VarChar(100)
   base_u_r_l                     String                          @db.VarChar(300)
   order_num                      Int                             @db.Int
   remark                         String?                         @db.VarChar(300)
@@ -624,6 +625,7 @@ model log_operation {
 model log_algorithm_call {
   id                        Int                       @id @default(autoincrement()) @db.Int
   user_group_permission_id  Int                       @db.Int
+  pperms                    String                    @db.VarChar(100)
   perms                     String                    @db.VarChar(100)
   user_id                   String                    @db.VarChar(10)
   call_ip                   String                    @db.VarChar(20)

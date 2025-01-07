@@ -11,16 +11,16 @@ export class LogAlgorithmCallService {
     private readonly bcs: BaseContextService,
   ) {
     this.bcs.setFieldSelectParam('log_algorithm_call', {
-      notNullKeys: ['userGroupPermissionId', 'perms', 'userId', 'callIp', 'ifSuccess', 'loginRole'],
+      notNullKeys: ['userGroupPermissionId', 'pperms', 'perms', 'userId', 'callIp', 'ifSuccess', 'loginRole'],
       numberKeys: ['userGroupPermissionId'],
-      completeMatchingKeys: ['userGroupPermissionId', 'perms', 'userId', 'loginRole'],
+      completeMatchingKeys: ['userGroupPermissionId', 'pperms', 'perms', 'userId', 'loginRole'],
       ifCreateRole: false,
       ifUpdateRole: false,
       ifCreateBy: false,
       ifUpdateBy: false,
       ifUpdateTime: false,
       ifDeleted: false,
-    })
+    });
   }
 
   async selLogAlgorithmCall(dto: LogAlgorithmCallSelListDto): Promise<R> {

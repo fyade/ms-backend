@@ -19,7 +19,7 @@ export class AlgorithmController {
     summary: '算法接口',
   })
   @Authorize({
-    permission: '',
+    permission: 'algorithm:algorithm',
     label: '算法',
     ifSF: true,
   })

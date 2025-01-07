@@ -9,6 +9,8 @@ export class LogAlgorithmCallDto extends BaseDto {
 
   userGroupPermissionId: number;
 
+  pperms: string;
+
   perms: string;
 
   userId: string;
@@ -29,7 +31,10 @@ export class LogAlgorithmCallSelListDto extends PageDto {
   @ApiProperty({ description: '用户组权限id', required: false })
   userGroupPermissionId: number;
 
-  @ApiProperty({ description: '权限标识', required: false })
+  @ApiProperty({ description: '接口组权限标识', required: false })
+  pperms: string;
+
+  @ApiProperty({ description: '接口权限标识', required: false })
   perms: string;
 
   @ApiProperty({ description: '用户id', required: false })
@@ -52,7 +57,10 @@ export class LogAlgorithmCallSelAllDto {
   @ApiProperty({ description: '用户组权限id', required: false })
   userGroupPermissionId: number;
 
-  @ApiProperty({ description: '权限标识', required: false })
+  @ApiProperty({ description: '接口组权限标识', required: false })
+  pperms: string;
+
+  @ApiProperty({ description: '接口权限标识', required: false })
   perms: string;
 
   @ApiProperty({ description: '用户id', required: false })
@@ -77,8 +85,12 @@ export class LogAlgorithmCallInsOneDto {
   @IsNotEmpty({ message: '用户组权限id不能为空' })
   userGroupPermissionId: number;
 
-  @ApiProperty({ description: '权限标识', required: true })
-  @IsNotEmpty({ message: '权限标识不能为空' })
+  @ApiProperty({ description: '接口组权限标识', required: true })
+  @IsNotEmpty({ message: '接口组权限标识不能为空' })
+  pperms: string;
+
+  @ApiProperty({ description: '接口权限标识', required: true })
+  @IsNotEmpty({ message: '接口权限标识不能为空' })
   perms: string;
 
   @ApiProperty({ description: '用户id', required: true })

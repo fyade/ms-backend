@@ -11,9 +11,9 @@ export class InterfaceGroupService {
     private readonly bcs: BaseContextService,
   ) {
     this.bcs.setFieldSelectParam('sys_interface_group', {
-      notNullKeys: ['label', 'parentId', 'baseURL', 'orderNum'],
+      notNullKeys: ['label', 'parentId', 'perms', 'baseURL', 'orderNum'],
       numberKeys: ['parentId', 'orderNum'],
-    })
+    });
   }
 
   async selInterfaceGroup(dto: InterfaceGroupSelListDto): Promise<R> {

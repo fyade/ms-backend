@@ -64,8 +64,7 @@ export class PermissionGuard implements CanActivate {
     // 算法接口权限控制
     if (ifSF) {
       const reqBody = request.body as unknown as AlgorithmDto;
-      const permission = reqBody.perms;
-      if (!permission) {
+      if (!reqBody.pperms || !reqBody.perms) {
         await this.authService.insLogOperation(permission, request, false, {
           remark: '参数错误，权限标识不可为空。',
           ifIgnoreParamInLog,
@@ -73,7 +72,7 @@ export class PermissionGuard implements CanActivate {
         throw new ParameterException('参数错误，权限标识不可为空。');
       }
       if (userId) {
-        const permissionsOfUser = await this.authService.hasSFPermissionByUserid(userId, loginRole, permission, request);
+        const permissionsOfUser = await this.authService.hasSFPermissionByUserid(userId, loginRole, reqBody.pperms, reqBody.perms, request);
         if (permissionsOfUser) {
           return true;
         }
