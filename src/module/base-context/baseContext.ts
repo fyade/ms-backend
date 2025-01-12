@@ -1,4 +1,5 @@
 import { randomUUID } from '../../util/IdUtils';
+import { baseInterfaceColumns2 } from '../module/main/sys-util/code-generation/codeGeneration';
 
 export const USER_INFO_LINSHI_FIELD_NAME = 'user-info-linshi';
 
@@ -58,7 +59,7 @@ export class FieldSelectParam {
                 ifDeleted?: boolean,
               } = {},
   ) {
-    this.notNullKeys = notNullKeys;
+    this.notNullKeys = [...baseInterfaceColumns2, ...notNullKeys];
     this.numberKeys = numberKeys;
     this.completeMatchingKeys = completeMatchingKeys;
     this.ifCreateRole = ifCreateRole;

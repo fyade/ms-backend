@@ -18,6 +18,7 @@ export const currentEnv = () => {
 };
 
 export const portFromCmd = process.env.PORT;
+export const wsPortFromCmd = process.env.WS_PORT;
 const mysqlConnectParam = '';
 export const publicConfig = {
 };
@@ -26,6 +27,7 @@ const config = {
     ...publicConfig,
     mode: base.DEV,
     port: portFromCmd || 8060,
+    wsPort: wsPortFromCmd || 8061,
     staticRoot: '/static/file',
     redis: {
       host: 'localhost',
