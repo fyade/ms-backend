@@ -7,9 +7,11 @@ import { Request } from 'express';
  */
 export function getIpInfoFromRequest(request: Request) {
   const loginIp: string = request.headers['x-real-ip'] || request.headers['x-forwarded-for'] || (request as any).ip;
-  const proto = (request.headers['x-forwarded-proto'] || request.protocol || 'http') as string;
+  const proto_ = request.headers['x-forwarded-proto'] || request.protocol || 'http';
+  const proto = Array.isArray(proto_) ? proto_.toString() : proto_;
   const hostname = request.hostname;
-  const port = (request.headers['x-forwarded-port'] || '80') as string;
+  const port_ = request.headers['x-forwarded-port'] || '80';
+  const port = Array.isArray(proto_) ? proto_.toString() : proto_;
   const userAgentString = request.headers['user-agent'];
   const userAgent = uaparser(userAgentString);
   const browser = userAgent.browser;

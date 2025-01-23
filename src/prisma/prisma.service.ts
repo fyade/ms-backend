@@ -10,7 +10,6 @@ import { deepClone } from '../util/ObjectUtils';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { PrismaClient } from '@prisma/client';
 import { baseInterfaceColumns2 } from '../module/module/main/sys-util/code-generation/codeGeneration';
-import { Exception } from '../exception/Exception';
 import { PrismaParam, SelectParamObj } from './dto';
 
 const env = currentEnv();
@@ -383,12 +382,37 @@ export class PrismaService extends PrismaClientOrigin {
                     break;
                 }
               }
+              // 如果指定为日期类型
+              if (datum_[itm].type === 'date') {
+                switch (typeOf(datum_[itm].value)) {
+                  case 'array':
+                    items[item][itm] = datum_[itm].value.map(n => new Date(n));
+                    break;
+                  // case 'object':
+                  //   items[item][itm] = Object.keys(datum_[itm].value)
+                  //     .reduce((obj, key) => ({ ...obj, [key]: Number(datum_[itm].value[key]) }), {});
+                  //   break;
+                  case 'string':
+                    items[item][itm] = new Date(datum_[itm].value);
+                    break;
+                  default:
+                    items[item][itm] = datum_[itm].value;
+                    break;
+                }
+              }
               // 未指定类型，原样返回
               else {
                 items[item][itm] = datum_[itm].value;
               }
+              if (itm === 'between') {
+                delete items[item][itm];
+                items[item]['gte'] = datum_[itm].value[0];
+                items[item]['lte'] = datum_[itm].value[1];
+              }
             }
-            obj2.OR.push(items);
+            if (Object.keys(datum_).length > 0) {
+              obj2.OR.push(items);
+            }
           } else {
             // 数字
             if (toSnakeCases(numberKeys).includes(item)) {
@@ -407,7 +431,11 @@ export class PrismaService extends PrismaClientOrigin {
               obj2.OR.push({ [item]: null });
             }
           }
-          return [...obj, obj2];
+          if (obj2.OR.length > 0) {
+            return [...obj, obj2];
+          } else {
+            return [...obj]
+          }
         }, []),
         ...Object.keys(range).map(item => (
           {

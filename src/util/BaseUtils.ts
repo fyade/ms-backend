@@ -4,7 +4,7 @@
  */
 export const typeOf = (param: any) => {
   if (typeof param === 'object') {
-    return Object.prototype.toString.call(param).slice(8, -1).toLowerCase();
+    return Object.prototype.toString.call(param).slice(8, -1).toLowerCase() as string;
   } else {
     return typeof param;
   }
