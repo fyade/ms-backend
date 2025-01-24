@@ -11,7 +11,7 @@ VALUES (1,'系统管理','mm','sys-manage',0,'#','system',1,'N','Y','N','N','mai
        (6,'部门管理','mc','dept',1,'/sysManage/dept/index.vue','group',4,'N','Y','N','N','main:sysManage:dept',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (7,'字典管理','mc','dict',1,'/sysManage/dict/index.vue','view-list',7,'N','Y','N','N','main:sysManage:dict',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (8,'系统日志','mm','sys-log',1,'#','log',8,'N','Y','N','N','main:sysLog',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (9,'登录日志','mc','user-login',8,'/sysLog/logUserLogin/index.vue','login',1,'N','Y','N','N','main:sysLog:logUserLogin',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (9,'登录日志','mc','log-user-login',8,'/sysLog/logUserLogin/index.vue','login',1,'N','Y','N','N','main:sysLog:logUserLogin',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (10,'操作日志','mc','log-operation',8,'/sysLog/logOperation/index.vue','doc-detail',2,'N','Y','N','N','main:sysLog:logOperation',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (11,'系统工具','mm','sys-util',0,'#','toolkit',3,'N','Y','N','N','main:sysUtil',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (12,'代码生成','mc','code-generation',11,'/sysUtil/codeGeneration/index.vue','file-code',1,'N','Y','N','N','main:sysUtil:codeGeneration',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),

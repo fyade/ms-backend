@@ -246,7 +246,7 @@ export class UserService {
     token: string,
     user: UserDto
   }>> {
-    if ([base.PROD].includes(currentEnv().mode)) {
+    if (!currentEnv().ifIgnoreVerificationCode) {
       const vcode = await this.cacheTokenService.getVerificationCode(dto.verificationCodeUuid);
       if (!vcode) {
         throw new VerificationCodeErrorException('验证码已过期。');

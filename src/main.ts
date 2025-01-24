@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { currentEnv } from '../config/config';
 import { time } from './util/TimeUtils';
-import { base } from './util/base';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 const banner = 'This is a banner.';
@@ -14,7 +13,7 @@ async function bootstrap() {
     next();
   });
   const node_env = currentEnv();
-  if ([base.DEV, base.TEST].includes(node_env.mode)) {
+  if (node_env.ifShowSwagger) {
     const swaggerOptions = new DocumentBuilder()
       .addBearerAuth()
       .setTitle('知笙后台管理系统')

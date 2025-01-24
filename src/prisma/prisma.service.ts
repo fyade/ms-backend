@@ -28,7 +28,7 @@ export class PrismaService extends PrismaClientOrigin {
           url: getMysqlUrlFromEnv(env),
         },
       },
-      log: env.mode === base.DEV ? ['query', 'info', 'warn'] : [],
+      log: (env.prismaLogLevel && typeOf(env.prismaLogLevel) === 'array') ? env.prismaLogLevel : [],
     };
     super(dbConfig);
     // 使用中间件对查询结果中的 Bigint 类型进行序列化
@@ -36,7 +36,7 @@ export class PrismaService extends PrismaClientOrigin {
       const t1 = Date.now();
       const result = await next(params);
       const t2 = Date.now();
-      if ([base.DEV, base.TEST].includes(currentEnv().mode)) {
+      if (currentEnv().ifLogSQLExecutionTime) {
         console.info(`Query ${params.model}.${params.action} took ${t2 - t1}ms`);
       }
       return this.serialize(result);
