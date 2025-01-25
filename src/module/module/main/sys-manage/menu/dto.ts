@@ -29,6 +29,8 @@ export class MenuDto extends BaseDto {
 
   ifPublic: string;
 
+  ifFixed: string;
+
   perms: string;
 
   sysId: number;
@@ -72,6 +74,9 @@ export class MenuSelListDto extends PageDto {
 
   @ApiProperty({ description: '是否公共接口', required: false })
   ifPublic: string;
+
+  @ApiProperty({ description: '是否固定', required: false })
+  ifFixed: string;
 
   @ApiProperty({ description: '权限标识', required: false })
   perms: string;
@@ -117,6 +122,9 @@ export class MenuSelAllDto {
   @ApiProperty({ description: '是否公共接口', required: false })
   ifPublic: string;
 
+  @ApiProperty({ description: '是否固定', required: false })
+  ifFixed: string;
+
   @ApiProperty({ description: '权限标识', required: false })
   perms: string;
 
@@ -149,7 +157,8 @@ export class MenuInsOneDto {
   @IsNotEmpty({ message: '组件路径不能为空' })
   component: string;
 
-  @ApiProperty({ description: '图标', required: false })
+  @ApiProperty({ description: '图标', required: true })
+  @IsNotEmpty({ message: '图标不能为空' })
   icon: string;
 
   @ApiProperty({ description: '顺序', required: true })
@@ -172,6 +181,10 @@ export class MenuInsOneDto {
   @ApiProperty({ description: '是否公共接口', required: true })
   @IsNotEmpty({ message: '是否公共接口不能为空' })
   ifPublic: string;
+
+  @ApiProperty({ description: '是否固定', required: true })
+  @IsNotEmpty({ message: '是否固定不能为空' })
+  ifFixed: string;
 
   @ApiProperty({ description: '权限标识', required: true })
   @IsNotEmpty({ message: '权限标识不能为空' })

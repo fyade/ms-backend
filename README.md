@@ -1,4 +1,4 @@
-## 关于 About
+## 关于
 
 这是一个后台管理系统模板，前端语言为 Vue.js（Vue3），后端语言为 Nest.js，建议 Node 版本：20.12.0。
 
@@ -15,7 +15,7 @@
 - https://github.com/fyade/ms-backend
 - https://gitee.com/fyade/ms-backend
 
-## 运行教程 How to run
+## 运行教程
 
 若非初次运行，可直接 `npm run start:dev` 运行，然后下面步骤可忽略。
 
@@ -54,7 +54,7 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 随后需要插入一个初始用户，步骤如下：
 
-4.1 打开 api 工具如 postman，调用 /sys/user/regist 接口，请求方法为 POST，请求体参数如下，其中 username 和 password 改成管理员的用户名和密码、psdType 勿更改、loginRole 勿更改；
+4.1 打开 api 工具，调用 /sys/user/regist 接口，请求方法为 POST，请求体参数如下，其中 username 和 password 改成管理员的用户名和密码、psdType 勿更改、loginRole 勿更改；
 
 ```json
 {
@@ -71,7 +71,7 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 4.4 `npm run start:dev` 运行；
 
-## 打包教程 How to build
+## 打包教程
 
 注意：以生产环境为例子：在 config.ts 中有一个变量，叫 config，其第一个键为 dev，表示开发环境的配置，接下来你需要加一个键 prod，表示生产环境的配置，然后你需要把 dev 的值复制进去并修改为生产环境的配置。
 
@@ -85,54 +85,63 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 5. 运行 `$env:NODE_ENV="prod"; node .\dist\main.js` 命令，其中 NODE_ENV 是命令行变量，在不同系统、不同命令行工具中写法可能不一样，请根据自身情况修改。
 
-## 修改数据库结构 How to edit database
+## 修改数据库结构
 
-1. 在 /prisma/schema/schema.prisma 中定义数据库；
+1. 在 /prisma/schema/ 目录下的 .prisma 文件中定义数据库结构；
 
-2. 在 .env 中定义数据库地址，随后运行 `npx prisma migrate dev --name gx` 命令。
+2. 在 .env 文件中定义数据库地址，随后运行 `npx prisma migrate dev --name gx` 命令。
 
-## 命令 Bin
+## 将数据库结构同步至生产环境
 
-启动命令：
+在 /prisma/migrations/ 目录下，有每次运行迁移命令时产生的 sql 文件，找到对应文件，在生产环境运行即可。
+
+## 命令
+
+### 启动命令：
 ```bash
 $env:NODE_ENV="dev"; node ./main.js
 ```
 
-其他命令：
+### 其他命令：
+
+初始化 prisma：
 ```bash
 npx prisma init
 ```
 
-更新数据库：
+prisma 迁移数据库：
 ```bash
-$ npx prisma migrate dev --name init
+$ npx prisma migrate dev --name gx
 ```
 
-重置数据库：
+prisma 重置数据库：
 ```bash
 $ npx prisma migrate reset
 ```
 
-生成 Prisma Client：
+prisma 生成 Prisma Client：
 ```bash
 $ npx prisma generate
 ```
 
+nest 生成拦截器：
 ```bash
-$ nest generate interceptor auth-token # 生成拦截器
+$ nest generate interceptor auth-token
 ```
 
+nest 创建模块：
 ```bash
 $ nest g mo module/name # 创建一个用户模块
 $ nest g co module/name --no-spec # 创建不带测试文件的控制器
 $ nest g s module/name --no-spec # 创建不带测试文件的服务层
 ```
 
+nest 创建管道：
 ```bash
 $ nest g pipe validation pipe # 管道
 ```
 
-## 注意 NOTICE
+## 注意
 
 菜单相关常量：
 * mm 表示菜单
@@ -157,7 +166,7 @@ $ nest g pipe validation pipe # 管道
 * SELF_ROLE 表示本角色
 * SELF 表示自己
 
-## 许可证 License
+## 许可证
 
 [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.txt)
 

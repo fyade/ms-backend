@@ -13,10 +13,10 @@ export class MenuService {
     private readonly cachePermissionService: CachePermissionService,
   ) {
     this.bcs.setFieldSelectParam('sys_menu', {
-      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'perms', 'sysId'],
+      notNullKeys: ['label', 'type', 'path', 'parentId', 'component', 'icon', 'orderNum', 'ifLink', 'ifVisible', 'ifDisabled', 'ifPublic', 'ifFixed', 'perms', 'sysId'],
       numberKeys: ['parentId', 'orderNum', 'sysId'],
       completeMatchingKeys: ['type'],
-    })
+    });
   }
 
   async selMenu(dto: MenuSelListDto): Promise<R> {

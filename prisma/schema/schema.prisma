@@ -190,6 +190,7 @@ model sys_menu {
   if_visible                String                     @db.Char(1)
   if_disabled               String                     @db.Char(1)
   if_public                 String                     @db.Char(1)
+  if_fixed                  String                     @db.Char(1)
   perms                     String                     @db.VarChar(100)
   sys_id                    Int                        @db.Int
   remark                    String?                    @db.VarChar(300)
