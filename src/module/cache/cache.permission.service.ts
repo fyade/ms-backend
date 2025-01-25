@@ -1,11 +1,14 @@
 import { RedisService } from '../../redis/redis.service';
 import { Injectable } from '@nestjs/common';
 import { base } from '../../util/base';
+import { MenuIpWhiteListDto } from '../module/main/sys-manage/menu-ip-white-list/dto';
 
 @Injectable()
 export class CachePermissionService {
   private readonly USER_PERMISSION = 'user:permission';
   private readonly PERMISSION_PUBLIC = 'permission:public';
+  private readonly PERMISSION_IP_WHITE_LIST = 'permission:ipWhiteList';
+  private readonly ADMIN_TOP = 'admin:top';
 
   constructor(
     private readonly redis: RedisService,
@@ -62,6 +65,24 @@ export class CachePermissionService {
   }
 
   /**
+   * 设置接口 ip 白名单
+   * @param permission
+   * @param list
+   */
+  async setIpWhiteListOfPermissionInCache(permission: string, list: MenuIpWhiteListDto[]) {
+    await this.redis.hset(this.PERMISSION_IP_WHITE_LIST, permission, JSON.stringify(list));
+  }
+
+  /**
+   * 获取接口 ip 白名单
+   * @param permission
+   */
+  async getIpWhiteListOfPermissionInCache(permission: string) {
+    const s = await this.redis.hget(this.PERMISSION_IP_WHITE_LIST, permission);
+    return s;
+  }
+
+  /**
    * 删除缓存中的所有权限记录
    */
   async clearPermissionsInCache() {
@@ -73,5 +94,18 @@ export class CachePermissionService {
     if (Object.keys(allUPs).length > 0) {
       await this.redis.hdel(this.USER_PERMISSION, ...Object.keys(allUPs));
     }
+    const allPIWLs = await this.redis.hgetall(this.PERMISSION_IP_WHITE_LIST);
+    if (Object.keys(allPIWLs).length > 0) {
+      await this.redis.hdel(this.PERMISSION_IP_WHITE_LIST, ...Object.keys(allPIWLs));
+    }
+  }
+
+  async setAdminTopInCache(loginRole: string, userId: string, ifAdmin: boolean) {
+    await this.redis.hset(`${this.ADMIN_TOP}:${loginRole}`, userId, ifAdmin ? base.Y : base.N);
+  }
+
+  async getAdminTopInCache(loginRole: string, userId: string) {
+    const s = await this.redis.hget(`${this.ADMIN_TOP}:${loginRole}`, userId);
+    return s;
   }
 }

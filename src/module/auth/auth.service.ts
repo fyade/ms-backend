@@ -33,7 +33,7 @@ export class AuthService {
    * @param loginRole
    */
   async ifAdminUser(userId: string, loginRole: string) {
-    if (await this.hasTopAdminPermission(userId)) {
+    if (await this.hasTopAdminPermission(loginRole, userId)) {
       return true;
     }
     const { allRoleIds, allDeptIds } = await this.rolesAndDeptsOfUser(userId, loginRole);
@@ -42,11 +42,21 @@ export class AuthService {
 
   /**
    * 是否超级管理员用户
+   * @param loginRole
    * @param userId
    */
-  async hasTopAdminPermission(userId: string) {
-    const admintop = await this.prisma.findFirst('sys_admin_top', { userId: userId });
-    return !!admintop;
+  async hasTopAdminPermission(loginRole: string, userId: string) {
+    const s = await this.cachePermissionService.getAdminTopInCache(loginRole, userId);
+    if (s) {
+      return s === base.Y;
+    }
+    if (loginRole === 'admin') {
+      const admintop = await this.prisma.findFirst('sys_admin_top', { userId: userId });
+      const b = !!admintop;
+      await this.cachePermissionService.setAdminTopInCache(loginRole, userId, b);
+      return b;
+    }
+    return false;
   }
 
   /**
@@ -60,7 +70,7 @@ export class AuthService {
     if (b) {
       return b === base.Y;
     }
-    if (await this.hasTopAdminPermission(userId)) {
+    if (await this.hasTopAdminPermission(loginRole, userId)) {
       return true;
     }
     const permissionsOfUser = await this.permissionsOfUser({ userId: userId, permission, loginRole });
@@ -97,59 +107,69 @@ export class AuthService {
    * @param request
    */
   async ifIpInWhiteListOfPermission(permission: string, request: Request): Promise<boolean> {
-    const menu: MenuDto[] = await this.prisma.$queryRaw`
-      select id          as id,
-             label       as label,
-             type        as type,
-             path        as path,
-             parent_id   as parentId,
-             component   as component,
-             icon        as icon,
-             order_num   as orderNum,
-             if_link     as ifLink,
-             if_visible  as ifVisible,
-             if_disabled as ifDisabled,
-             if_public   as ifPublic,
-             perms       as perms,
-             sys_id      as sysId,
-             remark      as remark,
-             create_by   as createBy,
-             update_by   as updateBy,
-             create_time as createTime,
-             update_time as updateTime,
-             deleted     as deleted
-      from sys_menu
-      where deleted = ${base.N}
-        and if_disabled = ${base.N}
-        and type = ${T_IS}
-        and id =
-            (select parent_id
-             from sys_menu
-             where deleted = ${base.N}
-               and if_disabled = ${base.N}
-               and type = ${T_Inter}
-               and perms = ${permission});
-    `;
-    if (menu.length === 0) {
-      return true;
+    const menuIpWhiteLists = await this.cachePermissionService.getIpWhiteListOfPermissionInCache(permission);
+    const ips = [];
+    if (menuIpWhiteLists) {
+      const parse = JSON.parse(menuIpWhiteLists) as MenuIpWhiteListDto[];
+      ips.push(...parse);
+    } else {
+      // 接口是否存在
+      const menu: MenuDto[] = await this.prisma.$queryRaw`
+        select id          as id,
+               label       as label,
+               type        as type,
+               path        as path,
+               parent_id   as parentId,
+               component   as component,
+               icon        as icon,
+               order_num   as orderNum,
+               if_link     as ifLink,
+               if_visible  as ifVisible,
+               if_disabled as ifDisabled,
+               if_public   as ifPublic,
+               perms       as perms,
+               sys_id      as sysId,
+               remark      as remark,
+               create_by   as createBy,
+               update_by   as updateBy,
+               create_time as createTime,
+               update_time as updateTime,
+               deleted     as deleted
+        from sys_menu
+        where deleted = ${base.N}
+          and if_disabled = ${base.N}
+          and type = ${T_IS}
+          and id =
+              (select parent_id
+               from sys_menu
+               where deleted = ${base.N}
+                 and if_disabled = ${base.N}
+                 and type = ${T_Inter}
+                 and perms = ${permission});
+      `;
+      if (menu.length === 0) {
+        return true;
+      }
+      const ips_: MenuIpWhiteListDto[] = await this.prisma.$queryRaw`
+        select id          as id,
+               menu_id     as menuId,
+               white_list  as whiteList,
+               from_type   as fromType,
+               type        as type,
+               remark      as remark,
+               create_by   as createBy,
+               update_by   as updateBy,
+               create_time as createTime,
+               update_time as updateTime,
+               deleted     as deleted
+        from sys_menu_ip_white_list
+        where deleted = ${base.N}
+          and menu_id = ${menu[0].id}
+          and type = ${T_IS};
+      `;
+      ips.push(...ips_);
+      await this.cachePermissionService.setIpWhiteListOfPermissionInCache(permission, ips_);
     }
-    const ips: MenuIpWhiteListDto[] = await this.prisma.$queryRaw`
-      select id          as id,
-             menu_id     as menuId,
-             white_list  as whiteList,
-             from_type   as fromType,
-             type        as type,
-             remark      as remark,
-             create_by   as createBy,
-             update_by   as updateBy,
-             create_time as createTime,
-             update_time as updateTime,
-             deleted     as deleted
-      from sys_menu_ip_white_list
-      where deleted = ${base.N}
-        and menu_id = ${menu[0].id}
-        and type = ${T_IS};
-    `;
     if (ips.length === 0) {
       return true;
     }
@@ -183,7 +203,7 @@ export class AuthService {
   async systemsOfUser(userId: string, loginRole: string) {
     const retarr = [];
     const sysPublicSelectParam = { if_disabled: base.N };
-    const ifTopAdmin = await this.hasTopAdminPermission(userId);
+    const ifTopAdmin = await this.hasTopAdminPermission(loginRole, userId);
     if (ifTopAdmin) {
       const userSyss_ = await this.prisma.getOrigin().sys_sys.findMany({
         where: {
@@ -272,7 +292,7 @@ export class AuthService {
       ...(permission ? { perms: permission } : {}),
       if_disabled: base.N,
     };
-    const ifTopAdmin = await this.hasTopAdminPermission(userId);
+    const ifTopAdmin = await this.hasTopAdminPermission(loginRole, userId);
     if (ifTopAdmin) {
       const userPermissions_ = await this.prisma.getOrigin().sys_menu.findMany({
         where: {

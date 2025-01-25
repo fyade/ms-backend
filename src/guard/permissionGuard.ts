@@ -109,7 +109,7 @@ export class PermissionGuard implements CanActivate {
       throw new IpNotInWhiteListException();
     }
     // 是否超级管理员
-    const ifTopAdmin = await this.authService.hasTopAdminPermission(userId);
+    const ifTopAdmin = await this.authService.hasTopAdminPermission(loginRole, userId);
     if (ifTopAdmin) {
       this.bcs.setUserToTopAdmin();
       ifTrue = true;

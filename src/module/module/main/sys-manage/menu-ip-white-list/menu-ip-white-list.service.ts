@@ -3,12 +3,14 @@ import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { MenuIpWhiteListDto, MenuIpWhiteListSelListDto, MenuIpWhiteListSelAllDto, MenuIpWhiteListInsOneDto, MenuIpWhiteListUpdOneDto } from './dto';
 import { BaseContextService } from '../../../../base-context/base-context.service';
+import { CachePermissionService } from '../../../../cache/cache.permission.service';
 
 @Injectable()
 export class MenuIpWhiteListService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly bcs: BaseContextService,
+    private readonly cachePermissionService: CachePermissionService,
   ) {
     this.bcs.setFieldSelectParam('sys_menu_ip_white_list', {
       notNullKeys: ['menuId', 'whiteList', 'fromType', 'type'],
@@ -53,16 +55,19 @@ export class MenuIpWhiteListService {
   }
 
   async updMenuIpWhiteList(dto: MenuIpWhiteListUpdOneDto): Promise<R> {
+    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.updateById<MenuIpWhiteListDto>('sys_menu_ip_white_list', dto);
     return R.ok(res);
   }
 
   async updMenuIpWhiteLists(dtos: MenuIpWhiteListUpdOneDto[]): Promise<R> {
+    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.updateMany<MenuIpWhiteListDto>('sys_menu_ip_white_list', dtos);
     return R.ok(res);
   }
 
   async delMenuIpWhiteList(ids: number[]): Promise<R> {
+    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.deleteById<MenuIpWhiteListDto>('sys_menu_ip_white_list', ids);
     return R.ok(res);
   }
