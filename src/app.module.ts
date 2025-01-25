@@ -53,7 +53,7 @@ import { TableRowPermissionModule } from './module/module/main/sys-manage/table-
       load: [currentEnv],
     }),
     ServeStaticModule.forRoot({
-      rootPath: currentEnv().file.fileUploadPath,
+      rootPath: currentEnv().file.uploadPath,
       serveRoot: currentEnv().staticRoot,
     }),
     ClsModule.forRoot({

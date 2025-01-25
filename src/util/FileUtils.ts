@@ -1,3 +1,7 @@
+import { join } from 'path';
+import * as fs2 from 'fs';
+import { splitStrByLine } from './RegularUtils';
+
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -22,4 +26,36 @@ export async function getAllFiles(directoryPath: string) {
       }
     }
   }
+}
+
+const dirIfExist = new Map<string, boolean>();
+
+export function saveFile(directoryPath: string, fileName: string, fileBuffer,
+                         {
+                           a = '',
+                         }: {
+                           a?: string
+                         } = {},
+) {
+  if (!dirIfExist.get(directoryPath)) {
+    if (!fs2.existsSync(directoryPath)) {
+      fs2.mkdirSync(directoryPath);
+    }
+    dirIfExist.set(directoryPath, true);
+  }
+  let uploadPath = directoryPath;
+  if (a) {
+    const strings = splitStrByLine(a);
+    for (const string of strings) {
+      uploadPath += `/${string}/`;
+      if (!dirIfExist.get(uploadPath)) {
+        if (!fs2.existsSync(uploadPath)) {
+          fs2.mkdirSync(uploadPath);
+        }
+        dirIfExist.set(uploadPath, true);
+      }
+    }
+  }
+  const filePath = join(uploadPath, fileName);
+  fs2.writeFileSync(filePath, fileBuffer);
 }

@@ -8,7 +8,7 @@ import { Response } from 'express';
 export class StaticController {
   @Get('/:filename')
   static(@Param('filename') filename: string, @Res() res: Response) {
-    const filepath = currentEnv().file.fileUploadPath + filename;
+    const filepath = currentEnv().file.uploadPath + filename;
     res.sendFile(filepath);
   }
 }

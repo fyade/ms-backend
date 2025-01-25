@@ -10,3 +10,12 @@ export function getDBTableName(str: string): string {
   }
   return aaa;
 }
+
+/**
+ * 把字符串根据/或者\分割
+ * @param path
+ */
+export function splitStrByLine(path: string) {
+  // 使用正则表达式匹配斜杠或反斜杠，并分割字符串
+  return path.split(/\/|\\/).filter(_ => _);
+}

@@ -44,8 +44,7 @@ const config = {
       timezone: 'Asia/Shanghai',
     },
     file: {
-      fileUploadPath: '', // 完整文件位置
-      fileChunkPath: '', // 分片文件位置
+      uploadPath: '', // 文件存放位置
       maxSizeOfFull: 1024 * 1024 * 10, // 允许上传的文件的最大体积
     },
     log: {

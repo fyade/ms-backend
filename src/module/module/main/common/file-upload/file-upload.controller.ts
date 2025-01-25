@@ -96,7 +96,7 @@ export class FileUploadController {
     return this.fileUploadService.fileUploadOneChunkCheck(dto);
   }
 
-  @Post('/one-chunk/upload/:fileMd5/:fileNewName/:chunkIndex')
+  @Post('/one-chunk/upload/:fileMd5/:chunkIndex/:fileNewName(*)')
   @ApiOperation({
     summary: '文件上传-单文件分片上传',
   })

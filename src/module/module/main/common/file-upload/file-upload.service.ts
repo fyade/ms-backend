@@ -15,12 +15,15 @@ import {
 } from './dto';
 import { randomUUID } from '../../../../../util/IdUtils';
 import { BaseContextService } from '../../../../base-context/base-context.service';
+import { saveFile } from '../../../../../util/FileUtils';
+import { formatDate } from '../../../../../util/TimeUtils';
 
 const SparkMD5 = require('spark-md5');
 
 @Injectable()
 export class FileUploadService {
   private env: any;
+  private directoryPrefix = 'YYYY/MM/DD/';
 
   constructor(
     private readonly prisma: PrismaService,
@@ -30,14 +33,14 @@ export class FileUploadService {
     this.bcs.setFieldSelectParam('tbl_file', {
       notNullKeys: ['fileName', 'fileNewName', 'fileSize', 'fileMd5', 'ifChunk', 'chunkNum', 'ifMerge', 'ifFirst', 'ifFinished', 'module'],
       numberKeys: ['fileSize', 'chunkNum'],
-    })
+    });
     this.bcs.setFieldSelectParam('tbl_file_chunk', {
       notNullKeys: ['fileName', 'fileNewName', 'fileSize', 'fileMd5', 'ifChunk', 'chunkNum', 'ifMerge', 'ifFirst', 'ifFinished', 'module'],
       numberKeys: ['fileSize', 'chunkNum'],
       ifUpdateRole: false,
       ifUpdateBy: false,
       ifUpdateTime: false,
-    })
+    });
   }
 
   async selList(dto: FileSelListDto): Promise<R> {
@@ -82,11 +85,12 @@ export class FileUploadService {
       const fileSize = file.size;
       const fileSuffix = fileName.substring(fileName.lastIndexOf('.'));
       const fileUUID = randomUUID();
-      const fileNewName = fileUUID + fileSuffix;
-      const filePath = join(this.env.file.fileUploadPath, fileNewName);
+      const s = formatDate(new Date(), this.directoryPrefix);
+      const fileNewName1 = fileUUID + fileSuffix;
+      const fileNewName2 = s + fileNewName1;
       const fillObj = {
         fileName: fileName,
-        fileNewName: fileNewName,
+        fileNewName: fileNewName2,
         fileSize: BigInt(fileSize),
         fileMd5: fileMd5,
         ifChunk: base.N,
@@ -104,7 +108,7 @@ export class FileUploadService {
       } else {
         // 如果无相同文件，先存下库，ifFinished字段设为false，然后存文件，最后更新库
         const newVar = await this.prisma.create<FileDto>('tbl_file', fillObj);
-        fs.writeFileSync(filePath, file.buffer);
+        saveFile(this.env.file.uploadPath, fileNewName1, file.buffer, { a: s });
         await this.prisma.updateById<FileDto>('tbl_file', {
           id: newVar.id,
           ifFinished: base.Y,
@@ -121,7 +125,9 @@ export class FileUploadService {
     const fileName = dto.fileName;
     const fileSuffix = fileName.substring(fileName.lastIndexOf('.'));
     const fileUUID = randomUUID();
-    const fileNewName = fileUUID + fileSuffix;
+    const s = formatDate(new Date(), this.directoryPrefix);
+    const fileNewName1 = fileUUID + fileSuffix;
+    const fileNewName2 = s + fileNewName1;
     const sameFile = await this.prisma.findAll<FileDto>('tbl_file', {
       data: {
         // fileName: dto.fileName,
@@ -190,7 +196,7 @@ export class FileUploadService {
       // 不存在，保存文件信息至数据库
       const fillObj = {
         fileName: fileName,
-        fileNewName: fileNewName,
+        fileNewName: fileNewName2,
         fileSize: BigInt(dto.fileSize),
         fileMd5: dto.fileMd5,
         ifChunk: base.Y,
@@ -203,7 +209,7 @@ export class FileUploadService {
       return R.ok({
         merge: false,
         count: 0,
-        fileNewName: fileNewName,
+        fileNewName: fileNewName2,
         uploadedIndexs: [],
       });
     }
@@ -212,18 +218,19 @@ export class FileUploadService {
   async fileUploadOneChunkUpload(dto: FileUploadOneChunk_upload): Promise<R> {
     dto.chunkIndex = Number(dto.chunkIndex);
     try {
-      const chunkName = randomUUID();
+      const s = formatDate(new Date(), this.directoryPrefix);
+      const chunkName1 = randomUUID();
+      const chunkName2 = s + chunkName1;
       // 保存文件信息至数据库
       const info = await this.prisma.create<FileChunkDto>('tbl_file_chunk', {
         fileMd5: dto.fileMd5,
         fileNewName: dto.fileNewName,
-        chunkName: chunkName,
+        chunkName: chunkName2,
         chunkIndex: dto.chunkIndex,
         ifFinished: base.N,
       });
       // 保存文件
-      const filePath = join(this.env.file.fileChunkPath, chunkName);
-      fs.writeFileSync(filePath, dto.file.buffer);
+      saveFile(this.env.file.uploadPath, chunkName1, dto.file.buffer, { a: s });
       // 更新文件信息
       await this.prisma.updateById<FileChunkDto>('tbl_file_chunk', {
         id: info.id,
@@ -257,11 +264,11 @@ export class FileUploadService {
     if (chunks.length !== fileInfo.chunkNum) {
       return R.err('合并失败，请重试。');
     }
-    const outputFile = join(this.env.file.fileUploadPath, fileInfo.fileNewName);
+    const outputFile = join(this.env.file.uploadPath, fileInfo.fileNewName);
     const outputFd = fs.openSync(outputFile, 'w');
     // 创建一个 Promise 数组，每个 Promise 处理一个文件块的写入
     const promises = chunks.map((chunk) => {
-      const file = join(this.env.file.fileChunkPath, chunk.chunkName);
+      const file = join(this.env.file.uploadPath, chunk.chunkName);
       const inputFd = fs.openSync(file, 'r');
       const buffer = Buffer.alloc(4096); // 4KB 缓冲区，你可以根据实际情况调整大小
       function write() {

@@ -523,7 +523,7 @@ model sys_user_group_permission {
 model tbl_file {
   id            String   @id @default(uuid()) @db.VarChar(50)
   file_name     String   @db.VarChar(200)
-  file_new_name String   @db.VarChar(50)
+  file_new_name String   @db.VarChar(200)
   file_size     BigInt   @db.BigInt
   file_md5      String   @db.VarChar(50)
   if_chunk      String   @db.Char(1)
@@ -546,7 +546,7 @@ model tbl_file {
 model tbl_file_chunk {
   id            String   @id @default(uuid()) @db.VarChar(50)
   file_md5      String   @db.VarChar(50)
-  file_new_name String   @db.VarChar(50)
+  file_new_name String   @db.VarChar(200)
   chunk_name    String   @db.VarChar(50)
   chunk_index   Int      @db.Int
   if_finished   String   @db.Char(1)

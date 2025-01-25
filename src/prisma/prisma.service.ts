@@ -304,7 +304,7 @@ export class PrismaService extends PrismaClientOrigin {
       return 'self';
     }
     if (dataTypes.includes('SELF_ROLE')) {
-      console.log('===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====', model, JSON.stringify(arg));
+      // model, JSON.stringify(arg)
     }
   }
 
