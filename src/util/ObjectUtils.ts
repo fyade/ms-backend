@@ -29,7 +29,7 @@ export function deepClone<T = any>(value: T, {
 }
 
 /**
- * 数组不重复push
+ * 数组不重复
  * @param arr
  */
 export function arrNoRepeat<T = any>(arr: T[]): T[] {
