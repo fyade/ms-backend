@@ -8,6 +8,7 @@ import {
   FileUploadOneChunk_check,
   FileUploadOneChunk_merge,
   FileUploadOneChunk_upload,
+  FileUploadOneFull_upload,
 } from './dto';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -42,30 +43,15 @@ export class FileUploadController {
   })
   @UseInterceptors(FileInterceptor('file'))
   @Authorize({
-    permission: 'main:system:fileupload:onefull0',
-    label: '文件上传-单文件完整上传',
-  })
-  async fileUploadOneFull0(@UploadedFile() file): Promise<R> {
-    if (file.size > this.env.file.maxSizeOfFull) {
-      return R.err('文件大小超出限制。');
-    }
-    return this.fileUploadService.fileUploadOneFull(file);
-  }
-
-  @Post('/one-full/:filename')
-  @ApiOperation({
-    summary: '文件上传-单文件完整上传',
-  })
-  @UseInterceptors(FileInterceptor('file'))
-  @Authorize({
     permission: 'main:system:fileupload:onefull',
     label: '文件上传-单文件完整上传',
   })
-  async fileUploadOneFull(@Param() param, @UploadedFile() file): Promise<R> {
+  async fileUploadOneFull0(@Body() param: FileUploadOneFull_upload, @UploadedFile() file): Promise<R> {
     if (file.size > this.env.file.maxSizeOfFull) {
       return R.err('文件大小超出限制。');
     }
-    return this.fileUploadService.fileUploadOneFull(file, { filename: param.filename });
+    delete param.file;
+    return this.fileUploadService.fileUploadOneFull(file, param);
   }
 
   @Post('/one-full-avatar')
@@ -77,11 +63,11 @@ export class FileUploadController {
     permission: 'main:system:fileupload:avatar',
     label: '文件上传-头像',
   })
-  async fileUploadAvatar(@Param() param, @UploadedFile() file): Promise<R> {
+  async fileUploadAvatar(@Body() param: FileUploadOneFull_upload, @UploadedFile() file): Promise<R> {
     if (file.size > this.env.file.maxSizeOfFull) {
       return R.err('文件大小超出限制。');
     }
-    return this.fileUploadService.fileUploadOneFull(file, { filename: param.filename, module: 'avatar' });
+    return this.fileUploadService.fileUploadOneFull(file, { fileName: param.fileName, module: 'avatar' });
   }
 
   @Post('/one-chunk/check')
@@ -96,7 +82,7 @@ export class FileUploadController {
     return this.fileUploadService.fileUploadOneChunkCheck(dto);
   }
 
-  @Post('/one-chunk/upload/:fileMd5/:chunkIndex/:fileNewName(*)')
+  @Post('/one-chunk/upload')
   @ApiOperation({
     summary: '文件上传-单文件分片上传',
   })
@@ -105,7 +91,7 @@ export class FileUploadController {
     permission: 'main:system:fileupload:onechunkupload',
     label: '文件上传-单文件分片上传',
   })
-  async fileUploadOneChunkUpload(@Param() param: FileUploadOneChunk_upload, @UploadedFile() file): Promise<R> {
+  async fileUploadOneChunkUpload(@Body() param: FileUploadOneChunk_upload, @UploadedFile() file): Promise<R> {
     return this.fileUploadService.fileUploadOneChunkUpload({
       fileMd5: param.fileMd5,
       chunkIndex: param.chunkIndex,

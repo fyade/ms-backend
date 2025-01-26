@@ -14,7 +14,7 @@ export class R<T = any> {
     this.data = data;
     this.msg = msg;
     this.time = time();
-    this.timestamp = timeStamp(time());
+    this.timestamp = timeStamp(this.time);
     this.reqId = '';
   }
 

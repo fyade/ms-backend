@@ -65,31 +65,31 @@ export class FileUploadService {
   }
 
   async fileUploadOneFull(file, {
-                            filename = '',
+                            fileName = '',
                             module = null,
                           }: {
-                            filename?: string
+                            fileName?: string
                             module?: string | null
                           } = {},
   ): Promise<R> {
     try {
-      const fileName = filename || file.originalname;
+      const fileName2 = fileName || file.originalname;
       const fileMd5 = SparkMD5.hash(file.buffer);
       // 如果已有相同文件，则不用上传了
       const sameFile = await this.prisma.findFirst<FileDto>('tbl_file', {
-        // fileName: fileName,
+        // fileName: fileName2,
         fileMd5: fileMd5,
         ifChunk: base.N,
         ifFinished: base.Y,
       });
       const fileSize = file.size;
-      const fileSuffix = fileName.substring(fileName.lastIndexOf('.'));
+      const fileSuffix = fileName2.substring(fileName2.lastIndexOf('.'));
       const fileUUID = randomUUID();
-      const s = formatDate(new Date(), this.directoryPrefix);
+      const s = formatDate(new Date(), { format: this.directoryPrefix, ifUseUTC: true });
       const fileNewName1 = fileUUID + fileSuffix;
       const fileNewName2 = s + fileNewName1;
       const fillObj = {
-        fileName: fileName,
+        fileName: fileName2,
         fileNewName: fileNewName2,
         fileSize: BigInt(fileSize),
         fileMd5: fileMd5,
@@ -125,7 +125,7 @@ export class FileUploadService {
     const fileName = dto.fileName;
     const fileSuffix = fileName.substring(fileName.lastIndexOf('.'));
     const fileUUID = randomUUID();
-    const s = formatDate(new Date(), this.directoryPrefix);
+    const s = formatDate(new Date(), { format: this.directoryPrefix, ifUseUTC: true });
     const fileNewName1 = fileUUID + fileSuffix;
     const fileNewName2 = s + fileNewName1;
     const sameFile = await this.prisma.findAll<FileDto>('tbl_file', {
@@ -218,7 +218,7 @@ export class FileUploadService {
   async fileUploadOneChunkUpload(dto: FileUploadOneChunk_upload): Promise<R> {
     dto.chunkIndex = Number(dto.chunkIndex);
     try {
-      const s = formatDate(new Date(), this.directoryPrefix);
+      const s = formatDate(new Date(), { format: this.directoryPrefix, ifUseUTC: true });
       const chunkName1 = randomUUID();
       const chunkName2 = s + chunkName1;
       // 保存文件信息至数据库

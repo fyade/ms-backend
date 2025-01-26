@@ -252,6 +252,14 @@ export class FileUploadSelListDto2 extends PageDto {
   filterSame: string;
 }
 
+export class FileUploadOneFull_upload {
+  @ApiProperty({ description: '文件名', required: false })
+  fileName: string;
+
+  @ApiProperty({ description: '文件', required: false })
+  file: any;
+}
+
 export class FileUploadOneChunk_check {
   @ApiProperty({ description: '文件名', required: false })
   fileName: string;
