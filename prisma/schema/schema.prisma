@@ -42,7 +42,7 @@ model sys_user_visitor {
   username    String   @db.VarChar(50)
   nickname    String?  @db.VarChar(50)
   password    String   @db.VarChar(100)
-  avatar      String?  @db.VarChar(50)
+  avatar      String?  @db.VarChar(200)
   sex         String?  @db.VarChar(10)
   email       String?  @db.VarChar(50)
   tel         String?  @db.VarChar(15)
@@ -547,7 +547,7 @@ model tbl_file_chunk {
   id            String   @id @default(uuid()) @db.VarChar(50)
   file_md5      String   @db.VarChar(50)
   file_new_name String   @db.VarChar(200)
-  chunk_name    String   @db.VarChar(50)
+  chunk_name    String   @db.VarChar(200)
   chunk_index   Int      @db.Int
   if_finished   String   @db.Char(1)
   remark        String?  @db.VarChar(300)

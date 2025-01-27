@@ -97,7 +97,12 @@ export class PermissionGuard implements CanActivate {
     }
     if (!ifTrue && !userId) {
       await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
-      throw new ForbiddenException(label);
+      const b = await this.authService.permissionIfDisabled(permission);
+      if (b) {
+        throw new Exception('当前接口被禁用。');
+      } else {
+        throw new ForbiddenException(label);
+      }
     }
     // 请求ip是否在此接口的ip白名单中
     const ifIpInWhiteList = await this.authService.ifIpInWhiteListOfPermission(permission, request);
@@ -126,6 +131,11 @@ export class PermissionGuard implements CanActivate {
       return true;
     }
     await this.authService.insLogOperation(permission, request, false, { remark: '403', ifIgnoreParamInLog });
-    throw new ForbiddenException(label);
+    const b1 = await this.authService.permissionIfDisabled(permission);
+    if (b1) {
+      throw new Exception('当前接口被禁用。');
+    } else {
+      throw new ForbiddenException(label);
+    }
   }
 }

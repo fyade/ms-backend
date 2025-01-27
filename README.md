@@ -15,6 +15,10 @@
 - https://github.com/fyade/ms-backend
 - https://gitee.com/fyade/ms-backend
 
+## 二开注意事项
+
+- sys_sys 及 sys_menu 表中，您二开时产生的系统及菜单的 id，建议从 10001 开始，否则可能会与本项目后续产生的新数据冲突。
+
 ## 运行教程
 
 若非初次运行，可直接 `npm run start:dev` 运行，然后下面步骤可忽略。
@@ -141,7 +145,7 @@ nest 创建管道：
 $ nest g pipe validation pipe # 管道
 ```
 
-## 注意
+## 其他注意事项
 
 菜单相关常量：
 * mm 表示菜单

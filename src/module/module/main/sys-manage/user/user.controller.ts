@@ -29,11 +29,11 @@ export class UserController {
 
   @Get('/self-info')
   @ApiOperation({
-    summary: '查询个人信息',
+    summary: '查询个人信息（支持不同登录角色）',
   })
   @Authorize({
     permission: 'main:sysManage:user:getSelfInfo',
-    label: '查询个人信息',
+    label: '查询个人信息（支持不同登录角色）',
   })
   async getSelfInfo() {
     return this.userService.getSelfInfo();
@@ -75,11 +75,11 @@ export class UserController {
 
   @Post('/upd-user')
   @ApiOperation({
-    summary: '修改个人信息',
+    summary: '修改个人信息（支持不同登录角色）',
   })
   @Authorize({
     permission: 'main:sysManage:user:updUser',
-    label: '修改个人信息',
+    label: '修改个人信息（支持不同登录角色）',
   })
   async updUser(@Body() dto: UserDto) {
     delete dto.password;
@@ -88,11 +88,11 @@ export class UserController {
 
   @Post('/upd-psd')
   @ApiOperation({
-    summary: '修改密码',
+    summary: '修改密码（支持不同登录角色）',
   })
   @Authorize({
     permission: 'main:sysManage:user:updPsd',
-    label: '修改密码',
+    label: '修改密码（支持不同登录角色）',
   })
   async updPsd(@Body() dto: UpdPsdDto) {
     if (dto.oldpType === 'b') {
@@ -107,6 +107,7 @@ export class UserController {
     delete dto.oldpType;
     delete dto.newp1Type;
     delete dto.newp2Type;
+    if (!dto.newp1 || !dto.newp2) return R.err('密码不能为空。');
     if (dto.newp1 !== dto.newp2) return R.err('新密码不一致。');
     return this.userService.updPsd(dto);
   }

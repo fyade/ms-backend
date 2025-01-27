@@ -19,11 +19,11 @@ export class UserLoginController {
 
   @Post('/regist')
   @ApiOperation({
-    summary: '用户注册',
+    summary: '用户注册（支持不同登录角色）',
   })
   @Authorize({
     permission: '-',
-    label: '用户注册',
+    label: '用户注册（支持不同登录角色）',
     ifIgnore: true,
     ifIgnoreParamInLog: true,
   })
@@ -37,11 +37,11 @@ export class UserLoginController {
 
   @Post('/login')
   @ApiOperation({
-    summary: '用户登录',
+    summary: '用户登录（支持不同登录角色）',
   })
   @Authorize({
     permission: '-',
-    label: '用户登录',
+    label: '用户登录（支持不同登录角色）',
     ifIgnore: true,
     ifIgnoreParamInLog: true,
   })
@@ -56,11 +56,11 @@ export class UserLoginController {
 
   @Post('/adminlogin')
   @ApiOperation({
-    summary: '管理员登录',
+    summary: '管理员登录（支持不同登录角色）',
   })
   @Authorize({
     permission: '-',
-    label: '管理员登录',
+    label: '管理员登录（支持不同登录角色）',
     ifIgnore: true,
     ifIgnoreParamInLog: true,
   })
@@ -75,11 +75,11 @@ export class UserLoginController {
 
   @Post('/log-out')
   @ApiOperation({
-    summary: '登出',
+    summary: '登出（支持不同登录角色）',
   })
   @Authorize({
     permission: '-',
-    label: '登出',
+    label: '登出（支持不同登录角色）',
     ifIgnore: true,
     ifIgnoreButResolveToken: true,
     ifIgnoreParamInLog: true,

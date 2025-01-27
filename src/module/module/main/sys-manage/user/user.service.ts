@@ -149,9 +149,19 @@ export class UserService {
   }
 
   async getSelfInfo(): Promise<R> {
-    const user = await this.prisma.findById<UserDto>('sys_user', this.bcs.getUserData().userId);
-    delete user.password;
-    return R.ok(user);
+    const loginRole = this.bcs.getUserData().loginRole;
+    const userId = this.bcs.getUserData().userId;
+    if (loginRole === 'admin') {
+      const user = await this.prisma.findById<UserDto>('sys_user', userId);
+      delete user.password;
+      return R.ok(user);
+    }
+    if (loginRole === 'visitor') {
+      const user = await this.prisma.findById<UserVisitorDto>('sys_user_visitor', userId);
+      delete user.password;
+      return R.ok(user);
+    }
+    return R.err('');
   }
 
   async selOnesUser(ids: string[]): Promise<R> {
@@ -176,21 +186,47 @@ export class UserService {
   }
 
   async updUser(dto: UserDto): Promise<R> {
-    await this.prisma.updateById('sys_user', dto);
-    return R.ok();
+    const loginRole = this.bcs.getUserData().loginRole;
+    const userId = this.bcs.getUserData().userId;
+    if (loginRole === 'admin') {
+      await this.prisma.updateById('sys_user', dto);
+      return R.ok();
+    }
+    if (loginRole === 'visitor') {
+      await this.prisma.updateById('sys_user_visitor', dto);
+      return R.ok();
+    }
+    return R.err('');
   }
 
   async updPsd(dto: UpdPsdDto): Promise<R> {
-    const user_ = await this.prisma.findById<UserDto>('sys_user', this.bcs.getUserData().userId);
-    const ifUserYes = await comparePassword(dto.oldp, user_.password);
-    if (!ifUserYes) {
-      return R.err('旧密码错误。');
+    const loginRole = this.bcs.getUserData().loginRole;
+    const userId = this.bcs.getUserData().userId;
+    if (loginRole === 'admin') {
+      const user_ = await this.prisma.findById<UserDto>('sys_user', userId);
+      const ifUserYes = await comparePassword(dto.oldp, user_.password);
+      if (!ifUserYes) {
+        return R.err('旧密码错误。');
+      }
+      await this.prisma.updateById('sys_user', {
+        id: user_.id,
+        password: await hashPassword(dto.newp1),
+      });
+      return R.ok();
     }
-    await this.prisma.updateById('sys_user', {
-      id: user_.id,
-      password: await hashPassword(dto.newp1),
-    });
-    return R.ok();
+    if (loginRole === 'visitor') {
+      const user_ = await this.prisma.findById<UserVisitorDto>('sys_user_visitor', userId);
+      const ifUserYes = await comparePassword(dto.oldp, user_.password);
+      if (!ifUserYes) {
+        return R.err('旧密码错误。');
+      }
+      await this.prisma.updateById('sys_user_visitor', {
+        id: user_.id,
+        password: await hashPassword(dto.newp1),
+      });
+      return R.ok();
+    }
+    return R.err('');
   }
 
   async adminResetUserPsd(dto: ResetUserPsdDto): Promise<R> {
@@ -244,7 +280,8 @@ export class UserService {
 
   async login(dto: LoginDto, { loginIp, loginBrowser, loginOs }, ifAdminLogin = false): Promise<R<{
     token: string,
-    user: UserDto
+    user: UserDto,
+    loginRole: string,
   }>> {
     if (!currentEnv().ifIgnoreVerificationCode) {
       const vcode = await this.cacheTokenService.getVerificationCode(dto.verificationCodeUuid);
@@ -282,6 +319,7 @@ export class UserService {
       return R.ok({
         token: token,
         user: user,
+        loginRole: dto.loginRole,
       });
     }
     if (dto.loginRole === 'visitor') {
@@ -310,6 +348,7 @@ export class UserService {
       return R.ok({
         token: token,
         user: user,
+        loginRole: dto.loginRole,
       });
     }
   }

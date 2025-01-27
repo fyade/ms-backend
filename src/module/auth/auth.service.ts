@@ -351,6 +351,21 @@ export class AuthService {
   }
 
   /**
+   * 某权限是否被禁用
+   * @param permission
+   */
+  async permissionIfDisabled(permission: string) {
+    const newVar = await this.prisma.getOrigin().sys_menu.findMany({
+      where: {
+        perms: permission,
+        if_disabled: base.Y,
+        ...this.prisma.defaultSelArg().where,
+      },
+    });
+    return newVar.length > 0;
+  }
+
+  /**
    * 是否管理员用户操作非管理员用户
    * @param controlUserId
    * @param controledUserId
