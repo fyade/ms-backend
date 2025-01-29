@@ -13,9 +13,6 @@ export class InterfaceInterfaceGroupDto extends BaseDto {
 }
 
 export class InterfaceInterfaceGroupSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '接口', required: false })
   interfaceId: number;
 

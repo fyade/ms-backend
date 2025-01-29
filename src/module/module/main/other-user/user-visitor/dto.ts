@@ -23,9 +23,6 @@ export class UserVisitorDto extends BaseDto {
 }
 
 export class UserVisitorSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: string;
-
   @ApiProperty({ description: '用户名', required: false })
   username: string;
 

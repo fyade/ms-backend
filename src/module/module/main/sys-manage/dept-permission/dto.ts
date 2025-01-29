@@ -13,9 +13,6 @@ export class DeptPermissionDto extends BaseDto {
 }
 
 export class DeptPermissionSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '部门', required: false })
   deptId: number;
 

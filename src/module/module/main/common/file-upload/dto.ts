@@ -31,9 +31,6 @@ export class FileDto extends BaseDto {
 }
 
 export class FileSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: string;
-
   @ApiProperty({ description: '原文件名', required: false })
   fileName: string;
 
@@ -173,9 +170,6 @@ export class FileChunkDto extends BaseDto {
 }
 
 export class FileChunkSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: string;
-
   @ApiProperty({ description: '文件md5', required: false })
   fileMd5: string;
 

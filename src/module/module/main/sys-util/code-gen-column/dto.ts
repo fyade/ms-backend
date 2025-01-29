@@ -39,9 +39,6 @@ export class CodeGenColumnDto extends BaseDto {
 }
 
 export class CodeGenColumnSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '所属表', required: false })
   tableId: number;
 

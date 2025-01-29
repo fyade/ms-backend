@@ -21,9 +21,6 @@ export class DeptDto extends BaseDto {
 }
 
 export class DeptSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '部门名', required: false })
   label: string;
 

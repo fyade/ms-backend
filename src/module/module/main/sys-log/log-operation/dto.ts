@@ -31,9 +31,6 @@ export class LogOperationDto extends BaseDto {
 }
 
 export class LogOperationSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '请求id', required: false })
   reqId: string;
 

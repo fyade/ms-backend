@@ -17,9 +17,6 @@ export class UserGroupDto extends BaseDto {
 }
 
 export class UserGroupSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '用户组名', required: false })
   label: string;
 

@@ -30,9 +30,6 @@ export class UserDto {
 }
 
 export class UserSelListDto extends PageDto {
-  @ApiProperty({ description: '用户id', required: false })
-  id: string;
-
   @ApiProperty({ description: '用户名', required: false })
   username: string;
 

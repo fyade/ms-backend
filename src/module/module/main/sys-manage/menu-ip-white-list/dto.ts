@@ -19,9 +19,6 @@ export class MenuIpWhiteListDto extends BaseDto {
 }
 
 export class MenuIpWhiteListSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '菜单', required: false })
   menuId: number;
 

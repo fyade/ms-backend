@@ -21,9 +21,6 @@ export class SysDto extends BaseDto {
 }
 
 export class SysSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '系统名', required: false })
   name: string;
 

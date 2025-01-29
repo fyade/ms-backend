@@ -13,9 +13,6 @@ export class RoleSysDto extends BaseDto {
 }
 
 export class RoleSysSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '角色', required: false })
   roleId: number;
 

@@ -39,9 +39,6 @@ export class MenuDto extends BaseDto {
 }
 
 export class MenuSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '菜单/组件名', required: false })
   label: string;
 

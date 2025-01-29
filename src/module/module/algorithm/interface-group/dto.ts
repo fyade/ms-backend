@@ -21,9 +21,6 @@ export class InterfaceGroupDto extends BaseDto {
 }
 
 export class InterfaceGroupSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '接口组名', required: false })
   label: string;
 

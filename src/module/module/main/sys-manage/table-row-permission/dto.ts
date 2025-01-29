@@ -17,9 +17,6 @@ export class TableRowPermissionDto extends BaseDto {
 }
 
 export class TableRowPermissionSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '权限id', required: false })
   permissionId: number;
 

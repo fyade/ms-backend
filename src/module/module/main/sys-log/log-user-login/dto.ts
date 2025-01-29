@@ -30,9 +30,6 @@ export class LogUserLoginDto extends BaseDto {
 }
 
 export class LogUserLoginSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '用户id', required: false })
   userId: string;
 

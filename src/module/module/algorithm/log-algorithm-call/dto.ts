@@ -25,9 +25,6 @@ export class LogAlgorithmCallDto extends BaseDto {
 }
 
 export class LogAlgorithmCallSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '用户组权限id', required: false })
   userGroupPermissionId: number;
 

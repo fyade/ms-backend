@@ -23,9 +23,6 @@ export class DicDataDto extends BaseDto {
 }
 
 export class DicDataSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '标签', required: false })
   label: string;
 

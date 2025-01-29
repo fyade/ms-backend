@@ -15,9 +15,6 @@ export class UserRoleDto extends BaseDto {
 }
 
 export class UserRoleSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '用户', required: false })
   userId: string;
 

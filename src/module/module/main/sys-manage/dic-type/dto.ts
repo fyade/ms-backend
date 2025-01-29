@@ -19,9 +19,6 @@ export class DicTypeDto extends BaseDto {
 }
 
 export class DicTypeSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '字典名', required: false })
   name: string;
 

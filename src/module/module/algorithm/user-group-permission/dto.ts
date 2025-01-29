@@ -31,9 +31,6 @@ export class UserGroupPermissionDto extends BaseDto {
 }
 
 export class UserGroupPermissionSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '用户组', required: false })
   userGroupId: number;
 

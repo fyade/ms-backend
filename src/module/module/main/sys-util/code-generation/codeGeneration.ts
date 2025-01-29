@@ -386,9 +386,6 @@ ${
 ${`}`}
 ${``}
 ${`export class ${moduleName2}SelListDto extends PageDto {`}
-${`  @ApiProperty({ description: '主键id', required: false })`}
-${`  id: ${columns.find(item => item.colName === 'id').tsType};`}
-${``}
 ${
       columns
         .filter(item => item.ifSelMore === base.Y)

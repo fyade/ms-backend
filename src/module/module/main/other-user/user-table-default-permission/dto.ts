@@ -15,9 +15,6 @@ export class UserTableDefaultPermissionDto extends BaseDto {
 }
 
 export class UserTableDefaultPermissionSelListDto extends PageDto {
-  @ApiProperty({ description: '主键id', required: false })
-  id: number;
-
   @ApiProperty({ description: '表名', required: false })
   tableName: string;
 
