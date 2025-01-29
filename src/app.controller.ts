@@ -1,10 +1,9 @@
-import { Body, Controller, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
+import { Controller, Get, Param, UsePipes } from '@nestjs/common';
 import { AppService } from './app.service';
 import { R } from './common/R';
 import { Authorize } from './decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from './pipe/validation/validation.pipe';
-import { sonProjAuthDto } from './common/app';
 
 @Controller('/sys/base')
 @ApiTags('系统')
@@ -96,17 +95,4 @@ export class AppController {
   async getButtons(@Param('sysId') sysId: number): Promise<R> {
     return this.appService.getButtons(sysId);
   }
-
-  // @Post('/son-proj-auth')
-  // @ApiOperation({
-  //   summary: '子系统鉴权',
-  // })
-  // @Authorize({
-  //   permission: 'system:home:sonProjAuth',
-  //   label: '子系统鉴权',
-  //   ifIgnore: true,
-  // })
-  // async sonProjAuth(@Body() dto: sonProjAuthDto): Promise<R> {
-  //   return this.appService.sonProjAuth(dto);
-  // }
 }

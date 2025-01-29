@@ -10,9 +10,7 @@ import { AuthService } from './module/auth/auth.service';
 import { getAllFiles } from './util/FileUtils';
 import { T_COMP, T_Inter, T_MENU } from './util/base';
 import { BaseContextService } from './module/base-context/base-context.service';
-import { sonProjAuthDto } from './common/app';
 import { CacheTokenService } from './module/cache/cache.token.service';
-import { getTokenUuidFromAuth } from './util/RequestUtils';
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -123,15 +121,10 @@ export class AppService {
     return R.ok(buttonsOfUser);
   }
 
-  async sonProjAuth(dto: sonProjAuthDto): Promise<R> {
-    const decoded = await this.cacheTokenService.verifyToken(getTokenUuidFromAuth(dto.token));
-    return R.ok(decoded);
-  }
-
   /**
    * 获取CPU信息
    */
-  async getCPUUsage() {
+  private async getCPUUsage() {
     const t1 = this._getCPUInfo();
     await sleep(this.cpuUsageMSDefault);
     const t2 = this._getCPUInfo();
@@ -146,7 +139,7 @@ export class AppService {
     };
   }
 
-  _getCPUInfo() {
+  private _getCPUInfo() {
     const cpus = os.cpus();
     let user = 0, nice = 0, sys = 0, idle = 0, irq = 0, total = 0;
     for (const cpu in cpus) {
@@ -169,7 +162,7 @@ export class AppService {
   /**
    * 获取内存信息
    */
-  getMemoryInfo() {
+  private getMemoryInfo() {
     const totalmem = os.totalmem(); // 系统总内存
     const freemem = os.freemem(); // 系统空闲内存
     const { rss, heapUsed, heapTotal } = process.memoryUsage(); // 当前Node进程内存情况
@@ -186,7 +179,7 @@ export class AppService {
   /**
    * 获取磁盘信息
    */
-  getDiskInfo() {
+  private getDiskInfo() {
     const retArr = [];
     return new Promise((resolve) => {
       diskinfo.getDrives((err, aDrives) => {

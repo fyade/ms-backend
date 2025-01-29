@@ -17,7 +17,8 @@
 
 ## 二开注意事项
 
-- sys_sys 及 sys_menu 表中，您二开时产生的系统及菜单的 id，建议从 10001 开始，否则可能会与本项目后续产生的新数据冲突。
+- sys_sys 及 sys_menu 表中，您二开时产生的系统及菜单的 id，建议从 10001 开始，否则可能会与本项目后续产生的新数据冲突；
+- 本项目中未对 DTO、VO、POJO、ENTITY 等做区分，均使用 DTO；
 
 ## 运行教程
 
@@ -58,7 +59,7 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 随后需要插入一个初始用户，步骤如下：
 
-4.1 打开 api 工具，调用 /sys/user/regist 接口，请求方法为 POST，请求体参数如下，其中 username 和 password 改成管理员的用户名和密码、psdType 勿更改、loginRole 勿更改；
+4.1 打开 api 工具，调用 /sys/user/regist 接口，请求方法为 POST，content-type 为 application/json，请求体参数如下，其中 username 和 password 改成管理员的用户名和密码、psdType 勿更改、loginRole 勿更改；
 
 ```json
 {
@@ -71,9 +72,11 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 4.2 随后发送请求，请求成功后，打开数据库管理软件，打开 sys_user 表，复制刚注册的用户的 id 字段；
 
-4.3 打开 sys_admin_top 表，添加一条记录，其中 user_id 为刚复制的 id，deleted 为 'N'，其他随意；
+4.3 打开 sys_admin_top 表，添加一条记录，其中 user_id 为刚复制的 id，deleted 为字符 N，其他随意；
 
-4.4 `npm run start:dev` 运行；
+4.4 至此，刚才注册的用户就成为了至高无上的超级管理员；
+
+4.5 最后，使用 `npm run start:dev` 命令启动项目；
 
 ## 打包教程
 

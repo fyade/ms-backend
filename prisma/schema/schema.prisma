@@ -557,39 +557,6 @@ model tbl_file_chunk {
   deleted       String   @default("N") @db.Char(1)
 }
 
-// 3.4 公告表
-model tbl_bulletin {
-  id          Int      @id @default(autoincrement()) @db.Int
-  title       String   @db.VarChar(100)
-  content     String   @db.VarChar(500)
-  type        String   @db.VarChar(5)
-  if_top      String   @db.Char(1)
-  if_pin      String   @db.Char(1)
-  remark      String?  @db.VarChar(300)
-  create_role String   @db.VarChar(30)
-  update_role String   @db.VarChar(30)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
-}
-
-// 3.5 公告阅读状态表
-model tbl_bulletin_read {
-  id          Int      @id @default(autoincrement()) @db.Int
-  bulletin_id Int      @db.Int
-  user_id     String   @db.VarChar(10)
-  remark      String?  @db.VarChar(300)
-  create_role String   @db.VarChar(30)
-  update_role String   @db.VarChar(30)
-  create_by   String   @db.VarChar(10)
-  update_by   String   @db.VarChar(10)
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-  deleted     String   @default("N") @db.Char(1)
-}
-
 // 0.1 登录日志表
 model log_user_login {
   id             Int      @id @default(autoincrement()) @db.Int
