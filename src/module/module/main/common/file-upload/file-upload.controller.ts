@@ -67,6 +67,7 @@ export class FileUploadController {
     if (file.size > this.env.file.maxSizeOfFull) {
       return R.err('文件大小超出限制。');
     }
+    delete param.file;
     return this.fileUploadService.fileUploadOneFull(file, { fileName: param.fileName, module: 'avatar' });
   }
 
@@ -92,6 +93,7 @@ export class FileUploadController {
     label: '文件上传-单文件分片上传',
   })
   async fileUploadOneChunkUpload(@Body() param: FileUploadOneChunk_upload, @UploadedFile() file): Promise<R> {
+    delete param.file;
     return this.fileUploadService.fileUploadOneChunkUpload({
       fileMd5: param.fileMd5,
       chunkIndex: param.chunkIndex,

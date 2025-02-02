@@ -4,13 +4,7 @@ import { UserVisitorService } from './user-visitor.service';
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { R } from '../../../../../common/R';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
-import {
-  UserVisitorSelListDto,
-  UserVisitorSelAllDto,
-  UserVisitorInsOneDto,
-  UserVisitorUpdOneDto,
-  AdminNewUserVisitorDto, ResetUserVisitorPsdDto,
-} from './dto';
+import { UserVisitorSelListDto, AdminNewUserVisitorDto, ResetUserVisitorPsdDto } from './dto';
 import { decrypt } from '../../../../../util/EncryptUtils';
 
 @Controller('/main/other-user/user-visitor')
