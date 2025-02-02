@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { currentEnv } from '../config/config';
+import { currentEnv, currentVersion } from '../config/config';
 import { time } from './util/TimeUtils';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -18,7 +18,7 @@ async function bootstrap() {
       .addBearerAuth()
       .setTitle('知笙后台管理系统')
       .setDescription('知笙后台管理系统接口文档')
-      .setVersion('1.0.0')
+      .setVersion(currentVersion)
       .build();
     const swaggerDocuemnt = SwaggerModule.createDocument(app, swaggerOptions);
     SwaggerModule.setup('/api', app, swaggerDocuemnt);
