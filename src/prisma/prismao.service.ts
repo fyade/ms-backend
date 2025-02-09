@@ -1,19 +1,17 @@
 import { currentEnv, getMysqlUrlFromEnv } from '../../config/config';
 import { base } from '../util/base';
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { toSnakeCase, typeOf } from '../util/BaseUtils';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { baseInterfaceColumns2 } from '../module/module/main/sys-util/code-generation/codeGeneration';
 import { time } from '../util/TimeUtils';
+import { PrismaClient } from '@prisma/client';
 
 const env = currentEnv();
 const { PrismaClient: PrismaClientOrigin } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
 
 @Injectable()
 export class PrismaoService extends PrismaClientOrigin {
-  protected prismaClient: PrismaClient;
-
   constructor(
     private readonly bcs: BaseContextService,
   ) {
@@ -36,11 +34,10 @@ export class PrismaoService extends PrismaClientOrigin {
       }
       return this.serialize(result);
     });
-    this.prismaClient = new PrismaClientOrigin(dbConfig);
   }
 
   public getOrigin() {
-    return this.prismaClient;
+    return this as unknown as PrismaClient;
   }
 
   protected getUserId() {
