@@ -20,25 +20,29 @@ export class StaticGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
+
+    let tokenUsable = true;
+
     const query = request.query;
-    const oauth = query['authorization'];
-    if (!oauth) {
+    const oauth = query['authorization'] as string;
+    const token = getTokenUuidFromAuth(oauth);
+    if (!token) {
       throw new UnauthorizedException();
     }
     try {
-      const token = getTokenUuidFromAuth(oauth as string);
       const decoded = await this.cacheTokenService.verifyToken(token);
       if (decoded) {
         this.bcs.setUserData(genCurrentUser(decoded.userid, token, decoded.loginRole));
       } else {
-        throw new UnauthorizedException();
+        tokenUsable = false;
       }
-      const userData = this.bcs.getUserData();
-      const b = await this.authService.ifAdminUser(decoded.userid, decoded.loginRole);
-      return true;
     } catch (e) {
-      console.error(e);
+      tokenUsable = false;
+    }
+
+    if (!tokenUsable) {
       throw new UnauthorizedException();
     }
+    return true;
   }
 }

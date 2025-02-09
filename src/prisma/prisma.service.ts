@@ -1,212 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { currentEnv, getMysqlUrlFromEnv } from '../../config/config';
-import { base, T_DEPT, T_ROLE } from '../util/base';
-import { time } from '../util/TimeUtils';
 import { UnknownException } from '../exception/UnknownException';
 import { PageDto } from '../common/dto/PageDto';
 import { objToCamelCase, objToSnakeCase, toSnakeCase, toSnakeCases, typeOf } from '../util/BaseUtils';
 import { PageVo } from '../common/vo/PageVo';
 import { deepClone } from '../util/ObjectUtils';
-import { BaseContextService } from '../module/base-context/base-context.service';
-import { PrismaClient } from '@prisma/client';
-import { baseInterfaceColumns2 } from '../module/module/main/sys-util/code-generation/codeGeneration';
 import { PrismaParam, SelectParamObj } from './dto';
-
-const env = currentEnv();
-const { PrismaClient: PrismaClientOrigin } = require(env.mode === base.DEV ? '@prisma/client' : '../../generated/client');
+import { PrismaoService } from './prismao.service';
+import { AuthService } from '../module/auth/auth.service';
+import { BaseContextService } from '../module/base-context/base-context.service';
+import { T_DEPT, T_ROLE } from '../util/base';
 
 @Injectable()
-export class PrismaService extends PrismaClientOrigin {
-  private prismaClient: PrismaClient;
-
+export class PrismaService {
   constructor(
+    private readonly authService: AuthService,
     private readonly bcs: BaseContextService,
+    private readonly prismao: PrismaoService,
   ) {
-    const dbConfig = {
-      datasources: {
-        db: {
-          url: getMysqlUrlFromEnv(env),
-        },
-      },
-      log: (env.prismaLogLevel && typeOf(env.prismaLogLevel) === 'array') ? env.prismaLogLevel : [],
-    };
-    super(dbConfig);
-    // 使用中间件对查询结果中的 Bigint 类型进行序列化
-    super.$use(async (params, next) => {
-      const t1 = Date.now();
-      const result = await next(params);
-      const t2 = Date.now();
-      if (currentEnv().ifLogSQLExecutionTime) {
-        console.info(`Query ${params.model}.${params.action} took ${t2 - t1}ms`);
-      }
-      return this.serialize(result);
-    });
-    this.prismaClient = new PrismaClientOrigin(dbConfig);
   }
-
-  getOrigin() {
-    return this.prismaClient;
-  }
-
-  private getUserId() {
-    return this.bcs.getUserData().userId || '???';
-  }
-
-  private getLoginRole() {
-    return this.bcs.getUserData().loginRole || '???';
-  }
-
-  private serialize(obj) {
-    if (typeOf(obj) === 'bigint') {
-      return parseInt(`${obj}`);
-    } else if (typeOf(obj) === 'object') {
-      return JSON.parse(
-        JSON.stringify(obj, (key, value) => {
-          if (typeOf(value) === 'bigint') {
-            return parseInt(`${value}`);
-          }
-          return value;
-        }),
-      );
-    } else if (typeOf(obj) === 'array') {
-      return obj.map(item => {
-        return this.serialize(item);
-      });
-    }
-    return obj;
-  }
-
-  defaultSelArg = ({
-                     selKeys = [],
-                     ifDeleted = true,
-                     ifUseSelfData = false,
-                   }: {
-                     selKeys?: string[],
-                     ifDeleted?: boolean,
-                     ifUseSelfData?: boolean,
-                   } = {},
-  ) => {
-    const retObj = {
-      ...(selKeys.length > 0 ? {
-        select: [...selKeys, ...baseInterfaceColumns2].reduce((o, a) => ({
-          ...o,
-          [toSnakeCase(a)]: true,
-        }), {}),
-      } : {}),
-      where: {
-        create_role: this.getLoginRole(),
-        create_by: this.getUserId(),
-        deleted: base.N,
-      },
-    };
-    if (!ifDeleted) delete retObj.where.deleted;
-    if (!ifUseSelfData) {
-      delete retObj.where.create_role;
-      delete retObj.where.create_by;
-    }
-    return retObj;
-  };
-  defaultInsArg = ({
-                     ifCreateRole = true,
-                     ifUpdateRole = true,
-                     ifCreateBy = true,
-                     ifUpdateBy = true,
-                     ifCreateTime = true,
-                     ifUpdateTime = true,
-                     ifDeleted = true,
-                   }: {
-                     ifCreateRole?: boolean,
-                     ifUpdateRole?: boolean,
-                     ifCreateBy?: boolean,
-                     ifUpdateBy?: boolean,
-                     ifCreateTime?: boolean,
-                     ifUpdateTime?: boolean,
-                     ifDeleted?: boolean,
-                   } = {},
-  ) => {
-    const userid = this.getUserId();
-    const time1 = time();
-    const retObj = {
-      data: {
-        create_role: this.getLoginRole(),
-        update_role: this.getLoginRole(),
-        create_by: userid,
-        update_by: userid,
-        create_time: time1,
-        update_time: time1,
-        deleted: base.N,
-      },
-    };
-    if (!ifCreateRole) delete retObj.data.create_role;
-    if (!ifUpdateRole) delete retObj.data.update_role;
-    if (!ifCreateBy) delete retObj.data.create_by;
-    if (!ifUpdateBy) delete retObj.data.update_by;
-    if (!ifCreateTime) delete retObj.data.create_time;
-    if (!ifUpdateTime) delete retObj.data.update_time;
-    if (!ifDeleted) delete retObj.data.deleted;
-    return retObj;
-  };
-  defaultUpdArg = ({
-                     ifUpdateRole = true,
-                     ifUpdateBy = true,
-                     ifUpdateTime = true,
-                     ifDeleted = true,
-                     ifUseSelfData = false,
-                   }: {
-                     ifUpdateRole?: boolean,
-                     ifUpdateBy?: boolean,
-                     ifUpdateTime?: boolean,
-                     ifDeleted?: boolean,
-                     ifUseSelfData?: boolean,
-                   } = {},
-  ) => {
-    const retObj = {
-      where: {
-        create_role: this.getLoginRole(),
-        create_by: this.getUserId(),
-        deleted: base.N,
-      },
-      data: {
-        update_role: this.getLoginRole(),
-        update_by: this.getUserId(),
-        update_time: time(),
-      },
-    };
-    if (!ifUpdateRole) delete retObj.data.update_role;
-    if (!ifUpdateBy) delete retObj.data.update_by;
-    if (!ifUpdateTime) delete retObj.data.update_time;
-    if (!ifDeleted) delete retObj.where.deleted;
-    if (!ifUseSelfData) {
-      delete retObj.where.create_role;
-      delete retObj.where.create_by;
-    }
-    return retObj;
-  };
-  defaultDelArg = ({
-                     ifUseSelfData = false,
-                   }: {
-                     ifUseSelfData?: boolean
-                   } = {},
-  ) => {
-    const retObj = {
-      where: {
-        create_role: this.getLoginRole(),
-        create_by: this.getUserId(),
-        deleted: base.N,
-      },
-      data: {
-        update_role: this.getLoginRole(),
-        update_by: this.getUserId(),
-        update_time: time(),
-        deleted: base.Y,
-      },
-    };
-    if (!ifUseSelfData) {
-      delete retObj.where.create_role;
-      delete retObj.where.create_by;
-    }
-    return retObj;
-  };
 
   /**
    * 数据表行级别权限控制
@@ -223,11 +34,11 @@ export class PrismaService extends PrismaClientOrigin {
                                       },
   ): Promise<boolean | string | { key: string, value: (number | string)[] }> {
     const userData = this.bcs.getUserData();
-    const permissionData = await this.getOrigin().sys_menu.findFirst({
+    const permissionData = await this.prismao.getOrigin().sys_menu.findFirst({
       where: {
         perms: userData.perms,
         type: 'mb',
-        ...this.defaultSelArg().where,
+        ...this.prismao.defaultSelArg().where,
       },
     });
     if (!permissionData) {
@@ -238,57 +49,26 @@ export class PrismaService extends PrismaClientOrigin {
     if (ifTopAdmin) {
       return true;
     }
-    // 用户的角色/部门
-    const userRoles_ = await this.getOrigin().sys_user_role.findMany({
-      where: {
-        user_id: userData.userId,
-        ...this.defaultSelArg().where,
-      },
-    });
-    const userDepts_ = await this.getOrigin().sys_user_dept.findMany({
-      where: {
-        user_id: userData.userId,
-        ...this.defaultSelArg().where,
-      },
-    });
-    const userRoles = await this.getOrigin().sys_role.findMany({
-      where: {
-        if_admin: base.Y,
-        if_disabled: base.N,
-        id: {
-          in: userRoles_.map(item => item.role_id),
-        },
-        ...this.defaultSelArg().where,
-      },
-    });
-    const userDepts = await this.getOrigin().sys_dept.findMany({
-      where: {
-        if_admin: base.Y,
-        if_disabled: base.N,
-        id: {
-          in: userDepts_.map(item => item.dept_id),
-        },
-        ...this.defaultSelArg().where,
-      },
-    });
-    const trpsRole = await this.getOrigin().sys_table_row_permission.findMany({
+    // // 用户的角色/部门
+    const { allRoleIds, allDeptIds } = await this.authService.rolesAndDeptsOfUser(userData.userId, userData.loginRole);
+    const trpsRole = await this.prismao.getOrigin().sys_table_row_permission.findMany({
       where: {
         action_type: T_ROLE,
         action_id: {
-          in: userRoles.map(item => item.id).map(_ => `${_}`),
+          in: allRoleIds.map(_ => `${_}`),
         },
         permission_id: permissionData.id,
-        ...this.defaultSelArg().where,
+        ...this.prismao.defaultSelArg().where,
       },
     });
-    const trpsDept = await this.getOrigin().sys_table_row_permission.findMany({
+    const trpsDept = await this.prismao.getOrigin().sys_table_row_permission.findMany({
       where: {
         action_type: T_DEPT,
         action_id: {
-          in: userDepts.map(item => item.id).map(_ => `${_}`),
+          in: allDeptIds.map(_ => `${_}`),
         },
         permission_id: permissionData.id,
-        ...this.defaultSelArg().where,
+        ...this.prismao.defaultSelArg().where,
       },
     });
     const trps = [...trpsRole, ...trpsDept];
@@ -297,6 +77,9 @@ export class PrismaService extends PrismaClientOrigin {
     }
     const dataTypes = trps.map(item => item.data_type);
     // 注：同一权限类型同一权限只能设置一个数据类型
+    if (dataTypes.length !== (allRoleIds.length + allDeptIds.length)) {
+      return true;
+    }
     if (dataTypes.includes('ALL')) {
       return true;
     }
@@ -309,7 +92,7 @@ export class PrismaService extends PrismaClientOrigin {
   }
 
   private getModel(model: string) {
-    const modelInstance = this[model];
+    const modelInstance = this.prismao[model];
     if (!modelInstance) {
       throw new UnknownException(this.bcs.getUserData().reqId);
     }
@@ -339,7 +122,7 @@ export class PrismaService extends PrismaClientOrigin {
                              } = {},
   ) {
     const data_ = objToSnakeCase(data);
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted, ifUseSelfData }).where;
+    const publicData = this.prismao.defaultSelArg({ selKeys, ifDeleted, ifUseSelfData }).where;
     return {
       AND: [
         ...Object.keys(publicData).reduce((obj, item) => [
@@ -434,7 +217,7 @@ export class PrismaService extends PrismaClientOrigin {
           if (obj2.OR.length > 0) {
             return [...obj, obj2];
           } else {
-            return [...obj]
+            return [...obj];
           }
         }, []),
         ...Object.keys(range).map(item => (
@@ -478,7 +261,7 @@ export class PrismaService extends PrismaClientOrigin {
     delete data2.pageNum;
     delete data2.pageSize;
     const fieldSelectParam = this.bcs.getFieldSelectParam(model);
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
+    const publicData = this.prismao.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
     const arg: PrismaParam = {
       where: this.genSelParams<T, P>({
         data: data2,
@@ -551,7 +334,7 @@ export class PrismaService extends PrismaClientOrigin {
                                } = {},
   ): Promise<T[]> {
     const fieldSelectParam = this.bcs.getFieldSelectParam(model);
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
+    const publicData = this.prismao.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
     const arg = {
       where: this.genSelParams<T, P>({
         data,
@@ -600,7 +383,7 @@ export class PrismaService extends PrismaClientOrigin {
                               } = {},
   ): Promise<T> {
     const fieldSelectParam = this.bcs.getFieldSelectParam(model);
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
+    const publicData = this.prismao.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
     const arg = {
       where: {
         ...publicData.where,
@@ -647,7 +430,7 @@ export class PrismaService extends PrismaClientOrigin {
                      } = {},
   ): Promise<T[]> {
     const fieldSelectParam = this.bcs.getFieldSelectParam(model);
-    const publicData = this.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
+    const publicData = this.prismao.defaultSelArg({ selKeys, ifDeleted: fieldSelectParam.ifDeleted, ifUseSelfData });
     const arg = {
       where: {
         ...publicData.where,
@@ -712,7 +495,7 @@ export class PrismaService extends PrismaClientOrigin {
       delete data2.id;
     }
     const fieldSelectParam = this.bcs.getFieldSelectParam(model);
-    const publicData = this.defaultInsArg({
+    const publicData = this.prismao.defaultInsArg({
       ifCreateRole: fieldSelectParam.ifCreateRole,
       ifUpdateRole: fieldSelectParam.ifUpdateRole,
       ifCreateBy: fieldSelectParam.ifCreateBy,
@@ -744,7 +527,7 @@ export class PrismaService extends PrismaClientOrigin {
                       } = {},
   ): Promise<T> {
     const fieldSelectParam = this.bcs.getFieldSelectParam(model);
-    const publicData = this.defaultInsArg({
+    const publicData = this.prismao.defaultInsArg({
       ifCreateRole: fieldSelectParam.ifCreateRole,
       ifUpdateRole: fieldSelectParam.ifUpdateRole,
       ifCreateBy: fieldSelectParam.ifCreateBy,
@@ -784,7 +567,7 @@ export class PrismaService extends PrismaClientOrigin {
     const data2 = deepClone(data);
     delete data2.id;
     const fieldSelectParam = this.bcs.getFieldSelectParam(model);
-    const publicData = this.defaultUpdArg({
+    const publicData = this.prismao.defaultUpdArg({
       ifUpdateRole: fieldSelectParam.ifUpdateRole,
       ifUpdateBy: fieldSelectParam.ifUpdateBy,
       ifUpdateTime: fieldSelectParam.ifUpdateTime,
@@ -843,7 +626,7 @@ export class PrismaService extends PrismaClientOrigin {
                         ifUseSelfData?: boolean
                       } = {},
   ): Promise<{ count: number }> {
-    const publicData = this.defaultDelArg({ ifUseSelfData });
+    const publicData = this.prismao.defaultDelArg({ ifUseSelfData });
     const arg = {
       where: {
         ...publicData.where,
@@ -872,7 +655,7 @@ export class PrismaService extends PrismaClientOrigin {
                     ifUseSelfData?: boolean
                   } = {},
   ): Promise<{ count: number }> {
-    const publicData = this.defaultDelArg({ ifUseSelfData });
+    const publicData = this.prismao.defaultDelArg({ ifUseSelfData });
     const arg = {
       where: {
         ...publicData.where,

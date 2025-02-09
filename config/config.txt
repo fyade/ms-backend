@@ -55,7 +55,6 @@ const config = {
     ifLogSQLExecutionTime: true, // 是否打印 sql 执行耗时
     prismaLogLevel: ['query', 'info', 'warn'], // prisma 日志等级
   },
-  test: {},
   prod: {},
 }
 

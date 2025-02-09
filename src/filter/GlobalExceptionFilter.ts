@@ -14,7 +14,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   }
 
   catch(exception: HttpException, host: ArgumentsHost) {
-    // You can override the response object to customize the error response
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request: Request = ctx.getRequest();

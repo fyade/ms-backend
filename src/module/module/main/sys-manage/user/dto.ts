@@ -63,11 +63,9 @@ export class LoginDto2 {
 
 export class LoginDto extends LoginDto2 {
   @ApiProperty({ description: '验证码', required: true })
-  @IsNotEmpty({ message: '验证码不能为空' })
   verificationCode: string;
 
   @ApiProperty({ description: '验证码uuid', required: true })
-  @IsNotEmpty({ message: '验证码uuid不能为空' })
   verificationCodeUuid: string;
 }
 
