@@ -9,20 +9,16 @@ export class R<T = any> {
   private timestamp: number;
   private reqId: string;
 
-  constructor(code: number, data: any, msg: string) {
+  constructor(code: number, data: any, msg: string, reqId: string = '') {
     this.code = code;
     this.data = data;
     this.msg = msg;
     this.time = time();
     this.timestamp = timeStamp(this.time);
-    this.reqId = '';
+    this.reqId = reqId;
   }
 
   static ok(data: any = true) {
     return new R(HTTP.SUCCESS().code, data, HTTP.SUCCESS().msg);
-  }
-
-  static err(msg: string) {
-    return new R(HTTP.SERVER_ERROR().code, null, msg || HTTP.SERVER_ERROR().msg);
   }
 }

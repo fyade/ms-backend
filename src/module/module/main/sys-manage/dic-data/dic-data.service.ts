@@ -5,6 +5,7 @@ import { DicDataDto, DicDataSelListDto, DicDataSelAllDto, DicDataInsOneDto, DicD
 import { DicTypeDto } from '../dic-type/dto';
 import { base } from '../../../../../util/base';
 import { BaseContextService } from '../../../../base-context/base-context.service';
+import { Exception } from "../../../../../exception/Exception";
 
 @Injectable()
 export class DicDataService {
@@ -78,7 +79,7 @@ export class DicDataService {
   async insDicDatas(dtos: DicDataInsOneDto[]): Promise<R> {
     const dicDataInsOneDtos = dtos.filter(item => item.ifDefault === base.Y);
     if (dicDataInsOneDtos.length > 1) {
-      return R.err('只允许有一个默认值。');
+      throw new Exception('只允许有一个默认值。');
     }
     if (dicDataInsOneDtos.length === 1) {
       const r = await this.selAllDicData({ dicTypeId: dicDataInsOneDtos[0].dicTypeId });
@@ -112,7 +113,7 @@ export class DicDataService {
   async updDicDatas(dtos: DicDataUpdOneDto[]): Promise<R> {
     const dicDataUpdOneDtos = dtos.filter(item => item.ifDefault === base.Y);
     if (dicDataUpdOneDtos.length > 1) {
-      return R.err('只允许有一个默认值。');
+      throw new Exception('只允许有一个默认值。');
     }
     if (dicDataUpdOneDtos.length === 1) {
       const r = await this.selAllDicData({ dicTypeId: dicDataUpdOneDtos[0].dicTypeId });

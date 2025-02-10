@@ -12,6 +12,7 @@ import { DeptDto } from '../../sys-manage/dept/dto';
 import { UserUserGroupDto } from '../../../algorithm/user-user-group/dto';
 import { UserGroupDto } from '../../../algorithm/user-group/dto';
 import { BaseContextService } from '../../../../base-context/base-context.service';
+import { Exception } from "../../../../../exception/Exception";
 
 @Injectable()
 export class UserVisitorService {
@@ -122,7 +123,7 @@ export class UserVisitorService {
   async insUserVisitor(dto: AdminNewUserVisitorDto): Promise<R> {
     const userVisitor = await this.prisma.findFirst<UserVisitorDto>('sys_user_visitor', { username: dto.username });
     if (userVisitor) {
-      return R.err('用户名已存在。');
+      throw new Exception('用户名已存在。');
     }
     await this.prisma.create('sys_user_visitor', {
       ...dto,

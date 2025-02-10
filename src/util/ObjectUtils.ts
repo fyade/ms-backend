@@ -35,9 +35,3 @@ export function deepClone<T = any>(value: T, {
 export function arrNoRepeat<T = any>(arr: T[]): T[] {
   return Array.from(new Set(arr));
 }
-
-// export function fit2Obj(obj1: object, obj2: object): object {
-// }
-//
-// function fit2Obj_(obj0: object, obj: object): void {
-// }

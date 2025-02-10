@@ -6,6 +6,7 @@ import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { decrypt } from '../../../../../util/EncryptUtils';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
+import { Exception } from "../../../../../exception/Exception";
 
 @Controller('/main/sys-manage/user')
 @ApiTags('主系统/系统管理/用户')
@@ -107,8 +108,8 @@ export class UserController {
     delete dto.oldpType;
     delete dto.newp1Type;
     delete dto.newp2Type;
-    if (!dto.newp1 || !dto.newp2) return R.err('密码不能为空。');
-    if (dto.newp1 !== dto.newp2) return R.err('新密码不一致。');
+    if (!dto.newp1 || !dto.newp2) throw new Exception('密码不能为空。');
+    if (dto.newp1 !== dto.newp2) throw new Exception('新密码不一致。');
     return this.userService.updPsd(dto);
   }
 

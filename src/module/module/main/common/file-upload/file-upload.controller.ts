@@ -13,6 +13,7 @@ import {
 import { Authorize } from '../../../../../decorator/authorizeDecorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '../../../../../pipe/validation/validation.pipe';
+import { Exception } from "../../../../../exception/Exception";
 
 @Controller('/main/sys/file-upload')
 @ApiTags('通用/文件上传')
@@ -48,7 +49,7 @@ export class FileUploadController {
   })
   async fileUploadOneFull0(@Body() param: FileUploadOneFull_upload, @UploadedFile() file): Promise<R> {
     if (file.size > this.env.file.maxSizeOfFull) {
-      return R.err('文件大小超出限制。');
+      throw new Exception('文件大小超出限制。');
     }
     delete param.file;
     return this.fileUploadService.fileUploadOneFull(file, param);
@@ -65,7 +66,7 @@ export class FileUploadController {
   })
   async fileUploadAvatar(@Body() param: FileUploadOneFull_upload, @UploadedFile() file): Promise<R> {
     if (file.size > this.env.file.maxSizeOfFull) {
-      return R.err('文件大小超出限制。');
+      throw new Exception('文件大小超出限制。');
     }
     delete param.file;
     return this.fileUploadService.fileUploadOneFull(file, { fileName: param.fileName, module: 'avatar' });

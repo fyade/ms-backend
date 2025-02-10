@@ -20,11 +20,11 @@ import { DeptDto } from '../dept/dto';
 import { CacheTokenService } from '../../../../cache/cache.token.service';
 import { timestamp } from '../../../../../util/TimeUtils';
 import { BaseContextService } from '../../../../base-context/base-context.service';
-import { LogUserLoginDto, NOT_ADMIN, PASSWORD_ERROR } from '../../sys-log/log-user-login/dto';
+import { NOT_ADMIN, PASSWORD_ERROR } from '../../sys-log/log-user-login/dto';
 import { UserVisitorDto } from '../../other-user/user-visitor/dto';
-import { VerificationCodeErrorException } from '../../../../../exception/VerificationCodeErrorException';
 import * as svgCaptcha from 'svg-captcha';
 import { currentEnv } from '../../../../../../config/config';
+import { Exception } from "../../../../../exception/Exception";
 
 @Injectable()
 export class UserService {
@@ -161,7 +161,7 @@ export class UserService {
       delete user.password;
       return R.ok(user);
     }
-    return R.err('');
+    throw new Exception('');
   }
 
   async selOnesUser(ids: string[]): Promise<R> {
@@ -175,7 +175,7 @@ export class UserService {
   async insUser(dto: AdminNewUserDto): Promise<R> {
     const user = await this.prisma.findFirst('sys_user', { username: dto.username });
     if (user) {
-      return R.err('用户名已存在。');
+      throw new Exception('用户名已存在。');
     }
     await this.prisma.create('sys_user', {
       ...dto,
@@ -196,7 +196,7 @@ export class UserService {
       await this.prisma.updateById('sys_user_visitor', dto);
       return R.ok();
     }
-    return R.err('');
+    throw new Exception('');
   }
 
   async updPsd(dto: UpdPsdDto): Promise<R> {
@@ -206,7 +206,7 @@ export class UserService {
       const user_ = await this.prisma.findById<UserDto>('sys_user', userId);
       const ifUserYes = await comparePassword(dto.oldp, user_.password);
       if (!ifUserYes) {
-        return R.err('旧密码错误。');
+        throw new Exception('旧密码错误。');
       }
       await this.prisma.updateById('sys_user', {
         id: user_.id,
@@ -218,7 +218,7 @@ export class UserService {
       const user_ = await this.prisma.findById<UserVisitorDto>('sys_user_visitor', userId);
       const ifUserYes = await comparePassword(dto.oldp, user_.password);
       if (!ifUserYes) {
-        return R.err('旧密码错误。');
+        throw new Exception('旧密码错误。');
       }
       await this.prisma.updateById('sys_user_visitor', {
         id: user_.id,
@@ -226,7 +226,7 @@ export class UserService {
       });
       return R.ok();
     }
-    return R.err('');
+    throw new Exception('');
   }
 
   async adminResetUserPsd(dto: ResetUserPsdDto): Promise<R> {
@@ -243,7 +243,7 @@ export class UserService {
         username: dto.username,
       });
       if (user) {
-        return R.err('用户名已被使用。');
+        throw new Exception('用户名已被使用。');
       }
       const userid = genId(5, false);
       await this.prisma.create<UserDto>('sys_user', {
@@ -262,7 +262,7 @@ export class UserService {
         username: dto.username,
       });
       if (user) {
-        return R.err('用户名已被使用。');
+        throw new Exception('用户名已被使用。');
       }
       const userid = genId(10, false);
       await this.prisma.create<UserVisitorDto>('sys_user_visitor', {
@@ -286,11 +286,11 @@ export class UserService {
     if (!currentEnv().ifIgnoreVerificationCode) {
       const vcode = await this.cacheTokenService.getVerificationCode(dto.verificationCodeUuid);
       if (!vcode) {
-        throw new VerificationCodeErrorException('验证码已过期。');
+        throw new Exception('验证码已过期。');
       }
       await this.cacheTokenService.deleteVerificationCode(dto.verificationCodeUuid);
       if (vcode.toLowerCase() !== dto.verificationCode.toLowerCase()) {
-        throw new VerificationCodeErrorException('验证码错误。');
+        throw new Exception('验证码错误。');
       }
     }
     if (dto.loginRole === 'admin') {
@@ -304,12 +304,12 @@ export class UserService {
       if (loginlogs.length >= this.maxLoginFailCount) {
         const sort = loginlogs.sort((a, b) => timestamp(a.createTime) - timestamp(b.createTime));
         const number = Math.ceil(24 - (timestamp() - timestamp(sort[0].createTime)) / (1000 * 60 * 60));
-        return R.err(`您的账号在当前IP密码错误次数过多，请${number}小时后重试或更换网络环境重试。`);
+        throw new Exception(`您的账号在当前IP密码错误次数过多，请${number}小时后重试或更换网络环境重试。`);
       }
       const b1 = await comparePassword(dto.password, user.password);
       if (!b1) {
         await this.insLoginLog(loginIp, loginBrowser, '', loginOs, user.id, dto.loginRole, b1, PASSWORD_ERROR);
-        return R.err(`密码错误，还剩${this.maxLoginFailCount - loginlogs.length - 1}次机会。`);
+        throw new Exception(`密码错误，还剩${this.maxLoginFailCount - loginlogs.length - 1}次机会。`);
       }
       if (!ifAdminLogin) {
         await this.insLoginLog(loginIp, loginBrowser, '', loginOs, user.id, dto.loginRole, b1);
@@ -333,12 +333,12 @@ export class UserService {
       if (loginlogs.length >= this.maxLoginFailCount) {
         const sort = loginlogs.sort((a, b) => timestamp(a.createTime) - timestamp(b.createTime));
         const number = Math.ceil(24 - (timestamp() - timestamp(sort[0].createTime)) / (1000 * 60 * 60));
-        return R.err(`您的账号在当前IP密码错误次数过多，请${number}小时后重试或更换网络环境重试。`);
+        throw new Exception(`您的账号在当前IP密码错误次数过多，请${number}小时后重试或更换网络环境重试。`);
       }
       const b1 = await comparePassword(dto.password, user.password);
       if (!b1) {
         await this.insLoginLog(loginIp, loginBrowser, '', loginOs, user.id, dto.loginRole, b1, PASSWORD_ERROR);
-        return R.err(`密码错误，还剩${this.maxLoginFailCount - loginlogs.length - 1}次机会。`);
+        throw new Exception(`密码错误，还剩${this.maxLoginFailCount - loginlogs.length - 1}次机会。`);
       }
       if (!ifAdminLogin) {
         await this.insLoginLog(loginIp, loginBrowser, '', loginOs, user.id, dto.loginRole, b1);
@@ -356,7 +356,7 @@ export class UserService {
   async adminlogin(dto: LoginDto, { loginIp, loginBrowser, loginOs }): Promise<R> {
     const userinfo = await this.login(dto, { loginIp, loginBrowser, loginOs }, true);
     if (userinfo.code !== HTTP.SUCCESS().code) {
-      return R.err(userinfo.msg);
+      throw new Exception(userinfo.msg);
     }
     const ifAdminUser = await this.authService.ifAdminUser(userinfo.data.user.id, dto.loginRole);
     if (ifAdminUser) {
@@ -364,7 +364,7 @@ export class UserService {
       return R.ok(userinfo.data);
     } else {
       await this.insLoginLog(loginIp, loginBrowser, '', loginOs, userinfo.data.user.id, dto.loginRole, false, NOT_ADMIN, '不是管理员用户');
-      return R.err('你不是管理员用户。');
+      throw new Exception('你不是管理员用户。');
     }
   }
 

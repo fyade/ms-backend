@@ -19,6 +19,29 @@ export function sleep(ms = 1000) {
 }
 
 /**
+ * 转换为path
+ * @param str
+ */
+export function toPath(...str: string[]): string {
+  return str.join('/').replace(/\/+/g, '/');
+}
+
+/**
+ * 生成随机数
+ * @param min
+ * @param max
+ * @param decimalPlaces
+ */
+export function randomNumber(min: number, max: number, decimalPlaces: number): number {
+  if (min > max) {
+    throw new Error('最小值不能大于最大值');
+  }
+  const factor = Math.pow(10, decimalPlaces);
+  const randomNum = Math.random() * (max - min) + min;
+  return Math.round(randomNum * factor) / factor;
+}
+
+/**
  * 下划线转驼峰
  * @param str
  */

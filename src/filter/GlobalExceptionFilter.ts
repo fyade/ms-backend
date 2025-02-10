@@ -18,10 +18,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const request: Request = ctx.getRequest();
     try {
-      response.status(HTTP.SERVER_ERROR().code).json(new R(exception.getStatus(), null, exception.message));
+      response.status(exception.getStatus()).json(new R(exception.getStatus(), null, exception.message, this.bcs.getUserData().reqId));
     } catch (e) {
       const unknownException = new UnknownException(this.bcs.getUserData().reqId, exception);
-      response.status(unknownException.getStatus()).json(new R(unknownException.getStatus(), null, unknownException.getMessage()));
+      response.status(unknownException.getStatus()).json(new R(unknownException.getStatus(), null, unknownException.getMessage(), this.bcs.getUserData().reqId));
     }
   }
 }

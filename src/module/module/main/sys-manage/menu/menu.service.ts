@@ -4,6 +4,7 @@ import { R } from '../../../../../common/R';
 import { MenuDto, MenuSelListDto, MenuSelAllDto, MenuInsOneDto, MenuUpdOneDto } from './dto';
 import { CachePermissionService } from '../../../../cache/cache.permission.service';
 import { BaseContextService } from '../../../../base-context/base-context.service';
+import { Exception } from "../../../../../exception/Exception";
 
 @Injectable()
 export class MenuService {
@@ -58,7 +59,7 @@ export class MenuService {
   async updMenu(dto: MenuUpdOneDto): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     if (dto.id === dto.parentId) {
-      return R.err('父级菜单不可选自己！');
+      throw new Exception('父级菜单不可选自己！');
     }
     const res = await this.prisma.updateById<MenuDto>('sys_menu', dto);
     return R.ok(res);
@@ -67,7 +68,7 @@ export class MenuService {
   async updMenus(dtos: MenuUpdOneDto[]): Promise<R> {
     await this.cachePermissionService.clearPermissionsInCache();
     if (dtos.some(item => item.id === item.parentId)) {
-      return R.err('父级菜单不可选自己！');
+      throw new Exception('父级菜单不可选自己！');
     }
     const res = await this.prisma.updateMany<MenuDto>('sys_menu', dtos);
     return R.ok(res);

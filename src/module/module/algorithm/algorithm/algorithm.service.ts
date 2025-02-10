@@ -7,6 +7,7 @@ import { AuthService } from '../../../auth/auth.service';
 import { requestSF } from '../../../../api/request';
 import { base } from '../../../../util/base';
 import { BaseContextService } from '../../../base-context/base-context.service';
+import { Exception } from "../../../../exception/Exception";
 
 @Injectable()
 export class AlgorithmService {
@@ -36,6 +37,6 @@ export class AlgorithmService {
         return R.ok(response);
       }
     }
-    return R.err('');
+    throw new Exception('');
   }
 }

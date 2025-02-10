@@ -17,6 +17,7 @@ import { randomUUID } from '../../../../../util/IdUtils';
 import { BaseContextService } from '../../../../base-context/base-context.service';
 import { saveFile } from '../../../../../util/FileUtils';
 import { formatDate } from '../../../../../util/TimeUtils';
+import { Exception } from "../../../../../exception/Exception";
 
 const SparkMD5 = require('spark-md5');
 
@@ -117,7 +118,7 @@ export class FileUploadService {
       return R.ok(fillObj.fileNewName);
     } catch (e) {
       console.error(e);
-      return R.err(e.message);
+      throw new Exception(e.message);
     }
   }
 
@@ -239,7 +240,7 @@ export class FileUploadService {
       return R.ok();
     } catch (e) {
       console.error(e);
-      return R.err(e.message);
+      throw new Exception(e.message);
     }
   }
 
@@ -262,7 +263,7 @@ export class FileUploadService {
       },
     });
     if (chunks.length !== fileInfo.chunkNum) {
-      return R.err('合并失败，请重试。');
+      throw new Exception('合并失败，请重试。');
     }
     const outputFile = join(this.env.file.uploadPath, fileInfo.fileNewName);
     const outputFd = fs.openSync(outputFile, 'w');
