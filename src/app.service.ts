@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { R } from './common/R';
-import { sleep } from './util/BaseUtils';
-import * as os from 'os';
-import * as process from 'process';
-import * as diskinfo from 'diskinfo';
 import { NonSupportedException } from './exception/NonSupportedException';
 import { currentVersion } from '../config/config';
 import { AuthService } from './module/auth/auth.service';
@@ -12,6 +8,7 @@ import { T_COMP, T_Inter, T_MENU } from './util/base';
 import { BaseContextService } from './module/base-context/base-context.service';
 import { CacheTokenService } from './module/cache/cache.token.service';
 
+const si = require("systeminformation");
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -36,14 +33,16 @@ export class AppService {
   }
 
   async getSystemUsingInfo(): Promise<R> {
-    const cpuUsage = await this.getCPUUsage();
-    const memoryInfo = this.getMemoryInfo();
-    const diskInfo = await this.getDiskInfo();
+    const ress = await Promise.allSettled([
+      this.getCPUUsage(),
+      this.getMemoryInfo(),
+      this.getDiskInfo()
+    ])
     return R.ok({
-      cpu: cpuUsage,
-      memory: memoryInfo,
-      disk: diskInfo,
-    });
+      cpu: ress[0].status === 'fulfilled' ? ress[0].value : null,
+      memory: ress[1].status === 'fulfilled' ? ress[1].value : null,
+      disk: ress[2].status === 'fulfilled' ? ress[2].value : null,
+    })
   }
 
   async getAllAuthApis(): Promise<R> {
@@ -125,78 +124,38 @@ export class AppService {
    * 获取CPU信息
    */
   private async getCPUUsage() {
-    const t1 = this._getCPUInfo();
-    await sleep(this.cpuUsageMSDefault);
-    const t2 = this._getCPUInfo();
-    const idle = t2.idle - t1.idle;
-    const total = t2.total - t1.total;
-    const usage = 1 - idle / total;
-    const cpus = os.cpus();
-    return {
-      coreNum: cpus.length,
-      core: cpus[0].model.trim(),
-      usage,
-    };
-  }
-
-  private _getCPUInfo() {
-    const cpus = os.cpus();
-    let user = 0, nice = 0, sys = 0, idle = 0, irq = 0, total = 0;
-    for (const cpu in cpus) {
-      const times = cpus[cpu].times;
-      user += times.user;
-      nice += times.user;
-      sys += times.sys;
-      idle += times.idle;
-      irq += times.irq;
-    }
-    total += user + nice + sys + idle + irq;
-    return {
-      user,
-      sys,
-      idle,
-      total,
-    };
+    return new Promise(resolve => {
+      // si.cpu().then(data => resolve(data));
+      resolve(null)
+    })
   }
 
   /**
    * 获取内存信息
    */
-  private getMemoryInfo() {
-    const totalmem = os.totalmem(); // 系统总内存
-    const freemem = os.freemem(); // 系统空闲内存
-    const { rss, heapUsed, heapTotal } = process.memoryUsage(); // 当前Node进程内存情况
-    return {
-      system: 1 - freemem / totalmem, // 系统内存占用
-      heap: heapUsed / heapTotal, // Node内存占用
-      node: rss / totalmem, // Node内存占用（相对于系统
-      total: totalmem,
-      free: freemem,
-      used: totalmem - freemem,
-    };
+  private async getMemoryInfo() {
+    return new Promise(resolve => {
+      si.mem().then(res => resolve({
+        total: res.total,
+        free: res.free,
+        used: res.used,
+      }))
+    })
   }
 
   /**
    * 获取磁盘信息
    */
   private getDiskInfo() {
-    const retArr = [];
     return new Promise((resolve) => {
-      diskinfo.getDrives((err, aDrives) => {
-        const index1 = aDrives.findIndex((item, index) => item.mounted === aDrives[0].mounted && index !== 0);
-        const aDrives_ = index1 === -1 ? aDrives : aDrives.slice(0, index1);
-        for (let i = 0; i < aDrives_.length; i++) {
-          const item = aDrives_[i];
-          retArr.push({
-            mounted: item.mounted,
-            total: item.blocks,
-            used: item.used,
-            available: item.available,
-            capacity: item.capacity,
-          });
-        }
-        resolve(retArr);
-      });
+      si.fsSize().then(res => {
+        resolve(res.map(item => ({
+          mount: item.mount,
+          size: item.size,
+          used: item.used,
+          available: item.available,
+        })))
+      })
     });
   }
 }
