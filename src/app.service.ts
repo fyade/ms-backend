@@ -7,6 +7,7 @@ import { getAllFiles } from './util/FileUtils';
 import { T_COMP, T_Inter, T_MENU } from './util/base';
 import { BaseContextService } from './module/base-context/base-context.service';
 import { CacheTokenService } from './module/cache/cache.token.service';
+import { PrismaoService } from "./prisma/prismao.service";
 
 const si = require("systeminformation");
 const fs = require('fs').promises;
@@ -20,6 +21,7 @@ export class AppService {
     private readonly authService: AuthService,
     private readonly bcs: BaseContextService,
     private readonly cacheTokenService: CacheTokenService,
+    private readonly prismao: PrismaoService,
   ) {
     this.cpuUsageMSDefault = 100; // CPU 利用率默认时间段
   }
@@ -30,6 +32,10 @@ export class AppService {
 
   async getVersion(): Promise<R> {
     return R.ok(currentVersion);
+  }
+
+  async getTime(): Promise<R> {
+    return R.ok(new Date());
   }
 
   async getSystemUsingInfo(): Promise<R> {
@@ -45,7 +51,10 @@ export class AppService {
     })
   }
 
-  async getAllAuthApis(): Promise<R> {
+  async getAllAuthApis(): Promise<R<Record<string, {
+    authApiStrs: string[],
+    authApiObjs: { permission: string, label: string }[]
+  }>>> {
     const allAuthApis = {};
     try {
       const directoryPath = path.join(__dirname, '../../src/module');
@@ -90,6 +99,46 @@ export class AppService {
       throw new NonSupportedException('读取源代码信息');
     }
     return R.ok(allAuthApis);
+  }
+
+  async getAllAuthApis2(): Promise<R> {
+    const hdData = await this.getAllAuthApis();
+    const dbData = await this.prismao.getOrigin().sys_menu.findMany({
+      where: {
+        ...this.prismao.defaultSelArg().where,
+      }
+    })
+    const dbPerms = dbData.filter(item => item.type === 'mb').map(item => [item.label, item.perms]);
+    const hdPerms = Object.values(hdData.data).map(item => item.authApiObjs).flat().map(item => [item.label, item.permission])
+    const dbPerms1 = dbPerms.map(_ => _[1]);
+    const hdPerms1 = hdPerms.map(_ => _[1]);
+    // 后端有数据库没有的
+    const permsNotInDb = hdPerms1.filter(item => !dbPerms1.includes(item)).filter(item => item !== '-')
+    // 数据库有后端没有的
+    const permsNotInHd = dbPerms1.filter(item => !hdPerms1.includes(item))
+    // label不一样的
+    const labelDiffs = [
+      ...dbPerms.filter(item => {
+        const find1 = dbPerms.find(itm => itm[1] === item[1])
+        const find2 = hdPerms.find(itm => itm[1] === item[1])
+        return find1 && find2 && find1[0] !== find2[0]
+      }),
+      ...hdPerms.filter(item => {
+        const find1 = dbPerms.find(itm => itm[1] === item[1])
+        const find2 = hdPerms.find(itm => itm[1] === item[1])
+        return find1 && find2 && find1[0] !== find2[0]
+      })
+    ]
+    return R.ok({
+      permsNotInDb,
+      permsNotInHd,
+      labelDiffs,
+      label: {
+        permsNotInDb: '后端有数据库没有的',
+        permsNotInHd: '数据库有后端没有的',
+        labelDiffs: 'label不一样的',
+      }
+    });
   }
 
   async getSystems(): Promise<R> {

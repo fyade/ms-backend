@@ -20,7 +20,7 @@ export class AppController {
     summary: 'Hello World!',
   })
   async getHello(): Promise<R> {
-    return await this.appService.getHello();
+    return this.appService.getHello();
   }
 
   @Get('/v')
@@ -33,7 +33,20 @@ export class AppController {
     ifIgnore: true,
   })
   async getVersion(): Promise<R> {
-    return await this.appService.getVersion();
+    return this.appService.getVersion();
+  }
+
+  @Get('/time')
+  @ApiOperation({
+    summary: '获取服务器时间'
+  })
+  @Authorize({
+    permission: '-',
+    label: '获取服务器时间',
+    ifIgnore: true
+  })
+  async getTime(): Promise<R> {
+    return this.appService.getTime()
   }
 
   @Get('/system-base-info')
@@ -58,6 +71,18 @@ export class AppController {
   })
   async getAllAuthApis(): Promise<R> {
     return this.appService.getAllAuthApis();
+  }
+
+  @Get('/system-all-apis-2')
+  @ApiOperation({
+    summary: '获取数据库中缺失的鉴权接口',
+  })
+  @Authorize({
+    permission: 'system:home:systemAllApis2',
+    label: '获取数据库中缺失的鉴权接口',
+  })
+  async getAllAuthApis2(): Promise<R> {
+    return this.appService.getAllAuthApis2();
   }
 
   @Get('/system')
