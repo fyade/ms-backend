@@ -55,20 +55,20 @@ export class RoleService {
   }
 
   async updRole(dto: RoleUpdOneDto): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.updateById<RoleDto>('sys_role', dto);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 
   async updRoles(dtos: RoleUpdOneDto[]): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.updateMany<RoleDto>('sys_role', dtos);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 
   async delRole(ids: number[]): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.deleteById<RoleDto>('sys_role', ids);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 }

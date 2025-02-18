@@ -55,20 +55,20 @@ export class MenuIpWhiteListService {
   }
 
   async updMenuIpWhiteList(dto: MenuIpWhiteListUpdOneDto): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.updateById<MenuIpWhiteListDto>('sys_menu_ip_white_list', dto);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 
   async updMenuIpWhiteLists(dtos: MenuIpWhiteListUpdOneDto[]): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.updateMany<MenuIpWhiteListDto>('sys_menu_ip_white_list', dtos);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 
   async delMenuIpWhiteList(ids: number[]): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.deleteById<MenuIpWhiteListDto>('sys_menu_ip_white_list', ids);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 }

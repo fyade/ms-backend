@@ -57,26 +57,26 @@ export class MenuService {
   }
 
   async updMenu(dto: MenuUpdOneDto): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     if (dto.id === dto.parentId) {
       throw new Exception('父级菜单不可选自己！');
     }
     const res = await this.prisma.updateById<MenuDto>('sys_menu', dto);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 
   async updMenus(dtos: MenuUpdOneDto[]): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     if (dtos.some(item => item.id === item.parentId)) {
       throw new Exception('父级菜单不可选自己！');
     }
     const res = await this.prisma.updateMany<MenuDto>('sys_menu', dtos);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 
   async delMenu(ids: number[]): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.deleteById<MenuDto>('sys_menu', ids);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 }

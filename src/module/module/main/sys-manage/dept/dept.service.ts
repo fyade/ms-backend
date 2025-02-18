@@ -55,20 +55,20 @@ export class DeptService {
   }
 
   async updDept(dto: DeptUpdOneDto): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.updateById<DeptDto>('sys_dept', dto);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 
   async updDepts(dtos: DeptUpdOneDto[]): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.updateMany<DeptDto>('sys_dept', dtos);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 
   async delDept(ids: number[]): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.deleteById<DeptDto>('sys_dept', ids);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 }

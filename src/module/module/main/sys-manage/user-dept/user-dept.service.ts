@@ -49,7 +49,6 @@ export class UserDeptService {
   }
 
   async updUserDeptUD(dto: UserDeptUpdUDDto): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     if (!await this.authService.ifAdminUserUpdNotAdminUser(this.bcs.getUserData().userId, dto.userId)) {
       throw new UserPermissionDeniedException();
     }
@@ -60,11 +59,11 @@ export class UserDeptService {
     const delDepts = allDepts.filter(item => delDeptIds.indexOf(item.deptId) > -1).map(item => item.id);
     await this.prisma.deleteById('sys_user_dept', delDepts);
     await this.prisma.createMany('sys_user_dept', addDepts.map(item => ({ userId: dto.userId, deptId: item, loginRole: dto.loginRole })));
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok();
   }
 
   async updUserDeptDU(dto: UserDeptUpdDUDto): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const data = [];
     const allUsersOfThisDept = await this.prisma.findAll<UserDeptDto>('sys_user_dept', {
       data: { deptId: dto.deptId },
@@ -83,12 +82,13 @@ export class UserDeptService {
       });
     }
     await this.prisma.createMany('sys_user_dept', data);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok();
   }
 
   async delUserDept(ids: number[]): Promise<R> {
-    await this.cachePermissionService.clearPermissionsInCache();
     const res = await this.prisma.deleteById<UserDeptDto>('sys_user_dept', ids);
+    await this.cachePermissionService.clearPermissionsInCache();
     return R.ok(res);
   }
 }
