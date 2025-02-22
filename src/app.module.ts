@@ -10,6 +10,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './module/auth/auth.module';
 import { BaseContextModule } from './module/base-context/base-context.module';
 import { CacheModule } from './module/cache/cache.module';
+import { LoggerModule } from "./module/logger/logger.module";
+import { QueueModule } from "./module/queue/queue.module";
 import { StaticModule } from './module/static/static.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
@@ -47,14 +49,16 @@ import { UserVisitorModule } from './module/module/main/other-user/user-visitor/
 import { UserTableDefaultPermissionModule } from './module/module/main/other-user/user-table-default-permission/user-table-default-permission.module';
 import { TableRowPermissionModule } from './module/module/main/sys-manage/table-row-permission/table-row-permission.module';
 
+const currentEnv1 = currentEnv();
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [currentEnv],
     }),
     ServeStaticModule.forRoot({
-      rootPath: currentEnv().file.uploadPath,
-      serveRoot: currentEnv().staticRoot,
+      rootPath: currentEnv1.file.uploadPath,
+      serveRoot: currentEnv1.staticRoot,
     }),
     ClsModule.forRoot({
       global: true,
@@ -65,6 +69,8 @@ import { TableRowPermissionModule } from './module/module/main/sys-manage/table-
     AuthModule,
     BaseContextModule,
     CacheModule,
+    LoggerModule,
+    QueueModule,
     StaticModule,
     PrismaModule,
     RedisModule,

@@ -34,6 +34,7 @@ const config = {
       port: 6379,
       password: '123456',
       database: 0,
+      databaseForQueue: 0,
     },
     database: {
       host: 'localhost',

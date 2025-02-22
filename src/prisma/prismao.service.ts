@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 import { toSnakeCase, typeOf } from '../util/BaseUtils';
 import { BaseContextService } from '../module/base-context/base-context.service';
 import { baseInterfaceColumns2 } from '../module/module/main/sys-util/code-generation/codeGeneration';
-import { time } from '../util/TimeUtils';
 import { PrismaClient } from '@prisma/client';
 
 const env = currentEnv();
@@ -117,7 +116,7 @@ export class PrismaoService extends PrismaClientOrigin {
                    } = {},
   ) => {
     const userid = this.getUserId();
-    const time1 = time();
+    const time1 = new Date();
     const retObj = {
       data: {
         create_role: this.getLoginRole(),
@@ -161,7 +160,7 @@ export class PrismaoService extends PrismaClientOrigin {
       data: {
         update_role: this.getLoginRole(),
         update_by: this.getUserId(),
-        update_time: time(),
+        update_time: new Date(),
       },
     };
     if (!ifUpdateRole) delete retObj.data.update_role;
@@ -189,7 +188,7 @@ export class PrismaoService extends PrismaClientOrigin {
       data: {
         update_role: this.getLoginRole(),
         update_by: this.getUserId(),
-        update_time: time(),
+        update_time: new Date(),
         deleted: base.Y,
       },
     };

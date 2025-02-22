@@ -4,23 +4,25 @@ import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { PRE_AUTHORIZE_KEY, PreAuthorizeParams } from '../decorator/customDecorator';
 import { R } from '../common/R';
-import { AuthService } from '../module/auth/auth.service';
 import { BaseContextService } from '../module/base-context/base-context.service';
+import { QueueService } from "../module/queue/queue.service";
+import { getIpInfoFromRequest } from "../util/RequestUtils";
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
-    private readonly authService: AuthService,
     private readonly bcs: BaseContextService,
+    private readonly queueService: QueueService
   ) {
   }
 
   intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
+    const userData = this.bcs.getUserData();
     return next.handle().pipe(
       map(data => {
         if (typeof data === 'object') {
-          data.reqId = this.bcs.getUserData().reqId;
+          data.reqId = userData.reqId;
         }
         return data;
       }),
@@ -31,7 +33,22 @@ export class ResponseInterceptor implements NestInterceptor {
           context.getHandler(),
         );
         const { permission, ifIgnoreParamInLog } = authorizeParams;
-        await this.authService.insLogOperation(permission, request, response ? response.code === 200 : 'O', { ifIgnoreParamInLog });
+        const ipInfoFromRequest = getIpInfoFromRequest(request)
+        const reqId = userData.reqId;
+        const userId = userData.userId;
+        const loginRole = userData.loginRole;
+        await this.queueService.addLogOperationQueue('ins', {
+          permission: permission,
+          request: ipInfoFromRequest,
+          ifSuccess: response ? response.code === 200 : 'O',
+          ifIgnoreParamInLog: ifIgnoreParamInLog,
+          reqBody: request.body,
+          reqQuery: request.query,
+          reqMethod: request.method,
+          reqId: reqId,
+          userId: userId,
+          loginRole: loginRole,
+        })
       }),
       catchError(async (error) => {
         const request: Request = context.switchToHttp().getRequest();
@@ -40,7 +57,22 @@ export class ResponseInterceptor implements NestInterceptor {
           context.getHandler(),
         );
         const { permission, ifIgnoreParamInLog } = authorizeParams;
-        await this.authService.insLogOperation(permission, request, false, { ifIgnoreParamInLog });
+        const ipInfoFromRequest = getIpInfoFromRequest(request)
+        const reqId = userData.reqId;
+        const userId = userData.userId;
+        const loginRole = userData.loginRole;
+        await this.queueService.addLogOperationQueue('ins', {
+          permission: permission,
+          request: ipInfoFromRequest,
+          ifSuccess: false,
+          ifIgnoreParamInLog: ifIgnoreParamInLog,
+          reqBody: request.body,
+          reqQuery: request.query,
+          reqMethod: request.method,
+          reqId: reqId,
+          userId: userId,
+          loginRole: loginRole,
+        })
         throw error;
       }),
     );

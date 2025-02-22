@@ -677,25 +677,81 @@ export class AuthService {
                           ifIgnoreParamInLog: false,
                         },
   ) {
+    const reqId = this.bcs.getUserData().reqId;
     const userId = this.bcs.getUserData().userId || '???';
     const loginRole = this.bcs.getUserData().loginRole || '???';
     const ipInfoFromRequest = getIpInfoFromRequest(request);
+    await this.insLogOperation2(permission, ipInfoFromRequest, ifSuccess, {
+      remark: remark,
+      ifIgnoreParamInLog,
+      reqBody: request.body,
+      reqQuery: request.query,
+      reqMethod: request.method,
+      reqId: reqId,
+      userId: userId,
+      loginRole: loginRole,
+    })
+  }
+
+  /**
+   * 插入操作记录
+   * @param permission
+   * @param request
+   * @param ifSuccess
+   * @param remark
+   * @param ifIgnoreParamInLog
+   * @param reqBody
+   * @param reqQuery
+   * @param reqMethod
+   * @param reqId
+   * @param userId
+   * @param loginRole
+   */
+  async insLogOperation2(permission: string, request: ReturnType<typeof getIpInfoFromRequest>, ifSuccess: boolean | string, {
+                           remark,
+                           ifIgnoreParamInLog,
+                           reqBody,
+                           reqQuery,
+                           reqMethod,
+                           reqId,
+                           userId,
+                           loginRole,
+                         }: {
+                           remark?: string
+                           ifIgnoreParamInLog?: boolean
+                           reqBody: object
+                           reqQuery: object
+                           reqMethod: string
+                           reqId: string
+                           userId: string
+                           loginRole: string
+                         } = {
+                           remark: '',
+                           ifIgnoreParamInLog: false,
+                           reqBody: {},
+                           reqQuery: {},
+                           reqMethod: '',
+                           reqId: '',
+                           userId: '',
+                           loginRole: '',
+                         },
+  ) {
     await this.prismao.getOrigin().log_operation.create({
       data: {
-        req_id: this.bcs.getUserData().reqId,
-        call_ip: ipInfoFromRequest.ip,
-        host_name: `${ipInfoFromRequest.proto}://${ipInfoFromRequest.host}`,
+        req_id: reqId,
+        call_ip: request.ip,
+        host_name: `${request.proto}://${request.host}`,
         perms: permission,
         user_id: userId,
         req_param: ifIgnoreParamInLog ?
           JSON.stringify({ body: 'hidden', query: 'hidden' }) :
-          JSON.stringify({ body: request.body, query: request.query }),
+          JSON.stringify({ body: reqBody, query: reqQuery }),
         old_value: '',
-        operate_type: request.method,
+        operate_type: reqMethod,
         if_success: typeof ifSuccess === 'boolean' ? ifSuccess ? base.Y : base.N : ifSuccess,
         login_role: loginRole,
         remark: remark,
-        create_time: new Date(timestamp()),
+        create_time: new Date(),
       },
     });
   }

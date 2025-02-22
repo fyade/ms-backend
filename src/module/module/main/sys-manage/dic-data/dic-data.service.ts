@@ -11,9 +11,9 @@ import { Exception } from "../../../../../exception/Exception";
 export class DicDataService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly bcs:BaseContextService
-    ) {
-    this.bcs.setFieldSelectParam('sys_dic_data',{
+    private readonly bcs: BaseContextService
+  ) {
+    this.bcs.setFieldSelectParam('sys_dic_data', {
       notNullKeys: ['label', 'value', 'dicTypeId', 'ifDefault', 'ifDisabled', 'orderNum'],
       numberKeys: ['dicTypeId', 'orderNum'],
     })
