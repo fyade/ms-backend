@@ -30,6 +30,13 @@ export async function getAllFiles(directoryPath: string) {
 
 const dirIfExist = new Map<string, boolean>();
 
+/**
+ * 保存文件
+ * @param directoryPath
+ * @param fileName
+ * @param fileBuffer
+ * @param a
+ */
 export function saveFile(directoryPath: string, fileName: string, fileBuffer,
                          {
                            a = '',

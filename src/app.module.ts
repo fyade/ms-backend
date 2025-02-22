@@ -12,6 +12,7 @@ import { BaseContextModule } from './module/base-context/base-context.module';
 import { CacheModule } from './module/cache/cache.module';
 import { LoggerModule } from "./module/logger/logger.module";
 import { QueueModule } from "./module/queue/queue.module";
+import { ScheduleModule } from "./module/schedule/schedule.module";
 import { StaticModule } from './module/static/static.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
@@ -71,6 +72,7 @@ const currentEnv1 = currentEnv();
     CacheModule,
     LoggerModule,
     QueueModule,
+    ScheduleModule,
     StaticModule,
     PrismaModule,
     RedisModule,

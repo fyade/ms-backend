@@ -742,14 +742,14 @@ export class AuthService {
         call_ip: request.ip,
         host_name: `${request.proto}://${request.host}`,
         perms: permission,
-        user_id: userId,
+        user_id: userId || '???',
         req_param: ifIgnoreParamInLog ?
           JSON.stringify({ body: 'hidden', query: 'hidden' }) :
           JSON.stringify({ body: reqBody, query: reqQuery }),
         old_value: '',
         operate_type: reqMethod,
         if_success: typeof ifSuccess === 'boolean' ? ifSuccess ? base.Y : base.N : ifSuccess,
-        login_role: loginRole,
+        login_role: loginRole || '???',
         remark: remark,
         create_time: new Date(),
       },
