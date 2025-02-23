@@ -1,24 +1,51 @@
 import { Injectable, LoggerService } from "@nestjs/common";
 import * as winston from "winston";
 import { currentEnv } from "../../../config/config";
+import "winston-daily-rotate-file";
+import { formatDate } from "../../util/TimeUtils";
 
 @Injectable()
 export class WinstonService implements LoggerService {
   private logger: winston.Logger
 
   constructor() {
+    const errorTransport = new winston.transports.DailyRotateFile({
+      level: 'error',
+      dirname: currentEnv().log.logSavePath + '/errors/',
+      filename: '%DATE%.error.log',
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: currentEnv().log.maxSizeOfKogFile,
+      format: winston.format.combine(
+        winston.format.printf(info => {
+          return `${formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`
+        })
+      ),
+    });
+    const infoTransport = new winston.transports.DailyRotateFile({
+      level: 'info',
+      dirname: currentEnv().log.logSavePath + '/infos/',
+      filename: '%DATE%.info.log',
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: currentEnv().log.maxSizeOfKogFile,
+      format: winston.format.combine(
+        winston.format.printf(info => {
+          return `${formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`
+        })
+      ),
+    });
     this.logger = winston.createLogger({
       levels: winston.config.syslog.levels,
       transports: [
-        new winston.transports.File({
-          level: 'error',
-          dirname: currentEnv().log.logSavePath+'/errors/',
-          filename:  'error.log',
-          maxsize: currentEnv().log.maxSizeOfKogFile,
-          format: winston.format.combine(
-            winston.format.printf(info => `[${info.level.padEnd(15)}]: ${info.message}`)
-          ),
-        })
+        errorTransport,
+        infoTransport,
+      ],
+      exceptionHandlers: [
+        errorTransport,
+      ],
+      rejectionHandlers: [
+        errorTransport,
       ],
       exitOnError: false,
     })

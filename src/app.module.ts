@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { currentEnv } from '../config/config';
-import { WinstonService } from "./module/winston/winston.service";
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -98,10 +97,6 @@ import { TableRowPermissionModule } from './module/module/main/sys-manage/table-
     TableRowPermissionModule,
   ],
   providers: [
-    {
-      provide: 'Logger',
-      useClass: WinstonService,
-    },
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
