@@ -20,7 +20,7 @@ import { Exception } from "../../../../../exception/Exception";
 @ApiBearerAuth()
 @UsePipes(new ValidationPipe())
 export class FileUploadController {
-  private env: any;
+  private env: ReturnType<typeof currentEnv>;
 
   constructor(private readonly fileUploadService: FileUploadService) {
     this.env = currentEnv();

@@ -23,7 +23,7 @@ const SparkMD5 = require('spark-md5');
 
 @Injectable()
 export class FileUploadService {
-  private env: any;
+  private env: ReturnType<typeof currentEnv>;
   private directoryPrefix = 'YYYY/MM/DD/';
 
   constructor(

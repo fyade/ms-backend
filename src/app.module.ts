@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
-import { ConfigModule } from '@nestjs/config';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { ClsModule } from 'nestjs-cls';
 import { currentEnv } from '../config/config';
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './module/auth/auth.module';
 import { BaseContextModule } from './module/base-context/base-context.module';
 import { CacheModule } from './module/cache/cache.module';
@@ -50,22 +48,10 @@ import { UserVisitorModule } from './module/module/main/other-user/user-visitor/
 import { UserTableDefaultPermissionModule } from './module/module/main/other-user/user-table-default-permission/user-table-default-permission.module';
 import { TableRowPermissionModule } from './module/module/main/sys-manage/table-row-permission/table-row-permission.module';
 
-const currentEnv1 = currentEnv();
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [currentEnv],
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: currentEnv1.file.uploadPath,
-      serveRoot: currentEnv1.staticRoot,
-    }),
-    ClsModule.forRoot({
-      global: true,
-      middleware: {
-        mount: true,
-      },
     }),
     AuthModule,
     BaseContextModule,

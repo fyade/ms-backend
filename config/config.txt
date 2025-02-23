@@ -12,7 +12,7 @@ export const SECRET_KEY = '' // 前端-后端接口敏感信息加密盐，注�
 export const SECRET_KEY_HD_DB = '' // 后端-数据库敏感信息加密盐
 export const SECRET_CON_PROJ_AUTH = ''; // 后端主项目-后端子项目请求信息加密盐
 
-export const currentEnv = () => {
+export const currentEnv = (): typeof config.dev => {
   const env = process.env.NODE_ENV || base.DEV;
   return config[env];
 };
@@ -20,8 +20,7 @@ export const currentEnv = () => {
 export const portFromCmd = process.env.PORT;
 export const wsPortFromCmd = process.env.WS_PORT;
 const mysqlConnectParam = '';
-export const publicConfig = {
-};
+export const publicConfig = {};
 const config = {
   dev: {
     ...publicConfig,
@@ -54,10 +53,10 @@ const config = {
     ifShowSwagger: true, // 是否开启 swagger 文档
     ifIgnoreVerificationCode: true, // 是否不校验登录验证码
     ifLogSQLExecutionTime: true, // 是否打印 sql 执行耗时
-    prismaLogLevel: ['query', 'info', 'warn'], // prisma 日志等级
+    prismaLogLevel: ['query', 'info', 'warn', 'error'], // prisma 日志等级
   },
   prod: {},
-}
+};
 
 export function getMysqlUrlFromEnv(env: any): string {
   return `mysql://${env.database.username}:${env.database.password}@${env.database.host}:${env.database.port}/${env.database.database}`;
