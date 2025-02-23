@@ -86,7 +86,7 @@ DATABASE_URL="mysql://root:123456@localhost:3306/table_name"
 
 2. 运行 `npx prisma generate` 命令，然后将 /generated 目录复制至 生产环境根目录 /generated；
 
-3. 运行 `npm run build` 命令，然后将 /dist 目录复制至 生产环境根目录 /dist；
+3. 运行 `npm run build:wp` 命令，然后将 /dist 目录复制至 生产环境根目录 /dist；
 
 4. 在 node_modules 文件夹中，找到 svg-captcha 文件夹，然后将文件夹内 /fonts 目录复制至 生产环境根目录 /fonts；
 

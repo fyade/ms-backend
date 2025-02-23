@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { currentEnv } from '../config/config';
+import { WinstonService } from "./module/winston/winston.service";
 import { GlobalExceptionFilter } from './filter/GlobalExceptionFilter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,10 +9,10 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './module/auth/auth.module';
 import { BaseContextModule } from './module/base-context/base-context.module';
 import { CacheModule } from './module/cache/cache.module';
-import { LoggerModule } from "./module/logger/logger.module";
 import { QueueModule } from "./module/queue/queue.module";
 import { ScheduleModule } from "./module/schedule/schedule.module";
 import { StaticModule } from './module/static/static.module';
+import { WinstonModule } from "./module/winston/winston.module";
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { FileUploadModule } from './module/module/main/common/file-upload/file-upload.module';
@@ -56,10 +57,10 @@ import { TableRowPermissionModule } from './module/module/main/sys-manage/table-
     AuthModule,
     BaseContextModule,
     CacheModule,
-    LoggerModule,
     QueueModule,
     ScheduleModule,
     StaticModule,
+    WinstonModule,
     PrismaModule,
     RedisModule,
     FileUploadModule,
@@ -97,6 +98,10 @@ import { TableRowPermissionModule } from './module/module/main/sys-manage/table-
     TableRowPermissionModule,
   ],
   providers: [
+    {
+      provide: 'Logger',
+      useClass: WinstonService,
+    },
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
