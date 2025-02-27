@@ -743,15 +743,14 @@ export class AuthService {
         host_name: `${request.proto}://${request.host}`,
         perms: permission,
         user_id: userId || '???',
+        login_role: loginRole || '???',
         req_param: ifIgnoreParamInLog ?
           JSON.stringify({ body: 'hidden', query: 'hidden' }) :
           JSON.stringify({ body: reqBody, query: reqQuery }),
         old_value: '',
         operate_type: reqMethod,
         if_success: typeof ifSuccess === 'boolean' ? ifSuccess ? base.Y : base.N : ifSuccess,
-        login_role: loginRole || '???',
         remark: remark,
-        create_time: new Date(),
       },
     });
   }
@@ -774,9 +773,9 @@ export class AuthService {
         pperms: pperms,
         perms: perms,
         user_id: userId,
+        login_role: loginRole,
         call_ip: callIp,
         if_success: ifSuccess,
-        login_role: loginRole,
         remark: remark,
       },
     });

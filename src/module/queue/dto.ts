@@ -12,3 +12,10 @@ export class LogOperationQueueJobDataDto {
   userId: string
   loginRole: string
 }
+
+export class LogScheduledTaskQueueJobDataDto {
+  taskTarget: string
+  operateType: string
+  ifSuccess: string
+  remark: string
+}

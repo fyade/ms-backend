@@ -625,7 +625,7 @@ model log_algorithm_call {
 // 0.4 定时任务运行日志表
 model log_scheduled_task {
   id           Int      @id @default(autoincrement()) @db.Int
-  tesk_id      Int      @db.Int
+  task_target  String   @db.VarChar(150)
   operate_type String   @db.VarChar(10)
   if_success   String   @db.Char(1)
   remark       String?  @db.VarChar(100)

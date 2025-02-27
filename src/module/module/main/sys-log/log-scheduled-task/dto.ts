@@ -7,7 +7,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class LogScheduledTaskDto extends BaseDto {
   id: number;
 
-  teskId: number;
+  taskTarget: string;
 
   operateType: string;
 
@@ -17,10 +17,10 @@ export class LogScheduledTaskDto extends BaseDto {
 }
 
 export class LogScheduledTaskSelListDto extends PageDto {
-  @ApiProperty({ description: '任务id', required: false })
-  teskId: number;
+  @ApiProperty({ description: '任务目标标识', required: false })
+  taskTarget: string;
 
-  @ApiProperty({ description: '运行类型', required: false })
+  @ApiProperty({ description: '执行类型', required: false })
   operateType: string;
 
   @ApiProperty({ description: '是否成功', required: false })
@@ -31,10 +31,10 @@ export class LogScheduledTaskSelListDto extends PageDto {
 }
 
 export class LogScheduledTaskSelAllDto {
-  @ApiProperty({ description: '任务id', required: false })
-  teskId: number;
+  @ApiProperty({ description: '任务目标标识', required: false })
+  taskTarget: string;
 
-  @ApiProperty({ description: '运行类型', required: false })
+  @ApiProperty({ description: '执行类型', required: false })
   operateType: string;
 
   @ApiProperty({ description: '是否成功', required: false })
@@ -45,13 +45,12 @@ export class LogScheduledTaskSelAllDto {
 }
 
 export class LogScheduledTaskInsOneDto {
-  @ApiProperty({ description: '任务id', required: true })
-  @Type(() => Number)
-  @IsNotEmpty({ message: '任务id不能为空' })
-  teskId: number;
+  @ApiProperty({ description: '任务目标标识', required: true })
+  @IsNotEmpty({ message: '任务目标标识不能为空' })
+  taskTarget: string;
 
-  @ApiProperty({ description: '运行类型', required: true })
-  @IsNotEmpty({ message: '运行类型不能为空' })
+  @ApiProperty({ description: '执行类型', required: true })
+  @IsNotEmpty({ message: '执行类型不能为空' })
   operateType: string;
 
   @ApiProperty({ description: '是否成功', required: true })

@@ -11,8 +11,7 @@ export class LogScheduledTaskService {
     private readonly bcs: BaseContextService,
   ) {
     this.bcs.setFieldSelectParam('log_scheduled_task', {
-      notNullKeys: ['teskId', 'operateType', 'ifSuccess'],
-      numberKeys: ['teskId'],
+      notNullKeys: ['taskTarget', 'operateType', 'ifSuccess'],
       ifCreateRole: false,
       ifUpdateRole: false,
       ifCreateBy: false,

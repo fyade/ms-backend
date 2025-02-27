@@ -13,7 +13,7 @@ export class LogOperationConsumer extends WorkerHost {
     super();
   }
 
-  async process(job: Job<LogOperationQueueJobDataDto>): Promise<any> {
+  async process(job: Job<LogOperationQueueJobDataDto>) {
     const data = job.data;
     await this.authService.insLogOperation2(data.permission, data.request, data.ifSuccess, {
       ifIgnoreParamInLog: data.ifIgnoreParamInLog,
@@ -24,6 +24,5 @@ export class LogOperationConsumer extends WorkerHost {
       userId: data.userId,
       loginRole: data.loginRole,
     })
-    return Promise.resolve(void 0);
   }
 }

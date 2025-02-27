@@ -2,12 +2,14 @@ import { Injectable, OnModuleInit } from "@nestjs/common";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { PrismaoService } from "../../prisma/prismao.service";
 import { CronJob } from "cron";
+import { QueueoService } from "../queue/queueo.service";
 
 @Injectable()
 export class ScheduleService implements OnModuleInit {
   constructor(
     private readonly schedulerRegistry: SchedulerRegistry,
     private readonly prismao: PrismaoService,
+    private readonly queueoService: QueueoService,
   ) {
   }
 
@@ -33,7 +35,15 @@ export class ScheduleService implements OnModuleInit {
     if (!obj) {
       return
     }
-    const cronJob = new CronJob(cronExpression, obj);
+    const cronJob = new CronJob(cronExpression, async () => {
+      await this.queueoService.addLogScheduledTaskQueue('ins', {
+        taskTarget: name,
+        operateType: 'by:self',
+        ifSuccess: 'O',
+        remark: '',
+      })
+      await obj()
+    });
     this.schedulerRegistry.addCronJob(name, cronJob)
     cronJob.start()
   }

@@ -333,4 +333,5 @@ VALUES (1,'系统管理','mm','sys-manage',0,'#','system',1,'N','Y','N','N','N',
        (328,'批量新增定时任务运行日志','mb','#',322,'#','#',0,'N','Y','N','N','N','main:sysLog:logScheduledTask:inss',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (329,'修改定时任务运行日志','mb','#',322,'#','#',0,'N','Y','N','N','N','main:sysLog:logScheduledTask:upd',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
        (330,'批量修改定时任务运行日志','mb','#',322,'#','#',0,'N','Y','N','N','N','main:sysLog:logScheduledTask:upds',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
-       (331,'删除定时任务运行日志','mb','#',322,'#','#',0,'N','Y','N','N','N','main:sysLog:logScheduledTask:del',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N');
+       (331,'删除定时任务运行日志','mb','#',322,'#','#',0,'N','Y','N','N','N','main:sysLog:logScheduledTask:del',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N'),
+       (332,'定时任务日志','mc','log-scheduled-task',8,'/sysLog/logScheduledTask/index.vue','schedule',3,'N','Y','N','N','N','main:sysLog:logScheduledTask',1,'','admin','admin','admin','admin','2024-01-01 00:00:00.000','2024-01-01 00:00:00.000','N');

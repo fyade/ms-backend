@@ -5,15 +5,15 @@ import { Reflector } from '@nestjs/core';
 import { PRE_AUTHORIZE_KEY, PreAuthorizeParams } from '../decorator/customDecorator';
 import { R } from '../common/R';
 import { BaseContextService } from '../module/base-context/base-context.service';
-import { QueueService } from "../module/queue/queue.service";
 import { getIpInfoFromRequest } from "../util/RequestUtils";
+import { QueueoService } from "../module/queue/queueo.service";
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
     private readonly bcs: BaseContextService,
-    private readonly queueService: QueueService
+    private readonly queueoService: QueueoService,
   ) {
   }
 
@@ -37,7 +37,7 @@ export class ResponseInterceptor implements NestInterceptor {
         const reqId = userData.reqId;
         const userId = userData.userId;
         const loginRole = userData.loginRole;
-        await this.queueService.addLogOperationQueue('ins', {
+        await this.queueoService.addLogOperationQueue('ins', {
           permission: permission,
           request: ipInfoFromRequest,
           ifSuccess: response ? response.code === 200 : 'O',
@@ -61,7 +61,7 @@ export class ResponseInterceptor implements NestInterceptor {
         const reqId = userData.reqId;
         const userId = userData.userId;
         const loginRole = userData.loginRole;
-        await this.queueService.addLogOperationQueue('ins', {
+        await this.queueoService.addLogOperationQueue('ins', {
           permission: permission,
           request: ipInfoFromRequest,
           ifSuccess: false,
