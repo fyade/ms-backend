@@ -9,13 +9,14 @@ export class WinstonService implements LoggerService {
   private logger: winston.Logger
 
   constructor() {
+    const env = currentEnv();
     const errorTransport = new winston.transports.DailyRotateFile({
       level: 'error',
-      dirname: currentEnv().log.logSavePath + '/errors/',
+      dirname: env.log.logSavePath + '/errors/',
       filename: '%DATE%.error.log',
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
-      maxSize: currentEnv().log.maxSizeOfKogFile,
+      maxSize: env.log.maxSizeOfKogFile,
       format: winston.format.combine(
         winston.format.printf(info => {
           return `${formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`
@@ -24,11 +25,11 @@ export class WinstonService implements LoggerService {
     });
     const infoTransport = new winston.transports.DailyRotateFile({
       level: 'info',
-      dirname: currentEnv().log.logSavePath + '/infos/',
+      dirname: env.log.logSavePath + '/infos/',
       filename: '%DATE%.info.log',
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
-      maxSize: currentEnv().log.maxSizeOfKogFile,
+      maxSize: env.log.maxSizeOfKogFile,
       format: winston.format.combine(
         winston.format.printf(info => {
           return `${formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss')} [${info.level.padEnd(15)}]: ${info.message}`

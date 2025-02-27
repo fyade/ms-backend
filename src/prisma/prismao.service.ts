@@ -84,17 +84,13 @@ export class PrismaoService extends PrismaClientOrigin {
           [toSnakeCase(a)]: true,
         }), {}),
       } : {}),
-      where: {
-        create_role: this.getLoginRole(),
-        create_by: this.getUserId(),
-        deleted: base.N,
-      },
+      where: {},
     };
-    if (!ifDeleted) delete retObj.where.deleted;
-    if (!ifUseSelfData) {
-      delete retObj.where.create_role;
-      delete retObj.where.create_by;
+    if (ifUseSelfData) {
+      retObj.where['create_role'] = this.getLoginRole();
+      retObj.where['create_by'] = this.getUserId();
     }
+    if (ifDeleted) retObj.where['deleted'] = base.N;
     return retObj;
   };
   defaultInsArg = ({

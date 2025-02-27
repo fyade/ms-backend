@@ -1,9 +1,9 @@
 @echo off
 echo.
-echo [build]
+echo [build:wp]
 echo.
 
 cd ../
-npm run build
+npm run build:wp
 
 pause

@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './module/auth/auth.module';
 import { BaseContextModule } from './module/base-context/base-context.module';
 import { CacheModule } from './module/cache/cache.module';
+import { CommonModule } from "./module/common/common.module";
 import { QueueModule } from "./module/queue/queue.module";
 import { ScheduleModule } from "./module/schedule/schedule.module";
 import { StaticModule } from './module/static/static.module';
@@ -47,6 +48,8 @@ import { MenuIpWhiteListModule } from './module/module/main/sys-manage/menu-ip-w
 import { UserVisitorModule } from './module/module/main/other-user/user-visitor/user-visitor.module';
 import { UserTableDefaultPermissionModule } from './module/module/main/other-user/user-table-default-permission/user-table-default-permission.module';
 import { TableRowPermissionModule } from './module/module/main/sys-manage/table-row-permission/table-row-permission.module';
+import { ScheduledTaskModule } from './module/module/main/sys-monitor/scheduled-task/scheduled-task.module';
+import { LogScheduledTaskModule } from './module/module/main/sys-log/log-scheduled-task/log-scheduled-task.module';
 
 @Module({
   imports: [
@@ -56,6 +59,7 @@ import { TableRowPermissionModule } from './module/module/main/sys-manage/table-
     AuthModule,
     BaseContextModule,
     CacheModule,
+    CommonModule,
     QueueModule,
     ScheduleModule,
     StaticModule,
@@ -95,6 +99,8 @@ import { TableRowPermissionModule } from './module/module/main/sys-manage/table-
     UserVisitorModule,
     UserTableDefaultPermissionModule,
     TableRowPermissionModule,
+    ScheduledTaskModule,
+    LogScheduledTaskModule,
   ],
   providers: [
     {

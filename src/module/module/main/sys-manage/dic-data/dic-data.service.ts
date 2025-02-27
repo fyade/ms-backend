@@ -2,16 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../../../prisma/prisma.service';
 import { R } from '../../../../../common/R';
 import { DicDataDto, DicDataSelListDto, DicDataSelAllDto, DicDataInsOneDto, DicDataUpdOneDto } from './dto';
-import { DicTypeDto } from '../dic-type/dto';
 import { base } from '../../../../../util/base';
 import { BaseContextService } from '../../../../base-context/base-context.service';
 import { Exception } from "../../../../../exception/Exception";
+import { CommonService } from "../../../../common/common.service";
 
 @Injectable()
 export class DicDataService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly bcs: BaseContextService
+    private readonly bcs: BaseContextService,
+    private readonly commonService: CommonService,
   ) {
     this.bcs.setFieldSelectParam('sys_dic_data', {
       notNullKeys: ['label', 'value', 'dicTypeId', 'ifDefault', 'ifDisabled', 'orderNum'],
@@ -20,19 +21,8 @@ export class DicDataService {
   }
 
   async selDicDataOfType(perm: string, label: string = ''): Promise<R<DicDataDto[]>> {
-    const dicTypeDto = await this.prisma.findFirst<DicTypeDto, DicTypeDto>('sys_dic_type', {
-      type: perm,
-      ifDisabled: base.N,
-    });
-    const ret: DicDataDto[] = [];
-    if (dicTypeDto) {
-      const dicDataDtos = await this.prisma.findAll<DicDataDto, DicDataSelAllDto>('sys_dic_data', {
-        data: { label: label, dicTypeId: dicTypeDto.id, ifDisabled: base.N },
-        orderBy: true,
-      });
-      ret.push(...dicDataDtos);
-    }
-    return R.ok(ret);
+    const dicDataDtos = await this.commonService.selDicDataOfType(perm,label);
+    return R.ok(dicDataDtos);
   }
 
   async selDicData(dto: DicDataSelListDto): Promise<R> {
