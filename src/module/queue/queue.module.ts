@@ -1,10 +1,10 @@
 import { Global, Module } from "@nestjs/common";
 import { QueueService } from "./queue.service";
 import { BullModule } from "@nestjs/bullmq";
-import { LogOperationConsumer } from "./log-operation.consumer";
 import { currentEnv } from "../../../config/config";
-import { LogScheduledTaskConsumer } from "./log-scheduled-task.consumer";
 import { QueueoService } from "./queueo.service";
+import { LogOperationConsumer } from "./log-operation.consumer";
+import { LogScheduledTaskConsumer } from "./log-scheduled-task.consumer";
 
 const redisConfig = currentEnv().redis;
 
@@ -19,23 +19,20 @@ const redisConfig = currentEnv().redis;
         db: redisConfig.databaseForQueue,
       },
       defaultJobOptions: {
-        removeOnComplete: true
+        removeOnComplete: true,
+        removeOnFail: false,
       }
     }),
     BullModule.registerQueue(
-      {
-        name: 'log-operation-queue'
-      },
-      {
-        name: 'log-scheduled-task-queue'
-      }
+      { name: 'log-operation-queue' },
+      { name: 'log-scheduled-task-queue' }
     ),
   ],
   providers: [
     QueueService,
     QueueoService,
     LogOperationConsumer,
-    LogScheduledTaskConsumer
+    LogScheduledTaskConsumer,
   ],
   exports: [
     QueueService,

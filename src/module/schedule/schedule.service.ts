@@ -3,6 +3,7 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { PrismaoService } from "../../prisma/prismao.service";
 import { CronJob } from "cron";
 import { QueueoService } from "../queue/queueo.service";
+import { base } from "../../util/base";
 
 @Injectable()
 export class ScheduleService implements OnModuleInit {
@@ -24,7 +25,9 @@ export class ScheduleService implements OnModuleInit {
       }
     });
     for (const task of tasks) {
-      this.addSchedule(task.target, task.cron_expression)
+      if (task.if_disabled === base.N) {
+        this.addSchedule(task.target, task.cron_expression)
+      }
     }
   }
 
