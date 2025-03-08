@@ -1,3 +1,9 @@
+
+# !!!注意!!!
+本项目现已整合至以下仓库，今后的所有更新与维护工作都将在此新仓库中进行。敬请关注新仓库的最新动态。
+- https://github.com/fyade/ms
+- https://gitee.com/fyade/ms
+
 ## 关于
 
 这是一个后台管理系统模板，前端语言为 Vue.js（Vue3），后端语言为 Nest.js，建议 Node 版本：20.12.0。
@@ -8,12 +14,12 @@
 - Redis 较新版本皆可
 
 前端开源地址：
-- https://github.com/fyade/ms-frontend-admin
-- https://gitee.com/fyade/ms-frontend-admin
+- ~~https://github.com/fyade/ms-frontend-admin~~ 请关注新仓库
+- ~~https://gitee.com/fyade/ms-frontend-admin~~ 请关注新仓库
 
 后端开源地址：
-- https://github.com/fyade/ms-backend
-- https://gitee.com/fyade/ms-backend
+- ~~https://github.com/fyade/ms-backend~~ 请关注新仓库
+- ~~https://gitee.com/fyade/ms-backend~~ 请关注新仓库
 
 ## 二开注意事项
 
